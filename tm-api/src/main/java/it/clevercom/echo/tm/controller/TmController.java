@@ -1,4 +1,4 @@
-package it.clevercom.echo.controller;
+package it.clevercom.echo.tm.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("protected")
-public class ProtectedController {
+public class TmController {
 
   /**
   This is an example of some different kinds of granular restriction for endpoints. You can use the built-in SPEL expressions

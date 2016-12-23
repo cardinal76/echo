@@ -12,7 +12,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
+
 		<spring-framework.version>4.3.4.RELEASE</spring-framework.version>
 		<spring-security.version>4.2.0.RELEASE</spring-security.version>
 		<spring-mobile-device.version>1.1.5.RELEASE</spring-mobile-device.version>
@@ -33,12 +33,19 @@
 	<!-- Parent information -->
 	<parent>
 		<groupId>it.clevercom</groupId>
-		<artifactId>rest-api</artifactId>
+		<artifactId>echo</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<!-- Dependency information -->
 	<dependencies>
+		<!-- clevercom -->
+		<dependency>
+			<groupId>it.clevercom</groupId>
+			<artifactId>tm-api</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+
 		<!-- spring basic -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -66,11 +73,11 @@
 		</dependency>
 
 		<!-- spring-security -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-			<version>${spring-security.version}</version>
-		</dependency>
+		<!-- <dependency> -->
+		<!-- <groupId>org.springframework.security</groupId> -->
+		<!-- <artifactId>spring-security-core</artifactId> -->
+		<!-- <version>${spring-security.version}</version> -->
+		<!-- </dependency> -->
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
