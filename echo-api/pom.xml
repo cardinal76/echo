@@ -5,30 +5,6 @@
 	<artifactId>echo-api</artifactId>
 	<packaging>war</packaging>
 	<name>echo-api</name>
-	<description>Example stateless authorization server using JSON web tokens, based on https://github.com/brahalla/Cerberus</description>
-	<inceptionYear>2016</inceptionYear>
-
-	<!-- Properties information -->
-	<properties>
-		<java.version>1.8</java.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-		<spring-framework.version>4.3.4.RELEASE</spring-framework.version>
-		<spring-security.version>4.2.0.RELEASE</spring-security.version>
-		<spring-mobile-device.version>1.1.5.RELEASE</spring-mobile-device.version>
-		<spring-data-jpa.version>1.10.5.RELEASE</spring-data-jpa.version>
-		<hibernate.version>5.2.5.Final</hibernate.version>
-		<mysql-connector.version>5.1.40</mysql-connector.version>
-		<javax-servlet.version>3.1.0</javax-servlet.version>
-		<javax-persistence.version>1.0.2</javax-persistence.version>
-		<jjwt.version>0.7.0</jjwt.version>
-		<jackson.version>2.8.5</jackson.version>
-		<apache-commons.version>3.5</apache-commons.version>
-		<log4j.version>1.2.17</log4j.version>
-
-		<maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
-		<maven-war-plugin.version>3.0.0</maven-war-plugin.version>
-	</properties>
 
 	<!-- Parent information -->
 	<parent>
@@ -39,124 +15,72 @@
 
 	<!-- Dependency information -->
 	<dependencies>
-		<!-- clevercom -->
-		<dependency>
-			<groupId>it.clevercom</groupId>
-			<artifactId>tm-api</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
-
-		<!-- spring basic -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-core</artifactId>
-			<version>${spring-framework.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring-framework.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
-			<version>${spring-framework.version}</version>
-		</dependency>
-
 		<!-- spring mvc -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>${spring-framework.version}</version>
 		</dependency>
-
-		<!-- spring-security -->
-		<!-- <dependency> -->
-		<!-- <groupId>org.springframework.security</groupId> -->
-		<!-- <artifactId>spring-security-core</artifactId> -->
-		<!-- <version>${spring-security.version}</version> -->
-		<!-- </dependency> -->
-
+		<!-- spring security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-			<version>${spring-security.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>${spring-security.version}</version>
 		</dependency>
-
-		<!-- spring-data-jpa -->
+		<!-- jpa -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
-			<version>${spring-data-jpa.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
 		<!-- spring-mobile-device -->
 		<dependency>
 			<groupId>org.springframework.mobile</groupId>
 			<artifactId>spring-mobile-device</artifactId>
-			<version>${spring-mobile-device.version}</version>
 		</dependency>
-
 		<!-- javax -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>persistence-api</artifactId>
-			<version>${javax-persistence.version}</version>
 		</dependency>
-
 		<!-- json web token -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
-			<version>${jjwt.version}</version>
 		</dependency>
-
-		<!-- mysql connector -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql-connector.version}</version>
-		</dependency>
-
 		<!-- jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
 		</dependency>
-
 		<!-- apache commons -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>${apache-commons.version}</version>
 		</dependency>
-
 		<!-- log4j -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
+		</dependency>
+
+		<!-- jar modules -->
+		<dependency>
+			<groupId>it.clevercom</groupId>
+			<artifactId>tm-api</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -166,21 +90,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin.version}</version>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-					<encoding>${project.build.sourceEncoding}</encoding>
-					<!-- <compilerArgument>-Xlint:unchecked</compilerArgument> -->
-				</configuration>
 			</plugin>
 
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>${maven-war-plugin.version}</version>
-				<configuration>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

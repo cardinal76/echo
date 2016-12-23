@@ -9,18 +9,27 @@
 	<artifactId>tm-api</artifactId>
 
 	<dependencies>
+		<!-- all dependencies already used by the echo-api war project must have 
+			scope provided -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>4.3.4.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>4.2.0.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- all specific dependencies for this jar must hava scope compile -->
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>
