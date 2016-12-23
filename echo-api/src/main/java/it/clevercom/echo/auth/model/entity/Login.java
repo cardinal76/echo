@@ -1,4 +1,4 @@
-package it.clevercom.echo.model.entity;
+package it.clevercom.echo.auth.model.entity;
 
 import java.io.Serializable;
 import java.util.Date;

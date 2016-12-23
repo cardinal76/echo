@@ -5,6 +5,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -19,12 +20,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories("it.clevercom.echo.repository")
+@EnableJpaRepositories("${echo.base.package}")
 @PropertySource("classpath:application.properties")
 public class DataBaseConfig {
 
-	private static final String PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN = "it.clevercom.echo.model.entity";
-
+	@Value("${echo.base.package}")
+	private String echoBasePackage;
+	
 	@Autowired
 	private Environment environment;
 
@@ -33,7 +35,7 @@ public class DataBaseConfig {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 //		em.setPersistenceUnitName("authPU");
 		em.setDataSource(dataSource());
-		em.setPackagesToScan(new String[] { PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN });
+		em.setPackagesToScan(new String[] { echoBasePackage });
 
 		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);

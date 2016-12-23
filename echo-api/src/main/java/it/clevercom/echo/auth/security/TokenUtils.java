@@ -1,4 +1,4 @@
-package it.clevercom.echo.security;
+package it.clevercom.echo.auth.security;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import it.clevercom.echo.model.dto.security.CerberusUser;
+import it.clevercom.echo.auth.model.dto.security.LoginDto;
 
 @Component
 public class TokenUtils {
@@ -156,7 +156,7 @@ public class TokenUtils {
   }
 
   public Boolean validateToken(String token, UserDetails userDetails) {
-    CerberusUser user = (CerberusUser) userDetails;
+    LoginDto user = (LoginDto) userDetails;
     final String username = this.getUsernameFromToken(token);
     final Date created = this.getCreatedDateFromToken(token);
     final Date expiration = this.getExpirationDateFromToken(token);

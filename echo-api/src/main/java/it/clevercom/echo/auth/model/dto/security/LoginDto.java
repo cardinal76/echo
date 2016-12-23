@@ -1,4 +1,4 @@
-package it.clevercom.echo.model.dto.security;
+package it.clevercom.echo.auth.model.dto.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -8,11 +8,11 @@ import java.util.Date;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class CerberusUser implements UserDetails {
+public class LoginDto implements UserDetails {
 
 
 	private static final long serialVersionUID = 1L;
-	private Long id;
+	private int id;
 	private String username;
 	private String password;
 	private String email;
@@ -23,11 +23,11 @@ public class CerberusUser implements UserDetails {
 	private Boolean credentialsNonExpired = true;
 	private Boolean enabled = true;
 
-	public CerberusUser() {
+	public LoginDto() {
 		super();
 	}
 
-	public CerberusUser(Long id, String username, String password, String email, Date lastPasswordReset, Collection<? extends GrantedAuthority> authorities) {
+	public LoginDto(int id, String username, String password, String email, Date lastPasswordReset, Collection<? extends GrantedAuthority> authorities) {
 		this.setId(id);
 		this.setUsername(username);
 		this.setPassword(password);
@@ -36,11 +36,11 @@ public class CerberusUser implements UserDetails {
 		this.setAuthorities(authorities);
 	}
 
-	public Long getId() {
+	public int getId() {
 		return this.id;
 	}
 
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

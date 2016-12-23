@@ -1,4 +1,4 @@
-package it.clevercom.echo.security;
+package it.clevercom.echo.auth.security;
 
 import java.io.IOException;
 

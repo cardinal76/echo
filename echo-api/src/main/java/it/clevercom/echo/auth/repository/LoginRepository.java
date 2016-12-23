@@ -1,12 +1,12 @@
-package it.clevercom.echo.repository;
+package it.clevercom.echo.auth.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import it.clevercom.echo.model.entity.Login;
+import it.clevercom.echo.auth.model.entity.Login;
 
 @Repository
-public interface UserRepository extends JpaRepository<Login, Long> {
+public interface LoginRepository extends JpaRepository<Login, Long> {
 
   public Login findByUsername(String username);
 

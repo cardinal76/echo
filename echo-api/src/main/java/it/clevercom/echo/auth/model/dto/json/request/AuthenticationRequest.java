@@ -1,4 +1,4 @@
-package it.clevercom.echo.model.dto.json.request;
+package it.clevercom.echo.auth.model.dto.json.request;
 
 import java.io.Serializable;
 

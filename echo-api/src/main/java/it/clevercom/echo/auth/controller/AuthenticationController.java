@@ -1,4 +1,4 @@
-package it.clevercom.echo.controller;
+package it.clevercom.echo.auth.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.clevercom.echo.model.dto.json.request.AuthenticationRequest;
-import it.clevercom.echo.model.dto.json.response.AuthenticationResponse;
-import it.clevercom.echo.model.dto.security.CerberusUser;
-import it.clevercom.echo.security.TokenUtils;
+import it.clevercom.echo.auth.model.dto.json.request.AuthenticationRequest;
+import it.clevercom.echo.auth.model.dto.json.response.AuthenticationResponse;
+import it.clevercom.echo.auth.model.dto.security.LoginDto;
+import it.clevercom.echo.auth.security.TokenUtils;
 
 @RestController
 @RequestMapping("auth")
@@ -72,7 +72,7 @@ public class AuthenticationController {
 	public ResponseEntity<?> authenticationRequest(HttpServletRequest request) {
 		String token = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(token);
-		CerberusUser user = (CerberusUser) this.userDetailsService.loadUserByUsername(username);
+		LoginDto user = (LoginDto) this.userDetailsService.loadUserByUsername(username);
 		if (this.tokenUtils.canTokenBeRefreshed(token, user.getLastPasswordReset())) {
 			String refreshedToken = this.tokenUtils.refreshToken(token);
 			return ResponseEntity.ok(new AuthenticationResponse(refreshedToken));
