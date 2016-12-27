@@ -11,11 +11,12 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EntryPointUnauthorizedHandler implements AuthenticationEntryPoint {
+public class CustomUnauthorizedHandler implements AuthenticationEntryPoint {
 
 	@Override
 	public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-		httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied");
+		httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		httpServletResponse.getWriter().write("Authentication failed!");
 	}
 
 }

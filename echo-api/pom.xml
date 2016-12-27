@@ -80,6 +80,10 @@
 		<!-- jar modules -->
 		<dependency>
 			<groupId>it.clevercom</groupId>
+			<artifactId>echo-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>it.clevercom</groupId>
 			<artifactId>tm-api</artifactId>
 		</dependency>
 	</dependencies>

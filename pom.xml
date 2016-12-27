@@ -11,6 +11,7 @@
 
 	<modules>
 		<module>echo-api</module>
+		<module>echo-common</module>
 		<module>tm-api</module>
 	</modules>
 
@@ -31,7 +32,8 @@
 		<apache-commons.version>3.5</apache-commons.version>
 		<log4j.version>1.2.17</log4j.version>
 
-		<tm-api-version>1.0.0-SNAPSHOT</tm-api-version>
+		<tm-api.version>1.0.0-SNAPSHOT</tm-api.version>
+		<echo-common.version>1.0.0-SNAPSHOT</echo-common.version>
 
 		<maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
 		<maven-war-plugin.version>3.0.0</maven-war-plugin.version>
@@ -121,7 +123,12 @@
 			<dependency>
 				<groupId>it.clevercom</groupId>
 				<artifactId>tm-api</artifactId>
-				<version>${tm-api-version}</version>
+				<version>${tm-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>it.clevercom</groupId>
+				<artifactId>echo-common</artifactId>
+				<version>${echo-common.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

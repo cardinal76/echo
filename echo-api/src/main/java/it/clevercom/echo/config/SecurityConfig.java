@@ -18,17 +18,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import it.clevercom.echo.auth.security.AuthenticationTokenFilter;
-import it.clevercom.echo.auth.security.EntryPointUnauthorizedHandler;
+import it.clevercom.echo.auth.security.CustomAccessDeniedHandler;
+import it.clevercom.echo.auth.security.CustomUnauthorizedHandler;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled=true)
 @ComponentScan(basePackages = "${echo.base.package}")
 @PropertySource("classpath:application.properties")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private EntryPointUnauthorizedHandler unauthorizedHandler;
+	private CustomUnauthorizedHandler unauthorizedHandler;
+
+	@Autowired
+	private CustomAccessDeniedHandler accessDeniedHandler;
 
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -61,13 +65,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity
-		.csrf()
-		.disable()
-		.exceptionHandling()
-		.authenticationEntryPoint(this.unauthorizedHandler)
+		.csrf().disable()
+		.exceptionHandling().accessDeniedHandler(this.accessDeniedHandler).authenticationEntryPoint(this.unauthorizedHandler)
 		.and()
-		.sessionManagement()
-		.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		.and()
 		.authorizeRequests()
 		.antMatchers("/auth/**").permitAll()

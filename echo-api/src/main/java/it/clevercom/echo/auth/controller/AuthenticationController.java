@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mobile.device.Device;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +23,7 @@ import it.clevercom.echo.auth.model.dto.json.request.AuthenticationRequest;
 import it.clevercom.echo.auth.model.dto.json.response.AuthenticationResponse;
 import it.clevercom.echo.auth.model.dto.security.LoginDto;
 import it.clevercom.echo.auth.security.TokenUtils;
+import it.clevercom.echo.exception.model.BadRequestException;
 
 @RestController
 @RequestMapping("auth")
@@ -69,15 +69,15 @@ public class AuthenticationController {
 	}
 
 	@RequestMapping(value = "refresh", method = RequestMethod.GET)
-	public ResponseEntity<?> authenticationRequest(HttpServletRequest request) {
+	public @ResponseBody AuthenticationResponse authenticationRequest(HttpServletRequest request) throws BadRequestException {
 		String token = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(token);
 		LoginDto user = (LoginDto) this.userDetailsService.loadUserByUsername(username);
 		if (this.tokenUtils.canTokenBeRefreshed(token, user.getLastPasswordReset())) {
 			String refreshedToken = this.tokenUtils.refreshToken(token);
-			return ResponseEntity.ok(new AuthenticationResponse(refreshedToken));
+			return new AuthenticationResponse(refreshedToken);
 		} else {
-			return ResponseEntity.badRequest().body(null);
+			throw new BadRequestException("Invalid Token! Token cannot be refreshed!");
 		}
 	}
 
