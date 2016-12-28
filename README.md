@@ -4,9 +4,9 @@
     E       C       H   H   O   O
     EEEEEE  CCCCC   H   H   OOOOO
 
-    ENTERPRISE CONTAINER FOR HARDENED OBJECTS        
--------------------------------------------
--------------------------------------------
+    Enterprise Connector for Hardened Objects        
+-----------------------------------------------
+-----------------------------------------------
 
 #### BASE PROJECT DESCRIPTION ##
 ECHO [Enterprise Connector for Hardened Objects] is a modular RESTful API platform that encloses a stateless token-based authorization system [based on JSON Web Tokens (JWT) and Spring Security], used to handle authorization and secure protected resources.
