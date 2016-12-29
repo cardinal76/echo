@@ -19,12 +19,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.clevercom.echo.auth.model.dto.json.request.AuthenticationRequest;
-import it.clevercom.echo.auth.model.dto.json.response.AuthenticationResponse;
-import it.clevercom.echo.auth.model.dto.security.LoginDto;
+import it.clevercom.echo.auth.model.dto.request.AuthenticationRequest;
+import it.clevercom.echo.auth.model.dto.response.AuthenticationResponse;
+import it.clevercom.echo.auth.security.CustomUserDetails;
 import it.clevercom.echo.auth.security.TokenUtils;
-import it.clevercom.echo.exception.model.BadRequestException;
+import it.clevercom.echo.common.exception.model.BadRequestException;
+import it.clevercom.echo.common.logging.annotation.Loggable;
 
+/**
+ * 
+ * @author alx
+ * @since 28/12/2016
+ * Controller class exposing public auth-api.
+ * 
+ */
 @RestController
 @RequestMapping("auth")
 public class AuthenticationController {
@@ -43,13 +51,31 @@ public class AuthenticationController {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+
+	/**
+	 * Simple acknowledge test
+	 * 
+	 * @return Test string
+	 */
 	@RequestMapping(value = "test", method = RequestMethod.GET)
-	public String test() throws Exception {
-		return "ECHO is up and running!";
+	public String test() {
+		String testMessage = "ECHO is up and running!";
+		logger.info(testMessage);
+		return testMessage;
 	}
 
+	/**
+	 * Handles usr&pwd authentication comparing request values with the ones retrieved from database.
+	 * No token is required to invoke this api.
+	 * 
+	 * @param authenticationRequest
+	 * @param device
+	 * @return
+	 * @throws AuthenticationException
+	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public @ResponseBody AuthenticationResponse authenticationRequest(@RequestBody AuthenticationRequest authenticationRequest, Device device) throws AuthenticationException {
+	public @ResponseBody AuthenticationResponse authenticate(@RequestBody AuthenticationRequest authenticationRequest, Device device) throws AuthenticationException {
+		logger.info("Trying to perform authentication for user " + authenticationRequest.getUsername());
 
 		// Perform the authentication
 		Authentication authentication = this.authenticationManager.authenticate(
@@ -64,15 +90,18 @@ public class AuthenticationController {
 		UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
 		String token = this.tokenUtils.generateToken(userDetails, device);
 
+		logger.info("User " + authenticationRequest.getUsername() + " successfully authenticated! Returning auth token " + token);
 		// Return the token
 		return new AuthenticationResponse(token);
 	}
 
+	//TODO study in deep token refresh mechanism and add this javadoc
+	@Loggable
 	@RequestMapping(value = "refresh", method = RequestMethod.GET)
 	public @ResponseBody AuthenticationResponse authenticationRequest(HttpServletRequest request) throws BadRequestException {
 		String token = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(token);
-		LoginDto user = (LoginDto) this.userDetailsService.loadUserByUsername(username);
+		CustomUserDetails user = (CustomUserDetails) this.userDetailsService.loadUserByUsername(username);
 		if (this.tokenUtils.canTokenBeRefreshed(token, user.getLastPasswordReset())) {
 			String refreshedToken = this.tokenUtils.refreshToken(token);
 			return new AuthenticationResponse(refreshedToken);

@@ -8,17 +8,23 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+/**
+ * 
+ * @author alx
+ * @since 28/12/2016
+ * Global spring context bootstrap class
+ * 
+ */
 public class WebAppInitializer implements WebApplicationInitializer {
 
 	public void onStartup(ServletContext container) throws ServletException {
 
 		AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
-//		ctx.scan("it.clevercom");
 		ctx.register(WebConfig.class, DataBaseConfig.class);
 		ctx.setServletContext(container);
 
+		// registering spring MVC rest servlet
 		ServletRegistration.Dynamic servlet = container.addServlet("dispatcher", new DispatcherServlet(ctx));
-
 		servlet.setLoadOnStartup(1);
 		servlet.addMapping("/");
 	}

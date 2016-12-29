@@ -6,10 +6,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import it.clevercom.echo.auth.model.dto.security.LoginDtoFactory;
 import it.clevercom.echo.auth.model.entity.Login;
 import it.clevercom.echo.auth.repository.LoginRepository;
 
+/**
+ * 
+ * @author alx
+ * @since 28/12/2016
+ * Custom service class overriding default behavior for {@link UserDetailsService}
+ *
+ */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -23,7 +29,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		if (user == null) {
 			throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
 		} else {
-			return LoginDtoFactory.create(user);
+			return CustomUserDetailsFactory.create(user);
 		}
 	}
 

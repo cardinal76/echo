@@ -1,9 +1,14 @@
-package it.clevercom.echo.auth.model.dto.json.response;
+package it.clevercom.echo.auth.model.dto.response;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-
+/**
+ * 
+ * @author alx
+ * @since 28/12/2016
+ * Outbound auth json object containing jwt token to access protected APIs
+ *
+ */
 public class AuthenticationResponse implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -27,7 +32,6 @@ public class AuthenticationResponse implements Serializable {
 
 	@Override
 	public String toString() {
-		return ReflectionToStringBuilder.toString(this);
+		return "AuthenticationResponse [token=" + token + "]";
 	}
-
 }

@@ -21,9 +21,16 @@ import it.clevercom.echo.auth.security.AuthenticationTokenFilter;
 import it.clevercom.echo.auth.security.CustomAccessDeniedHandler;
 import it.clevercom.echo.auth.security.CustomUnauthorizedHandler;
 
+/**
+ * 
+ * @author alx
+ * @since 28/12/2016
+ * Global spring-security configuration
+ *
+ */
 @Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled=true)
+@EnableWebSecurity // enables spring security filter chain
+@EnableGlobalMethodSecurity(prePostEnabled=true) // enables @PreAuthorize annotations 
 @ComponentScan(basePackages = "${echo.base.package}")
 @PropertySource("classpath:application.properties")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {

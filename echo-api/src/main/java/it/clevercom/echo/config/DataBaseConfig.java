@@ -18,6 +18,13 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+/**
+ * 
+ * @author alx
+ * @since 28/12/2016
+ * Global DB configuration
+ *
+ */
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories("${echo.base.package}")
@@ -33,7 +40,6 @@ public class DataBaseConfig {
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-//		em.setPersistenceUnitName("authPU");
 		em.setDataSource(dataSource());
 		em.setPackagesToScan(new String[] { echoBasePackage });
 

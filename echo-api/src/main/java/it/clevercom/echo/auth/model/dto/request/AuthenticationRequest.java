@@ -1,9 +1,14 @@
-package it.clevercom.echo.auth.model.dto.json.request;
+package it.clevercom.echo.auth.model.dto.request;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-
+/**
+ * 
+ * @author alx
+ * @since 28/12/2016
+ * Inbound auth json object containing usr & pwd
+ * 
+ */
 public class AuthenticationRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -37,7 +42,6 @@ public class AuthenticationRequest implements Serializable {
 
 	@Override
 	public String toString() {
-		return ReflectionToStringBuilder.toString(this);
+		return "AuthenticationRequest [username=" + username + ", password=" + password + "]";
 	}
-
 }

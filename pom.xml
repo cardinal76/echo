@@ -35,6 +35,9 @@
 		<tm-api.version>1.0.0-SNAPSHOT</tm-api.version>
 		<echo-common.version>1.0.0-SNAPSHOT</echo-common.version>
 
+		<aspectjrt.version>1.5.4</aspectjrt.version>
+		<aspectjweaver.version>1.8.10</aspectjweaver.version>
+
 		<maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
 		<maven-war-plugin.version>3.0.0</maven-war-plugin.version>
 	</properties>
@@ -118,6 +121,16 @@
 			</dependency>
 
 			<!-- jar specific dependencies -->
+			<dependency>
+				<groupId>aspectj</groupId>
+				<artifactId>aspectjrt</artifactId>
+				<version>${aspectjrt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjweaver</artifactId>
+				<version>${aspectjweaver.version}</version>
+			</dependency>
 
 			<!-- jar modules -->
 			<dependency>

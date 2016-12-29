@@ -1,4 +1,4 @@
-package it.clevercom.echo.auth.model.dto.security;
+package it.clevercom.echo.auth.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -8,8 +8,14 @@ import java.util.Date;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class LoginDto implements UserDetails {
-
+/**
+ * 
+ * @author alx
+ * @since 28/12/2016
+ * Custom model overriding default spring-security {@link UserDetails}
+ *
+ */
+public class CustomUserDetails implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 	private int id;
@@ -23,11 +29,11 @@ public class LoginDto implements UserDetails {
 	private Boolean credentialsNonExpired = true;
 	private Boolean enabled = true;
 
-	public LoginDto() {
+	public CustomUserDetails() {
 		super();
 	}
 
-	public LoginDto(int id, String username, String password, String email, Date lastPasswordReset, Collection<? extends GrantedAuthority> authorities) {
+	public CustomUserDetails(int id, String username, String password, String email, Date lastPasswordReset, Collection<? extends GrantedAuthority> authorities) {
 		this.setId(id);
 		this.setUsername(username);
 		this.setPassword(password);
@@ -143,4 +149,11 @@ public class LoginDto implements UserDetails {
 		return this.getEnabled();
 	}
 
+	@Override
+	public String toString() {
+		return "LoginDto [id=" + id + ", username=" + username + ", password=" + password + ", email=" + email
+				+ ", lastPasswordReset=" + lastPasswordReset + ", authorities=" + authorities + ", accountNonExpired="
+				+ accountNonExpired + ", accountNonLocked=" + accountNonLocked + ", credentialsNonExpired="
+				+ credentialsNonExpired + ", enabled=" + enabled + "]";
+	}
 }

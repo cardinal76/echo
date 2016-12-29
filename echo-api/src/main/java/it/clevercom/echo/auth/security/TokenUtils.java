@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,24 +12,39 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import it.clevercom.echo.auth.model.dto.security.LoginDto;
 
+/**
+ * 
+ * @author alx
+ * @since 28/12/2016
+ * Utility class used to handle operations on jwt tokens.
+ *
+ */
 @Component
 public class TokenUtils {
-
-	private final Logger logger = Logger.getLogger(this.getClass());
 
 	private final String AUDIENCE_UNKNOWN   = "unknown";
 	private final String AUDIENCE_WEB       = "web";
 	private final String AUDIENCE_MOBILE    = "mobile";
 	private final String AUDIENCE_TABLET    = "tablet";
 
+	/**
+	 * secret string used to decode jwt tokens
+	 */
 	@Value("${jwt.token.secret}")
 	private String secret;
 
+	/**
+	 * token expiration time in seconds
+	 */
 	@Value("${jwt.token.expiration}")
 	private Long expiration;
 
+	/**
+	 * Extracts username plain string from jwt token 
+	 * @param token
+	 * @return
+	 */
 	public String getUsernameFromToken(String token) {
 		String username;
 		try {
@@ -42,6 +56,11 @@ public class TokenUtils {
 		return username;
 	}
 
+	/**
+	 * Extracts plain creation date from jwt token 
+	 * @param token
+	 * @return
+	 */
 	public Date getCreatedDateFromToken(String token) {
 		Date created;
 		try {
@@ -53,6 +72,11 @@ public class TokenUtils {
 		return created;
 	}
 
+	/**
+	 * Extracts plain expiration date from jwt token 
+	 * @param token
+	 * @return
+	 */
 	public Date getExpirationDateFromToken(String token) {
 		Date expiration;
 		try {
@@ -64,6 +88,11 @@ public class TokenUtils {
 		return expiration;
 	}
 
+	/**
+	 * Extracts plain audience(caller device type) string  from jwt token 
+	 * @param token
+	 * @return
+	 */
 	public String getAudienceFromToken(String token) {
 		String audience;
 		try {
@@ -75,6 +104,11 @@ public class TokenUtils {
 		return audience;
 	}
 
+	/**
+	 * extracts all Claims json object (containing all user related info {@linkplain}http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#rfc.section.4 ) from jwt token
+	 * @param token
+	 * @return
+	 */
 	private Claims getClaimsFromToken(String token) {
 		Claims claims;
 		try {
@@ -138,12 +172,24 @@ public class TokenUtils {
 				.compact();
 	}
 
+	/**
+	 * Checks if a given token can be refreshed extending its period of validity
+	 * @param token
+	 * @param lastPasswordReset
+	 * @return
+	 */
 	public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
 		final Date created = this.getCreatedDateFromToken(token);
 		return (!(this.isCreatedBeforeLastPasswordReset(created, lastPasswordReset)) 
 				&& (!(this.isTokenExpired(token)) || this.ignoreTokenExpiration(token)));
 	}
 
+	/**
+	 * Refreshes an existing token generating a new one with the same claims
+	 * @param token
+	 * @return
+	 */
+	//TODO study in deep token refresh mechanism and integrate this javadoc
 	public String refreshToken(String token) {
 		String refreshedToken;
 		try {
@@ -156,8 +202,15 @@ public class TokenUtils {
 		return refreshedToken;
 	}
 
+	/**
+	 * Checks the validity of a given token
+	 * @param token
+	 * @param userDetails
+	 * @return
+	 */
+	//TODO study indeep token expiration mechanism and integrate this javadoc
 	public Boolean validateToken(String token, UserDetails userDetails) {
-		LoginDto user = (LoginDto) userDetails;
+		CustomUserDetails user = (CustomUserDetails) userDetails;
 		final String username = this.getUsernameFromToken(token);
 		final Date created = this.getCreatedDateFromToken(token);
 		final Date expiration = this.getExpirationDateFromToken(token);

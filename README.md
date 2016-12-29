@@ -45,6 +45,8 @@ Dependency note: all dependencies used by any sub-module and their related versi
 - The "echo-common [jar]" contains common classes and utilities used project-wide in all other modules (ex. common exceptions, global exception handling classes, common model etc...)
 Dependency note: all dependencies already used by "echo-api [war]" should have scope 'provided' in this project's pom, only project specific dependencies should have scope 'compile' in order to prevent dependencies duplication. 
 
+	## ADD EXCEPTION HANDLING / ASPECT LOGGING DESCRIPTION
+
 - The "custom-api-1/n [jar]" are case specific, self-consistent api projects that expose their own PROTECTED rest controllers (endpoints). 
 Respecting the base package naming "it.clevercom.echo" for all sub-packges contained in these projects, will ensure that Spring will be able to lookup all @Components (@Controller, @Service, etc...) classes, making all custom JARs share the same Spring and Spring-Security context.
 Dependency note 1: all dependencies already used by "echo-api [war]" should have scope 'provided' in this project's pom, only project specific dependencies should have scope 'compile' in order to prevent dependencies duplication.
@@ -65,3 +67,6 @@ ECHO requires Maven and it's been developed using Java 1.8 (probably works with 
 ### DEPLOYMENT ###
 As mentioned before "echo-api [war]" module, must be configured to import as dependencies all needed custom-api jars. Doing so will ensure that all referred APIs will be deployed within the single war "echo-api". 
 Any application server can be used for deployment, but the application has been developed on and tested on wildfly10. The file jboss-web.xml in "echo-api [war]" should be modified/replaced in order to deploy on a different application server. Context root for the war on wildfly10 is /echo-api
+
+### OPEN POINTS ###
+- Check token expiration and refreshing (think of both web and mobile clients)

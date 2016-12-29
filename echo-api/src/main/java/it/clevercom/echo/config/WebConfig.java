@@ -13,8 +13,15 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+/**
+ * 
+ * @author alx
+ * @since 28/12/2016
+ * Global spring web configuration
+ *
+ */
 @Configuration
-@EnableWebMvc
+@EnableWebMvc // enables @RestController, @RequestMapping annotations
 @ComponentScan(basePackages = "${echo.base.package}")
 @PropertySource("classpath:application.properties")
 public class WebConfig extends WebMvcConfigurerAdapter {

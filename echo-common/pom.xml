@@ -10,6 +10,7 @@
 	<artifactId>echo-common</artifactId>
 
 	<dependencies>
+		<!-- echo-api war common dependencies (scope provided) -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
@@ -19,6 +20,16 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<scope>provided</scope>
+		</dependency>
+
+		<!-- jar specific dependencies (scope compile) -->
+		<dependency>
+			<groupId>aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
 		</dependency>
 	</dependencies>
 </project>
