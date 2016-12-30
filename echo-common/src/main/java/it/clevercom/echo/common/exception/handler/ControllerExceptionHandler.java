@@ -23,7 +23,7 @@ public class ControllerExceptionHandler {
 
 	/**
 	 * Maps {@link BadRequestException} to a BAD_REQUEST http status
-	 * @param e
+	 * @param e exception to handle 
 	 * @return simple error message
 	 */
 	@ExceptionHandler(BadRequestException.class)

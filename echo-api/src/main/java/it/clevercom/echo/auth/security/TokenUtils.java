@@ -42,8 +42,8 @@ public class TokenUtils {
 
 	/**
 	 * Extracts username plain string from jwt token 
-	 * @param token
-	 * @return
+	 * @param token to decode
+	 * @return username contained in token
 	 */
 	public String getUsernameFromToken(String token) {
 		String username;
@@ -58,8 +58,8 @@ public class TokenUtils {
 
 	/**
 	 * Extracts plain creation date from jwt token 
-	 * @param token
-	 * @return
+	 * @param token to decode
+	 * @return token creation date
 	 */
 	public Date getCreatedDateFromToken(String token) {
 		Date created;
@@ -74,8 +74,8 @@ public class TokenUtils {
 
 	/**
 	 * Extracts plain expiration date from jwt token 
-	 * @param token
-	 * @return
+	 * @param token to decode
+	 * @return token expiration date
 	 */
 	public Date getExpirationDateFromToken(String token) {
 		Date expiration;
@@ -89,9 +89,9 @@ public class TokenUtils {
 	}
 
 	/**
-	 * Extracts plain audience(caller device type) string  from jwt token 
-	 * @param token
-	 * @return
+	 * Extracts plain audience (caller device type) string  from jwt token 
+	 * @param token to decode
+	 * @return audience (device) that generated the token
 	 */
 	public String getAudienceFromToken(String token) {
 		String audience;
@@ -106,8 +106,8 @@ public class TokenUtils {
 
 	/**
 	 * extracts all Claims json object (containing all user related info {@linkplain}http://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#rfc.section.4 ) from jwt token
-	 * @param token
-	 * @return
+	 * @param token to decode
+	 * @return complete token claims
 	 */
 	private Claims getClaimsFromToken(String token) {
 		Claims claims;
@@ -174,9 +174,9 @@ public class TokenUtils {
 
 	/**
 	 * Checks if a given token can be refreshed extending its period of validity
-	 * @param token
-	 * @param lastPasswordReset
-	 * @return
+	 * @param token to check
+	 * @param lastPasswordReset date of the last pwd reset of the token owner
+	 * @return can or cannot be refreshed
 	 */
 	public Boolean canTokenBeRefreshed(String token, Date lastPasswordReset) {
 		final Date created = this.getCreatedDateFromToken(token);
@@ -186,8 +186,8 @@ public class TokenUtils {
 
 	/**
 	 * Refreshes an existing token generating a new one with the same claims
-	 * @param token
-	 * @return
+	 * @param token to refresh
+	 * @return refreshed token
 	 */
 	//TODO study in deep token refresh mechanism and integrate this javadoc
 	public String refreshToken(String token) {
@@ -204,9 +204,9 @@ public class TokenUtils {
 
 	/**
 	 * Checks the validity of a given token
-	 * @param token
-	 * @param userDetails
-	 * @return
+	 * @param token to check
+	 * @param userDetails of the owner of the token
+	 * @return is or isn't valid
 	 */
 	//TODO study indeep token expiration mechanism and integrate this javadoc
 	public Boolean validateToken(String token, UserDetails userDetails) {

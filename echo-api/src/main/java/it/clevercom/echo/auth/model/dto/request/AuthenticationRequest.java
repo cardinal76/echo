@@ -6,7 +6,7 @@ import java.io.Serializable;
  * 
  * @author alx
  * @since 28/12/2016
- * Inbound auth json object containing usr & pwd
+ * Inbound auth json object containing usr and pwd
  * 
  */
 public class AuthenticationRequest implements Serializable {

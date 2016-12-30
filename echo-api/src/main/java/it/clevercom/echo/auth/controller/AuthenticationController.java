@@ -65,13 +65,13 @@ public class AuthenticationController {
 	}
 
 	/**
-	 * Handles usr&pwd authentication comparing request values with the ones retrieved from database.
+	 * Handles usr and pwd authentication comparing request values with the ones retrieved from database.
 	 * No token is required to invoke this api.
 	 * 
-	 * @param authenticationRequest
-	 * @param device
-	 * @return
-	 * @throws AuthenticationException
+	 * @param authenticationRequest containing usr and pwd
+	 * @param device from which the request comes from
+	 * @return valid auth token
+	 * @throws AuthenticationException in case of bad credentials
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody AuthenticationResponse authenticate(@RequestBody AuthenticationRequest authenticationRequest, Device device) throws AuthenticationException {

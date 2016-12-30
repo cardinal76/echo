@@ -13,7 +13,7 @@ import org.aspectj.lang.reflect.MethodSignature;
  * 
  * @author alx
  * @since 28/12/2016
- * Custom Aspect used to handle logging of classes annotated with {@link @Loggable}
+ * Custom Aspect used to handle logging of classes annotated with {@link it.clevercom.echo.common.logging.annotation.Loggable}
  *
  */
 @Aspect
@@ -22,11 +22,11 @@ public class MethodLogger {
 	private final Logger logger = Logger.getLogger(this.getClass());
 
 	/**
-	 * This method triggers for every {@link @Loggable} annotated method.
+	 * This method triggers for every {@link it.clevercom.echo.common.logging.annotation.Loggable} annotated method.
 	 * Logs method invocation with input parameters, proceeds with method execution and then logs method completition with result and execution time. 
-	 * @param joinPoint
-	 * @return
-	 * @throws Throwable
+	 * @param joinPoint containing method info
+	 * @return generic Object containing the result of method execution
+	 * @throws Throwable unexpected exception
 	 */
 	@Around("execution(* *(..)) && @annotation(it.clevercom.echo.common.logging.annotation.Loggable)")
 	public Object around(ProceedingJoinPoint joinPoint) throws Throwable {

@@ -186,7 +186,7 @@
 	<!-- artifactory url to deploy releases -->
 	<distributionManagement>
 		<repository>
-			<id>dev.neclab.it</id>
+			<id>clevercom-releases-repo</id>
 			<name>dev.neclab.it-releases</name>
 			<url>http://dev.neclab.it:8081/artifactory/libs-release-local</url>
 		</repository>
