@@ -30,6 +30,7 @@
 		<jackson.version>2.8.5</jackson.version>
 		<apache-commons.version>3.5</apache-commons.version>
 		<log4j.version>1.2.17</log4j.version>
+		<mockito.version>2.5.5</mockito.version>
 
 		<tm-api.version>1.1.0-SNAPSHOT</tm-api.version>
 		<echo-common.version>1.1.0-SNAPSHOT</echo-common.version>
@@ -119,7 +120,13 @@
 				<artifactId>log4j</artifactId>
 				<version>${log4j.version}</version>
 			</dependency>
-
+			<!-- mockito test fw -->
+			<dependency>
+			    <groupId>org.mockito</groupId>
+			    <artifactId>mockito-core</artifactId>
+			    <version>${mockito.version}</version>
+			</dependency>
+			
 			<!-- jar specific dependencies -->
 			<dependency>
 				<groupId>aspectj</groupId>
