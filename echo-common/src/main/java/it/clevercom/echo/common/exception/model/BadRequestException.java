@@ -7,7 +7,8 @@ package it.clevercom.echo.common.exception.model;
  * Exception class used to map badRequest validation errors
  *
  */
-public class BadRequestException extends Exception {
+
+public class BadRequestException extends EchoException {
 
 	private static final long serialVersionUID = 1L;
 

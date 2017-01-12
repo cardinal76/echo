@@ -18,10 +18,10 @@
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<spring-framework.version>4.3.4.RELEASE</spring-framework.version>
+		<spring-framework.version>4.3.5.RELEASE</spring-framework.version>
 		<spring-security.version>4.2.0.RELEASE</spring-security.version>
 		<spring-mobile-device.version>1.1.5.RELEASE</spring-mobile-device.version>
-		<spring-data-jpa.version>1.10.5.RELEASE</spring-data-jpa.version>
+		<spring-data-jpa.version>1.10.6.RELEASE</spring-data-jpa.version>
 		<hibernate.version>5.2.5.Final</hibernate.version>
 		<mysql-connector.version>5.1.40</mysql-connector.version>
 		<javax-servlet.version>3.1.0</javax-servlet.version>
@@ -31,7 +31,7 @@
 		<apache-commons.version>3.5</apache-commons.version>
 		<log4j.version>1.2.17</log4j.version>
 		<mockito.version>2.5.5</mockito.version>
-
+		<dozer.version>5.5.1</dozer.version>
 		<tm-api.version>1.1.0-SNAPSHOT</tm-api.version>
 		<echo-common.version>1.1.0-SNAPSHOT</echo-common.version>
 
@@ -62,6 +62,17 @@
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-web</artifactId>
 				<version>${spring-security.version}</version>
+			</dependency>
+			<!-- do not remove -->
+			<dependency>
+			    <groupId>org.springframework</groupId>
+			    <artifactId>spring-orm</artifactId>
+			    <version>${spring-framework.version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>org.springframework</groupId>
+			    <artifactId>spring-tx</artifactId>
+			    <version>${spring-framework.version}</version>
 			</dependency>
 			<!-- jpa -->
 			<dependency>
@@ -126,7 +137,17 @@
 			    <artifactId>mockito-core</artifactId>
 			    <version>${mockito.version}</version>
 			</dependency>
-			
+			<!-- dozer mapping fw -->
+			<dependency>
+		    	<groupId>net.sf.dozer</groupId>
+		    	<artifactId>dozer</artifactId>
+		    	<version>${dozer.version}</version>
+			</dependency>
+			<dependency>
+            	<groupId>net.sf.dozer</groupId>
+            	<artifactId>dozer-spring</artifactId>
+            	<version>${dozer.version}</version>
+        	</dependency>
 			<!-- jar specific dependencies -->
 			<dependency>
 				<groupId>aspectj</groupId>

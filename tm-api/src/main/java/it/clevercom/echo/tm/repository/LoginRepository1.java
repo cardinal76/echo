@@ -1,9 +1,9 @@
-package it.clevercom.echo.auth.repository;
+package it.clevercom.echo.tm.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import it.clevercom.echo.auth.model.entity.EchoUser;
+import it.clevercom.echo.tm.model.entity.Login;
 
 /**
  * 
@@ -13,8 +13,8 @@ import it.clevercom.echo.auth.model.entity.EchoUser;
  *
  */
 @Repository
-public interface LoginRepository extends JpaRepository<EchoUser, Long> {
+public interface LoginRepository1 extends JpaRepository<Login, Long> {
 
-  public EchoUser findByUsername(String username);
+  public Login findByUsername(String username);
 
 }

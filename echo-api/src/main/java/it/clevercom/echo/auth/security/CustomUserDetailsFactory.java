@@ -2,7 +2,7 @@ package it.clevercom.echo.auth.security;
 
 import org.springframework.security.core.authority.AuthorityUtils;
 
-import it.clevercom.echo.auth.model.entity.Login;
+import it.clevercom.echo.auth.model.entity.EchoUser;
 
 /**
  * 
@@ -13,7 +13,7 @@ import it.clevercom.echo.auth.model.entity.Login;
  */
 public class CustomUserDetailsFactory {
 
-	public static CustomUserDetails create(Login user) {
+	public static CustomUserDetails create(EchoUser user) {
 		return new CustomUserDetails(
 				user.getIdLogin(),
 				user.getUsername(),
