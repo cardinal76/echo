@@ -1,5 +1,7 @@
 package it.clevercom.echo.tm.controller;
 
+import java.util.HashMap;
+
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -49,8 +51,20 @@ public class CareGiverController {
 	public @ResponseBody CreateResponseDTO add(@RequestBody CareGiverDTO careGiver) throws BadRequestException {
 		if (careGiver == null) throw new BadRequestException("Impossible to store a null caregiver");
 		Caregiver entity = dozerMapper.map(careGiver, Caregiver.class);
-		repo.saveAndFlush(entity);
-		return new CreateResponseDTO();
+		Caregiver saved = repo.saveAndFlush(entity);
+		
+		// create standard response
+		CreateResponseDTO response = new CreateResponseDTO();
+		HashMap<String,String> ids = new HashMap<String,String>();
+		ids.put("idCareGiver", saved.getIdCareGiver().toString());
+		response.setIds(ids);
+		response.setEntityName("careGiver");
+		response.setMessage(null);
+		response.setNewValue(null);
+		response.setStatusCode("0");
+		
+		// return standard response
+		return response;
 	}
 	
 	@RequestMapping(value = "careGiver", method = RequestMethod.PUT)

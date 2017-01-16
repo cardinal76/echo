@@ -110,7 +110,7 @@ public class Patient implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idLogin", nullable = false)
+	@JoinColumn(name = "idLogin", nullable = true)
 	public Login getLogin() {
 		return this.login;
 	}
@@ -120,7 +120,7 @@ public class Patient implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idMunicipality", nullable = false)
+	@JoinColumn(name = "idMunicipality", nullable = true)
 	public Municipality getMunicipality() {
 		return this.municipality;
 	}

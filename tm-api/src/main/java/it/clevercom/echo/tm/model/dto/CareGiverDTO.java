@@ -9,9 +9,10 @@ public class CareGiverDTO implements Serializable {
 	private static final long serialVersionUID = 9050386437727257377L;
 	
 	private Integer idCareGiver;
-	// mapped from Login
-	private Integer idLogin;
-	//private Municipality municipality;
+	// rettificare tipo
+	private Integer login;
+	// rettificare tipo
+	private Integer municipality;
 	private String name;
 	private String surname;
 	private Character gender;
@@ -24,11 +25,10 @@ public class CareGiverDTO implements Serializable {
 	private Date updated;
 	private boolean active;
 	private String updateUser;
-	// mapped from Patient
+	// rettificare tipo
 	private Set<Integer> patientCaregivers = new HashSet<Integer>(0);
 
 	public CareGiverDTO() {
-		super();
 	}
 
 	/**
@@ -46,17 +46,31 @@ public class CareGiverDTO implements Serializable {
 	}
 
 	/**
-	 * @return the idLogin
+	 * @return the login
 	 */
-	public Integer getIdLogin() {
-		return idLogin;
+	public Integer getLogin() {
+		return login;
 	}
 
 	/**
-	 * @param idLogin the idLogin to set
+	 * @param login the login to set
 	 */
-	public void setIdLogin(Integer idLogin) {
-		this.idLogin = idLogin;
+	public void setLogin(Integer login) {
+		this.login = login;
+	}
+
+	/**
+	 * @return the municipality
+	 */
+	public Integer getMunicipality() {
+		return municipality;
+	}
+
+	/**
+	 * @param municipality the municipality to set
+	 */
+	public void setMunicipality(Integer municipality) {
+		this.municipality = municipality;
 	}
 
 	/**
