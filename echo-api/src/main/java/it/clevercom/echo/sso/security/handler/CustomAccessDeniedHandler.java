@@ -1,4 +1,4 @@
-package it.clevercom.echo.auth.security;
+package it.clevercom.echo.sso.security.handler;
 
 import java.io.IOException;
 
@@ -27,6 +27,6 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 	public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
 		logger.warn("AccessDeniedException occurred :", e);
 		httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-		httpServletResponse.getWriter().write("Access Denied!");
+		httpServletResponse.getWriter().write(e.getMessage());
 	}
 }

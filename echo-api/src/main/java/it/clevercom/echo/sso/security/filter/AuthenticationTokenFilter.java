@@ -1,4 +1,4 @@
-package it.clevercom.echo.auth.security;
+package it.clevercom.echo.sso.security.filter;
 
 import java.io.IOException;
 
@@ -10,12 +10,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+
+import it.clevercom.echo.common.enums.ApplicationEnum;
+import it.clevercom.echo.sso.model.entity.LoginApplication;
+import it.clevercom.echo.sso.repository.LoginApplicationRepository;
+import it.clevercom.echo.sso.security.jwt.TokenUtils;
+import it.clevercom.echo.sso.security.provider.CustomAuthenticationToken;
 
 /**
  * 
@@ -40,7 +44,7 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 	private TokenUtils tokenUtils;
 
 	@Autowired
-	private UserDetailsService userDetailsService;
+	private LoginApplicationRepository loginApplicationRepository;
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -48,13 +52,22 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String authToken = httpRequest.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
+		String applicationCode = this.tokenUtils.getIssuerFromToken(authToken);
 
-		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-			if (this.tokenUtils.validateToken(authToken, userDetails)) {
-				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
-				SecurityContextHolder.getContext().setAuthentication(authentication);
+		if (username != null && applicationCode != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+			LoginApplication appLogin = loginApplicationRepository.findByAppcodeAndUsername(applicationCode, username);
+			if (this.tokenUtils.validateToken(authToken, appLogin)) {
+				CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken(
+						appLogin.getLogin().getUsername(),
+						appLogin.getLogin().getPassword(),
+						ApplicationEnum.getByCode(appLogin.getApplication().getCode()),
+						appLogin.getLogin().getEmail(),
+						appLogin.getLogin().getLastPasswordReset(),
+						appLogin.getLogin().isActive(),
+						AuthorityUtils.commaSeparatedStringToAuthorityList(appLogin.getAuthorities()));
+
+				authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
+				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 			}
 		}
 

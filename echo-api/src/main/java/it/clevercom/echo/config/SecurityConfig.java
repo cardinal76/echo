@@ -12,14 +12,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import it.clevercom.echo.auth.security.AuthenticationTokenFilter;
-import it.clevercom.echo.auth.security.CustomAccessDeniedHandler;
-import it.clevercom.echo.auth.security.CustomUnauthorizedHandler;
+import it.clevercom.echo.sso.security.filter.AuthenticationTokenFilter;
+import it.clevercom.echo.sso.security.handler.CustomAccessDeniedHandler;
+import it.clevercom.echo.sso.security.handler.CustomUnauthorizedHandler;
+import it.clevercom.echo.sso.security.provider.CustomAuthenticationProvider;
 
 /**
  * 
@@ -40,15 +40,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private CustomAccessDeniedHandler accessDeniedHandler;
-
+	
 	@Autowired
-	private UserDetailsService userDetailsService;
+	private CustomAuthenticationProvider authenticationProvider;
+
+//	@Autowired
+//	private UserDetailsService userDetailsService;
 
 	@Autowired
 	public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
 		authenticationManagerBuilder
-		.userDetailsService(this.userDetailsService)
-		.passwordEncoder(passwordEncoder());
+		.authenticationProvider(authenticationProvider);
+//		.userDetailsService(this.userDetailsService)
+//		.passwordEncoder(passwordEncoder());
 	}
 
 	@Bean

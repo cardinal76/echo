@@ -8,6 +8,8 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
+import it.clevercom.echo.sso.config.SsoDataBaseConfig;
+
 /**
  * 
  * @author alx
@@ -20,7 +22,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
 	public void onStartup(ServletContext container) throws ServletException {
 
 		AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
-		ctx.register(WebConfig.class, DataBaseConfig.class);
+		ctx.register(WebConfig.class, SsoDataBaseConfig.class);
 		ctx.setServletContext(container);
 
 		// registering spring MVC rest servlet

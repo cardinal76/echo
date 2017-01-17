@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class TmController {
 
 	@RequestMapping(value = "admin", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ROLE_TM_ADMIN')")
 	public @ResponseBody String getDaHoneyAdmin() {
 		return "OK ADMIN!";
 	}
 
 	@RequestMapping(value = "user", method = RequestMethod.GET)
-	@PreAuthorize("hasRole('USER')")
+	@PreAuthorize("hasRole('ROLE_TM_USER')")
 	public @ResponseBody String getDaHoneyUser() {
 		return "OK USER!";
 	}

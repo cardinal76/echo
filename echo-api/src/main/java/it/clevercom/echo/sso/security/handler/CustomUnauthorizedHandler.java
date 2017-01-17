@@ -1,4 +1,4 @@
-package it.clevercom.echo.auth.security;
+package it.clevercom.echo.sso.security.handler;
 
 import java.io.IOException;
 
@@ -27,7 +27,7 @@ public class CustomUnauthorizedHandler implements AuthenticationEntryPoint {
 	public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
 		logger.warn("AuthenticationException occurred :", e);
 		httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		httpServletResponse.getWriter().write("Authentication failed!");
+		httpServletResponse.getWriter().write(e.getMessage());
 	}
 
 }

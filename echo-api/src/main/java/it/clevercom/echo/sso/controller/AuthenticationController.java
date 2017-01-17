@@ -1,4 +1,4 @@
-package it.clevercom.echo.auth.controller;
+package it.clevercom.echo.sso.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -7,24 +7,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.clevercom.echo.auth.model.dto.request.AuthenticationRequest;
-import it.clevercom.echo.auth.model.dto.response.AuthenticationResponse;
-import it.clevercom.echo.auth.security.CustomUserDetails;
-import it.clevercom.echo.auth.security.TokenUtils;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
+import it.clevercom.echo.sso.model.dto.request.AuthenticationRequest;
+import it.clevercom.echo.sso.model.dto.response.AuthenticationResponse;
+import it.clevercom.echo.sso.model.entity.LoginApplication;
+import it.clevercom.echo.sso.repository.LoginApplicationRepository;
+import it.clevercom.echo.sso.security.jwt.TokenUtils;
+import it.clevercom.echo.sso.security.provider.CustomAuthenticationToken;
 
 /**
  * 
@@ -47,10 +45,9 @@ public class AuthenticationController {
 
 	@Autowired
 	private TokenUtils tokenUtils;
-
+	
 	@Autowired
-	private UserDetailsService userDetailsService;
-
+	private LoginApplicationRepository loginApplicationRepository;
 
 	/**
 	 * Simple acknowledge test
@@ -78,20 +75,17 @@ public class AuthenticationController {
 		logger.info("Trying to perform authentication for user " + authenticationRequest.getUsername());
 
 		// Perform the authentication
-		Authentication authentication = this.authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(
+		CustomAuthenticationToken customAuthentication = (CustomAuthenticationToken) this.authenticationManager.authenticate(
+				new CustomAuthenticationToken(
 						authenticationRequest.getUsername(),
-						authenticationRequest.getPassword()
+						authenticationRequest.getPassword(),
+						authenticationRequest.getApplication()
 						)
 				);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		// Reload password post-authentication so we can generate token
-		UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-		String token = this.tokenUtils.generateToken(userDetails, device);
+		SecurityContextHolder.getContext().setAuthentication(customAuthentication);
+		String token = this.tokenUtils.generateToken(customAuthentication, device);
 
 		logger.info("User " + authenticationRequest.getUsername() + " successfully authenticated! Returning auth token " + token);
-		// Return the token
 		return new AuthenticationResponse(token);
 	}
 
@@ -101,8 +95,11 @@ public class AuthenticationController {
 	public @ResponseBody AuthenticationResponse authenticationRequest(HttpServletRequest request) throws BadRequestException {
 		String token = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(token);
-		CustomUserDetails user = (CustomUserDetails) this.userDetailsService.loadUserByUsername(username);
-		if (this.tokenUtils.canTokenBeRefreshed(token, user.getLastPasswordReset())) {
+		String applicationCode = this.tokenUtils.getIssuerFromToken(token);
+		
+		LoginApplication applogin = loginApplicationRepository.findByAppcodeAndUsername(applicationCode, username);
+//		CustomUserDetails user = (CustomUserDetails) this.userDetailsService.loadUserByUsername(username);
+		if (this.tokenUtils.canTokenBeRefreshed(token, applogin.getLogin().getLastPasswordReset())) {
 			String refreshedToken = this.tokenUtils.refreshToken(token);
 			return new AuthenticationResponse(refreshedToken);
 		} else {

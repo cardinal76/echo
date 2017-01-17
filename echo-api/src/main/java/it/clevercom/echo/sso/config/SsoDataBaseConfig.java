@@ -1,4 +1,4 @@
-package it.clevercom.echo.config;
+package it.clevercom.echo.sso.config;
 
 import java.util.Properties;
 
@@ -22,56 +22,58 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * 
  * @author alx
  * @since 28/12/2016
- * Global DB configuration
+ * SSO DB configuration
  *
  */
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories("${echo.base.package}")
-@PropertySource("classpath:application.properties")
-public class DataBaseConfig {
+@EnableJpaRepositories(entityManagerFactoryRef = "ssoEntityManagerFactory",
+					transactionManagerRef = "ssoTransactionManager",
+					basePackages = {"${sso.jpa.repository.package}"})
+@PropertySource("classpath:sso-db.properties")
+public class SsoDataBaseConfig {
 
-	@Value("${echo.base.package}")
-	private String echoBasePackage;
-	
+	@Value("${sso.jpa.entity.package}")
+	private String ssoJpaEntityPackage;
+
 	@Autowired
 	private Environment environment;
 
 	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+	public LocalContainerEntityManagerFactoryBean ssoEntityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-		em.setDataSource(dataSource());
-		em.setPackagesToScan(new String[] { echoBasePackage });
+		em.setDataSource(ssoDataSource());
+		em.setPackagesToScan(new String[] { ssoJpaEntityPackage });
 
 		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);
-		em.setJpaProperties(hibernateProperties());
+		em.setJpaProperties(ssoHibernateProperties());
 
 		return em;
 	}
 
-	private Properties hibernateProperties() {
+	private Properties ssoHibernateProperties() {
 		Properties properties = new Properties();
-		properties.put("hibernate.dialect", environment.getRequiredProperty("hibernate.dialect"));
-		properties.put("hibernate.show_sql", environment.getRequiredProperty("hibernate.show_sql"));
-		properties.put("hibernate.format_sql", environment.getRequiredProperty("hibernate.format_sql"));
+		properties.put("hibernate.dialect", environment.getRequiredProperty("sso.hibernate.dialect"));
+		properties.put("hibernate.show_sql", environment.getRequiredProperty("sso.hibernate.show_sql"));
+		properties.put("hibernate.format_sql", environment.getRequiredProperty("sso.hibernate.format_sql"));
 		return properties;        
 	}
 
 	@Bean
-	public DataSource dataSource() {
+	public DataSource ssoDataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName(environment.getRequiredProperty("jdbc.driverClassName"));
-		dataSource.setUrl(environment.getRequiredProperty("jdbc.url"));
-		dataSource.setUsername(environment.getRequiredProperty("jdbc.username"));
-		dataSource.setPassword(environment.getRequiredProperty("jdbc.password"));
+		dataSource.setDriverClassName(environment.getRequiredProperty("sso.jdbc.driverClassName"));
+		dataSource.setUrl(environment.getRequiredProperty("sso.jdbc.url"));
+		dataSource.setUsername(environment.getRequiredProperty("sso.jdbc.username"));
+		dataSource.setPassword(environment.getRequiredProperty("sso.jdbc.password"));
 		return dataSource;
 	}
 
 	@Bean
-	public JpaTransactionManager transactionManager() {
+	public JpaTransactionManager ssoTransactionManager() {
 		JpaTransactionManager transactionManager = new JpaTransactionManager();
-		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+		transactionManager.setEntityManagerFactory(ssoEntityManagerFactory().getObject());
 		return transactionManager;
 	}
 

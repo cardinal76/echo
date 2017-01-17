@@ -1,12 +1,14 @@
-package it.clevercom.echo.auth.model.dto.request;
+package it.clevercom.echo.sso.model.dto.request;
 
 import java.io.Serializable;
+
+import it.clevercom.echo.common.enums.ApplicationEnum;
 
 /**
  * 
  * @author alx
  * @since 28/12/2016
- * Inbound auth json object containing usr and pwd
+ * Inbound auth json object containing usr, pwd and caller application code
  * 
  */
 public class AuthenticationRequest implements Serializable {
@@ -14,34 +16,40 @@ public class AuthenticationRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String username;
 	private String password;
+	private ApplicationEnum application;
 
 	public AuthenticationRequest() {
 		super();
 	}
 
-	public AuthenticationRequest(String username, String password) {
+	public AuthenticationRequest(String username, String password, ApplicationEnum application) {
 		this.setUsername(username);
 		this.setPassword(password);
+		this.setApplication(application);
 	}
 
 	public String getUsername() {
 		return this.username;
 	}
-
 	public void setUsername(String username) {
 		this.username = username;
 	}
-
 	public String getPassword() {
 		return this.password;
 	}
-
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public ApplicationEnum getApplication() {
+		return application;
+	}
+	public void setApplication(ApplicationEnum application) {
+		this.application = application;
 	}
 
 	@Override
 	public String toString() {
-		return "AuthenticationRequest [username=" + username + ", password=" + password + "]";
+		return "AuthenticationRequest [username=" + username + ", password=" + password + ", application=" + application
+				+ "]";
 	}
 }
