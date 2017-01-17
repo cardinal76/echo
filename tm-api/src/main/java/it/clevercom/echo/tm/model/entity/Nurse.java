@@ -1,5 +1,5 @@
 package it.clevercom.echo.tm.model.entity;
-// Generated 10-gen-2017 15.17.23 by Hibernate Tools 5.2.0.CR1
+// Generated 17-gen-2017 15.09.29 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -27,13 +26,13 @@ import javax.persistence.TemporalType;
 public class Nurse implements java.io.Serializable {
 
 	private Integer idNurse;
-	private Login login;
 	private String name;
 	private String surname;
 	private Character gender;
 	private String telephone;
 	private String skype;
 	private Date dateOfBirth;
+	private String username;
 	private Date created;
 	private Date updated;
 	private boolean active;
@@ -44,24 +43,24 @@ public class Nurse implements java.io.Serializable {
 	public Nurse() {
 	}
 
-	public Nurse(Login login, Date created, Date updated, boolean active, String updateUser) {
-		this.login = login;
+	public Nurse(String username, Date created, Date updated, boolean active, String updateUser) {
+		this.username = username;
 		this.created = created;
 		this.updated = updated;
 		this.active = active;
 		this.updateUser = updateUser;
 	}
 
-	public Nurse(Login login, String name, String surname, Character gender, String telephone, String skype,
-			Date dateOfBirth, Date created, Date updated, boolean active, String updateUser, Set<Patient> patients,
+	public Nurse(String name, String surname, Character gender, String telephone, String skype, Date dateOfBirth,
+			String username, Date created, Date updated, boolean active, String updateUser, Set<Patient> patients,
 			Set<NurseOrganizationunit> nurseOrganizationunits) {
-		this.login = login;
 		this.name = name;
 		this.surname = surname;
 		this.gender = gender;
 		this.telephone = telephone;
 		this.skype = skype;
 		this.dateOfBirth = dateOfBirth;
+		this.username = username;
 		this.created = created;
 		this.updated = updated;
 		this.active = active;
@@ -80,16 +79,6 @@ public class Nurse implements java.io.Serializable {
 
 	public void setIdNurse(Integer idNurse) {
 		this.idNurse = idNurse;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idLogin", nullable = false)
-	public Login getLogin() {
-		return this.login;
-	}
-
-	public void setLogin(Login login) {
-		this.login = login;
 	}
 
 	@Column(name = "name", length = 100)
@@ -145,6 +134,15 @@ public class Nurse implements java.io.Serializable {
 
 	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+
+	@Column(name = "username", nullable = false, length = 100)
+	public String getUsername() {
+		return this.username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)

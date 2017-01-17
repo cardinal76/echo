@@ -1,5 +1,5 @@
 package it.clevercom.echo.tm.model.entity;
-// Generated 10-gen-2017 15.17.23 by Hibernate Tools 5.2.0.CR1
+// Generated 17-gen-2017 15.09.29 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -10,8 +10,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -25,7 +23,7 @@ import javax.persistence.TemporalType;
 public class Worklist implements java.io.Serializable {
 
 	private Integer idWorkList;
-	private Login login;
+	private String username;
 	private Date created;
 	private Date updated;
 	private boolean active;
@@ -35,17 +33,17 @@ public class Worklist implements java.io.Serializable {
 	public Worklist() {
 	}
 
-	public Worklist(Login login, Date created, Date updated, boolean active, String updateUser) {
-		this.login = login;
+	public Worklist(String username, Date created, Date updated, boolean active, String updateUser) {
+		this.username = username;
 		this.created = created;
 		this.updated = updated;
 		this.active = active;
 		this.updateUser = updateUser;
 	}
 
-	public Worklist(Login login, Date created, Date updated, boolean active, String updateUser,
+	public Worklist(String username, Date created, Date updated, boolean active, String updateUser,
 			Set<Worktask> worktasks) {
-		this.login = login;
+		this.username = username;
 		this.created = created;
 		this.updated = updated;
 		this.active = active;
@@ -65,14 +63,13 @@ public class Worklist implements java.io.Serializable {
 		this.idWorkList = idWorkList;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idLogin", nullable = false)
-	public Login getLogin() {
-		return this.login;
+	@Column(name = "username", nullable = false, length = 100)
+	public String getUsername() {
+		return this.username;
 	}
 
-	public void setLogin(Login login) {
-		this.login = login;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)

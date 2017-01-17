@@ -1,16 +1,12 @@
 package it.clevercom.echo.tm.model.entity;
-// Generated 10-gen-2017 15.17.23 by Hibernate Tools 5.2.0.CR1
+// Generated 17-gen-2017 15.09.29 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -29,7 +25,6 @@ public class Languagetype implements java.io.Serializable {
 	private Date updated;
 	private boolean active;
 	private String updateUser;
-	private Set<Login> logins = new HashSet<Login>(0);
 
 	public Languagetype() {
 	}
@@ -42,17 +37,6 @@ public class Languagetype implements java.io.Serializable {
 		this.updated = updated;
 		this.active = active;
 		this.updateUser = updateUser;
-	}
-
-	public Languagetype(String code, String description, Date created, Date updated, boolean active, String updateUser,
-			Set<Login> logins) {
-		this.code = code;
-		this.description = description;
-		this.created = created;
-		this.updated = updated;
-		this.active = active;
-		this.updateUser = updateUser;
-		this.logins = logins;
 	}
 
 	@Id
@@ -121,15 +105,6 @@ public class Languagetype implements java.io.Serializable {
 
 	public void setUpdateUser(String updateUser) {
 		this.updateUser = updateUser;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "languagetype")
-	public Set<Login> getLogins() {
-		return this.logins;
-	}
-
-	public void setLogins(Set<Login> logins) {
-		this.logins = logins;
 	}
 
 }
