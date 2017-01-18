@@ -2,6 +2,8 @@ package it.clevercom.echo.sso.model.dto.request;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 import it.clevercom.echo.common.enums.ApplicationEnum;
 
 /**
@@ -14,8 +16,11 @@ import it.clevercom.echo.common.enums.ApplicationEnum;
 public class AuthenticationRequest implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	@NotNull
 	private String username;
+	@NotNull
 	private String password;
+	@NotNull
 	private ApplicationEnum application;
 
 	public AuthenticationRequest() {

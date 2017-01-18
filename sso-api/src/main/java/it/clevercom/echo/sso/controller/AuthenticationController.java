@@ -1,6 +1,7 @@
 package it.clevercom.echo.sso.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -72,7 +73,7 @@ public class AuthenticationController {
 	 * @throws AuthenticationException in case of bad credentials
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public @ResponseBody AuthenticationResponse authenticate(@RequestBody AuthenticationRequest authenticationRequest, Device device) throws AuthenticationException {
+	public @ResponseBody AuthenticationResponse authenticate(@RequestBody @Valid AuthenticationRequest authenticationRequest, Device device) throws AuthenticationException {
 		logger.info("Trying to perform authentication for user " + authenticationRequest.getUsername());
 
 		// Perform the authentication
