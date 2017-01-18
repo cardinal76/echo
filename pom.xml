@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.clevercom</groupId>
@@ -12,6 +13,7 @@
 		<module>echo-api</module>
 		<module>echo-common</module>
 		<module>tm-api</module>
+		<module>sso-api</module>
 	</modules>
 
 	<properties>
@@ -32,8 +34,10 @@
 		<log4j.version>1.2.17</log4j.version>
 		<mockito.version>2.5.5</mockito.version>
 		<dozer.version>5.5.1</dozer.version>
-		<tm-api.version>1.1.0-SNAPSHOT</tm-api.version>
+		
 		<echo-common.version>1.1.0-SNAPSHOT</echo-common.version>
+		<sso-api.version>1.1.0-SNAPSHOT</sso-api.version>
+		<tm-api.version>1.1.0-SNAPSHOT</tm-api.version>
 
 		<aspectjrt.version>1.5.4</aspectjrt.version>
 		<aspectjweaver.version>1.8.10</aspectjweaver.version>
@@ -65,14 +69,14 @@
 			</dependency>
 			<!-- do not remove -->
 			<dependency>
-			    <groupId>org.springframework</groupId>
-			    <artifactId>spring-orm</artifactId>
-			    <version>${spring-framework.version}</version>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${spring-framework.version}</version>
 			</dependency>
 			<dependency>
-			    <groupId>org.springframework</groupId>
-			    <artifactId>spring-tx</artifactId>
-			    <version>${spring-framework.version}</version>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring-framework.version}</version>
 			</dependency>
 			<!-- jpa -->
 			<dependency>
@@ -133,21 +137,21 @@
 			</dependency>
 			<!-- mockito test fw -->
 			<dependency>
-			    <groupId>org.mockito</groupId>
-			    <artifactId>mockito-core</artifactId>
-			    <version>${mockito.version}</version>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>${mockito.version}</version>
 			</dependency>
 			<!-- dozer mapping fw -->
 			<dependency>
-		    	<groupId>net.sf.dozer</groupId>
-		    	<artifactId>dozer</artifactId>
-		    	<version>${dozer.version}</version>
+				<groupId>net.sf.dozer</groupId>
+				<artifactId>dozer</artifactId>
+				<version>${dozer.version}</version>
 			</dependency>
 			<dependency>
-            	<groupId>net.sf.dozer</groupId>
-            	<artifactId>dozer-spring</artifactId>
-            	<version>${dozer.version}</version>
-        	</dependency>
+				<groupId>net.sf.dozer</groupId>
+				<artifactId>dozer-spring</artifactId>
+				<version>${dozer.version}</version>
+			</dependency>
 			<!-- jar specific dependencies -->
 			<dependency>
 				<groupId>aspectj</groupId>
@@ -161,15 +165,21 @@
 			</dependency>
 
 			<!-- jar modules -->
-			<dependency>
-				<groupId>it.clevercom</groupId>
-				<artifactId>tm-api</artifactId>
-				<version>${tm-api.version}</version>
-			</dependency>
+
 			<dependency>
 				<groupId>it.clevercom</groupId>
 				<artifactId>echo-common</artifactId>
 				<version>${echo-common.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>it.clevercom</groupId>
+				<artifactId>sso-api</artifactId>
+				<version>${sso-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>it.clevercom</groupId>
+				<artifactId>tm-api</artifactId>
+				<version>${tm-api.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -224,7 +234,7 @@
 		<connection>scm:git:git@dev.neclab.it:a.matteo/echo.git</connection>
 		<developerConnection>scm:git:git@dev.neclab.it:a.matteo/echo.git</developerConnection>
 		<url>http://dev.neclab.it:8181/a.matteo/echo</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 </project>

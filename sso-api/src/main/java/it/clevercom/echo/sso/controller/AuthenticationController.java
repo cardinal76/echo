@@ -2,6 +2,7 @@ package it.clevercom.echo.sso.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
+import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.sso.model.dto.request.AuthenticationRequest;
 import it.clevercom.echo.sso.model.dto.response.AuthenticationResponse;
 import it.clevercom.echo.sso.model.entity.LoginApplication;
 import it.clevercom.echo.sso.repository.LoginApplicationRepository;
-import it.clevercom.echo.sso.security.jwt.TokenUtils;
 import it.clevercom.echo.sso.security.provider.CustomAuthenticationToken;
 
 /**
@@ -44,8 +45,8 @@ public class AuthenticationController {
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	private TokenUtils tokenUtils;
-	
+	private JwtTokenUtils tokenUtils;
+
 	@Autowired
 	private LoginApplicationRepository loginApplicationRepository;
 
@@ -83,7 +84,10 @@ public class AuthenticationController {
 						)
 				);
 		SecurityContextHolder.getContext().setAuthentication(customAuthentication);
-		String token = this.tokenUtils.generateToken(customAuthentication, device);
+		String token = this.tokenUtils.generateToken(customAuthentication.getPrincipal(),
+				StringUtils.join(customAuthentication.getAuthorities().toArray(), ","),
+				customAuthentication.getApplication().getCode(),
+				device);
 
 		logger.info("User " + authenticationRequest.getUsername() + " successfully authenticated! Returning auth token " + token);
 		return new AuthenticationResponse(token);
@@ -96,9 +100,8 @@ public class AuthenticationController {
 		String token = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(token);
 		String applicationCode = this.tokenUtils.getIssuerFromToken(token);
-		
+
 		LoginApplication applogin = loginApplicationRepository.findByAppcodeAndUsername(applicationCode, username);
-//		CustomUserDetails user = (CustomUserDetails) this.userDetailsService.loadUserByUsername(username);
 		if (this.tokenUtils.canTokenBeRefreshed(token, applogin.getLogin().getLastPasswordReset())) {
 			String refreshedToken = this.tokenUtils.refreshToken(token);
 			return new AuthenticationResponse(refreshedToken);

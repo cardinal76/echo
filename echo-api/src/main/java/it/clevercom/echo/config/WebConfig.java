@@ -25,24 +25,24 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @ComponentScan(basePackages = "${echo.base.package}")
 @PropertySource("classpath:application.properties")
 public class WebConfig extends WebMvcConfigurerAdapter {
-	
+
 	@Bean
 	public DeviceResolverHandlerInterceptor deviceResolverHandlerInterceptor() {
-	    return new DeviceResolverHandlerInterceptor();
+		return new DeviceResolverHandlerInterceptor();
 	}
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-	    registry.addInterceptor(deviceResolverHandlerInterceptor());
+		registry.addInterceptor(deviceResolverHandlerInterceptor());
 	}
-	
+
 	@Bean
 	public DeviceHandlerMethodArgumentResolver deviceHandlerMethodArgumentResolver() {
-	    return new DeviceHandlerMethodArgumentResolver();
+		return new DeviceHandlerMethodArgumentResolver();
 	}
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-	    argumentResolvers.add(deviceHandlerMethodArgumentResolver());
+		argumentResolvers.add(deviceHandlerMethodArgumentResolver());
 	}
 }

@@ -1,10 +1,9 @@
-package it.clevercom.echo.sso.security.jwt;
+package it.clevercom.echo.common.util;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Component;
@@ -12,8 +11,6 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import it.clevercom.echo.sso.model.entity.LoginApplication;
-import it.clevercom.echo.sso.security.provider.CustomAuthenticationToken;
 
 /**
  * 
@@ -23,7 +20,7 @@ import it.clevercom.echo.sso.security.provider.CustomAuthenticationToken;
  *
  */
 @Component
-public class TokenUtils {
+public class JwtTokenUtils {
 
 	private final String AUDIENCE_UNKNOWN   = "unknown";
 	private final String AUDIENCE_WEB       = "web";
@@ -174,16 +171,14 @@ public class TokenUtils {
 		return (this.AUDIENCE_TABLET.equals(audience) || this.AUDIENCE_MOBILE.equals(audience));
 	}
 
-	public String generateToken(CustomAuthenticationToken authenticationToken, Device device) {
+	public String generateToken(String username, String commaSeparatedAuthorities, String applicationCode, Device device) {
 		Map<String, Object> claims = new HashMap<String, Object>();
 		// username claim
-		claims.put("sub", authenticationToken.getPrincipal());
+		claims.put("sub", username);
 		// spring security roles claim
-		// TODO check the authorities string once decoding the token
-		String commaSeparatedAuthorities = StringUtils.join(authenticationToken.getAuthorities().toArray(), ",");
 		claims.put("scopes", commaSeparatedAuthorities);
 		// application claim (token is generated with roles per application)
-		claims.put("iss", authenticationToken.getApplication().getCode());
+		claims.put("iss", applicationCode);
 		// device claim
 		claims.put("audience", this.generateAudience(device));
 		// creation time claim
@@ -236,15 +231,15 @@ public class TokenUtils {
 	 * @return is or isn't valid
 	 */
 	//TODO study indeep token expiration mechanism and integrate this javadoc
-	public Boolean validateToken(String token, LoginApplication appLogin) {
-		final String username = this.getUsernameFromToken(token);
-		final String applicationCode = this.getIssuerFromToken(token);
+	public Boolean validateToken(String token, String username, String applicationCode, Date lastPasswordReset) {
+		final String usernameToValidate = this.getUsernameFromToken(token);
+		final String applicationCodeToValidate = this.getIssuerFromToken(token);
 		final Date created = this.getCreatedDateFromToken(token);
 		final Date expiration = this.getExpirationDateFromToken(token);
-		return (username.equals(appLogin.getLogin().getUsername()) 
-				&& applicationCode.equals(appLogin.getApplication().getCode())
+		return (usernameToValidate.equals(username) 
+				&& applicationCodeToValidate.equals(applicationCode)
 				&& !(this.isTokenExpired(token)) 
-				&& !(this.isCreatedBeforeLastPasswordReset(created, appLogin.getLogin().getLastPasswordReset())));
+				&& !(this.isCreatedBeforeLastPasswordReset(created, lastPasswordReset)));
 	}
 
 }

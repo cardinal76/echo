@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 /**
  * 
  * @author alx
- * @since 28/12/2016
+ * @since 16/01/2017
  * SSO DB configuration
  *
  */

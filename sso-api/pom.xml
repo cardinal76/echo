@@ -2,11 +2,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>echo-api</artifactId>
-	<packaging>war</packaging>
-	<name>echo-api</name>
+	<artifactId>sso-api</artifactId>
+	<name>sso-api</name>
 
-	<!-- Parent information -->
 	<parent>
 		<groupId>it.clevercom</groupId>
 		<artifactId>echo</artifactId>
@@ -19,94 +17,76 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<!-- spring security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<!-- jpa -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<!-- spring-mobile-device -->
 		<dependency>
 			<groupId>org.springframework.mobile</groupId>
 			<artifactId>spring-mobile-device</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<!-- javax -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>persistence-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<!-- jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<!-- apache commons -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<!-- log4j -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
+			<scope>provided</scope>
 		</dependency>
-		<!-- dozer mapping fw -->
-		<dependency>
-			<groupId>net.sf.dozer</groupId>
-			<artifactId>dozer</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.dozer</groupId>
-			<artifactId>dozer-spring</artifactId>
-		</dependency>
+
 		<!-- jar modules -->
 		<dependency>
 			<groupId>it.clevercom</groupId>
 			<artifactId>echo-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>it.clevercom</groupId>
-			<artifactId>sso-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>it.clevercom</groupId>
-			<artifactId>tm-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-
-	<!-- Build information -->
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 </project>

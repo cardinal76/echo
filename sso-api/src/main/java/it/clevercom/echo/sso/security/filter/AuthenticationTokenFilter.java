@@ -16,9 +16,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
 import it.clevercom.echo.common.enums.ApplicationEnum;
+import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.sso.model.entity.LoginApplication;
 import it.clevercom.echo.sso.repository.LoginApplicationRepository;
-import it.clevercom.echo.sso.security.jwt.TokenUtils;
 import it.clevercom.echo.sso.security.provider.CustomAuthenticationToken;
 
 /**
@@ -41,7 +41,7 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 	private String tokenHeader;
 
 	@Autowired
-	private TokenUtils tokenUtils;
+	private JwtTokenUtils tokenUtils;
 
 	@Autowired
 	private LoginApplicationRepository loginApplicationRepository;
@@ -56,7 +56,7 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 
 		if (username != null && applicationCode != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			LoginApplication appLogin = loginApplicationRepository.findByAppcodeAndUsername(applicationCode, username);
-			if (this.tokenUtils.validateToken(authToken, appLogin)) {
+			if (this.tokenUtils.validateToken(authToken, appLogin.getLogin().getUsername(), appLogin.getApplication().getCode(), appLogin.getLogin().getLastPasswordReset())) {
 				CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken(
 						appLogin.getLogin().getUsername(),
 						appLogin.getLogin().getPassword(),
