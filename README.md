@@ -47,7 +47,7 @@ The base structure of ECHO can be described as follows:
     - *Dependency note:* all dependencies used by any sub-module and their related version, should be centralized in the pom's dependencyManagement section of this project in order to maintain code clarity. So any new dependency should be added in "echo [pom]" parent first and then be referenced in any sub-module's pom.
 <br><br>
 
-- The **"echo-api [war]"** project is the main module of the platform. It declares the general configurations of the platform and imports as dependencies all other jar modules who needs to be deployed (echo-common, sso-api, ...), enclosing all APIs in a single deployable war.
+- The **"echo-api [war]"** project is the main module of the platform. It declares the general configurations of the platform and imports as dependencies all other jar modules who needs to be deployed (echo-common, sso-api, ...) enclosing all APIs in a single deployable war.
 <br><br>
 
 - The **"echo-common [jar]"** contains common classes and utilities that can be used project-wide in all other modules. Out of the box it includes the following main features:
@@ -65,7 +65,7 @@ The base structure of ECHO can be described as follows:
 <br><br>
 
 - The **"custom-api-1/n [jar]"** are case specific, self-consistent api projects that expose their own PROTECTED rest controllers (endpoints). 
-Respecting the base package naming "it.clevercom.echo" for all sub-packges contained in these projects, will ensure that Spring will be able to lookup all @Components (@Controller, @Service, etc...) classes, making all custom JARs share the same Spring and Spring-Security context. Each custom module in the platform is designed to be self-consistent, so all module specific storage information can be decoupled following the independent datasource configuration solution contained in 'sso-api'.
+Respecting the base package naming "it.clevercom.echo" for all sub-packges contained in these projects, will ensure that Spring will be able to lookup all @Components (@Controller, @Service, etc...) classes, making all custom JARs share the same Spring and Spring-Security context. Each custom module in the platform must be designed to be self-consistent, so module specific datasource configuration must be implemented following the solution contained in 'sso-api'.
     <br><br>
     - *Dependency note 1: all dependencies already used by "echo-api [war]" should have scope 'provided' in this project's pom, only project specific dependencies should have scope 'compile' in order to prevent dependencies duplication.*
     - *Dependency note 2: In order to be included in the final deployment package,each custom-jar module must be included as a dependency in the "echo-api" project pom with scope compile.*
