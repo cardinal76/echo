@@ -13,14 +13,14 @@ ECHO [Enterprise Connector for Hardened Objects] is a modular RESTful API platfo
 The core of the platform is based on the open-source github project Cerberus [https://github.com/brahalla/Cerberus]
 <br><br>
 
-### AUTHENTICATION LOGIC DESCRIPTION ###
+### AUTH LOGIC DESCRIPTION ###
 ECHO exposes two main API sections:
-    1. A public API section that handles authentication based on a set of 3 parameters: username, password and application
-    2. A protected API section that can be accessed only by providing a valid token in the header of the http request
+1. A public API section that handles authentication based on a set of 3 parameters: username, password and application
+2. A protected API section that can be accessed only by providing a valid token in the header of the http request
 
-Authentication mechanism is application related, so a valid token for a given user will be generated only if the user has rights to authenticate for that given application .<br>
-Generated tokens contain all user security info (including username, grants and application) and it can be decoded using JWT utilities and knowing the "secret_jwt_string" (stored in the application.properties). <br>
-Any request is processed through an authentication filter who checks if any token is provided in the http header and eventually decodes the token and stores all user security info in the security context. After passing through the authentication filter, requests are forwarded to the proper resources endpoint that can be secured using @PreAuthorize annotations. When reaching a secured resource, Spring Security checks the grants eventually stored in the context by the authentication filter, and compares to the expressions reported on the annotations granting the access only to authorized users
+<br>
+- Authentication: authentication mechanism is application related, so a valid token for a given user will be generated only if the user has rights to authenticate for that given application. Therefore a generated token will be valid only for the given application it was created for. Tokens contain all user security info (including username, grants and application) and they can be decoded (from JwtUtility class) knowing the "secret_jwt_string" (stored in the application.properties). <br>
+- Authorization: any request is processed through an authentication filter who checks if any token is provided in the http header and eventually decodes the token and stores all user security info in the security context. After passing through the authentication filter, requests are forwarded to the proper resources endpoint that can be secured using @PreAuthorize annotations. When reaching a secured resource, Spring Security checks the grants eventually stored in the context by the authentication filter, and compares to the expressions reported on the annotations granting the access only to authorized users
 <br><br>
 
 ### PROJECT MODULES STRUCTURE ###
@@ -47,10 +47,8 @@ The base structure of ECHO can be described as follows:
     - *Dependency note:* all dependencies used by any sub-module and their related version, should be centralized in the pom's dependencyManagement section of this project in order to maintain code clarity. So any new dependency should be added in "echo [pom]" parent first and then be referenced in any sub-module's pom.
 <br><br>
 
-- The **"echo-api [war]"** project is the main module of the platform. It declares the general configurations of the platform. Furthermore this war project imports as dependencies the echo-common and all the other jar modules who needs to be deployed, enclosing all APIs in a single deployable war.
+- The **"echo-api [war]"** project is the main module of the platform. It declares the general configurations of the platform and imports as dependencies all other jar modules who needs to be deployed (echo-common, sso-api, ...), enclosing all APIs in a single deployable war.
 <br><br>
-
-
 
 - The **"echo-common [jar]"** contains common classes and utilities that can be used project-wide in all other modules. Out of the box it includes the following main features:
     - A global exception handling for all project controllers based on the @ControllerAdvice annotated ControllerExceptionHandler class. This class can handle all exceptions thrown by any controller by simply declaring a proper @ExceptionHandler method in it.
@@ -61,18 +59,17 @@ The base structure of ECHO can be described as follows:
     - *Dependency note 2: when importing "echo-common [jar]" as a dependency in another module, it should have scope "compile" only in "echo-api [war]" and scope "provided" in all other modules in order to prevent dependencies duplication.*
 <br><br>
 
+- The **"sso-api [jar]"** project contains the public auth-api section and all authentication related logic. This module relies on its own storage with dedicated datasource and configuration. Datasource config is self-consistent and can be used as a template for othem custom jar modules. Passwords are decoded using BCrypt algorithm.
+    <br><br>
+    - *Dependency note 1: all dependencies already used by "echo-api [war]" should have scope 'provided' in this project's pom, only project specific dependencies should have scope 'compile' in order to prevent dependencies duplication.*
+<br><br>
 
 - The **"custom-api-1/n [jar]"** are case specific, self-consistent api projects that expose their own PROTECTED rest controllers (endpoints). 
-Respecting the base package naming "it.clevercom.echo" for all sub-packges contained in these projects, will ensure that Spring will be able to lookup all @Components (@Controller, @Service, etc...) classes, making all custom JARs share the same Spring and Spring-Security context.
+Respecting the base package naming "it.clevercom.echo" for all sub-packges contained in these projects, will ensure that Spring will be able to lookup all @Components (@Controller, @Service, etc...) classes, making all custom JARs share the same Spring and Spring-Security context. Each custom module in the platform is designed to be self-consistent, so all module specific storage information can be decoupled following the independent datasource configuration solution contained in 'sso-api'.
     <br><br>
     - *Dependency note 1: all dependencies already used by "echo-api [war]" should have scope 'provided' in this project's pom, only project specific dependencies should have scope 'compile' in order to prevent dependencies duplication.*
     - *Dependency note 2: In order to be included in the final deployment package,each custom-jar module must be included as a dependency in the "echo-api" project pom with scope compile.*
     - *Development note: as any module is designed to be independent and self-consistent, each module must contain its own data-access layer as well as specific model, entities and utility classes where needed.*
-<br><br>
-
-
-### AUTHENTICATION PROVIDER ###
-Out of the box ECHO uses a login table on a MySQL database as user authentication source. User passwords are stored using bCrypt algorithm
 <br><br>
 
 ### REQUIREMENTS ###
