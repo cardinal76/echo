@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.clevercom</groupId>
 	<artifactId>echo</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<packaging>pom</packaging>
 	<description>Stateless authorization platform using JSON web tokens, based on https://github.com/brahalla/Cerberus</description>
 	<inceptionYear>2016</inceptionYear>
@@ -36,9 +35,9 @@
 		<mockito.version>2.5.5</mockito.version>
 		<dozer.version>5.5.1</dozer.version>
 
-		<echo-common.version>1.1.0-SNAPSHOT</echo-common.version>
-		<sso-api.version>1.1.0-SNAPSHOT</sso-api.version>
-		<tm-api.version>1.1.0-SNAPSHOT</tm-api.version>
+		<echo-common.version>1.1.0</echo-common.version>
+		<sso-api.version>1.1.0</sso-api.version>
+		<tm-api.version>1.1.0</tm-api.version>
 
 		<aspectjrt.version>1.5.4</aspectjrt.version>
 		<aspectjweaver.version>1.8.10</aspectjweaver.version>
@@ -240,7 +239,7 @@
 		<connection>scm:git:git@dev.neclab.it:a.matteo/echo.git</connection>
 		<developerConnection>scm:git:git@dev.neclab.it:a.matteo/echo.git</developerConnection>
 		<url>http://dev.neclab.it:8181/a.matteo/echo</url>
-		<tag>HEAD</tag>
+		<tag>echo-1.1.0</tag>
 	</scm>
 
 </project>
