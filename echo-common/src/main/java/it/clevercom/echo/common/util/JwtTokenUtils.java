@@ -227,7 +227,15 @@ public class JwtTokenUtils {
 	/**
 	 * Checks the validity of a given token
 	 * @param token to check
-	 * @param appLogin of the owner of the token
+	 * @param username of the owner of the token
+	 * @return is or isn't valid
+	 */
+	/**
+	 * Checks the validity of a given token
+	 * @param token to check
+	 * @param username must match with the one contained in the token
+	 * @param applicationCode must match with the one contained in the token
+	 * @param lastPasswordReset must be before token creation date
 	 * @return is or isn't valid
 	 */
 	//TODO study indeep token expiration mechanism and integrate this javadoc

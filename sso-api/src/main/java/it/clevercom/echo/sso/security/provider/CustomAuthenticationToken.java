@@ -22,7 +22,9 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 	 * This constructor can be safely used by any code that wishes to create a
 	 * <code>CustomAuthenticationToken</code>, as the {@link #isAuthenticated()}
 	 * will return <code>false</code>.
-	 *
+	 * @param principal identifier of user name
+	 * @param credentials password for the user
+	 * @param application that identifies the AuthenticationToken
 	 */
 	public CustomAuthenticationToken(String principal, String credentials, ApplicationEnum application) {
 		super(null);
@@ -38,13 +40,13 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 	 * producing a trusted (i.e. {@link #isAuthenticated()} = <code>true</code>)
 	 * authentication token.
 	 *
-	 * @param principal
-	 * @param credentials
-	 * @param application
-	 * @param email
-	 * @param lastPasswordReset
-	 * @param active
-	 * @param authorities
+	 * @param principal corresponding to the user name
+	 * @param credentials password for the user
+	 * @param application for which the user is being authenticated
+	 * @param email for the user
+	 * @param lastPasswordReset time of users's last password reset
+	 * @param active status of the user
+	 * @param authorities corresponding to user grants
 	 * 
 	 */
 	public CustomAuthenticationToken(String principal, String credentials, ApplicationEnum application, String email, 
@@ -54,6 +56,12 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 		this.credentials = credentials;
 		this.application = application;
 		super.setAuthenticated(true); // must use super, as we override
+	}
+
+	@Override
+	public void eraseCredentials() {
+		super.eraseCredentials();
+		credentials = null;
 	}
 
 	public String getCredentials() {
@@ -75,7 +83,6 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 		return active;
 	}
 
-	
 	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
 		if (isAuthenticated) {
 			throw new IllegalArgumentException(
@@ -83,12 +90,6 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 		}
 
 		super.setAuthenticated(false);
-	}
-
-	@Override
-	public void eraseCredentials() {
-		super.eraseCredentials();
-		credentials = null;
 	}
 
 }
