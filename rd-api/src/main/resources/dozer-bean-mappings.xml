@@ -2,5 +2,37 @@
 <mappings xmlns="http://dozer.sourceforge.net"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
-
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Patient</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.PatientDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Hl7patient</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.Hl7patientDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Municipality</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.MunicipalityDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Province</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ProvinceDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Region</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.RegionDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Country</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.CountryDTO</class-b>
+	</mapping>
+	
+	
+	
 </mappings>

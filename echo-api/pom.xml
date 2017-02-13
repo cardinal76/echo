@@ -96,6 +96,10 @@
 			<groupId>it.clevercom</groupId>
 			<artifactId>tm-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>it.clevercom</groupId>
+			<artifactId>rd-api</artifactId>
+		</dependency>
 	</dependencies>
 
 	<!-- Build information -->

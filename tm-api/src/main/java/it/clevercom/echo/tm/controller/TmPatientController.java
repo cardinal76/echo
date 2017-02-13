@@ -1,4 +1,4 @@
-package it.clevercom.echo.rd.controller;
+package it.clevercom.echo.tm.controller;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,27 +8,27 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("protected")
-public class PatientController {
+public class TmPatientController {
 	
-	@RequestMapping(value = "patient", method = RequestMethod.GET)
+	@RequestMapping(value = "tm/patient", method = RequestMethod.GET)
 	@PreAuthorize("hasRole('USER')")
 	public @ResponseBody String get() {
 		return "patient";
 	}
 	
-	@RequestMapping(value = "patient", method = RequestMethod.POST)
+	@RequestMapping(value = "tm/patient", method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ADMIN')")
 	public @ResponseBody String add() {
 		return "patient";
 	}
 	
-	@RequestMapping(value = "patient", method = RequestMethod.PUT)
+	@RequestMapping(value = "tm/patient", method = RequestMethod.PUT)
 	@PreAuthorize("hasRole('ADMIN')")
 	public @ResponseBody String update() {
 		return "patient";
 	}
 	
-	@RequestMapping(value = "patient", method = RequestMethod.DELETE)
+	@RequestMapping(value = "tm/patient", method = RequestMethod.DELETE)
 	@PreAuthorize("hasRole('ADMIN')")
 	public @ResponseBody String delete() {
 		return "patient";

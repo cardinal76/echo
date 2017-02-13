@@ -39,6 +39,7 @@
 		<echo-common.version>1.2.0-SNAPSHOT</echo-common.version>
 		<sso-api.version>1.2.0-SNAPSHOT</sso-api.version>
 		<tm-api.version>1.2.0-SNAPSHOT</tm-api.version>
+		<rd-api.version>1.2.0-SNAPSHOT</rd-api.version>
 
 		<aspectjrt.version>1.5.4</aspectjrt.version>
 		<aspectjweaver.version>1.8.10</aspectjweaver.version>
@@ -186,6 +187,11 @@
 				<groupId>it.clevercom</groupId>
 				<artifactId>tm-api</artifactId>
 				<version>${tm-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>it.clevercom</groupId>
+				<artifactId>rd-api</artifactId>
+				<version>${rd-api.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
