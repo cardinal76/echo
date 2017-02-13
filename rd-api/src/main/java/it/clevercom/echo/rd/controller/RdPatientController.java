@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.rd.model.dto.PatientDTO;
 import it.clevercom.echo.rd.model.entity.Patient;
-import it.clevercom.echo.rd.repository.PatientRepository;
+import it.clevercom.echo.rd.repository.RdPatientRepository;
 
 @Controller
 @RestController
-@RequestMapping("protected")
+@RequestMapping("rd/patient")
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
@@ -32,7 +32,7 @@ public class RdPatientController {
 	private Environment env;
 	
 	@Autowired
-	private PatientRepository repo;
+	private RdPatientRepository repo;
 	
 	@Autowired
 	private ApplicationContext appContext;
@@ -47,7 +47,7 @@ public class RdPatientController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "rd/patient", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	public @ResponseBody PatientDTO get(@RequestParam Integer id) throws RecordNotFoundException {
 		Patient entity = repo.findOne(id);	
@@ -60,7 +60,7 @@ public class RdPatientController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "rd/hl7/patient", method = RequestMethod.GET)
+	@RequestMapping(value = "hl7", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	public @ResponseBody String getHL7() {
 		return "patient";
@@ -70,7 +70,7 @@ public class RdPatientController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "rd/patient", method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	public @ResponseBody String add() {
 		return "patient";
@@ -80,7 +80,7 @@ public class RdPatientController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "rd/patient", method = RequestMethod.PUT)
+	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	public @ResponseBody String update() {
 		return "patient";
@@ -90,7 +90,7 @@ public class RdPatientController {
 	 * 
 	 * @return
 	 */
-	@RequestMapping(value = "rd/patient", method = RequestMethod.DELETE)
+	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	public @ResponseBody String delete() {
 		return "patient";

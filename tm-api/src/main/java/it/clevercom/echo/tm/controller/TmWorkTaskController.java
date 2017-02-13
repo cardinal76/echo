@@ -7,30 +7,30 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("tm/patient")
-public class TmPatientController {
+@RequestMapping("tm/workTask")
+public class TmWorkTaskController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	@PreAuthorize("hasRole('USER')")
 	public @ResponseBody String get() {
-		return "patient";
+		return "workTask";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasRole('ADMIN')")
 	public @ResponseBody String add() {
-		return "patient";
+		return "workTask";
 	}
 	
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasRole('ADMIN')")
 	public @ResponseBody String update() {
-		return "patient";
+		return "workTask";
 	}
 	
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasRole('ADMIN')")
 	public @ResponseBody String delete() {
-		return "patient";
+		return "workTask";
 	}
 }
