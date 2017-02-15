@@ -56,13 +56,13 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 
 		if (username != null && applicationCode != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			LoginApplication appLogin = loginApplicationRepository.findByAppcodeAndUsername(applicationCode, username);
-			if (this.tokenUtils.validateToken(authToken, appLogin.getLogin().getUsername(), appLogin.getApplication().getCode(), appLogin.getLogin().getLastPasswordReset())) {
+			if (this.tokenUtils.validateToken(authToken, appLogin.getLogin().getUsername(), appLogin.getApplication().getCode(), appLogin.getLogin().getLastpasswordreset())) {
 				CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken(
 						appLogin.getLogin().getUsername(),
 						appLogin.getLogin().getPassword(),
 						ApplicationEnum.getByCode(appLogin.getApplication().getCode()),
 						appLogin.getLogin().getEmail(),
-						appLogin.getLogin().getLastPasswordReset(),
+						appLogin.getLogin().getLastpasswordreset(),
 						appLogin.getLogin().isActive(),
 						AuthorityUtils.commaSeparatedStringToAuthorityList(appLogin.getAuthorities()));
 

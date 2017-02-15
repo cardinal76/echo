@@ -41,7 +41,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				appLogin.getLogin().getPassword(),
 				ApplicationEnum.getByCode(appLogin.getApplication().getCode()),
 				appLogin.getLogin().getEmail(),
-				appLogin.getLogin().getLastPasswordReset(),
+				appLogin.getLogin().getLastpasswordreset(),
 				appLogin.getLogin().isActive(),
 				AuthorityUtils.commaSeparatedStringToAuthorityList(appLogin.getAuthorities()));
 	}

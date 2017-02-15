@@ -3,7 +3,7 @@ package it.clevercom.echo.common.enums;
 public enum ApplicationEnum {
 
 	TM("TM", "SISTEMA DI TELEMEDICINA"),
-	RIS("RIS", "SISTEMA INFORMATICO RADIOLOGICO");
+	RD("RD", "SISTEMA INFORMATICO RADIOLOGICO");
 
 	private String code;
 	private String descritpion;

@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 13-feb-2017 9.08.37 by Hibernate Tools 5.1.0.Final
+// Generated 15-feb-2017 18.09.08 by Hibernate Tools 5.2.0.CR1
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -10,33 +10,33 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Hl7patientId implements java.io.Serializable {
 
-	private String idPatientPid3Cx1;
-	private String idAuthorityNamespaceIdPid3Cx4Hd1;
+	private long idpatient;
+	private String idauthoritynamespaceid;
 
 	public Hl7patientId() {
 	}
 
-	public Hl7patientId(String idPatientPid3Cx1, String idAuthorityNamespaceIdPid3Cx4Hd1) {
-		this.idPatientPid3Cx1 = idPatientPid3Cx1;
-		this.idAuthorityNamespaceIdPid3Cx4Hd1 = idAuthorityNamespaceIdPid3Cx4Hd1;
+	public Hl7patientId(long idpatient, String idauthoritynamespaceid) {
+		this.idpatient = idpatient;
+		this.idauthoritynamespaceid = idauthoritynamespaceid;
 	}
 
-	@Column(name = "idPatient-PID3-CX1", nullable = false, length = 16)
-	public String getIdPatientPid3Cx1() {
-		return this.idPatientPid3Cx1;
+	@Column(name = "IDPATIENT", nullable = false, precision = 10, scale = 0)
+	public long getIdpatient() {
+		return this.idpatient;
 	}
 
-	public void setIdPatientPid3Cx1(String idPatientPid3Cx1) {
-		this.idPatientPid3Cx1 = idPatientPid3Cx1;
+	public void setIdpatient(long idpatient) {
+		this.idpatient = idpatient;
 	}
 
-	@Column(name = "idAuthorityNamespaceId-PID3-CX4-HD1", nullable = false, length = 20)
-	public String getIdAuthorityNamespaceIdPid3Cx4Hd1() {
-		return this.idAuthorityNamespaceIdPid3Cx4Hd1;
+	@Column(name = "IDAUTHORITYNAMESPACEID", nullable = false, length = 20)
+	public String getIdauthoritynamespaceid() {
+		return this.idauthoritynamespaceid;
 	}
 
-	public void setIdAuthorityNamespaceIdPid3Cx4Hd1(String idAuthorityNamespaceIdPid3Cx4Hd1) {
-		this.idAuthorityNamespaceIdPid3Cx4Hd1 = idAuthorityNamespaceIdPid3Cx4Hd1;
+	public void setIdauthoritynamespaceid(String idauthoritynamespaceid) {
+		this.idauthoritynamespaceid = idauthoritynamespaceid;
 	}
 
 	public boolean equals(Object other) {
@@ -48,22 +48,17 @@ public class Hl7patientId implements java.io.Serializable {
 			return false;
 		Hl7patientId castOther = (Hl7patientId) other;
 
-		return ((this.getIdPatientPid3Cx1() == castOther.getIdPatientPid3Cx1())
-				|| (this.getIdPatientPid3Cx1() != null && castOther.getIdPatientPid3Cx1() != null
-						&& this.getIdPatientPid3Cx1().equals(castOther.getIdPatientPid3Cx1())))
-				&& ((this.getIdAuthorityNamespaceIdPid3Cx4Hd1() == castOther.getIdAuthorityNamespaceIdPid3Cx4Hd1())
-						|| (this.getIdAuthorityNamespaceIdPid3Cx4Hd1() != null
-								&& castOther.getIdAuthorityNamespaceIdPid3Cx4Hd1() != null
-								&& this.getIdAuthorityNamespaceIdPid3Cx4Hd1()
-										.equals(castOther.getIdAuthorityNamespaceIdPid3Cx4Hd1())));
+		return (this.getIdpatient() == castOther.getIdpatient())
+				&& ((this.getIdauthoritynamespaceid() == castOther.getIdauthoritynamespaceid())
+						|| (this.getIdauthoritynamespaceid() != null && castOther.getIdauthoritynamespaceid() != null
+								&& this.getIdauthoritynamespaceid().equals(castOther.getIdauthoritynamespaceid())));
 	}
 
 	public int hashCode() {
 		int result = 17;
 
-		result = 37 * result + (getIdPatientPid3Cx1() == null ? 0 : this.getIdPatientPid3Cx1().hashCode());
-		result = 37 * result + (getIdAuthorityNamespaceIdPid3Cx4Hd1() == null ? 0
-				: this.getIdAuthorityNamespaceIdPid3Cx4Hd1().hashCode());
+		result = 37 * result + (int) this.getIdpatient();
+		result = 37 * result + (getIdauthoritynamespaceid() == null ? 0 : this.getIdauthoritynamespaceid().hashCode());
 		return result;
 	}
 

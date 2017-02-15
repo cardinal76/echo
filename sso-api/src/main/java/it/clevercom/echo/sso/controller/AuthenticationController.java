@@ -11,6 +11,7 @@ import org.springframework.mobile.device.Device;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -72,6 +73,7 @@ public class AuthenticationController {
 	 * @return valid auth token
 	 * @throws AuthenticationException in case of bad credentials
 	 */
+	@Transactional("ssoTm")
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody AuthenticationResponse authenticate(@RequestBody @Valid AuthenticationRequest authenticationRequest, Device device) throws AuthenticationException {
 		logger.info("Trying to perform authentication for user " + authenticationRequest.getUsername());
@@ -95,6 +97,7 @@ public class AuthenticationController {
 	}
 
 	//TODO study in deep token refresh mechanism and add this javadoc
+	@Transactional("ssoTm")
 	@Loggable
 	@RequestMapping(value = "refresh", method = RequestMethod.GET)
 	public @ResponseBody AuthenticationResponse authenticationRequest(HttpServletRequest request) throws BadRequestException {
@@ -103,7 +106,7 @@ public class AuthenticationController {
 		String applicationCode = this.tokenUtils.getIssuerFromToken(token);
 
 		LoginApplication applogin = loginApplicationRepository.findByAppcodeAndUsername(applicationCode, username);
-		if (this.tokenUtils.canTokenBeRefreshed(token, applogin.getLogin().getLastPasswordReset())) {
+		if (this.tokenUtils.canTokenBeRefreshed(token, applogin.getLogin().getLastpasswordreset())) {
 			String refreshedToken = this.tokenUtils.refreshToken(token);
 			return new AuthenticationResponse(refreshedToken);
 		} else {

@@ -3,6 +3,7 @@ package it.clevercom.echo.sso.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.clevercom.echo.sso.model.entity.LoginApplication;
 
@@ -17,7 +18,7 @@ import it.clevercom.echo.sso.model.entity.LoginApplication;
 public interface LoginApplicationRepository extends JpaRepository<LoginApplication, Long> {
 
 	/**
-	 * This method returns ONLY the grants associated to the given USERNAME, for the given APPLICATION
+	 * Thi@Transactionals method returns ONLY the grants associated to the given USERNAME, for the given APPLICATION
 	 * @param applicationCode to retrieve the grants
 	 * @param username used to retrieve grants
 	 * @return the grants for the requested user and requested application

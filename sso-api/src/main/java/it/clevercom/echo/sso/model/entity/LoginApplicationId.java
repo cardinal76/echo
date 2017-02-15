@@ -1,5 +1,5 @@
 package it.clevercom.echo.sso.model.entity;
-// Generated Jan 16, 2017 2:51:50 PM by Hibernate Tools 5.2.0.CR1
+// Generated 15-feb-2017 18.09.01 by Hibernate Tools 5.2.0.CR1
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -10,34 +10,33 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class LoginApplicationId implements java.io.Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private int applicationIdApplication;
-	private int loginIdLogin;
+	private long applicationIdapplication;
+	private long loginIdlogin;
 
 	public LoginApplicationId() {
 	}
 
-	public LoginApplicationId(int applicationIdApplication, int loginIdLogin) {
-		this.applicationIdApplication = applicationIdApplication;
-		this.loginIdLogin = loginIdLogin;
+	public LoginApplicationId(long applicationIdapplication, long loginIdlogin) {
+		this.applicationIdapplication = applicationIdapplication;
+		this.loginIdlogin = loginIdlogin;
 	}
 
-	@Column(name = "Application_idApplication", nullable = false)
-	public int getApplicationIdApplication() {
-		return this.applicationIdApplication;
+	@Column(name = "APPLICATION_IDAPPLICATION", nullable = false, precision = 10, scale = 0)
+	public long getApplicationIdapplication() {
+		return this.applicationIdapplication;
 	}
 
-	public void setApplicationIdApplication(int applicationIdApplication) {
-		this.applicationIdApplication = applicationIdApplication;
+	public void setApplicationIdapplication(long applicationIdapplication) {
+		this.applicationIdapplication = applicationIdapplication;
 	}
 
-	@Column(name = "Login_idLogin", nullable = false)
-	public int getLoginIdLogin() {
-		return this.loginIdLogin;
+	@Column(name = "LOGIN_IDLOGIN", nullable = false, precision = 10, scale = 0)
+	public long getLoginIdlogin() {
+		return this.loginIdlogin;
 	}
 
-	public void setLoginIdLogin(int loginIdLogin) {
-		this.loginIdLogin = loginIdLogin;
+	public void setLoginIdlogin(long loginIdlogin) {
+		this.loginIdlogin = loginIdlogin;
 	}
 
 	public boolean equals(Object other) {
@@ -49,15 +48,15 @@ public class LoginApplicationId implements java.io.Serializable {
 			return false;
 		LoginApplicationId castOther = (LoginApplicationId) other;
 
-		return (this.getApplicationIdApplication() == castOther.getApplicationIdApplication())
-				&& (this.getLoginIdLogin() == castOther.getLoginIdLogin());
+		return (this.getApplicationIdapplication() == castOther.getApplicationIdapplication())
+				&& (this.getLoginIdlogin() == castOther.getLoginIdlogin());
 	}
 
 	public int hashCode() {
 		int result = 17;
 
-		result = 37 * result + this.getApplicationIdApplication();
-		result = 37 * result + this.getLoginIdLogin();
+		result = 37 * result + (int) this.getApplicationIdapplication();
+		result = 37 * result + (int) this.getLoginIdlogin();
 		return result;
 	}
 
