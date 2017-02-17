@@ -1,5 +1,5 @@
 package it.clevercom.echo.tm.model.entity;
-// Generated 17-gen-2017 15.09.29 by Hibernate Tools 5.2.0.CR1
+// Generated 17-feb-2017 16.34.42 by Hibernate Tools 5.2.0.CR1
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -10,33 +10,33 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class PhysicianPatientId implements java.io.Serializable {
 
-	private int idPhysician;
-	private int idPatient;
+	private long idphysician;
+	private long idpatient;
 
 	public PhysicianPatientId() {
 	}
 
-	public PhysicianPatientId(int idPhysician, int idPatient) {
-		this.idPhysician = idPhysician;
-		this.idPatient = idPatient;
+	public PhysicianPatientId(long idphysician, long idpatient) {
+		this.idphysician = idphysician;
+		this.idpatient = idpatient;
 	}
 
-	@Column(name = "idPhysician", nullable = false)
-	public int getIdPhysician() {
-		return this.idPhysician;
+	@Column(name = "idphysician", nullable = false)
+	public long getIdphysician() {
+		return this.idphysician;
 	}
 
-	public void setIdPhysician(int idPhysician) {
-		this.idPhysician = idPhysician;
+	public void setIdphysician(long idphysician) {
+		this.idphysician = idphysician;
 	}
 
-	@Column(name = "idPatient", nullable = false)
-	public int getIdPatient() {
-		return this.idPatient;
+	@Column(name = "idpatient", nullable = false)
+	public long getIdpatient() {
+		return this.idpatient;
 	}
 
-	public void setIdPatient(int idPatient) {
-		this.idPatient = idPatient;
+	public void setIdpatient(long idpatient) {
+		this.idpatient = idpatient;
 	}
 
 	public boolean equals(Object other) {
@@ -48,15 +48,15 @@ public class PhysicianPatientId implements java.io.Serializable {
 			return false;
 		PhysicianPatientId castOther = (PhysicianPatientId) other;
 
-		return (this.getIdPhysician() == castOther.getIdPhysician())
-				&& (this.getIdPatient() == castOther.getIdPatient());
+		return (this.getIdphysician() == castOther.getIdphysician())
+				&& (this.getIdpatient() == castOther.getIdpatient());
 	}
 
 	public int hashCode() {
 		int result = 17;
 
-		result = 37 * result + this.getIdPhysician();
-		result = 37 * result + this.getIdPatient();
+		result = 37 * result + (int) this.getIdphysician();
+		result = 37 * result + (int) this.getIdpatient();
 		return result;
 	}
 

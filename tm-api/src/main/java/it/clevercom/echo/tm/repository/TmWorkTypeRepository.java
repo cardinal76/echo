@@ -2,8 +2,8 @@ package it.clevercom.echo.tm.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import it.clevercom.echo.tm.model.entity.Worktype;
+import it.clevercom.echo.tm.model.entity.WorkType;
 
-public interface TmWorkTypeRepository extends JpaRepository<Worktype, Integer>{
+public interface TmWorkTypeRepository extends JpaRepository<WorkType, Integer>{
 
 }

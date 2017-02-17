@@ -1,5 +1,5 @@
 package it.clevercom.echo.tm.model.entity;
-// Generated 17-gen-2017 15.09.29 by Hibernate Tools 5.2.0.CR1
+// Generated 17-feb-2017 16.34.42 by Hibernate Tools 5.2.0.CR1
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -10,33 +10,33 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class PhysicianOrganizationunitId implements java.io.Serializable {
 
-	private int idPhysician;
-	private int idOrganizationUnit;
+	private long idphysician;
+	private long idorganizationunit;
 
 	public PhysicianOrganizationunitId() {
 	}
 
-	public PhysicianOrganizationunitId(int idPhysician, int idOrganizationUnit) {
-		this.idPhysician = idPhysician;
-		this.idOrganizationUnit = idOrganizationUnit;
+	public PhysicianOrganizationunitId(long idphysician, long idorganizationunit) {
+		this.idphysician = idphysician;
+		this.idorganizationunit = idorganizationunit;
 	}
 
-	@Column(name = "idPhysician", nullable = false)
-	public int getIdPhysician() {
-		return this.idPhysician;
+	@Column(name = "idphysician", nullable = false)
+	public long getIdphysician() {
+		return this.idphysician;
 	}
 
-	public void setIdPhysician(int idPhysician) {
-		this.idPhysician = idPhysician;
+	public void setIdphysician(long idphysician) {
+		this.idphysician = idphysician;
 	}
 
-	@Column(name = "idOrganizationUnit", nullable = false)
-	public int getIdOrganizationUnit() {
-		return this.idOrganizationUnit;
+	@Column(name = "idorganizationunit", nullable = false)
+	public long getIdorganizationunit() {
+		return this.idorganizationunit;
 	}
 
-	public void setIdOrganizationUnit(int idOrganizationUnit) {
-		this.idOrganizationUnit = idOrganizationUnit;
+	public void setIdorganizationunit(long idorganizationunit) {
+		this.idorganizationunit = idorganizationunit;
 	}
 
 	public boolean equals(Object other) {
@@ -48,15 +48,15 @@ public class PhysicianOrganizationunitId implements java.io.Serializable {
 			return false;
 		PhysicianOrganizationunitId castOther = (PhysicianOrganizationunitId) other;
 
-		return (this.getIdPhysician() == castOther.getIdPhysician())
-				&& (this.getIdOrganizationUnit() == castOther.getIdOrganizationUnit());
+		return (this.getIdphysician() == castOther.getIdphysician())
+				&& (this.getIdorganizationunit() == castOther.getIdorganizationunit());
 	}
 
 	public int hashCode() {
 		int result = 17;
 
-		result = 37 * result + this.getIdPhysician();
-		result = 37 * result + this.getIdOrganizationUnit();
+		result = 37 * result + (int) this.getIdphysician();
+		result = 37 * result + (int) this.getIdorganizationunit();
 		return result;
 	}
 

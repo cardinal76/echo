@@ -1,5 +1,5 @@
 package it.clevercom.echo.sso.model.entity;
-// Generated 15-feb-2017 18.09.01 by Hibernate Tools 5.2.0.CR1
+// Generated 17-feb-2017 17.36.09 by Hibernate Tools 5.2.0.CR1
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -21,7 +21,7 @@ public class LoginApplicationId implements java.io.Serializable {
 		this.loginIdlogin = loginIdlogin;
 	}
 
-	@Column(name = "APPLICATION_IDAPPLICATION", nullable = false, precision = 10, scale = 0)
+	@Column(name = "application_idapplication", nullable = false)
 	public long getApplicationIdapplication() {
 		return this.applicationIdapplication;
 	}
@@ -30,7 +30,7 @@ public class LoginApplicationId implements java.io.Serializable {
 		this.applicationIdapplication = applicationIdapplication;
 	}
 
-	@Column(name = "LOGIN_IDLOGIN", nullable = false, precision = 10, scale = 0)
+	@Column(name = "login_idlogin", nullable = false)
 	public long getLoginIdlogin() {
 		return this.loginIdlogin;
 	}

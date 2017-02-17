@@ -1,5 +1,5 @@
 package it.clevercom.echo.tm.model.entity;
-// Generated 17-gen-2017 15.09.29 by Hibernate Tools 5.2.0.CR1
+// Generated 17-feb-2017 16.34.42 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import javax.persistence.Column;
@@ -11,77 +11,77 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class HealthkitPatientId implements java.io.Serializable {
 
-	private int idHealthKit;
-	private int idPatient;
-	private Date assignmentDate;
-	private Date restitutionDate;
+	private long idhealthkit;
+	private long idpatient;
+	private Date assignmentdate;
+	private Date restitutiondate;
 	private Date created;
 	private Date updated;
 	private boolean active;
-	private String updateUser;
+	private String updateuser;
 
 	public HealthkitPatientId() {
 	}
 
-	public HealthkitPatientId(int idHealthKit, int idPatient, Date created, Date updated, boolean active,
-			String updateUser) {
-		this.idHealthKit = idHealthKit;
-		this.idPatient = idPatient;
+	public HealthkitPatientId(long idhealthkit, long idpatient, Date created, Date updated, boolean active,
+			String updateuser) {
+		this.idhealthkit = idhealthkit;
+		this.idpatient = idpatient;
 		this.created = created;
 		this.updated = updated;
 		this.active = active;
-		this.updateUser = updateUser;
+		this.updateuser = updateuser;
 	}
 
-	public HealthkitPatientId(int idHealthKit, int idPatient, Date assignmentDate, Date restitutionDate, Date created,
-			Date updated, boolean active, String updateUser) {
-		this.idHealthKit = idHealthKit;
-		this.idPatient = idPatient;
-		this.assignmentDate = assignmentDate;
-		this.restitutionDate = restitutionDate;
+	public HealthkitPatientId(long idhealthkit, long idpatient, Date assignmentdate, Date restitutiondate, Date created,
+			Date updated, boolean active, String updateuser) {
+		this.idhealthkit = idhealthkit;
+		this.idpatient = idpatient;
+		this.assignmentdate = assignmentdate;
+		this.restitutiondate = restitutiondate;
 		this.created = created;
 		this.updated = updated;
 		this.active = active;
-		this.updateUser = updateUser;
+		this.updateuser = updateuser;
 	}
 
-	@Column(name = "idHealthKit", nullable = false)
-	public int getIdHealthKit() {
-		return this.idHealthKit;
+	@Column(name = "idhealthkit", nullable = false)
+	public long getIdhealthkit() {
+		return this.idhealthkit;
 	}
 
-	public void setIdHealthKit(int idHealthKit) {
-		this.idHealthKit = idHealthKit;
+	public void setIdhealthkit(long idhealthkit) {
+		this.idhealthkit = idhealthkit;
 	}
 
-	@Column(name = "idPatient", nullable = false)
-	public int getIdPatient() {
-		return this.idPatient;
+	@Column(name = "idpatient", nullable = false)
+	public long getIdpatient() {
+		return this.idpatient;
 	}
 
-	public void setIdPatient(int idPatient) {
-		this.idPatient = idPatient;
+	public void setIdpatient(long idpatient) {
+		this.idpatient = idpatient;
 	}
 
-	@Column(name = "assignmentDate", length = 19)
-	public Date getAssignmentDate() {
-		return this.assignmentDate;
+	@Column(name = "assignmentdate", length = 29)
+	public Date getAssignmentdate() {
+		return this.assignmentdate;
 	}
 
-	public void setAssignmentDate(Date assignmentDate) {
-		this.assignmentDate = assignmentDate;
+	public void setAssignmentdate(Date assignmentdate) {
+		this.assignmentdate = assignmentdate;
 	}
 
-	@Column(name = "restitutionDate", length = 19)
-	public Date getRestitutionDate() {
-		return this.restitutionDate;
+	@Column(name = "restitutiondate", length = 29)
+	public Date getRestitutiondate() {
+		return this.restitutiondate;
 	}
 
-	public void setRestitutionDate(Date restitutionDate) {
-		this.restitutionDate = restitutionDate;
+	public void setRestitutiondate(Date restitutiondate) {
+		this.restitutiondate = restitutiondate;
 	}
 
-	@Column(name = "created", nullable = false, length = 19)
+	@Column(name = "created", nullable = false, length = 29)
 	public Date getCreated() {
 		return this.created;
 	}
@@ -90,7 +90,7 @@ public class HealthkitPatientId implements java.io.Serializable {
 		this.created = created;
 	}
 
-	@Column(name = "updated", nullable = false, length = 19)
+	@Column(name = "updated", nullable = false, length = 29)
 	public Date getUpdated() {
 		return this.updated;
 	}
@@ -108,13 +108,13 @@ public class HealthkitPatientId implements java.io.Serializable {
 		this.active = active;
 	}
 
-	@Column(name = "updateUser", nullable = false, length = 100)
-	public String getUpdateUser() {
-		return this.updateUser;
+	@Column(name = "updateuser", nullable = false, length = 100)
+	public String getUpdateuser() {
+		return this.updateuser;
 	}
 
-	public void setUpdateUser(String updateUser) {
-		this.updateUser = updateUser;
+	public void setUpdateuser(String updateuser) {
+		this.updateuser = updateuser;
 	}
 
 	public boolean equals(Object other) {
@@ -126,35 +126,35 @@ public class HealthkitPatientId implements java.io.Serializable {
 			return false;
 		HealthkitPatientId castOther = (HealthkitPatientId) other;
 
-		return (this.getIdHealthKit() == castOther.getIdHealthKit())
-				&& (this.getIdPatient() == castOther.getIdPatient())
-				&& ((this.getAssignmentDate() == castOther.getAssignmentDate())
-						|| (this.getAssignmentDate() != null && castOther.getAssignmentDate() != null
-								&& this.getAssignmentDate().equals(castOther.getAssignmentDate())))
-				&& ((this.getRestitutionDate() == castOther.getRestitutionDate())
-						|| (this.getRestitutionDate() != null && castOther.getRestitutionDate() != null
-								&& this.getRestitutionDate().equals(castOther.getRestitutionDate())))
+		return (this.getIdhealthkit() == castOther.getIdhealthkit())
+				&& (this.getIdpatient() == castOther.getIdpatient())
+				&& ((this.getAssignmentdate() == castOther.getAssignmentdate())
+						|| (this.getAssignmentdate() != null && castOther.getAssignmentdate() != null
+								&& this.getAssignmentdate().equals(castOther.getAssignmentdate())))
+				&& ((this.getRestitutiondate() == castOther.getRestitutiondate())
+						|| (this.getRestitutiondate() != null && castOther.getRestitutiondate() != null
+								&& this.getRestitutiondate().equals(castOther.getRestitutiondate())))
 				&& ((this.getCreated() == castOther.getCreated()) || (this.getCreated() != null
 						&& castOther.getCreated() != null && this.getCreated().equals(castOther.getCreated())))
 				&& ((this.getUpdated() == castOther.getUpdated()) || (this.getUpdated() != null
 						&& castOther.getUpdated() != null && this.getUpdated().equals(castOther.getUpdated())))
 				&& (this.isActive() == castOther.isActive())
-				&& ((this.getUpdateUser() == castOther.getUpdateUser())
-						|| (this.getUpdateUser() != null && castOther.getUpdateUser() != null
-								&& this.getUpdateUser().equals(castOther.getUpdateUser())));
+				&& ((this.getUpdateuser() == castOther.getUpdateuser())
+						|| (this.getUpdateuser() != null && castOther.getUpdateuser() != null
+								&& this.getUpdateuser().equals(castOther.getUpdateuser())));
 	}
 
 	public int hashCode() {
 		int result = 17;
 
-		result = 37 * result + this.getIdHealthKit();
-		result = 37 * result + this.getIdPatient();
-		result = 37 * result + (getAssignmentDate() == null ? 0 : this.getAssignmentDate().hashCode());
-		result = 37 * result + (getRestitutionDate() == null ? 0 : this.getRestitutionDate().hashCode());
+		result = 37 * result + (int) this.getIdhealthkit();
+		result = 37 * result + (int) this.getIdpatient();
+		result = 37 * result + (getAssignmentdate() == null ? 0 : this.getAssignmentdate().hashCode());
+		result = 37 * result + (getRestitutiondate() == null ? 0 : this.getRestitutiondate().hashCode());
 		result = 37 * result + (getCreated() == null ? 0 : this.getCreated().hashCode());
 		result = 37 * result + (getUpdated() == null ? 0 : this.getUpdated().hashCode());
 		result = 37 * result + (this.isActive() ? 1 : 0);
-		result = 37 * result + (getUpdateUser() == null ? 0 : this.getUpdateUser().hashCode());
+		result = 37 * result + (getUpdateuser() == null ? 0 : this.getUpdateuser().hashCode());
 		return result;
 	}
 

@@ -1,5 +1,5 @@
 package it.clevercom.echo.tm.model.entity;
-// Generated 17-gen-2017 15.09.29 by Hibernate Tools 5.2.0.CR1
+// Generated 17-feb-2017 16.34.42 by Hibernate Tools 5.2.0.CR1
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -10,33 +10,33 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class NurseOrganizationunitId implements java.io.Serializable {
 
-	private int idNurse;
-	private int idOrganizationUnit;
+	private long idnurse;
+	private long idorganizationunit;
 
 	public NurseOrganizationunitId() {
 	}
 
-	public NurseOrganizationunitId(int idNurse, int idOrganizationUnit) {
-		this.idNurse = idNurse;
-		this.idOrganizationUnit = idOrganizationUnit;
+	public NurseOrganizationunitId(long idnurse, long idorganizationunit) {
+		this.idnurse = idnurse;
+		this.idorganizationunit = idorganizationunit;
 	}
 
-	@Column(name = "idNurse", nullable = false)
-	public int getIdNurse() {
-		return this.idNurse;
+	@Column(name = "idnurse", nullable = false)
+	public long getIdnurse() {
+		return this.idnurse;
 	}
 
-	public void setIdNurse(int idNurse) {
-		this.idNurse = idNurse;
+	public void setIdnurse(long idnurse) {
+		this.idnurse = idnurse;
 	}
 
-	@Column(name = "idOrganizationUnit", nullable = false)
-	public int getIdOrganizationUnit() {
-		return this.idOrganizationUnit;
+	@Column(name = "idorganizationunit", nullable = false)
+	public long getIdorganizationunit() {
+		return this.idorganizationunit;
 	}
 
-	public void setIdOrganizationUnit(int idOrganizationUnit) {
-		this.idOrganizationUnit = idOrganizationUnit;
+	public void setIdorganizationunit(long idorganizationunit) {
+		this.idorganizationunit = idorganizationunit;
 	}
 
 	public boolean equals(Object other) {
@@ -48,15 +48,15 @@ public class NurseOrganizationunitId implements java.io.Serializable {
 			return false;
 		NurseOrganizationunitId castOther = (NurseOrganizationunitId) other;
 
-		return (this.getIdNurse() == castOther.getIdNurse())
-				&& (this.getIdOrganizationUnit() == castOther.getIdOrganizationUnit());
+		return (this.getIdnurse() == castOther.getIdnurse())
+				&& (this.getIdorganizationunit() == castOther.getIdorganizationunit());
 	}
 
 	public int hashCode() {
 		int result = 17;
 
-		result = 37 * result + this.getIdNurse();
-		result = 37 * result + this.getIdOrganizationUnit();
+		result = 37 * result + (int) this.getIdnurse();
+		result = 37 * result + (int) this.getIdorganizationunit();
 		return result;
 	}
 

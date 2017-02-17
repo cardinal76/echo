@@ -2,8 +2,8 @@ package it.clevercom.echo.tm.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import it.clevercom.echo.tm.model.entity.Systemeventtype;
+import it.clevercom.echo.tm.model.entity.SystemeventType;
 
-public interface TmSystemEventTypeRepository extends JpaRepository<Systemeventtype, Integer> {
+public interface TmSystemEventTypeRepository extends JpaRepository<SystemeventType, Integer> {
 
 }

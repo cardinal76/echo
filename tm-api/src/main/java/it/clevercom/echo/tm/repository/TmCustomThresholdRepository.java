@@ -2,8 +2,8 @@ package it.clevercom.echo.tm.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import it.clevercom.echo.tm.model.entity.Customthreshold;
+import it.clevercom.echo.tm.model.entity.CustomThreshold;
 
-public interface TmCustomThresholdRepository extends JpaRepository<Customthreshold, Integer> {
+public interface TmCustomThresholdRepository extends JpaRepository<CustomThreshold, Integer> {
 
 }

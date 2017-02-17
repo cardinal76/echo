@@ -2,8 +2,8 @@ package it.clevercom.echo.tm.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import it.clevercom.echo.tm.model.entity.Healthdevice;
+import it.clevercom.echo.tm.model.entity.HealthDevice;
 
-public interface TmHealthDeviceRepository extends JpaRepository<Healthdevice, Integer> {
+public interface TmHealthDeviceRepository extends JpaRepository<HealthDevice, Integer> {
 
 }

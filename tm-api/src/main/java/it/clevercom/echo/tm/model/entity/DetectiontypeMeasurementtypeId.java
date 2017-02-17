@@ -1,5 +1,5 @@
 package it.clevercom.echo.tm.model.entity;
-// Generated 17-gen-2017 15.09.29 by Hibernate Tools 5.2.0.CR1
+// Generated 17-feb-2017 16.34.42 by Hibernate Tools 5.2.0.CR1
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -10,33 +10,33 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class DetectiontypeMeasurementtypeId implements java.io.Serializable {
 
-	private int idDetectionType;
-	private int idMeasurementType;
+	private long iddetectiontype;
+	private long idmeasurementtype;
 
 	public DetectiontypeMeasurementtypeId() {
 	}
 
-	public DetectiontypeMeasurementtypeId(int idDetectionType, int idMeasurementType) {
-		this.idDetectionType = idDetectionType;
-		this.idMeasurementType = idMeasurementType;
+	public DetectiontypeMeasurementtypeId(long iddetectiontype, long idmeasurementtype) {
+		this.iddetectiontype = iddetectiontype;
+		this.idmeasurementtype = idmeasurementtype;
 	}
 
-	@Column(name = "idDetectionType", nullable = false)
-	public int getIdDetectionType() {
-		return this.idDetectionType;
+	@Column(name = "iddetectiontype", nullable = false)
+	public long getIddetectiontype() {
+		return this.iddetectiontype;
 	}
 
-	public void setIdDetectionType(int idDetectionType) {
-		this.idDetectionType = idDetectionType;
+	public void setIddetectiontype(long iddetectiontype) {
+		this.iddetectiontype = iddetectiontype;
 	}
 
-	@Column(name = "idMeasurementType", unique = true, nullable = false)
-	public int getIdMeasurementType() {
-		return this.idMeasurementType;
+	@Column(name = "idmeasurementtype", unique = true, nullable = false)
+	public long getIdmeasurementtype() {
+		return this.idmeasurementtype;
 	}
 
-	public void setIdMeasurementType(int idMeasurementType) {
-		this.idMeasurementType = idMeasurementType;
+	public void setIdmeasurementtype(long idmeasurementtype) {
+		this.idmeasurementtype = idmeasurementtype;
 	}
 
 	public boolean equals(Object other) {
@@ -48,15 +48,15 @@ public class DetectiontypeMeasurementtypeId implements java.io.Serializable {
 			return false;
 		DetectiontypeMeasurementtypeId castOther = (DetectiontypeMeasurementtypeId) other;
 
-		return (this.getIdDetectionType() == castOther.getIdDetectionType())
-				&& (this.getIdMeasurementType() == castOther.getIdMeasurementType());
+		return (this.getIddetectiontype() == castOther.getIddetectiontype())
+				&& (this.getIdmeasurementtype() == castOther.getIdmeasurementtype());
 	}
 
 	public int hashCode() {
 		int result = 17;
 
-		result = 37 * result + this.getIdDetectionType();
-		result = 37 * result + this.getIdMeasurementType();
+		result = 37 * result + (int) this.getIddetectiontype();
+		result = 37 * result + (int) this.getIdmeasurementtype();
 		return result;
 	}
 
