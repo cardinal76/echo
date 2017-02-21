@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 @RestController
-@RequestMapping("rd/worklist")
+@RequestMapping("rd/types/modalityservice")
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
-public class RdWorklistController {
+public class ModalityService_rd_Controller {
 
 }

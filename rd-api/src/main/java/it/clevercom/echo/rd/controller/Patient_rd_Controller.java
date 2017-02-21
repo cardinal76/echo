@@ -28,7 +28,7 @@ import it.clevercom.echo.rd.repository.IPatient_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
-public class RdPatientController {
+public class Patient_rd_Controller {
 	
 	@Autowired
 	private Environment env;
