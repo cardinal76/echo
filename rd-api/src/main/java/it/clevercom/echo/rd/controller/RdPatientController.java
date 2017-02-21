@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.rd.model.dto.PatientDTO;
 import it.clevercom.echo.rd.model.entity.Patient;
-import it.clevercom.echo.rd.repository.RdPatientRepository;
+import it.clevercom.echo.rd.repository.IPatient_rd_Repository;
 
 @Controller
 @RestController
@@ -34,7 +34,7 @@ public class RdPatientController {
 	private Environment env;
 	
 	@Autowired
-	private RdPatientRepository repo;
+	private IPatient_rd_Repository repo;
 	
 	@Autowired
 	private ApplicationContext appContext;
