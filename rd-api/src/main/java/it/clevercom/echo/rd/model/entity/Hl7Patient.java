@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 17-feb-2017 17.22.02 by Hibernate Tools 5.2.0.CR1
+// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import javax.persistence.AttributeOverride;
@@ -45,10 +45,8 @@ public class Hl7Patient implements java.io.Serializable {
 	public Hl7Patient() {
 	}
 
-	public Hl7Patient(Hl7PatientId id, Patient patient, String idauthority, String idtypecode,
-			String messagecontrolid) {
+	public Hl7Patient(Hl7PatientId id, String idauthority, String idtypecode, String messagecontrolid) {
 		this.id = id;
-		this.patient = patient;
 		this.idauthority = idauthority;
 		this.idtypecode = idtypecode;
 		this.messagecontrolid = messagecontrolid;
@@ -95,7 +93,7 @@ public class Hl7Patient implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idpatient", nullable = false)
+	@JoinColumn(name = "idpatient")
 	public Patient getPatient() {
 		return this.patient;
 	}

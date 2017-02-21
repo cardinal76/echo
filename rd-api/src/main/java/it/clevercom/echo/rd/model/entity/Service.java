@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 17-feb-2017 17.22.02 by Hibernate Tools 5.2.0.CR1
+// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,12 +23,17 @@ import javax.persistence.TemporalType;
 public class Service implements java.io.Serializable {
 
 	private long idservice;
-	private String name;
+	private BodyApparatus bodyApparatus;
+	private ModalityType modalityType;
 	private String description;
 	private Date created;
 	private Date updated;
 	private String userupdate;
 	private boolean active;
+	private Long prepcode;
+	private Long duration;
+	private Boolean schedulable;
+	private Set<ServiceCodingActor> serviceCodingActors = new HashSet<ServiceCodingActor>(0);
 	private Set<WorkTask> workTasks = new HashSet<WorkTask>(0);
 	private Set<ModalityService> modalityServices = new HashSet<ModalityService>(0);
 	private Set<OrderService> orderServices = new HashSet<OrderService>(0);
@@ -42,16 +49,22 @@ public class Service implements java.io.Serializable {
 		this.active = active;
 	}
 
-	public Service(long idservice, String name, String description, Date created, Date updated, String userupdate,
-			boolean active, Set<WorkTask> workTasks, Set<ModalityService> modalityServices,
-			Set<OrderService> orderServices) {
+	public Service(long idservice, BodyApparatus bodyApparatus, ModalityType modalityType, String description,
+			Date created, Date updated, String userupdate, boolean active, Long prepcode, Long duration,
+			Boolean schedulable, Set<ServiceCodingActor> serviceCodingActors, Set<WorkTask> workTasks,
+			Set<ModalityService> modalityServices, Set<OrderService> orderServices) {
 		this.idservice = idservice;
-		this.name = name;
+		this.bodyApparatus = bodyApparatus;
+		this.modalityType = modalityType;
 		this.description = description;
 		this.created = created;
 		this.updated = updated;
 		this.userupdate = userupdate;
 		this.active = active;
+		this.prepcode = prepcode;
+		this.duration = duration;
+		this.schedulable = schedulable;
+		this.serviceCodingActors = serviceCodingActors;
 		this.workTasks = workTasks;
 		this.modalityServices = modalityServices;
 		this.orderServices = orderServices;
@@ -68,13 +81,24 @@ public class Service implements java.io.Serializable {
 		this.idservice = idservice;
 	}
 
-	@Column(name = "name", length = 100)
-	public String getName() {
-		return this.name;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "bodyapparatuscode")
+	public BodyApparatus getBodyApparatus() {
+		return this.bodyApparatus;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setBodyApparatus(BodyApparatus bodyApparatus) {
+		this.bodyApparatus = bodyApparatus;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "idmodalitytype")
+	public ModalityType getModalityType() {
+		return this.modalityType;
+	}
+
+	public void setModalityType(ModalityType modalityType) {
+		this.modalityType = modalityType;
 	}
 
 	@Column(name = "description")
@@ -122,6 +146,42 @@ public class Service implements java.io.Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	@Column(name = "prepcode")
+	public Long getPrepcode() {
+		return this.prepcode;
+	}
+
+	public void setPrepcode(Long prepcode) {
+		this.prepcode = prepcode;
+	}
+
+	@Column(name = "duration")
+	public Long getDuration() {
+		return this.duration;
+	}
+
+	public void setDuration(Long duration) {
+		this.duration = duration;
+	}
+
+	@Column(name = "schedulable")
+	public Boolean getSchedulable() {
+		return this.schedulable;
+	}
+
+	public void setSchedulable(Boolean schedulable) {
+		this.schedulable = schedulable;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "service")
+	public Set<ServiceCodingActor> getServiceCodingActors() {
+		return this.serviceCodingActors;
+	}
+
+	public void setServiceCodingActors(Set<ServiceCodingActor> serviceCodingActors) {
+		this.serviceCodingActors = serviceCodingActors;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "service")

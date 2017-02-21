@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 17-feb-2017 17.22.02 by Hibernate Tools 5.2.0.CR1
+// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -35,9 +35,8 @@ public class Province implements java.io.Serializable {
 	public Province() {
 	}
 
-	public Province(long idprovince, Region region, Date created, Date updated, String updateuser, boolean active) {
+	public Province(long idprovince, Date created, Date updated, String updateuser, boolean active) {
 		this.idprovince = idprovince;
-		this.region = region;
 		this.created = created;
 		this.updated = updated;
 		this.updateuser = updateuser;
@@ -69,7 +68,7 @@ public class Province implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idregion", nullable = false)
+	@JoinColumn(name = "idregion")
 	public Region getRegion() {
 		return this.region;
 	}

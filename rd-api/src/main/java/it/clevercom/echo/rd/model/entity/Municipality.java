@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 17-feb-2017 17.22.02 by Hibernate Tools 5.2.0.CR1
+// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -30,16 +30,15 @@ public class Municipality implements java.io.Serializable {
 	private Date updated;
 	private String updateuser;
 	private boolean active;
+	private String postalcode;
 	private Set<Patient> patients = new HashSet<Patient>(0);
 	private Set<User> users = new HashSet<User>(0);
 
 	public Municipality() {
 	}
 
-	public Municipality(long idmunicipality, Province province, Date created, Date updated, String updateuser,
-			boolean active) {
+	public Municipality(long idmunicipality, Date created, Date updated, String updateuser, boolean active) {
 		this.idmunicipality = idmunicipality;
-		this.province = province;
 		this.created = created;
 		this.updated = updated;
 		this.updateuser = updateuser;
@@ -47,7 +46,8 @@ public class Municipality implements java.io.Serializable {
 	}
 
 	public Municipality(long idmunicipality, Province province, String municipalityname, String municipalitystdcode,
-			Date created, Date updated, String updateuser, boolean active, Set<Patient> patients, Set<User> users) {
+			Date created, Date updated, String updateuser, boolean active, String postalcode, Set<Patient> patients,
+			Set<User> users) {
 		this.idmunicipality = idmunicipality;
 		this.province = province;
 		this.municipalityname = municipalityname;
@@ -56,6 +56,7 @@ public class Municipality implements java.io.Serializable {
 		this.updated = updated;
 		this.updateuser = updateuser;
 		this.active = active;
+		this.postalcode = postalcode;
 		this.patients = patients;
 		this.users = users;
 	}
@@ -72,7 +73,7 @@ public class Municipality implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idprovince", nullable = false)
+	@JoinColumn(name = "idprovince")
 	public Province getProvince() {
 		return this.province;
 	}
@@ -135,6 +136,15 @@ public class Municipality implements java.io.Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	@Column(name = "postalcode", length = 25)
+	public String getPostalcode() {
+		return this.postalcode;
+	}
+
+	public void setPostalcode(String postalcode) {
+		this.postalcode = postalcode;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "municipality")
