@@ -66,8 +66,13 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- core module: use can you it on its own if you are not using Spring 
-			3 -->
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- core module: use can you it on its own if you are not using Spring 3 -->
 		<dependency>
 			<groupId>com.inspire-software.lib.dto.geda</groupId>
 			<artifactId>geda.core</artifactId>

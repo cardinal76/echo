@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inspiresoftware.lib.dto.geda.assembler.Assembler;
+import com.inspiresoftware.lib.dto.geda.assembler.DTOAssembler;
+
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.rd.model.dto.ServiceDTO;
 import it.clevercom.echo.rd.model.dto.response.CreateResponseDTO;
@@ -50,10 +53,13 @@ public class Service_rd_Controller {
 	@RequestMapping(method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	public @ResponseBody ServiceDTO get(@RequestParam Integer id) throws RecordNotFoundException {
-		Service entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), Service_rd_Controller.entity, id.toString()));
-		ServiceDTO dto = dozerMapper.map(entity, ServiceDTO.class);
-		return dto;
+//		Service entity = repo.findOne(id);
+//		if (entity == null) throw new RecordNotFoundException(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), Service_rd_Controller.entity, id.toString()));
+//		//ServiceDTO dto = dozerMapper.map(entity, ServiceDTO.class);
+//		final Assembler asm = DTOAssembler.newAssembler(ServiceDTO.class, Service.class);
+//		final ServiceDTO dto = new ServiceDTO();
+//		asm.assembleDto(dto, entity, null, null);
+		return new ServiceDTO();
 	}
 	
 	/**

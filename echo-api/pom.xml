@@ -86,6 +86,24 @@
 			<groupId>net.sf.dozer</groupId>
 			<artifactId>dozer-spring</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+		</dependency>
+
+		<!-- core module: use can you it on its own if you are not using Spring 3 -->
+		<dependency>
+			<groupId>com.inspire-software.lib.dto.geda</groupId>
+			<artifactId>geda.core</artifactId>
+		</dependency>
+
+		<!-- spring integration: spring 3 AOP wrapper for core -->
+		<dependency>
+			<groupId>com.inspire-software.lib.dto.geda</groupId>
+			<artifactId>geda.spring-integration</artifactId>
+		</dependency>
+		
 		<!-- jar modules -->
 		<dependency>
 			<groupId>it.clevercom</groupId>

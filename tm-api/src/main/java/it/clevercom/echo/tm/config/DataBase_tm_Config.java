@@ -58,6 +58,7 @@ public class DataBase_tm_Config {
 		properties.put("hibernate.dialect", environment.getRequiredProperty("tm.hibernate.dialect"));
 		properties.put("hibernate.show_sql", environment.getRequiredProperty("tm.hibernate.show_sql"));
 		properties.put("hibernate.format_sql", environment.getRequiredProperty("tm.hibernate.format_sql"));
+		properties.put("hibernate.temp.use_jdbc_metadata_defaults", environment.getRequiredProperty("rd.hibernate.use_jdbc_metadata_defaults"));
 		return properties;        
 	}
 

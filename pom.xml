@@ -26,6 +26,7 @@
 		<spring-mobile-device.version>1.1.5.RELEASE</spring-mobile-device.version>
 		<spring-data-jpa.version>1.10.6.RELEASE</spring-data-jpa.version>
 		<hibernate.version>5.2.5.Final</hibernate.version>
+		<javassist.version>3.8.0.GA</javassist.version>
 		<!-- <mysql-connector.version>5.1.40</mysql-connector.version> -->
 		<!-- <oracle-jdbc.version>10.2.0.4.0</oracle-jdbc.version> -->
 		<postgre-jdbc.version>9.4.1212</postgre-jdbc.version>
@@ -95,6 +96,7 @@
 				<artifactId>hibernate-core</artifactId>
 				<version>${hibernate.version}</version>
 			</dependency>
+			
 			<!-- <dependency> -->
 			<!-- <groupId>mysql</groupId> -->
 			<!-- <artifactId>mysql-connector-java</artifactId> -->
@@ -105,6 +107,7 @@
 			<!-- <artifactId>ojdbc14</artifactId> -->
 			<!-- <version>${oracle-jdbc.version}</version> -->
 			<!-- </dependency> -->
+			
 			<!-- spring-mobile-device -->
 			<dependency>
 				<groupId>org.postgresql</groupId>
@@ -175,6 +178,12 @@
 				<version>${dozer.version}</version>
 			</dependency>
 
+			<dependency>
+	            <groupId>javassist</groupId>
+	            <artifactId>javassist</artifactId>
+	            <version>${javassist.version}</version>
+	        </dependency>
+	
 			<!-- core module: use can you it on its own if you are not using Spring 3 -->
 			<dependency>
 				<groupId>com.inspire-software.lib.dto.geda</groupId>
@@ -237,6 +246,8 @@
 						<source>${java.version}</source>
 						<target>${java.version}</target>
 						<encoding>${project.build.sourceEncoding}</encoding>
+						<debuglevel>lines,vars,source</debuglevel>
+						<debug>true</debug>
 						<!-- <compilerArgument>-Xlint:unchecked</compilerArgument> -->
 					</configuration>
 				</plugin>
