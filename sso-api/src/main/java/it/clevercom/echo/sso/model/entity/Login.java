@@ -159,7 +159,7 @@ public class Login implements java.io.Serializable {
 		this.active = active;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "login")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "login")
 	public Set<LoginApplication> getLoginApplications() {
 		return this.loginApplications;
 	}

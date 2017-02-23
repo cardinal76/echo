@@ -134,7 +134,7 @@ public class Application implements java.io.Serializable {
 		this.active = active;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "application")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "application")
 	public Set<LoginApplication> getLoginApplications() {
 		return this.loginApplications;
 	}

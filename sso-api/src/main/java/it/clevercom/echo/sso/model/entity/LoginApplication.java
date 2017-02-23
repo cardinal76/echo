@@ -58,7 +58,7 @@ public class LoginApplication implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "application_idapplication", nullable = false, insertable = false, updatable = false)
 	public Application getApplication() {
 		return this.application;
@@ -68,7 +68,7 @@ public class LoginApplication implements java.io.Serializable {
 		this.application = application;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "login_idlogin", nullable = false, insertable = false, updatable = false)
 	public Login getLogin() {
 		return this.login;

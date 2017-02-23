@@ -52,14 +52,14 @@ public class Service_rd_Controller {
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
-	public @ResponseBody ServiceDTO get(@RequestParam Integer id) throws RecordNotFoundException {
-//		Service entity = repo.findOne(id);
-//		if (entity == null) throw new RecordNotFoundException(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), Service_rd_Controller.entity, id.toString()));
-//		//ServiceDTO dto = dozerMapper.map(entity, ServiceDTO.class);
-//		final Assembler asm = DTOAssembler.newAssembler(ServiceDTO.class, Service.class);
-//		final ServiceDTO dto = new ServiceDTO();
-//		asm.assembleDto(dto, entity, null, null);
-		return new ServiceDTO();
+	public @ResponseBody ServiceDTO get(@RequestParam Long id) throws RecordNotFoundException {
+		Service entity = repo.findOne(id);
+		if (entity == null) throw new RecordNotFoundException(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), Service_rd_Controller.entity, id.toString()));
+		//ServiceDTO dto = dozerMapper.map(entity, ServiceDTO.class);
+		final Assembler asm = DTOAssembler.newAssembler(ServiceDTO.class, Service.class);
+		final ServiceDTO dto = new ServiceDTO();
+		asm.assembleDto(dto, entity, null, null);
+		return dto;
 	}
 	
 	/**
