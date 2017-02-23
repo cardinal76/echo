@@ -1,14 +1,13 @@
-package it.clevercom.echo.tm.model.dto.response;
+package it.clevercom.echo.common.model.dto.response;
 
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class UpdateResponseDTO implements Serializable {
-	private static final long serialVersionUID = 5586951918496442774L;
-
+public class CreateResponseDTO implements Serializable {
+	private static final long serialVersionUID = 6623502706488958072L;
+	
 	private HashMap<String, String> ids;
 	private String entityName;
-	private String oldValue;
 	private String newValue;
 	private String statusCode;
 	private String message;
@@ -36,18 +35,6 @@ public class UpdateResponseDTO implements Serializable {
 	 */
 	public void setEntityName(String entityName) {
 		this.entityName = entityName;
-	}
-	/**
-	 * @return the oldValue
-	 */
-	public String getOldValue() {
-		return oldValue;
-	}
-	/**
-	 * @param oldValue the oldValue to set
-	 */
-	public void setOldValue(String oldValue) {
-		this.oldValue = oldValue;
 	}
 	/**
 	 * @return the newValue

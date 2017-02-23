@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
+import it.clevercom.echo.common.model.dto.response.DeleteResponseDTO;
+import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.tm.model.dto.CareGiverDTO;
-import it.clevercom.echo.tm.model.dto.response.CreateResponseDTO;
-import it.clevercom.echo.tm.model.dto.response.DeleteResponseDTO;
-import it.clevercom.echo.tm.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.tm.model.entity.CareGiver;
 import it.clevercom.echo.tm.repository.CareGiver_tm_Repository;
 

@@ -2,6 +2,7 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -18,10 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.inspiresoftware.lib.dto.geda.assembler.Assembler;
 import com.inspiresoftware.lib.dto.geda.assembler.DTOAssembler;
 
+import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
+import it.clevercom.echo.common.model.dto.response.ExceptionDTO;
+import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.model.dto.ServiceDTO;
-import it.clevercom.echo.rd.model.dto.response.CreateResponseDTO;
-import it.clevercom.echo.rd.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.repository.IService_rd_Repository;
 
@@ -41,6 +44,8 @@ public class Service_rd_Controller {
 	@Autowired
     private DozerBeanMapper dozerMapper;
 	
+	private final Logger logger = Logger.getLogger(this.getClass());
+	
 	// used to bind it in exception message
 	private static String entity = "Service";
 	private static String ca_rel_entity = "CodingActor";
@@ -48,18 +53,24 @@ public class Service_rd_Controller {
 	/**
 	 * 
 	 * @return
+	 * @throws EchoException 
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
-	public @ResponseBody ServiceDTO get(@RequestParam Long id) throws RecordNotFoundException {
-		Service entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), Service_rd_Controller.entity, id.toString()));
-		//ServiceDTO dto = dozerMapper.map(entity, ServiceDTO.class);
-		final Assembler asm = DTOAssembler.newAssembler(ServiceDTO.class, Service.class);
-		final ServiceDTO dto = new ServiceDTO();
-		asm.assembleDto(dto, entity, null, null);
-		return dto;
+	public @ResponseBody Object get(@RequestParam Long id) throws EchoException {
+		try {
+			Service entity = repo.findOne(id);
+			if (entity == null) throw new RecordNotFoundException(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), Service_rd_Controller.entity, id.toString()));
+			//ServiceDTO dto = dozerMapper.map(entity, ServiceDTO.class);
+			final Assembler asm = DTOAssembler.newAssembler(ServiceDTO.class, Service.class);
+			final ServiceDTO dto = new ServiceDTO();
+			asm.assembleDto(dto, entity, null, null);
+			return dto;
+		} catch (Exception ex) {
+			logger.fatal(ex.getMessage(), ex);
+			return new ExceptionDTO(env.getProperty("echo.api.exception.message"));
+		}
 	}
 	
 	/**

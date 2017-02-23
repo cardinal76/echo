@@ -86,6 +86,20 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- apache commons -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- log4j -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- jar modules -->
 		<dependency>
 			<groupId>it.clevercom</groupId>
