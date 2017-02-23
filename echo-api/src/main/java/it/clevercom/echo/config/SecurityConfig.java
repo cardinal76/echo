@@ -31,7 +31,7 @@ import it.clevercom.echo.sso.security.provider.CustomAuthenticationProvider;
 @Configuration
 @EnableWebSecurity // enables spring security filter chain
 @EnableGlobalMethodSecurity(prePostEnabled=true) // enables @PreAuthorize annotations 
-@ComponentScan(basePackages = "${echo.base.package}")
+@ComponentScan({"${echo.base.package.sso}","${echo.base.package.common}"})
 @PropertySource("classpath:application.properties")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
