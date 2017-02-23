@@ -37,6 +37,7 @@
 		<apache-commons.version>3.5</apache-commons.version>
 		<log4j.version>1.2.17</log4j.version>
 		<mockito.version>2.5.5</mockito.version>
+		<geda.version>3.1.0</geda.version>
 		<dozer.version>5.5.1</dozer.version>
 
 		<echo-common.version>1.2.0-SNAPSHOT</echo-common.version>
@@ -161,6 +162,7 @@
 				<artifactId>mockito-core</artifactId>
 				<version>${mockito.version}</version>
 			</dependency>
+
 			<!-- dozer mapping fw -->
 			<dependency>
 				<groupId>net.sf.dozer</groupId>
@@ -172,6 +174,21 @@
 				<artifactId>dozer-spring</artifactId>
 				<version>${dozer.version}</version>
 			</dependency>
+
+			<!-- core module: use can you it on its own if you are not using Spring 3 -->
+			<dependency>
+				<groupId>com.inspire-software.lib.dto.geda</groupId>
+				<artifactId>geda.core</artifactId>
+				<version>${geda.version}</version>
+			</dependency>
+
+			<!-- spring integration: spring 3 AOP wrapper for core -->
+			<dependency>
+				<groupId>com.inspire-software.lib.dto.geda</groupId>
+				<artifactId>geda.spring-integration</artifactId>
+				<version>${geda.version}</version>
+			</dependency>
+
 			<!-- jar specific dependencies -->
 			<dependency>
 				<groupId>aspectj</groupId>

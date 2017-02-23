@@ -1,9 +1,6 @@
 package it.clevercom.echo.rd.controller;
 
-import java.text.MessageFormat;
-
 import org.dozer.DozerBeanMapper;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.PropertySource;
@@ -18,8 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
-import it.clevercom.echo.rd.model.dto.PatientDTO;
-import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.repository.IPatient_rd_Repository;
 
 @Controller
@@ -52,13 +47,8 @@ public class Patient_rd_Controller {
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
-	public @ResponseBody PatientDTO get(@RequestParam Integer id) throws RecordNotFoundException {
-		Patient entity = repo.findOne(id);	
-		if (entity == null) throw new RecordNotFoundException(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), managedEntityName, id.toString()));
-		Hibernate.initialize(entity);
-		
-		PatientDTO dto = dozerMapper.map(entity, PatientDTO.class);
-		return dto;
+	public @ResponseBody String get(@RequestParam Integer id) throws RecordNotFoundException {
+		return "patient";
 	}
 	
 	/**
