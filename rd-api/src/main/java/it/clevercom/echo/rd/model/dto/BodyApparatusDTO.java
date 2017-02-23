@@ -5,23 +5,16 @@ import java.util.Date;
 import com.inspiresoftware.lib.dto.geda.annotations.Dto;
 import com.inspiresoftware.lib.dto.geda.annotations.DtoField;
 
-@Dto
 public class BodyApparatusDTO implements java.io.Serializable {
 	private static final long serialVersionUID = -9001955080302115293L;
 	
-	@DtoField
 	private char code;
-	@DtoField
 	private String description;
 
 	// transient attributes
-	@DtoField
 	private transient Date created;
-	@DtoField
 	private transient Date updated;
-	@DtoField
 	private transient String userupdate;
-	@DtoField
 	private transient boolean active;
 
 	public BodyApparatusDTO() {

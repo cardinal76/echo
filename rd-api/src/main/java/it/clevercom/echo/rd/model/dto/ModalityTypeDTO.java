@@ -5,23 +5,16 @@ import java.util.Date;
 import com.inspiresoftware.lib.dto.geda.annotations.Dto;
 import com.inspiresoftware.lib.dto.geda.annotations.DtoField;
 
-@Dto
 public class ModalityTypeDTO implements java.io.Serializable {
 	private static final long serialVersionUID = 3406464325790754778L;
 
-	@DtoField
 	private long idmodalitytype;
-	@DtoField
 	private String type;
 	
 	// transient attributes
-	@DtoField
 	private transient Date created;
-	@DtoField
 	private transient Date updated;
-	@DtoField
 	private transient String updateuser;
-	@DtoField
 	private transient boolean active;
 
 	public ModalityTypeDTO() {

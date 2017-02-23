@@ -5,7 +5,7 @@
     
 <mapping>
 	<class-a>it.clevercom.echo.tm.model.dto.CareGiverDTO</class-a>
-	<class-b>it.clevercom.echo.tm.model.entity.Caregiver</class-b>
+	<class-b>it.clevercom.echo.tm.model.entity.CareGiver</class-b>
 	<field>
 		<a>idCareGiver</a>
 		<b>idCareGiver</b>

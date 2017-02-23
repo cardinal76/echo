@@ -62,10 +62,7 @@ public class Service_rd_Controller {
 		try {
 			Service entity = repo.findOne(id);
 			if (entity == null) throw new RecordNotFoundException(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), Service_rd_Controller.entity, id.toString()));
-			//ServiceDTO dto = dozerMapper.map(entity, ServiceDTO.class);
-			final Assembler asm = DTOAssembler.newAssembler(ServiceDTO.class, Service.class);
-			final ServiceDTO dto = new ServiceDTO();
-			asm.assembleDto(dto, entity, null, null);
+			ServiceDTO dto = dozerMapper.map(entity, ServiceDTO.class);
 			return dto;
 		} catch (Exception ex) {
 			logger.fatal(ex.getMessage(), ex);
