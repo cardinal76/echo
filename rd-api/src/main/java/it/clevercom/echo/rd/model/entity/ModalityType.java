@@ -24,30 +24,30 @@ public class ModalityType implements java.io.Serializable {
 	private String type;
 	private Date created;
 	private Date updated;
-	private String updateuser;
+	private String userupdate;
 	private boolean active;
 	private Set<Service> services = new HashSet<Service>(0);
 
 	public ModalityType() {
 	}
 
-	public ModalityType(long idmodalitytype, String type, Date created, Date updated, String updateuser,
+	public ModalityType(long idmodalitytype, String type, Date created, Date updated, String userupdate,
 			boolean active) {
 		this.idmodalitytype = idmodalitytype;
 		this.type = type;
 		this.created = created;
 		this.updated = updated;
-		this.updateuser = updateuser;
+		this.userupdate = userupdate;
 		this.active = active;
 	}
 
-	public ModalityType(long idmodalitytype, String type, Date created, Date updated, String updateuser, boolean active,
+	public ModalityType(long idmodalitytype, String type, Date created, Date updated, String userupdate, boolean active,
 			Set<Service> services) {
 		this.idmodalitytype = idmodalitytype;
 		this.type = type;
 		this.created = created;
 		this.updated = updated;
-		this.updateuser = updateuser;
+		this.userupdate = userupdate;
 		this.active = active;
 		this.services = services;
 	}
@@ -92,13 +92,13 @@ public class ModalityType implements java.io.Serializable {
 		this.updated = updated;
 	}
 
-	@Column(name = "updateuser", nullable = false, length = 100)
-	public String getUpdateuser() {
-		return this.updateuser;
+	@Column(name = "userupdate", nullable = false, length = 100)
+	public String getUserupdate() {
+		return this.userupdate;
 	}
 
-	public void setUpdateuser(String updateuser) {
-		this.updateuser = updateuser;
+	public void setUserupdate(String userupdate) {
+		this.userupdate = userupdate;
 	}
 
 	@Column(name = "active", nullable = false)

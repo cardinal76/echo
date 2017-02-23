@@ -6,16 +6,64 @@
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.BodyApparatus</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.BodyApparatusDTO</class-b>
+		<field-exclude>
+			<a>created</a>
+			<b>created</b>
+		</field-exclude>
+		<field-exclude>
+			<a>updated</a>
+			<b>updated</b>
+		</field-exclude>
+		<field-exclude>
+			<a>created</a>
+			<b>created</b>
+		</field-exclude>
+		<field-exclude>
+			<a>created</a>
+			<b>created</b>
+		</field-exclude>
 	</mapping>
 	
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.ModalityType</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.ModalityTypeDTO</class-b>
+		<field-exclude>
+			<a>created</a>
+			<b>created</b>
+		</field-exclude>
+		<field-exclude>
+			<a>updated</a>
+			<b>updated</b>
+		</field-exclude>
+		<field-exclude>
+			<a>created</a>
+			<b>created</b>
+		</field-exclude>
+		<field-exclude>
+			<a>created</a>
+			<b>created</b>
+		</field-exclude>
 	</mapping>
 	
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.Service</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.ServiceDTO</class-b>
+		<field-exclude>
+			<a>created</a>
+			<b>created</b>
+		</field-exclude>
+		<field-exclude>
+			<a>updated</a>
+			<b>updated</b>
+		</field-exclude>
+		<field-exclude>
+			<a>created</a>
+			<b>created</b>
+		</field-exclude>
+		<field-exclude>
+			<a>created</a>
+			<b>created</b>
+		</field-exclude>
 	</mapping>	
 	
 </mappings>

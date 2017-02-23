@@ -2,9 +2,9 @@ package it.clevercom.echo.rd.model.dto;
 
 import java.util.Date;
 
-import com.inspiresoftware.lib.dto.geda.annotations.Dto;
-import com.inspiresoftware.lib.dto.geda.annotations.DtoField;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties({"created","updated","userupdate","active"})
 public class BodyApparatusDTO implements java.io.Serializable {
 	private static final long serialVersionUID = -9001955080302115293L;
 	
@@ -12,10 +12,10 @@ public class BodyApparatusDTO implements java.io.Serializable {
 	private String description;
 
 	// transient attributes
-	private transient Date created;
-	private transient Date updated;
-	private transient String userupdate;
-	private transient boolean active;
+	private Date created;
+	private Date updated;
+	private String userupdate;
+	private boolean active;
 
 	public BodyApparatusDTO() {
 	}

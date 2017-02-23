@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.inspiresoftware.lib.dto.geda.assembler.Assembler;
-import com.inspiresoftware.lib.dto.geda.assembler.DTOAssembler;
-
 import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
@@ -59,14 +56,22 @@ public class Service_rd_Controller {
 	@RequestMapping(method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	public @ResponseBody Object get(@RequestParam Long id) throws EchoException {
+		Object dto = null;
 		try {
 			Service entity = repo.findOne(id);
 			if (entity == null) throw new RecordNotFoundException(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), Service_rd_Controller.entity, id.toString()));
-			ServiceDTO dto = dozerMapper.map(entity, ServiceDTO.class);
-			return dto;
+			return dozerMapper.map(entity, ServiceDTO.class);
 		} catch (Exception ex) {
-			logger.fatal(ex.getMessage(), ex);
-			return new ExceptionDTO(env.getProperty("echo.api.exception.message"));
+			dto = new ExceptionDTO();
+			if (ex instanceof RecordNotFoundException) {
+				logger.warn(ex.getMessage(), ex);
+				((ExceptionDTO) dto).setController("get");
+				((ExceptionDTO) dto).setMessage(ex.getMessage());
+			} else {
+				logger.fatal(ex.getMessage(), ex);
+				dto = new ExceptionDTO(env.getProperty("echo.api.exception.message"));
+			}
+			return dto;
 		}
 	}
 	

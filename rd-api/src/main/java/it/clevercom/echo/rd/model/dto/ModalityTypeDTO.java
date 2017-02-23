@@ -2,9 +2,9 @@ package it.clevercom.echo.rd.model.dto;
 
 import java.util.Date;
 
-import com.inspiresoftware.lib.dto.geda.annotations.Dto;
-import com.inspiresoftware.lib.dto.geda.annotations.DtoField;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties({"created","updated","userupdate","active"})
 public class ModalityTypeDTO implements java.io.Serializable {
 	private static final long serialVersionUID = 3406464325790754778L;
 
@@ -12,21 +12,21 @@ public class ModalityTypeDTO implements java.io.Serializable {
 	private String type;
 	
 	// transient attributes
-	private transient Date created;
-	private transient Date updated;
-	private transient String updateuser;
-	private transient boolean active;
+	private Date created;
+	private Date updated;
+	private String userupdate;
+	private boolean active;
 
 	public ModalityTypeDTO() {
 	}
 
-	public ModalityTypeDTO(long idmodalitytype, String type, Date created, Date updated, String updateuser,
+	public ModalityTypeDTO(long idmodalitytype, String type, Date created, Date updated, String userupdate,
 			boolean active) {
 		this.idmodalitytype = idmodalitytype;
 		this.type = type;
 		this.created = created;
 		this.updated = updated;
-		this.updateuser = updateuser;
+		this.userupdate = userupdate;
 		this.active = active;
 	}
 
@@ -87,17 +87,17 @@ public class ModalityTypeDTO implements java.io.Serializable {
 	}
 
 	/**
-	 * @return the updateuser
+	 * @return the userupdate
 	 */
-	public String getUpdateuser() {
-		return updateuser;
+	public String getUserupdate() {
+		return userupdate;
 	}
 
 	/**
-	 * @param updateuser the updateuser to set
+	 * @param userupdate the userupdate to set
 	 */
-	public void setUpdateuser(String updateuser) {
-		this.updateuser = updateuser;
+	public void setUserupdate(String userupdate) {
+		this.userupdate = userupdate;
 	}
 
 	/**

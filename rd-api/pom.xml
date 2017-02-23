@@ -1,91 +1,114 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
+	<artifactId>rd-api</artifactId>
+	<name>rd-api</name>
+	
 	<parent>
 		<groupId>it.clevercom</groupId>
 		<artifactId>echo</artifactId>
 		<version>1.2.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>rd-api</artifactId>
 
+	<!-- Dependency information -->
 	<dependencies>
-		<!-- all dependencies already used by the echo-api war project must have 
-			scope provided -->
+		<!-- all dependencies already used by the echo-api war project must have scope provided -->
+		
+		<!-- spring mvc -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- spring security config -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- spring security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<!-- added 10/01/2017 -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-orm</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<scope>provided</scope>
-		</dependency>
+		
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.springframework</groupId> -->
+<!-- 			<artifactId>spring-orm</artifactId> -->
+<!-- 			<scope>provided</scope> -->
+<!-- 		</dependency> -->
+		
 		<!-- jpa -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- hibernate core -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- spring tx -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
 		<!-- postgre jdbc driver -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<scope>provided</scope>
-		</dependency>
+		
+		<!-- dozer -->
 		<dependency>
 			<groupId>net.sf.dozer</groupId>
 			<artifactId>dozer</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>net.sf.dozer</groupId>
 			<artifactId>dozer-spring</artifactId>
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- javax -->
 		<dependency>
-			<groupId>javassist</groupId>
-			<artifactId>javassist</artifactId>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
-		<!-- core module: use can you it on its own if you are not using Spring 3 -->
+		
 		<dependency>
-			<groupId>com.inspire-software.lib.dto.geda</groupId>
-			<artifactId>geda.core</artifactId>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
-		<!-- spring integration: spring 3 AOP wrapper for core -->
+		
 		<dependency>
-			<groupId>com.inspire-software.lib.dto.geda</groupId>
-			<artifactId>geda.spring-integration</artifactId>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
+		
+		<!-- jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
 		<!-- apache commons -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
