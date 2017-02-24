@@ -1,12 +1,15 @@
 package it.clevercom.echo.rd.controller;
 
-import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
-import it.clevercom.echo.common.model.dto.response.ExceptionDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.model.dto.ServiceDTO;
 import it.clevercom.echo.rd.model.entity.Service;
@@ -49,30 +53,44 @@ public class Service_rd_Controller {
 	
 	/**
 	 * 
+	 * @param id
 	 * @return
-	 * @throws EchoException 
+	 * @throws EchoException
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
-	public @ResponseBody Object get(@RequestParam Long id) throws EchoException {
-		Object dto = null;
-		try {
-			Service entity = repo.findOne(id);
-			if (entity == null) throw new RecordNotFoundException(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), Service_rd_Controller.entity, id.toString()));
-			return dozerMapper.map(entity, ServiceDTO.class);
-		} catch (Exception ex) {
-			dto = new ExceptionDTO();
-			if (ex instanceof RecordNotFoundException) {
-				logger.warn(ex.getMessage(), ex);
-				((ExceptionDTO) dto).setController("get");
-				((ExceptionDTO) dto).setMessage(ex.getMessage());
-			} else {
-				logger.fatal(ex.getMessage(), ex);
-				dto = new ExceptionDTO(env.getProperty("echo.api.exception.message"));
-			}
-			return dto;
+	@Loggable
+	public @ResponseBody ServiceDTO get(@RequestParam Long id) throws Exception {
+		Service entity = repo.findOne(id);
+		if (entity == null) throw new RecordNotFoundException(Service_rd_Controller.entity, id.toString());
+		return dozerMapper.map(entity, ServiceDTO.class);
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 * @throws EchoException
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(value="list", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody List<ServiceDTO> getList(@RequestParam int page, @RequestParam int size, @RequestParam String sort, @RequestParam String param) throws EchoException {
+		List<ServiceDTO> dto = new ArrayList<ServiceDTO>();
+		PageRequest request = null;
+		if (sort.equals("asc")) {
+			 request = new PageRequest(page, size, Direction.ASC, param);
+		} else if (sort.equals("desc")) {
+			request = new PageRequest(page, size, Direction.DESC, param);
+		} else {
+			throw new BadRequestException("");
 		}
+        List<Service> entity = repo.findAll(request).getContent();
+		if (entity.size() == 0) throw new RecordNotFoundException("");
+		dozerMapper.map(entity, dto);
+		return dto;
 	}
 	
 	/**
