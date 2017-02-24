@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.EchoException;
+import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
@@ -74,12 +75,16 @@ public class Service_rd_Controller {
 	 * @throws EchoException
 	 */
 	@Transactional("rdTm")
-	@RequestMapping(value="list", method = RequestMethod.GET)
+	@RequestMapping(value="page", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody List<ServiceDTO> getList(@RequestParam int page, @RequestParam int size, @RequestParam String sort, @RequestParam String param) throws EchoException {
-		List<ServiceDTO> dto = new ArrayList<ServiceDTO>();
+	public @ResponseBody List<ServiceDTO> getList(	@RequestParam int page, 
+													@RequestParam int size, 
+													@RequestParam(defaultValue="asc", required=false) String sort, 
+													@RequestParam(defaultValue="idservice", required=false) String param) throws EchoException {
+		// create paged request
 		PageRequest request = null;
+		
 		if (sort.equals("asc")) {
 			 request = new PageRequest(page, size, Direction.ASC, param);
 		} else if (sort.equals("desc")) {
@@ -87,9 +92,18 @@ public class Service_rd_Controller {
 		} else {
 			throw new BadRequestException("");
 		}
+		
+		// obtain records
         List<Service> entity = repo.findAll(request).getContent();
-		if (entity.size() == 0) throw new RecordNotFoundException("");
-		dozerMapper.map(entity, dto);
+        
+		if (entity.size() == 0) throw new PageNotFoundException(Service_rd_Controller.entity, page);
+		
+		// map list
+		List<ServiceDTO> dto = new ArrayList<ServiceDTO>();
+		for (Service s: entity) {
+			dto.add(dozerMapper.map(s, ServiceDTO.class));
+		}
+		
 		return dto;
 	}
 	

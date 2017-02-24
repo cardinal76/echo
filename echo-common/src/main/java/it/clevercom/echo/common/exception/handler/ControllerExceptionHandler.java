@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
+import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.model.dto.response.ExceptionDTO;
 
@@ -49,7 +50,7 @@ public class ControllerExceptionHandler {
 	/**
 	 * Maps {@link RecordNotFoundException} to a NOT_FOUND http status
 	 * @param e exception to handle 
-	 * @return simple error message
+	 * @return exception dto message
 	 */
 	@ExceptionHandler(RecordNotFoundException.class)
 	@ResponseStatus(value=HttpStatus.NOT_FOUND)
@@ -61,9 +62,23 @@ public class ControllerExceptionHandler {
 	}
 	
 	/**
-	 * Maps {@link Exception} to a NOT_FOUND http status
+	 * Maps {@link PageNotFoundException} to a NOT_FOUND http status
 	 * @param e exception to handle 
-	 * @return simple error message
+	 * @return exception dto message
+	 */
+	@ExceptionHandler(PageNotFoundException.class)
+	@ResponseStatus(value=HttpStatus.NOT_FOUND)
+	public @ResponseBody ExceptionDTO handlePageNotFoundException(PageNotFoundException e) {
+		logger.warn(e.getMessage(), e);
+		ExceptionDTO dto = new ExceptionDTO();
+		dto.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.search.nopage"), e.getEntityName(), e.getPage()));
+		return dto;
+	}
+	
+	/**
+	 * Maps {@link Exception} to a INTERNAL_SERVER_ERROR http status
+	 * @param e exception to handle 
+	 * @return exception dto message
 	 */
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)

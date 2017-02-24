@@ -8,26 +8,20 @@ package it.clevercom.echo.common.exception.model;
  * 
  */
 
-public class RecordNotFoundException extends EchoException {
+public class PageNotFoundException extends EchoException {
 	private static final long serialVersionUID = 1L;
 	
 	private String entityName;
-	private String recordId;
+	private int page;
 	
-	public RecordNotFoundException(String message) {
+	public PageNotFoundException(String message) {
 		super(message);
 	}
 
-	public RecordNotFoundException(String entityName, String recordId) {
-		super("no record has been found.");
+	public PageNotFoundException(String entityName, int page) {
+		super("no page has been found.");
 		this.entityName = entityName;
-		this.recordId = recordId;
-	}
-
-
-
-	public RecordNotFoundException(String message, Throwable cause) {
-		super(message, cause);
+		this.page = page;
 	}
 
 	/**
@@ -45,17 +39,17 @@ public class RecordNotFoundException extends EchoException {
 	}
 
 	/**
-	 * @return the recordId
+	 * @return the page
 	 */
-	public String getRecordId() {
-		return recordId;
+	public int getPage() {
+		return page;
 	}
 
 	/**
-	 * @param recordId the recordId to set
+	 * @param page the page to set
 	 */
-	public void setRecordId(String recordId) {
-		this.recordId = recordId;
+	public void setPage(int page) {
+		this.page = page;
 	}
 
 	/**
