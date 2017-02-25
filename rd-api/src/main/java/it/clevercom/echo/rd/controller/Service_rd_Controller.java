@@ -8,6 +8,7 @@ import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,8 +27,11 @@ import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
+import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.dto.ServiceDTO;
 import it.clevercom.echo.rd.model.entity.Service;
+import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
+import it.clevercom.echo.rd.model.jpa.helper.ServiceSpecificationQueryHelper;
 import it.clevercom.echo.rd.repository.IService_rd_Repository;
 
 @Controller
@@ -69,19 +73,68 @@ public class Service_rd_Controller {
 	}
 	
 	/**
+	 * @param page
+	 * @param size
+	 * @param sort
+	 * @param param
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(value="page", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody PagedDTO<ServiceDTO> getList(	@RequestParam int page, 
+													@RequestParam int size, 
+													@RequestParam(defaultValue="asc", required=false) String sort, 
+													@RequestParam(defaultValue="idservice", required=false) String param) throws Exception {
+		// create paged request
+		PageRequest request = null;
+		if (sort.equals("asc")) {
+			 request = new PageRequest(page, size, Direction.ASC, param);
+		} else if (sort.equals("desc")) {
+			request = new PageRequest(page, size, Direction.DESC, param);
+		} else {
+			throw new BadRequestException("");
+		}
+		
+		// obtain records
+        Page<Service> rs = repo.findAll(request);
+        int totalPages = rs.getTotalPages();
+        List<Service> entity = rs.getContent(); 
+        		 
+		if (entity.size() == 0) throw new PageNotFoundException(Service_rd_Controller.entity, page);
+		
+		// map list
+		List<ServiceDTO> serviceDTO = new ArrayList<ServiceDTO>();
+		for (Service s: entity) {
+			serviceDTO.add(dozerMapper.map(s, ServiceDTO.class));
+		}
+		
+		// assembly dto
+		PagedDTO<ServiceDTO> dto = new PagedDTO<ServiceDTO>();
+		dto.setElements(serviceDTO);
+		dto.setPageSize(size);
+		dto.setCurrentPage(page);
+		dto.setTotalPages(totalPages);
+		return dto;
+	}
+	
+	/**
 	 * 
 	 * @param id
 	 * @return
 	 * @throws EchoException
 	 */
 	@Transactional("rdTm")
-	@RequestMapping(value="page", method = RequestMethod.GET)
+	@RequestMapping(value="criteria", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody List<ServiceDTO> getList(	@RequestParam int page, 
+	public @ResponseBody PagedDTO<ServiceDTO> getList(	@RequestParam String description, 
+													@RequestParam int page, 
 													@RequestParam int size, 
 													@RequestParam(defaultValue="asc", required=false) String sort, 
-													@RequestParam(defaultValue="idservice", required=false) String param) throws EchoException {
+													@RequestParam(defaultValue="idservice", required=false) String param) throws Exception {
 		// create paged request
 		PageRequest request = null;
 		
@@ -94,16 +147,25 @@ public class Service_rd_Controller {
 		}
 		
 		// obtain records
-        List<Service> entity = repo.findAll(request).getContent();
-        
+		ServiceSpecificationQueryHelper spec = new ServiceSpecificationQueryHelper(new SearchCriteria("description", ":", description));
+		Page<Service> rs = repo.findAll(spec, request);
+        int totalPages = rs.getTotalPages();
+		List<Service> entity = rs.getContent();
+		
 		if (entity.size() == 0) throw new PageNotFoundException(Service_rd_Controller.entity, page);
 		
 		// map list
-		List<ServiceDTO> dto = new ArrayList<ServiceDTO>();
+		List<ServiceDTO> serviceDTO = new ArrayList<ServiceDTO>();
 		for (Service s: entity) {
-			dto.add(dozerMapper.map(s, ServiceDTO.class));
+			serviceDTO.add(dozerMapper.map(s, ServiceDTO.class));
 		}
 		
+		// assembly dto
+		PagedDTO<ServiceDTO> dto = new PagedDTO<ServiceDTO>();
+		dto.setElements(serviceDTO);
+		dto.setPageSize(size);
+		dto.setCurrentPage(page);
+		dto.setTotalPages(totalPages);
 		return dto;
 	}
 	
