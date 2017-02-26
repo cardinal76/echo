@@ -9,16 +9,16 @@ import org.springframework.data.jpa.domain.Specification;
 
 import it.clevercom.echo.rd.model.entity.Service;
 
-public class ServiceSpecificationQueryHelper implements Specification<Service> {
+public class SpecificationQueryHelper<T> implements Specification<T> {
     private SearchCriteria criteria;
     
-	public ServiceSpecificationQueryHelper(SearchCriteria criteria) {
+	public SpecificationQueryHelper(SearchCriteria criteria) {
 		super();
 		this.criteria = criteria;
 	}
 
 	@Override
-	public Predicate toPredicate(Root<Service> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+	public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 		if (criteria.getOperation().equalsIgnoreCase(">")) {
             return cb.greaterThanOrEqualTo(
               root.<String> get(criteria.getKey()), criteria.getValue().toString());

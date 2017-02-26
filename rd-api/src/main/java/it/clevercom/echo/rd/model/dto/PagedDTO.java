@@ -7,6 +7,7 @@ public class PagedDTO <T> {
 	private int pageSize;
 	private int currentPage;
 	private int totalPages;
+	private long totalElements;
 	
 	/**
 	 * @return the elements
@@ -62,5 +63,19 @@ public class PagedDTO <T> {
 	 */
 	public void setTotalPages(int totalPages) {
 		this.totalPages = totalPages;
+	}
+
+	/**
+	 * @return the totalElements
+	 */
+	public long getTotalElements() {
+		return totalElements;
+	}
+
+	/**
+	 * @param totalElements the totalElements to set
+	 */
+	public void setTotalElements(long totalElements) {
+		this.totalElements = totalElements;
 	}
 }
