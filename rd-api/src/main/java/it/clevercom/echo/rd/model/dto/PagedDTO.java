@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.model.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"created","updated","userupdate","active"})
 public class PagedDTO <T> {
 	private List<T> elements;
 	private int pageSize;

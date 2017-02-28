@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	
+	<!-- general mapping -->
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.BodyApparatus</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BodyApparatusDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.ModalityType</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ModalityTypeDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Service</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ServiceDTO</class-b>
+	</mapping>	
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Patient</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.PatientDTO</class-b>
+		<field>
+			<a>countryByDomicileidcountry</a>
+			<b>docimicileCountry</b>
+		</field>
+		<field>
+			<a>countryByResidenceidcountry</a>
+			<b>residenceCountry</b>
+		</field>
+		<field>
+			<a>countryByBirthplaceidcountry</a>
+			<b>birthplaceCountry</b>
+		</field>
+		<field>
+			<a>municipalityByDomicileidmunicipality</a>
+			<b>domicileMunicipality</b>
+		</field>
+		<field>
+			<a>municipalityByResidenceidmunicipality</a>
+			<b>residenceMunicipality</b>
+		</field>
+		<field>
+			<a>municipalityByBirthplaceidmunicipality</a>
+			<b>birthplaceMunicipality</b>
+		</field>
+		<field>
+			<a>organizationUnitByIdintorganizationunit</a>
+			<b>internalOrgUnit</b>
+		</field>
+		<field>
+			<a>organizationUnitByIdextorganizationunit</a>
+			<b>externalOrgUnit</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Citizenship</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.CitizenshipDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Country</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.CountryDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Municipality</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.MunicipalityDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.OrganizationUnit</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.OrganizationUnitDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.PatientCodingActor</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.PatientCodingActorDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.PatientCodingActorId</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.PatientCodingActorIdDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Maritalstatus</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.MaritalstatusDTO</class-b>
+	</mapping>
+</mappings>
