@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
+// Generated 28-feb-2017 10.00.08 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -27,6 +27,7 @@ public class CodingActor implements java.io.Serializable {
 	private String userupdate;
 	private boolean active;
 	private Set<ServiceCodingActor> serviceCodingActors = new HashSet<ServiceCodingActor>(0);
+	private Set<PatientCodingActor> patientCodingActors = new HashSet<PatientCodingActor>(0);
 
 	public CodingActor() {
 	}
@@ -42,7 +43,7 @@ public class CodingActor implements java.io.Serializable {
 	}
 
 	public CodingActor(long idcodingactor, String name, Date created, String updated, String userupdate, boolean active,
-			Set<ServiceCodingActor> serviceCodingActors) {
+			Set<ServiceCodingActor> serviceCodingActors, Set<PatientCodingActor> patientCodingActors) {
 		this.idcodingactor = idcodingactor;
 		this.name = name;
 		this.created = created;
@@ -50,6 +51,7 @@ public class CodingActor implements java.io.Serializable {
 		this.userupdate = userupdate;
 		this.active = active;
 		this.serviceCodingActors = serviceCodingActors;
+		this.patientCodingActors = patientCodingActors;
 	}
 
 	@Id
@@ -116,6 +118,15 @@ public class CodingActor implements java.io.Serializable {
 
 	public void setServiceCodingActors(Set<ServiceCodingActor> serviceCodingActors) {
 		this.serviceCodingActors = serviceCodingActors;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "codingActor")
+	public Set<PatientCodingActor> getPatientCodingActors() {
+		return this.patientCodingActors;
+	}
+
+	public void setPatientCodingActors(Set<PatientCodingActor> patientCodingActors) {
+		this.patientCodingActors = patientCodingActors;
 	}
 
 }

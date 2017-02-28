@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
+// Generated 28-feb-2017 10.00.08 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -8,8 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -23,7 +21,6 @@ import javax.persistence.TemporalType;
 public class User implements java.io.Serializable {
 
 	private long iduser;
-	private Municipality municipality;
 	private String username;
 	private String type;
 	private String name;
@@ -31,13 +28,14 @@ public class User implements java.io.Serializable {
 	private String gender;
 	private String taxcode;
 	private Date birthdate;
-	private String nationality;
-	private String homeaddress;
 	private String phonenumber;
 	private Date created;
 	private Date updated;
 	private String userupdate;
 	private boolean active;
+	private String alternativephonenumber;
+	private String email;
+	private Set<AppSetting> appSettings = new HashSet<AppSetting>(0);
 	private Set<PhraseBook> phraseBooks = new HashSet<PhraseBook>(0);
 	private Set<WorkReportUser> workReportUsers = new HashSet<WorkReportUser>(0);
 	private Set<WorkTask> workTasks = new HashSet<WorkTask>(0);
@@ -55,12 +53,11 @@ public class User implements java.io.Serializable {
 		this.active = active;
 	}
 
-	public User(long iduser, Municipality municipality, String username, String type, String name, String surname,
-			String gender, String taxcode, Date birthdate, String nationality, String homeaddress, String phonenumber,
-			Date created, Date updated, String userupdate, boolean active, Set<PhraseBook> phraseBooks,
+	public User(long iduser, String username, String type, String name, String surname, String gender, String taxcode,
+			Date birthdate, String phonenumber, Date created, Date updated, String userupdate, boolean active,
+			String alternativephonenumber, String email, Set<AppSetting> appSettings, Set<PhraseBook> phraseBooks,
 			Set<WorkReportUser> workReportUsers, Set<WorkTask> workTasks) {
 		this.iduser = iduser;
-		this.municipality = municipality;
 		this.username = username;
 		this.type = type;
 		this.name = name;
@@ -68,13 +65,14 @@ public class User implements java.io.Serializable {
 		this.gender = gender;
 		this.taxcode = taxcode;
 		this.birthdate = birthdate;
-		this.nationality = nationality;
-		this.homeaddress = homeaddress;
 		this.phonenumber = phonenumber;
 		this.created = created;
 		this.updated = updated;
 		this.userupdate = userupdate;
 		this.active = active;
+		this.alternativephonenumber = alternativephonenumber;
+		this.email = email;
+		this.appSettings = appSettings;
 		this.phraseBooks = phraseBooks;
 		this.workReportUsers = workReportUsers;
 		this.workTasks = workTasks;
@@ -89,16 +87,6 @@ public class User implements java.io.Serializable {
 
 	public void setIduser(long iduser) {
 		this.iduser = iduser;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idmunicipality")
-	public Municipality getMunicipality() {
-		return this.municipality;
-	}
-
-	public void setMunicipality(Municipality municipality) {
-		this.municipality = municipality;
 	}
 
 	@Column(name = "username", nullable = false, length = 100)
@@ -165,24 +153,6 @@ public class User implements java.io.Serializable {
 		this.birthdate = birthdate;
 	}
 
-	@Column(name = "nationality", length = 100)
-	public String getNationality() {
-		return this.nationality;
-	}
-
-	public void setNationality(String nationality) {
-		this.nationality = nationality;
-	}
-
-	@Column(name = "homeaddress", length = 100)
-	public String getHomeaddress() {
-		return this.homeaddress;
-	}
-
-	public void setHomeaddress(String homeaddress) {
-		this.homeaddress = homeaddress;
-	}
-
 	@Column(name = "phonenumber", length = 100)
 	public String getPhonenumber() {
 		return this.phonenumber;
@@ -228,6 +198,33 @@ public class User implements java.io.Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	@Column(name = "alternativephonenumber", length = 100)
+	public String getAlternativephonenumber() {
+		return this.alternativephonenumber;
+	}
+
+	public void setAlternativephonenumber(String alternativephonenumber) {
+		this.alternativephonenumber = alternativephonenumber;
+	}
+
+	@Column(name = "email")
+	public String getEmail() {
+		return this.email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+	public Set<AppSetting> getAppSettings() {
+		return this.appSettings;
+	}
+
+	public void setAppSettings(Set<AppSetting> appSettings) {
+		this.appSettings = appSettings;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")

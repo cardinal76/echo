@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
+// Generated 28-feb-2017 10.00.08 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -23,76 +23,81 @@ import javax.persistence.TemporalType;
 public class Patient implements java.io.Serializable {
 
 	private long idpatient;
-	private Municipality municipality;
+	private Citizenship citizenship;
+	private Country countryByDomicileidcountry;
+	private Country countryByResidenceidcountry;
+	private Country countryByBirthplaceidcountry;
+	private Maritalstatus maritalstatus;
+	private Municipality municipalityByDomicileidmunicipality;
+	private Municipality municipalityByResidenceidmunicipality;
+	private Municipality municipalityByBirthplaceidmunicipality;
+	private OrganizationUnit organizationUnitByIdintorganizationunit;
+	private OrganizationUnit organizationUnitByIdextorganizationunit;
 	private String name;
 	private String surname;
 	private Date dateofbirth;
 	private String gender;
 	private String residencestreetaddress;
-	private String residencecitycode;
-	private String residencecountry;
 	private String domicilestreetaddress;
-	private String domicilecitycode;
-	private String domicilecountry;
-	private String maritalstatus;
-	private String birthplace;
-	private String citizenshipid;
-	private String citizenshipdesc;
 	private Date deathdate;
 	private String taxcode;
-	private String nationality;
 	private String phonenumber;
 	private Date created;
 	private Date updated;
-	private String updateuser;
+	private String userupdate;
 	private boolean active;
+	private String email;
 	private Set<Hl7Patient> hl7Patients = new HashSet<Hl7Patient>(0);
+	private Set<PatientCodingActor> patientCodingActors = new HashSet<PatientCodingActor>(0);
 	private Set<WorkSession> workSessions = new HashSet<WorkSession>(0);
 
 	public Patient() {
 	}
 
-	public Patient(long idpatient, Municipality municipality, Date created, Date updated, String updateuser,
-			boolean active) {
+	public Patient(long idpatient, Date created, Date updated, String userupdate, boolean active) {
 		this.idpatient = idpatient;
-		this.municipality = municipality;
 		this.created = created;
 		this.updated = updated;
-		this.updateuser = updateuser;
+		this.userupdate = userupdate;
 		this.active = active;
 	}
 
-	public Patient(long idpatient, Municipality municipality, String name, String surname, Date dateofbirth,
-			String gender, String residencestreetaddress, String residencecitycode, String residencecountry,
-			String domicilestreetaddress, String domicilecitycode, String domicilecountry, String maritalstatus,
-			String birthplace, String citizenshipid, String citizenshipdesc, Date deathdate, String taxcode,
-			String nationality, String phonenumber, Date created, Date updated, String updateuser, boolean active,
-			Set<Hl7Patient> hl7Patients, Set<WorkSession> workSessions) {
+	public Patient(long idpatient, Citizenship citizenship, Country countryByDomicileidcountry,
+			Country countryByResidenceidcountry, Country countryByBirthplaceidcountry, Maritalstatus maritalstatus,
+			Municipality municipalityByDomicileidmunicipality, Municipality municipalityByResidenceidmunicipality,
+			Municipality municipalityByBirthplaceidmunicipality,
+			OrganizationUnit organizationUnitByIdintorganizationunit,
+			OrganizationUnit organizationUnitByIdextorganizationunit, String name, String surname, Date dateofbirth,
+			String gender, String residencestreetaddress, String domicilestreetaddress, Date deathdate, String taxcode,
+			String phonenumber, Date created, Date updated, String userupdate, boolean active, String email,
+			Set<Hl7Patient> hl7Patients, Set<PatientCodingActor> patientCodingActors, Set<WorkSession> workSessions) {
 		this.idpatient = idpatient;
-		this.municipality = municipality;
+		this.citizenship = citizenship;
+		this.countryByDomicileidcountry = countryByDomicileidcountry;
+		this.countryByResidenceidcountry = countryByResidenceidcountry;
+		this.countryByBirthplaceidcountry = countryByBirthplaceidcountry;
+		this.maritalstatus = maritalstatus;
+		this.municipalityByDomicileidmunicipality = municipalityByDomicileidmunicipality;
+		this.municipalityByResidenceidmunicipality = municipalityByResidenceidmunicipality;
+		this.municipalityByBirthplaceidmunicipality = municipalityByBirthplaceidmunicipality;
+		this.organizationUnitByIdintorganizationunit = organizationUnitByIdintorganizationunit;
+		this.organizationUnitByIdextorganizationunit = organizationUnitByIdextorganizationunit;
 		this.name = name;
 		this.surname = surname;
 		this.dateofbirth = dateofbirth;
 		this.gender = gender;
 		this.residencestreetaddress = residencestreetaddress;
-		this.residencecitycode = residencecitycode;
-		this.residencecountry = residencecountry;
 		this.domicilestreetaddress = domicilestreetaddress;
-		this.domicilecitycode = domicilecitycode;
-		this.domicilecountry = domicilecountry;
-		this.maritalstatus = maritalstatus;
-		this.birthplace = birthplace;
-		this.citizenshipid = citizenshipid;
-		this.citizenshipdesc = citizenshipdesc;
 		this.deathdate = deathdate;
 		this.taxcode = taxcode;
-		this.nationality = nationality;
 		this.phonenumber = phonenumber;
 		this.created = created;
 		this.updated = updated;
-		this.updateuser = updateuser;
+		this.userupdate = userupdate;
 		this.active = active;
+		this.email = email;
 		this.hl7Patients = hl7Patients;
+		this.patientCodingActors = patientCodingActors;
 		this.workSessions = workSessions;
 	}
 
@@ -108,13 +113,103 @@ public class Patient implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idmunicipality", nullable = false)
-	public Municipality getMunicipality() {
-		return this.municipality;
+	@JoinColumn(name = "idcitizenship")
+	public Citizenship getCitizenship() {
+		return this.citizenship;
 	}
 
-	public void setMunicipality(Municipality municipality) {
-		this.municipality = municipality;
+	public void setCitizenship(Citizenship citizenship) {
+		this.citizenship = citizenship;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "domicileidcountry")
+	public Country getCountryByDomicileidcountry() {
+		return this.countryByDomicileidcountry;
+	}
+
+	public void setCountryByDomicileidcountry(Country countryByDomicileidcountry) {
+		this.countryByDomicileidcountry = countryByDomicileidcountry;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "residenceidcountry")
+	public Country getCountryByResidenceidcountry() {
+		return this.countryByResidenceidcountry;
+	}
+
+	public void setCountryByResidenceidcountry(Country countryByResidenceidcountry) {
+		this.countryByResidenceidcountry = countryByResidenceidcountry;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "birthplaceidcountry")
+	public Country getCountryByBirthplaceidcountry() {
+		return this.countryByBirthplaceidcountry;
+	}
+
+	public void setCountryByBirthplaceidcountry(Country countryByBirthplaceidcountry) {
+		this.countryByBirthplaceidcountry = countryByBirthplaceidcountry;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "codemaritalstatus")
+	public Maritalstatus getMaritalstatus() {
+		return this.maritalstatus;
+	}
+
+	public void setMaritalstatus(Maritalstatus maritalstatus) {
+		this.maritalstatus = maritalstatus;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "domicileidmunicipality")
+	public Municipality getMunicipalityByDomicileidmunicipality() {
+		return this.municipalityByDomicileidmunicipality;
+	}
+
+	public void setMunicipalityByDomicileidmunicipality(Municipality municipalityByDomicileidmunicipality) {
+		this.municipalityByDomicileidmunicipality = municipalityByDomicileidmunicipality;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "residenceidmunicipality")
+	public Municipality getMunicipalityByResidenceidmunicipality() {
+		return this.municipalityByResidenceidmunicipality;
+	}
+
+	public void setMunicipalityByResidenceidmunicipality(Municipality municipalityByResidenceidmunicipality) {
+		this.municipalityByResidenceidmunicipality = municipalityByResidenceidmunicipality;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "birthplaceidmunicipality")
+	public Municipality getMunicipalityByBirthplaceidmunicipality() {
+		return this.municipalityByBirthplaceidmunicipality;
+	}
+
+	public void setMunicipalityByBirthplaceidmunicipality(Municipality municipalityByBirthplaceidmunicipality) {
+		this.municipalityByBirthplaceidmunicipality = municipalityByBirthplaceidmunicipality;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "idintorganizationunit")
+	public OrganizationUnit getOrganizationUnitByIdintorganizationunit() {
+		return this.organizationUnitByIdintorganizationunit;
+	}
+
+	public void setOrganizationUnitByIdintorganizationunit(OrganizationUnit organizationUnitByIdintorganizationunit) {
+		this.organizationUnitByIdintorganizationunit = organizationUnitByIdintorganizationunit;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "idextorganizationunit")
+	public OrganizationUnit getOrganizationUnitByIdextorganizationunit() {
+		return this.organizationUnitByIdextorganizationunit;
+	}
+
+	public void setOrganizationUnitByIdextorganizationunit(OrganizationUnit organizationUnitByIdextorganizationunit) {
+		this.organizationUnitByIdextorganizationunit = organizationUnitByIdextorganizationunit;
 	}
 
 	@Column(name = "name", length = 100)
@@ -163,24 +258,6 @@ public class Patient implements java.io.Serializable {
 		this.residencestreetaddress = residencestreetaddress;
 	}
 
-	@Column(name = "residencecitycode", length = 50)
-	public String getResidencecitycode() {
-		return this.residencecitycode;
-	}
-
-	public void setResidencecitycode(String residencecitycode) {
-		this.residencecitycode = residencecitycode;
-	}
-
-	@Column(name = "residencecountry", length = 4)
-	public String getResidencecountry() {
-		return this.residencecountry;
-	}
-
-	public void setResidencecountry(String residencecountry) {
-		this.residencecountry = residencecountry;
-	}
-
 	@Column(name = "domicilestreetaddress", length = 120)
 	public String getDomicilestreetaddress() {
 		return this.domicilestreetaddress;
@@ -188,60 +265,6 @@ public class Patient implements java.io.Serializable {
 
 	public void setDomicilestreetaddress(String domicilestreetaddress) {
 		this.domicilestreetaddress = domicilestreetaddress;
-	}
-
-	@Column(name = "domicilecitycode", length = 50)
-	public String getDomicilecitycode() {
-		return this.domicilecitycode;
-	}
-
-	public void setDomicilecitycode(String domicilecitycode) {
-		this.domicilecitycode = domicilecitycode;
-	}
-
-	@Column(name = "domicilecountry", length = 4)
-	public String getDomicilecountry() {
-		return this.domicilecountry;
-	}
-
-	public void setDomicilecountry(String domicilecountry) {
-		this.domicilecountry = domicilecountry;
-	}
-
-	@Column(name = "maritalstatus", length = 20)
-	public String getMaritalstatus() {
-		return this.maritalstatus;
-	}
-
-	public void setMaritalstatus(String maritalstatus) {
-		this.maritalstatus = maritalstatus;
-	}
-
-	@Column(name = "birthplace", length = 250)
-	public String getBirthplace() {
-		return this.birthplace;
-	}
-
-	public void setBirthplace(String birthplace) {
-		this.birthplace = birthplace;
-	}
-
-	@Column(name = "citizenshipid", length = 20)
-	public String getCitizenshipid() {
-		return this.citizenshipid;
-	}
-
-	public void setCitizenshipid(String citizenshipid) {
-		this.citizenshipid = citizenshipid;
-	}
-
-	@Column(name = "citizenshipdesc", length = 199)
-	public String getCitizenshipdesc() {
-		return this.citizenshipdesc;
-	}
-
-	public void setCitizenshipdesc(String citizenshipdesc) {
-		this.citizenshipdesc = citizenshipdesc;
 	}
 
 	@Temporal(TemporalType.DATE)
@@ -261,15 +284,6 @@ public class Patient implements java.io.Serializable {
 
 	public void setTaxcode(String taxcode) {
 		this.taxcode = taxcode;
-	}
-
-	@Column(name = "nationality", length = 100)
-	public String getNationality() {
-		return this.nationality;
-	}
-
-	public void setNationality(String nationality) {
-		this.nationality = nationality;
 	}
 
 	@Column(name = "phonenumber", length = 100)
@@ -301,13 +315,13 @@ public class Patient implements java.io.Serializable {
 		this.updated = updated;
 	}
 
-	@Column(name = "updateuser", nullable = false, length = 100)
-	public String getUpdateuser() {
-		return this.updateuser;
+	@Column(name = "userupdate", nullable = false, length = 100)
+	public String getUserupdate() {
+		return this.userupdate;
 	}
 
-	public void setUpdateuser(String updateuser) {
-		this.updateuser = updateuser;
+	public void setUserupdate(String userupdate) {
+		this.userupdate = userupdate;
 	}
 
 	@Column(name = "active", nullable = false)
@@ -319,6 +333,15 @@ public class Patient implements java.io.Serializable {
 		this.active = active;
 	}
 
+	@Column(name = "email")
+	public String getEmail() {
+		return this.email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
 	public Set<Hl7Patient> getHl7Patients() {
 		return this.hl7Patients;
@@ -326,6 +349,15 @@ public class Patient implements java.io.Serializable {
 
 	public void setHl7Patients(Set<Hl7Patient> hl7Patients) {
 		this.hl7Patients = hl7Patients;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")
+	public Set<PatientCodingActor> getPatientCodingActors() {
+		return this.patientCodingActors;
+	}
+
+	public void setPatientCodingActors(Set<PatientCodingActor> patientCodingActors) {
+		this.patientCodingActors = patientCodingActors;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "patient")

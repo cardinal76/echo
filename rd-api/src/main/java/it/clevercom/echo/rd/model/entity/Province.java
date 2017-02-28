@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
+// Generated 28-feb-2017 10.00.08 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -28,30 +28,30 @@ public class Province implements java.io.Serializable {
 	private String provincestdcode;
 	private Date created;
 	private Date updated;
-	private String updateuser;
+	private String userupdate;
 	private boolean active;
 	private Set<Municipality> municipalities = new HashSet<Municipality>(0);
 
 	public Province() {
 	}
 
-	public Province(long idprovince, Date created, Date updated, String updateuser, boolean active) {
+	public Province(long idprovince, Date created, Date updated, String userupdate, boolean active) {
 		this.idprovince = idprovince;
 		this.created = created;
 		this.updated = updated;
-		this.updateuser = updateuser;
+		this.userupdate = userupdate;
 		this.active = active;
 	}
 
 	public Province(long idprovince, Region region, String provincename, String provincestdcode, Date created,
-			Date updated, String updateuser, boolean active, Set<Municipality> municipalities) {
+			Date updated, String userupdate, boolean active, Set<Municipality> municipalities) {
 		this.idprovince = idprovince;
 		this.region = region;
 		this.provincename = provincename;
 		this.provincestdcode = provincestdcode;
 		this.created = created;
 		this.updated = updated;
-		this.updateuser = updateuser;
+		this.userupdate = userupdate;
 		this.active = active;
 		this.municipalities = municipalities;
 	}
@@ -115,13 +115,13 @@ public class Province implements java.io.Serializable {
 		this.updated = updated;
 	}
 
-	@Column(name = "updateuser", nullable = false, length = 100)
-	public String getUpdateuser() {
-		return this.updateuser;
+	@Column(name = "userupdate", nullable = false, length = 100)
+	public String getUserupdate() {
+		return this.userupdate;
 	}
 
-	public void setUpdateuser(String updateuser) {
-		this.updateuser = updateuser;
+	public void setUserupdate(String userupdate) {
+		this.userupdate = userupdate;
 	}
 
 	@Column(name = "active", nullable = false)

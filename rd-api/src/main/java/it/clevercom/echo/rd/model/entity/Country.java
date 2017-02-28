@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
+// Generated 28-feb-2017 10.00.08 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -30,7 +30,10 @@ public class Country implements java.io.Serializable {
 	private Date updated;
 	private String userupdate;
 	private boolean active;
+	private Set<Patient> patientsForDomicileidcountry = new HashSet<Patient>(0);
+	private Set<Patient> patientsForResidenceidcountry = new HashSet<Patient>(0);
 	private Set<Region> regions = new HashSet<Region>(0);
+	private Set<Patient> patientsForBirthplaceidcountry = new HashSet<Patient>(0);
 
 	public Country() {
 	}
@@ -45,7 +48,8 @@ public class Country implements java.io.Serializable {
 
 	public Country(long idcountry, String countryname, String countrynicename, String countryiso2, String countryiso3,
 			Long countryisonumcode, Date created, Date updated, String userupdate, boolean active,
-			Set<Region> regions) {
+			Set<Patient> patientsForDomicileidcountry, Set<Patient> patientsForResidenceidcountry, Set<Region> regions,
+			Set<Patient> patientsForBirthplaceidcountry) {
 		this.idcountry = idcountry;
 		this.countryname = countryname;
 		this.countrynicename = countrynicename;
@@ -56,7 +60,10 @@ public class Country implements java.io.Serializable {
 		this.updated = updated;
 		this.userupdate = userupdate;
 		this.active = active;
+		this.patientsForDomicileidcountry = patientsForDomicileidcountry;
+		this.patientsForResidenceidcountry = patientsForResidenceidcountry;
 		this.regions = regions;
+		this.patientsForBirthplaceidcountry = patientsForBirthplaceidcountry;
 	}
 
 	@Id
@@ -153,6 +160,24 @@ public class Country implements java.io.Serializable {
 		this.active = active;
 	}
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "countryByDomicileidcountry")
+	public Set<Patient> getPatientsForDomicileidcountry() {
+		return this.patientsForDomicileidcountry;
+	}
+
+	public void setPatientsForDomicileidcountry(Set<Patient> patientsForDomicileidcountry) {
+		this.patientsForDomicileidcountry = patientsForDomicileidcountry;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "countryByResidenceidcountry")
+	public Set<Patient> getPatientsForResidenceidcountry() {
+		return this.patientsForResidenceidcountry;
+	}
+
+	public void setPatientsForResidenceidcountry(Set<Patient> patientsForResidenceidcountry) {
+		this.patientsForResidenceidcountry = patientsForResidenceidcountry;
+	}
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "country")
 	public Set<Region> getRegions() {
 		return this.regions;
@@ -160,6 +185,15 @@ public class Country implements java.io.Serializable {
 
 	public void setRegions(Set<Region> regions) {
 		this.regions = regions;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "countryByBirthplaceidcountry")
+	public Set<Patient> getPatientsForBirthplaceidcountry() {
+		return this.patientsForBirthplaceidcountry;
+	}
+
+	public void setPatientsForBirthplaceidcountry(Set<Patient> patientsForBirthplaceidcountry) {
+		this.patientsForBirthplaceidcountry = patientsForBirthplaceidcountry;
 	}
 
 }

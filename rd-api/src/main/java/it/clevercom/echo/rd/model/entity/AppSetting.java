@@ -1,10 +1,13 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
+// Generated 28-feb-2017 10.00.08 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -17,38 +20,41 @@ import javax.persistence.TemporalType;
 public class AppSetting implements java.io.Serializable {
 
 	private long idsetting;
+	private User user;
 	private String key;
 	private String value;
-	private String username;
 	private Date created;
 	private Date updated;
 	private String userupdate;
 	private boolean active;
+	private String group;
 
 	public AppSetting() {
 	}
 
-	public AppSetting(long idsetting, String key, String value, String username, Date created, Date updated,
-			boolean active) {
+	public AppSetting(long idsetting, User user, String key, String value, Date created, Date updated, boolean active,
+			String group) {
 		this.idsetting = idsetting;
+		this.user = user;
 		this.key = key;
 		this.value = value;
-		this.username = username;
 		this.created = created;
 		this.updated = updated;
 		this.active = active;
+		this.group = group;
 	}
 
-	public AppSetting(long idsetting, String key, String value, String username, Date created, Date updated,
-			String userupdate, boolean active) {
+	public AppSetting(long idsetting, User user, String key, String value, Date created, Date updated,
+			String userupdate, boolean active, String group) {
 		this.idsetting = idsetting;
+		this.user = user;
 		this.key = key;
 		this.value = value;
-		this.username = username;
 		this.created = created;
 		this.updated = updated;
 		this.userupdate = userupdate;
 		this.active = active;
+		this.group = group;
 	}
 
 	@Id
@@ -60,6 +66,16 @@ public class AppSetting implements java.io.Serializable {
 
 	public void setIdsetting(long idsetting) {
 		this.idsetting = idsetting;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "iduser", nullable = false)
+	public User getUser() {
+		return this.user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	@Column(name = "key", nullable = false)
@@ -78,15 +94,6 @@ public class AppSetting implements java.io.Serializable {
 
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	@Column(name = "username", nullable = false, length = 100)
-	public String getUsername() {
-		return this.username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
 	}
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -125,6 +132,15 @@ public class AppSetting implements java.io.Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	@Column(name = "group", nullable = false)
+	public String getGroup() {
+		return this.group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
 	}
 
 }

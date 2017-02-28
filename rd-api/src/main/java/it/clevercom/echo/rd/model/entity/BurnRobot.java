@@ -1,10 +1,13 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
+// Generated 28-feb-2017 10.00.08 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -17,8 +20,8 @@ import javax.persistence.TemporalType;
 public class BurnRobot implements java.io.Serializable {
 
 	private long idburnrobot;
+	private OrganizationUnit organizationUnit;
 	private String name;
-	private Long idorganizationunit;
 	private String hostname;
 	private String ipaddress;
 	private String uri;
@@ -26,7 +29,6 @@ public class BurnRobot implements java.io.Serializable {
 	private Date updated;
 	private String userupdate;
 	private boolean active;
-	private String column1;
 
 	public BurnRobot() {
 	}
@@ -40,11 +42,11 @@ public class BurnRobot implements java.io.Serializable {
 		this.active = active;
 	}
 
-	public BurnRobot(long idburnrobot, String name, Long idorganizationunit, String hostname, String ipaddress,
-			String uri, Date created, Date updated, String userupdate, boolean active, String column1) {
+	public BurnRobot(long idburnrobot, OrganizationUnit organizationUnit, String name, String hostname,
+			String ipaddress, String uri, Date created, Date updated, String userupdate, boolean active) {
 		this.idburnrobot = idburnrobot;
+		this.organizationUnit = organizationUnit;
 		this.name = name;
-		this.idorganizationunit = idorganizationunit;
 		this.hostname = hostname;
 		this.ipaddress = ipaddress;
 		this.uri = uri;
@@ -52,7 +54,6 @@ public class BurnRobot implements java.io.Serializable {
 		this.updated = updated;
 		this.userupdate = userupdate;
 		this.active = active;
-		this.column1 = column1;
 	}
 
 	@Id
@@ -66,6 +67,16 @@ public class BurnRobot implements java.io.Serializable {
 		this.idburnrobot = idburnrobot;
 	}
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "idorganizationunit")
+	public OrganizationUnit getOrganizationUnit() {
+		return this.organizationUnit;
+	}
+
+	public void setOrganizationUnit(OrganizationUnit organizationUnit) {
+		this.organizationUnit = organizationUnit;
+	}
+
 	@Column(name = "name", nullable = false)
 	public String getName() {
 		return this.name;
@@ -73,15 +84,6 @@ public class BurnRobot implements java.io.Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	@Column(name = "idorganizationunit")
-	public Long getIdorganizationunit() {
-		return this.idorganizationunit;
-	}
-
-	public void setIdorganizationunit(Long idorganizationunit) {
-		this.idorganizationunit = idorganizationunit;
 	}
 
 	@Column(name = "hostname")
@@ -147,15 +149,6 @@ public class BurnRobot implements java.io.Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	@Column(name = "column1", length = 100)
-	public String getColumn1() {
-		return this.column1;
-	}
-
-	public void setColumn1(String column1) {
-		this.column1 = column1;
 	}
 
 }

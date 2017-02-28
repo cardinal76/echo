@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
+// Generated 28-feb-2017 10.00.08 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -37,6 +37,7 @@ public class WorkTask implements java.io.Serializable {
 	private Date updated;
 	private String userupdate;
 	private boolean active;
+	private Date created;
 	private Set<WorkReport> workReports = new HashSet<WorkReport>(0);
 	private Set<WorkTaskLog> workTaskLogs = new HashSet<WorkTaskLog>(0);
 
@@ -45,7 +46,7 @@ public class WorkTask implements java.io.Serializable {
 
 	public WorkTask(long idworktask, Modality modality, Service service, User user, WorkPriority workPriority,
 			WorkSession workSession, WorkStatus workStatus, long accessionnumber, Date scheduleddate, String studyuuid,
-			Date updated, String userupdate, boolean active) {
+			Date updated, String userupdate, boolean active, Date created) {
 		this.idworktask = idworktask;
 		this.modality = modality;
 		this.service = service;
@@ -59,12 +60,13 @@ public class WorkTask implements java.io.Serializable {
 		this.updated = updated;
 		this.userupdate = userupdate;
 		this.active = active;
+		this.created = created;
 	}
 
 	public WorkTask(long idworktask, Modality modality, Service service, User user, WorkPriority workPriority,
 			WorkSession workSession, WorkStatus workStatus, long accessionnumber, Date scheduleddate,
 			Date executiondate, String studyuuid, String studyid, Date updated, String userupdate, boolean active,
-			Set<WorkReport> workReports, Set<WorkTaskLog> workTaskLogs) {
+			Date created, Set<WorkReport> workReports, Set<WorkTaskLog> workTaskLogs) {
 		this.idworktask = idworktask;
 		this.modality = modality;
 		this.service = service;
@@ -80,6 +82,7 @@ public class WorkTask implements java.io.Serializable {
 		this.updated = updated;
 		this.userupdate = userupdate;
 		this.active = active;
+		this.created = created;
 		this.workReports = workReports;
 		this.workTaskLogs = workTaskLogs;
 	}
@@ -228,6 +231,16 @@ public class WorkTask implements java.io.Serializable {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "created", nullable = false, length = 29)
+	public Date getCreated() {
+		return this.created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "workTask")

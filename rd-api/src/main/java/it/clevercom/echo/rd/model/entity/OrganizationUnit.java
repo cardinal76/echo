@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
+// Generated 28-feb-2017 10.00.08 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -23,6 +23,7 @@ import javax.persistence.TemporalType;
 public class OrganizationUnit implements java.io.Serializable {
 
 	private long idorganizationunit;
+	private Municipality municipality;
 	private OrganizationUnit organizationUnit;
 	private String name;
 	private String description;
@@ -36,8 +37,12 @@ public class OrganizationUnit implements java.io.Serializable {
 	private Date updated;
 	private String userupdate;
 	private boolean active;
+	private String code;
 	private Set<Order> ordersForOriginorganizationunitid = new HashSet<Order>(0);
+	private Set<Patient> patientsForIdintorganizationunit = new HashSet<Patient>(0);
+	private Set<BurnRobot> burnRobots = new HashSet<BurnRobot>(0);
 	private Set<Order> ordersForTargetorganizationunitid = new HashSet<Order>(0);
+	private Set<Patient> patientsForIdextorganizationunit = new HashSet<Patient>(0);
 	private Set<Modality> modalities = new HashSet<Modality>(0);
 	private Set<OrganizationUnit> organizationUnits = new HashSet<OrganizationUnit>(0);
 
@@ -52,12 +57,15 @@ public class OrganizationUnit implements java.io.Serializable {
 		this.active = active;
 	}
 
-	public OrganizationUnit(long idorganizationunit, OrganizationUnit organizationUnit, String name, String description,
-			String address, String telephone, String email, String fax, String website, String type, Date created,
-			Date updated, String userupdate, boolean active, Set<Order> ordersForOriginorganizationunitid,
-			Set<Order> ordersForTargetorganizationunitid, Set<Modality> modalities,
+	public OrganizationUnit(long idorganizationunit, Municipality municipality, OrganizationUnit organizationUnit,
+			String name, String description, String address, String telephone, String email, String fax, String website,
+			String type, Date created, Date updated, String userupdate, boolean active, String code,
+			Set<Order> ordersForOriginorganizationunitid, Set<Patient> patientsForIdintorganizationunit,
+			Set<BurnRobot> burnRobots, Set<Order> ordersForTargetorganizationunitid,
+			Set<Patient> patientsForIdextorganizationunit, Set<Modality> modalities,
 			Set<OrganizationUnit> organizationUnits) {
 		this.idorganizationunit = idorganizationunit;
+		this.municipality = municipality;
 		this.organizationUnit = organizationUnit;
 		this.name = name;
 		this.description = description;
@@ -71,8 +79,12 @@ public class OrganizationUnit implements java.io.Serializable {
 		this.updated = updated;
 		this.userupdate = userupdate;
 		this.active = active;
+		this.code = code;
 		this.ordersForOriginorganizationunitid = ordersForOriginorganizationunitid;
+		this.patientsForIdintorganizationunit = patientsForIdintorganizationunit;
+		this.burnRobots = burnRobots;
 		this.ordersForTargetorganizationunitid = ordersForTargetorganizationunitid;
+		this.patientsForIdextorganizationunit = patientsForIdextorganizationunit;
 		this.modalities = modalities;
 		this.organizationUnits = organizationUnits;
 	}
@@ -86,6 +98,16 @@ public class OrganizationUnit implements java.io.Serializable {
 
 	public void setIdorganizationunit(long idorganizationunit) {
 		this.idorganizationunit = idorganizationunit;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "idmunicipality")
+	public Municipality getMunicipality() {
+		return this.municipality;
+	}
+
+	public void setMunicipality(Municipality municipality) {
+		this.municipality = municipality;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -208,6 +230,15 @@ public class OrganizationUnit implements java.io.Serializable {
 		this.active = active;
 	}
 
+	@Column(name = "code", length = 10)
+	public String getCode() {
+		return this.code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "organizationUnitByOriginorganizationunitid")
 	public Set<Order> getOrdersForOriginorganizationunitid() {
 		return this.ordersForOriginorganizationunitid;
@@ -217,6 +248,24 @@ public class OrganizationUnit implements java.io.Serializable {
 		this.ordersForOriginorganizationunitid = ordersForOriginorganizationunitid;
 	}
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "organizationUnitByIdintorganizationunit")
+	public Set<Patient> getPatientsForIdintorganizationunit() {
+		return this.patientsForIdintorganizationunit;
+	}
+
+	public void setPatientsForIdintorganizationunit(Set<Patient> patientsForIdintorganizationunit) {
+		this.patientsForIdintorganizationunit = patientsForIdintorganizationunit;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "organizationUnit")
+	public Set<BurnRobot> getBurnRobots() {
+		return this.burnRobots;
+	}
+
+	public void setBurnRobots(Set<BurnRobot> burnRobots) {
+		this.burnRobots = burnRobots;
+	}
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "organizationUnitByTargetorganizationunitid")
 	public Set<Order> getOrdersForTargetorganizationunitid() {
 		return this.ordersForTargetorganizationunitid;
@@ -224,6 +273,15 @@ public class OrganizationUnit implements java.io.Serializable {
 
 	public void setOrdersForTargetorganizationunitid(Set<Order> ordersForTargetorganizationunitid) {
 		this.ordersForTargetorganizationunitid = ordersForTargetorganizationunitid;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "organizationUnitByIdextorganizationunit")
+	public Set<Patient> getPatientsForIdextorganizationunit() {
+		return this.patientsForIdextorganizationunit;
+	}
+
+	public void setPatientsForIdextorganizationunit(Set<Patient> patientsForIdextorganizationunit) {
+		this.patientsForIdextorganizationunit = patientsForIdextorganizationunit;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "organizationUnit")

@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 21-feb-2017 16.05.29 by Hibernate Tools 5.2.0.CR1
+// Generated 28-feb-2017 10.00.08 by Hibernate Tools 5.2.0.CR1
 
 import java.util.Date;
 import java.util.HashSet;
@@ -28,37 +28,42 @@ public class Municipality implements java.io.Serializable {
 	private String municipalitystdcode;
 	private Date created;
 	private Date updated;
-	private String updateuser;
+	private String userupdate;
 	private boolean active;
 	private String postalcode;
-	private Set<Patient> patients = new HashSet<Patient>(0);
-	private Set<User> users = new HashSet<User>(0);
+	private Set<Patient> patientsForDomicileidmunicipality = new HashSet<Patient>(0);
+	private Set<Patient> patientsForResidenceidmunicipality = new HashSet<Patient>(0);
+	private Set<Patient> patientsForBirthplaceidmunicipality = new HashSet<Patient>(0);
+	private Set<OrganizationUnit> organizationUnits = new HashSet<OrganizationUnit>(0);
 
 	public Municipality() {
 	}
 
-	public Municipality(long idmunicipality, Date created, Date updated, String updateuser, boolean active) {
+	public Municipality(long idmunicipality, Date created, Date updated, String userupdate, boolean active) {
 		this.idmunicipality = idmunicipality;
 		this.created = created;
 		this.updated = updated;
-		this.updateuser = updateuser;
+		this.userupdate = userupdate;
 		this.active = active;
 	}
 
 	public Municipality(long idmunicipality, Province province, String municipalityname, String municipalitystdcode,
-			Date created, Date updated, String updateuser, boolean active, String postalcode, Set<Patient> patients,
-			Set<User> users) {
+			Date created, Date updated, String userupdate, boolean active, String postalcode,
+			Set<Patient> patientsForDomicileidmunicipality, Set<Patient> patientsForResidenceidmunicipality,
+			Set<Patient> patientsForBirthplaceidmunicipality, Set<OrganizationUnit> organizationUnits) {
 		this.idmunicipality = idmunicipality;
 		this.province = province;
 		this.municipalityname = municipalityname;
 		this.municipalitystdcode = municipalitystdcode;
 		this.created = created;
 		this.updated = updated;
-		this.updateuser = updateuser;
+		this.userupdate = userupdate;
 		this.active = active;
 		this.postalcode = postalcode;
-		this.patients = patients;
-		this.users = users;
+		this.patientsForDomicileidmunicipality = patientsForDomicileidmunicipality;
+		this.patientsForResidenceidmunicipality = patientsForResidenceidmunicipality;
+		this.patientsForBirthplaceidmunicipality = patientsForBirthplaceidmunicipality;
+		this.organizationUnits = organizationUnits;
 	}
 
 	@Id
@@ -120,13 +125,13 @@ public class Municipality implements java.io.Serializable {
 		this.updated = updated;
 	}
 
-	@Column(name = "updateuser", nullable = false, length = 100)
-	public String getUpdateuser() {
-		return this.updateuser;
+	@Column(name = "userupdate", nullable = false, length = 100)
+	public String getUserupdate() {
+		return this.userupdate;
 	}
 
-	public void setUpdateuser(String updateuser) {
-		this.updateuser = updateuser;
+	public void setUserupdate(String userupdate) {
+		this.userupdate = userupdate;
 	}
 
 	@Column(name = "active", nullable = false)
@@ -147,22 +152,40 @@ public class Municipality implements java.io.Serializable {
 		this.postalcode = postalcode;
 	}
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "municipalityByDomicileidmunicipality")
+	public Set<Patient> getPatientsForDomicileidmunicipality() {
+		return this.patientsForDomicileidmunicipality;
+	}
+
+	public void setPatientsForDomicileidmunicipality(Set<Patient> patientsForDomicileidmunicipality) {
+		this.patientsForDomicileidmunicipality = patientsForDomicileidmunicipality;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "municipalityByResidenceidmunicipality")
+	public Set<Patient> getPatientsForResidenceidmunicipality() {
+		return this.patientsForResidenceidmunicipality;
+	}
+
+	public void setPatientsForResidenceidmunicipality(Set<Patient> patientsForResidenceidmunicipality) {
+		this.patientsForResidenceidmunicipality = patientsForResidenceidmunicipality;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "municipalityByBirthplaceidmunicipality")
+	public Set<Patient> getPatientsForBirthplaceidmunicipality() {
+		return this.patientsForBirthplaceidmunicipality;
+	}
+
+	public void setPatientsForBirthplaceidmunicipality(Set<Patient> patientsForBirthplaceidmunicipality) {
+		this.patientsForBirthplaceidmunicipality = patientsForBirthplaceidmunicipality;
+	}
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "municipality")
-	public Set<Patient> getPatients() {
-		return this.patients;
+	public Set<OrganizationUnit> getOrganizationUnits() {
+		return this.organizationUnits;
 	}
 
-	public void setPatients(Set<Patient> patients) {
-		this.patients = patients;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "municipality")
-	public Set<User> getUsers() {
-		return this.users;
-	}
-
-	public void setUsers(Set<User> users) {
-		this.users = users;
+	public void setOrganizationUnits(Set<OrganizationUnit> organizationUnits) {
+		this.organizationUnits = organizationUnits;
 	}
 
 }
