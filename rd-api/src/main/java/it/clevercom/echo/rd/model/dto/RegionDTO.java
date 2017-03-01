@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"created","updated","userupdate","active"})
 public class RegionDTO implements java.io.Serializable {
+	private static final long serialVersionUID = 1509740953792223624L;
 
 	private long idregion;
 	private CountryDTO country;

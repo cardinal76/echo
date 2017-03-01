@@ -69,7 +69,7 @@ public class AppSetting implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "iduser", nullable = false)
+	@JoinColumn(name = "iduser")
 	public User getUser() {
 		return this.user;
 	}
@@ -134,7 +134,7 @@ public class AppSetting implements java.io.Serializable {
 		this.active = active;
 	}
 
-	@Column(name = "group", nullable = false)
+	@Column(name = "group")
 	public String getGroup() {
 		return this.group;
 	}

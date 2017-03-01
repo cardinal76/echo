@@ -1,11 +1,14 @@
 package it.clevercom.echo.rd.model.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"created","updated","userupdate","active"})
-public class PagedDTO <T> {
+public class PagedDTO <T> implements Serializable {
+	private static final long serialVersionUID = -5563571312744781257L;
+
 	private List<T> elements;
 	private int pageSize;
 	private int currentPage;
