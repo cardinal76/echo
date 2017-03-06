@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ServiceDTO implements java.io.Serializable {
 	private static final long serialVersionUID = -1545199145120818140L;
 	
-	private long idservice;
+	private Long idservice;
 	private String description;
 	private Long prepcode;
 	private Long duration;
@@ -28,7 +28,7 @@ public class ServiceDTO implements java.io.Serializable {
 		super();
 	}
 
-	public ServiceDTO(long idservice, Date created, Date updated, String userupdate, boolean active) {
+	public ServiceDTO(Long idservice, Date created, Date updated, String userupdate, boolean active) {
 		this.idservice = idservice;
 		this.created = created;
 		this.updated = updated;
@@ -46,7 +46,7 @@ public class ServiceDTO implements java.io.Serializable {
 	/**
 	 * @param idservice the idservice to set
 	 */
-	public void setIdservice(long idservice) {
+	public void setIdservice(Long idservice) {
 		this.idservice = idservice;
 	}
 

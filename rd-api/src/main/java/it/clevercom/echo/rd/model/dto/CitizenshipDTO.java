@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class CitizenshipDTO implements java.io.Serializable {
 	private static final long serialVersionUID = 2823533961722407809L;
 
-	private long idcitizenship;
+	private Long idcitizenship;
 	private String description;
 	
 	// transient attributes
@@ -20,8 +20,7 @@ public class CitizenshipDTO implements java.io.Serializable {
 	public CitizenshipDTO() {
 	}
 
-	public CitizenshipDTO(long idcitizenship, String description, Date created, Date updated, String userupdate,
-			boolean active) {
+	public CitizenshipDTO(Long idcitizenship, String description, Date created, Date updated, String userupdate, boolean active) {
 		this.idcitizenship = idcitizenship;
 		this.description = description;
 		this.created = created;
@@ -33,14 +32,14 @@ public class CitizenshipDTO implements java.io.Serializable {
 	/**
 	 * @return the idcitizenship
 	 */
-	public long getIdcitizenship() {
+	public Long getIdcitizenship() {
 		return idcitizenship;
 	}
 
 	/**
 	 * @param idcitizenship the idcitizenship to set
 	 */
-	public void setIdcitizenship(long idcitizenship) {
+	public void setIdcitizenship(Long idcitizenship) {
 		this.idcitizenship = idcitizenship;
 	}
 

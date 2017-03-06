@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class RegionDTO implements java.io.Serializable {
 	private static final long serialVersionUID = 1509740953792223624L;
 
-	private long idregion;
+	private Long idregion;
 	private CountryDTO country;
 	private String regionname;
 	private String regionstdcode;
@@ -21,7 +21,7 @@ public class RegionDTO implements java.io.Serializable {
 	public RegionDTO() {
 	}
 
-	public RegionDTO(long idregion, Date created, Date updated, String userupdate, boolean active) {
+	public RegionDTO(Long idregion, Date created, Date updated, String userupdate, boolean active) {
 		this.idregion = idregion;
 		this.created = created;
 		this.updated = updated;
@@ -32,14 +32,14 @@ public class RegionDTO implements java.io.Serializable {
 	/**
 	 * @return the idregion
 	 */
-	public long getIdregion() {
+	public Long getIdregion() {
 		return idregion;
 	}
 
 	/**
 	 * @param idregion the idregion to set
 	 */
-	public void setIdregion(long idregion) {
+	public void setIdregion(Long idregion) {
 		this.idregion = idregion;
 	}
 

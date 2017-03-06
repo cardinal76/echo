@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ModalityTypeDTO implements java.io.Serializable {
 	private static final long serialVersionUID = 3406464325790754778L;
 
-	private long idmodalitytype;
+	private Long idmodalitytype;
 	private String type;
 	
 	// transient attributes
@@ -20,8 +20,7 @@ public class ModalityTypeDTO implements java.io.Serializable {
 	public ModalityTypeDTO() {
 	}
 
-	public ModalityTypeDTO(long idmodalitytype, String type, Date created, Date updated, String userupdate,
-			boolean active) {
+	public ModalityTypeDTO(Long idmodalitytype, String type, Date created, Date updated, String userupdate,	boolean active) {
 		this.idmodalitytype = idmodalitytype;
 		this.type = type;
 		this.created = created;
@@ -33,14 +32,14 @@ public class ModalityTypeDTO implements java.io.Serializable {
 	/**
 	 * @return the idmodalitytype
 	 */
-	public long getIdmodalitytype() {
+	public Long getIdmodalitytype() {
 		return idmodalitytype;
 	}
 
 	/**
 	 * @param idmodalitytype the idmodalitytype to set
 	 */
-	public void setIdmodalitytype(long idmodalitytype) {
+	public void setIdmodalitytype(Long idmodalitytype) {
 		this.idmodalitytype = idmodalitytype;
 	}
 

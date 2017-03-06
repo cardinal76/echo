@@ -20,8 +20,7 @@ public class MaritalstatusDTO implements java.io.Serializable {
 	public MaritalstatusDTO() {
 	}
 
-	public MaritalstatusDTO(String code, String description, Date created, Date updated, String userupdate,
-			boolean active) {
+	public MaritalstatusDTO(String code, String description, Date created, Date updated, String userupdate,	boolean active) {
 		this.code = code;
 		this.description = description;
 		this.created = created;

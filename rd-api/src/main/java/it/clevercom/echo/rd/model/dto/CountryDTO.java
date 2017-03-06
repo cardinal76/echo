@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class CountryDTO implements java.io.Serializable {
 	private static final long serialVersionUID = 41850689146052393L;
 	
-	private long idcountry;
+	private Long idcountry;
 	private String countryname;
 	private String countrynicename;
 	private String countryiso2;
@@ -24,7 +24,7 @@ public class CountryDTO implements java.io.Serializable {
 	public CountryDTO() {
 	}
 
-	public CountryDTO(long idcountry, Date created, Date updated, String userupdate, boolean active) {
+	public CountryDTO(Long idcountry, Date created, Date updated, String userupdate, boolean active) {
 		this.idcountry = idcountry;
 		this.created = created;
 		this.updated = updated;
@@ -35,14 +35,14 @@ public class CountryDTO implements java.io.Serializable {
 	/**
 	 * @return the idcountry
 	 */
-	public long getIdcountry() {
+	public Long getIdcountry() {
 		return idcountry;
 	}
 
 	/**
 	 * @param idcountry the idcountry to set
 	 */
-	public void setIdcountry(long idcountry) {
+	public void setIdcountry(Long idcountry) {
 		this.idcountry = idcountry;
 	}
 

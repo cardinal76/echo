@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class BodyApparatusDTO implements java.io.Serializable {
 	private static final long serialVersionUID = -9001955080302115293L;
 	
-	private char code;
+	private Character code;
 	private String description;
 
 	// transient attributes
@@ -20,7 +20,7 @@ public class BodyApparatusDTO implements java.io.Serializable {
 	public BodyApparatusDTO() {
 	}
 
-	public BodyApparatusDTO(char code, String description, Date created, Date updated, String userupdate, boolean active) {
+	public BodyApparatusDTO(Character code, String description, Date created, Date updated, String userupdate, boolean active) {
 		this.code = code;
 		this.description = description;
 		this.created = created;
@@ -32,14 +32,14 @@ public class BodyApparatusDTO implements java.io.Serializable {
 	/**
 	 * @return the code
 	 */
-	public char getCode() {
+	public Character getCode() {
 		return code;
 	}
 
 	/**
 	 * @param code the code to set
 	 */
-	public void setCode(char code) {
+	public void setCode(Character code) {
 		this.code = code;
 	}
 

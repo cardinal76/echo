@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class PatientDTO implements Serializable {
 	private static final long serialVersionUID = 8178223709710995097L;
 	
-	private long idpatient;
+	private Long idpatient;
 	private CitizenshipDTO citizenship;
 	private CountryDTO docimicileCountry;
 	private CountryDTO residenceCountry;
@@ -36,13 +36,13 @@ public class PatientDTO implements Serializable {
 	private String userupdate;
 	private boolean active;
 	private String email;
-	private Set<PatientCodingActorDTO> patientCodingActors = new HashSet<PatientCodingActorDTO>(0);
+	//private Set<PatientCodingActorDTO> patientCodingActors = new HashSet<PatientCodingActorDTO>(0);
 
 	public PatientDTO() {
 		super();
 	}
 
-	public PatientDTO(long idpatient, Date created, Date updated, String userupdate, boolean active) {
+	public PatientDTO(Long idpatient, Date created, Date updated, String userupdate, boolean active) {
 		this.idpatient = idpatient;
 		this.created = created;
 		this.updated = updated;
@@ -53,14 +53,14 @@ public class PatientDTO implements Serializable {
 	/**
 	 * @return the idpatient
 	 */
-	public long getIdpatient() {
+	public Long getIdpatient() {
 		return idpatient;
 	}
 
 	/**
 	 * @param idpatient the idpatient to set
 	 */
-	public void setIdpatient(long idpatient) {
+	public void setIdpatient(Long idpatient) {
 		this.idpatient = idpatient;
 	}
 
@@ -398,20 +398,6 @@ public class PatientDTO implements Serializable {
 	 */
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	/**
-	 * @return the patientCodingActors
-	 */
-	public Set<PatientCodingActorDTO> getPatientCodingActors() {
-		return patientCodingActors;
-	}
-
-	/**
-	 * @param patientCodingActors the patientCodingActors to set
-	 */
-	public void setPatientCodingActors(Set<PatientCodingActorDTO> patientCodingActors) {
-		this.patientCodingActors = patientCodingActors;
 	}
 
 	/**

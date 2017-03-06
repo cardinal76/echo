@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class OrganizationUnitDTO implements java.io.Serializable {
 	private static final long serialVersionUID = -8750546516765816251L;
 
-	private long idorganizationunit;
+	private Long idorganizationunit;
 	private MunicipalityDTO municipality;
 	private OrganizationUnitDTO organizationUnit;
 	private String name;
@@ -32,7 +32,7 @@ public class OrganizationUnitDTO implements java.io.Serializable {
 	public OrganizationUnitDTO() {
 	}
 
-	public OrganizationUnitDTO(long idorganizationunit, Date created, Date updated, String userupdate, boolean active) {
+	public OrganizationUnitDTO(Long idorganizationunit, Date created, Date updated, String userupdate, boolean active) {
 		this.idorganizationunit = idorganizationunit;
 		this.created = created;
 		this.updated = updated;
@@ -43,14 +43,14 @@ public class OrganizationUnitDTO implements java.io.Serializable {
 	/**
 	 * @return the idorganizationunit
 	 */
-	public long getIdorganizationunit() {
+	public Long getIdorganizationunit() {
 		return idorganizationunit;
 	}
 
 	/**
 	 * @param idorganizationunit the idorganizationunit to set
 	 */
-	public void setIdorganizationunit(long idorganizationunit) {
+	public void setIdorganizationunit(Long idorganizationunit) {
 		this.idorganizationunit = idorganizationunit;
 	}
 

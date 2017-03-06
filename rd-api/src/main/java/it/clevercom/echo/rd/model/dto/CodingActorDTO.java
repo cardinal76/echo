@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class CodingActorDTO implements java.io.Serializable {
 	private static final long serialVersionUID = 2747455271900243910L;
 
-	private long idcodingactor;
+	private Long idcodingactor;
 	private String name;
 	private Date created;
 	private String updated;
@@ -18,7 +18,7 @@ public class CodingActorDTO implements java.io.Serializable {
 	public CodingActorDTO() {
 	}
 
-	public CodingActorDTO(long idcodingactor, String name, Date created, String updated, String userupdate,
+	public CodingActorDTO(Long idcodingactor, String name, Date created, String updated, String userupdate,
 			boolean active) {
 		this.idcodingactor = idcodingactor;
 		this.name = name;
@@ -31,14 +31,14 @@ public class CodingActorDTO implements java.io.Serializable {
 	/**
 	 * @return the idcodingactor
 	 */
-	public long getIdcodingactor() {
+	public Long getIdcodingactor() {
 		return idcodingactor;
 	}
 
 	/**
 	 * @param idcodingactor the idcodingactor to set
 	 */
-	public void setIdcodingactor(long idcodingactor) {
+	public void setIdcodingactor(Long idcodingactor) {
 		this.idcodingactor = idcodingactor;
 	}
 

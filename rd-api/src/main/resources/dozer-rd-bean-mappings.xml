@@ -23,35 +23,35 @@
 		<class-a>it.clevercom.echo.rd.model.entity.Patient</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.PatientDTO</class-b>
 		<field>
-			<a>countryByDomicileidcountry</a>
+			<a>country2</a>
 			<b>docimicileCountry</b>
 		</field>
 		<field>
-			<a>countryByResidenceidcountry</a>
+			<a>country3</a>
 			<b>residenceCountry</b>
 		</field>
 		<field>
-			<a>countryByBirthplaceidcountry</a>
+			<a>country1</a>
 			<b>birthplaceCountry</b>
 		</field>
 		<field>
-			<a>municipalityByDomicileidmunicipality</a>
+			<a>municipality2</a>
 			<b>domicileMunicipality</b>
 		</field>
 		<field>
-			<a>municipalityByResidenceidmunicipality</a>
+			<a>municipality3</a>
 			<b>residenceMunicipality</b>
 		</field>
 		<field>
-			<a>municipalityByBirthplaceidmunicipality</a>
+			<a>municipality1</a>
 			<b>birthplaceMunicipality</b>
 		</field>
 		<field>
-			<a>organizationUnitByIdintorganizationunit</a>
+			<a>organizationUnit2</a>
 			<b>internalOrgUnit</b>
 		</field>
 		<field>
-			<a>organizationUnitByIdextorganizationunit</a>
+			<a>organizationUnit1</a>
 			<b>externalOrgUnit</b>
 		</field>
 	</mapping>
@@ -74,16 +74,6 @@
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.OrganizationUnit</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.OrganizationUnitDTO</class-b>
-	</mapping>
-	
-	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.PatientCodingActor</class-a>
-		<class-b>it.clevercom.echo.rd.model.dto.PatientCodingActorDTO</class-b>
-	</mapping>
-	
-	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.PatientCodingActorId</class-a>
-		<class-b>it.clevercom.echo.rd.model.dto.PatientCodingActorIdDTO</class-b>
 	</mapping>
 	
 	<mapping>

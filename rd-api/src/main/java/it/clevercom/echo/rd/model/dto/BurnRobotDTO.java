@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class BurnRobotDTO implements Serializable {
 	private static final long serialVersionUID = 3123910630712760988L;
 
-	private long idburnrobot;
+	private Long idburnrobot;
 	private OrganizationUnitDTO organizationUnit;
 	private String name;
 	private String hostname;
@@ -26,14 +26,14 @@ public class BurnRobotDTO implements Serializable {
 	/**
 	 * @return the idburnrobot
 	 */
-	public long getIdburnrobot() {
+	public Long getIdburnrobot() {
 		return idburnrobot;
 	}
 
 	/**
 	 * @param idburnrobot the idburnrobot to set
 	 */
-	public void setIdburnrobot(long idburnrobot) {
+	public void setIdburnrobot(Long idburnrobot) {
 		this.idburnrobot = idburnrobot;
 	}
 

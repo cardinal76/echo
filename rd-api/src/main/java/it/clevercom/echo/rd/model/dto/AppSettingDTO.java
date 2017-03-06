@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class AppSettingDTO implements Serializable {
 	private static final long serialVersionUID = -300944911879884382L;
 	
-	private long idsetting;
+	private Long idsetting;
 	private String key;
 	private String value;
 	private Date created;
@@ -47,14 +47,14 @@ public class AppSettingDTO implements Serializable {
 	/**
 	 * @return the idsetting
 	 */
-	public long getIdsetting() {
+	public Long getIdsetting() {
 		return idsetting;
 	}
 
 	/**
 	 * @param idsetting the idsetting to set
 	 */
-	public void setIdsetting(long idsetting) {
+	public void setIdsetting(Long idsetting) {
 		this.idsetting = idsetting;
 	}
 

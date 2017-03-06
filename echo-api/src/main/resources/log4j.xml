@@ -12,6 +12,14 @@
 	<!-- <logger name="it.clevercom.echo"> -->
 	<!-- <level value="debug" /> -->
 	<!-- </logger> -->
+	
+	<logger name="log4j.logger.org.hibernate.SQL">
+		<level value="debug"></level>
+	</logger>
+	
+	<logger name="log4j.logger.org.hibernate.type">
+		<level value="trace"></level>
+	</logger>
 
 	<root>
 		<priority value="info" />

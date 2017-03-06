@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class MunicipalityDTO implements java.io.Serializable {
 	private static final long serialVersionUID = -1870547415190618881L;
 
-	private long idmunicipality;
+	private Long idmunicipality;
 	private ProvinceDTO province;
 	private String municipalityname;
 	private String municipalitystdcode;
@@ -23,7 +23,7 @@ public class MunicipalityDTO implements java.io.Serializable {
 	public MunicipalityDTO() {
 	}
 
-	public MunicipalityDTO(long idmunicipality, Date created, Date updated, String userupdate, boolean active) {
+	public MunicipalityDTO(Long idmunicipality, Date created, Date updated, String userupdate, boolean active) {
 		this.idmunicipality = idmunicipality;
 		this.created = created;
 		this.updated = updated;
@@ -34,14 +34,14 @@ public class MunicipalityDTO implements java.io.Serializable {
 	/**
 	 * @return the idmunicipality
 	 */
-	public long getIdmunicipality() {
+	public Long getIdmunicipality() {
 		return idmunicipality;
 	}
 
 	/**
 	 * @param idmunicipality the idmunicipality to set
 	 */
-	public void setIdmunicipality(long idmunicipality) {
+	public void setIdmunicipality(Long idmunicipality) {
 		this.idmunicipality = idmunicipality;
 	}
 
