@@ -23,35 +23,35 @@
 		<class-a>it.clevercom.echo.rd.model.entity.Patient</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.PatientDTO</class-b>
 		<field>
-			<a>country2</a>
+			<a>rdCountry2</a>
 			<b>docimicileCountry</b>
 		</field>
 		<field>
-			<a>country3</a>
+			<a>rdCountry3</a>
 			<b>residenceCountry</b>
 		</field>
 		<field>
-			<a>country1</a>
+			<a>rdCountry1</a>
 			<b>birthplaceCountry</b>
 		</field>
 		<field>
-			<a>municipality2</a>
+			<a>rdMunicipality2</a>
 			<b>domicileMunicipality</b>
 		</field>
 		<field>
-			<a>municipality3</a>
+			<a>rdMunicipality3</a>
 			<b>residenceMunicipality</b>
 		</field>
 		<field>
-			<a>municipality1</a>
+			<a>rdMunicipality1</a>
 			<b>birthplaceMunicipality</b>
 		</field>
 		<field>
-			<a>organizationUnit2</a>
+			<a>rdOrganizationUnit2</a>
 			<b>internalOrgUnit</b>
 		</field>
 		<field>
-			<a>organizationUnit1</a>
+			<a>rdOrganizationUnit1</a>
 			<b>externalOrgUnit</b>
 		</field>
 	</mapping>
