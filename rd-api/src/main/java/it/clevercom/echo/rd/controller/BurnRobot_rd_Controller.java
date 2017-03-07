@@ -1,6 +1,7 @@
 package it.clevercom.echo.rd.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,8 +31,11 @@ import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
+import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
+import it.clevercom.echo.rd.model.dto.AppSettingDTO;
 import it.clevercom.echo.rd.model.dto.BurnRobotDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
+import it.clevercom.echo.rd.model.entity.AppSetting;
 import it.clevercom.echo.rd.model.entity.BurnRobot;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
@@ -141,5 +146,32 @@ public class BurnRobot_rd_Controller {
 		dto.setTotalPages(totalPages);
 		dto.setTotalElements(totalElements);
 		return dto;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(method = RequestMethod.POST)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	public @ResponseBody CreateResponseDTO add(@RequestBody BurnRobotDTO burnrobot) throws Exception {
+		if (burnrobot == null) throw new BadRequestException("Impossible to store a null ");
+		BurnRobot entity = dozerMapper.map(burnrobot, BurnRobot.class);
+		
+		BurnRobot saved = repo.saveAndFlush(entity);
+		
+		// create standard response
+		CreateResponseDTO response = new CreateResponseDTO();
+		HashMap<String,String> ids = new HashMap<String,String>();
+		ids.put("idsetting", String.valueOf(saved.getIdburnrobot()));
+		response.setIds(ids);
+		response.setEntityName(BurnRobot_rd_Controller.entity);
+		response.setMessage(null);
+		response.setNewValue(null);
+		response.setStatusCode("0");
+		
+		// return standard response
+		return response;
 	}
 }
