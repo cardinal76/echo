@@ -1,13 +1,13 @@
 package it.clevercom.echo.rd.model.dto;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userupdate","active"})
+@JsonIgnoreProperties({"created","updated","userupdate","active","extendedObject"})
 public class PatientDTO implements Serializable {
 	private static final long serialVersionUID = 8178223709710995097L;
 	
@@ -36,6 +36,8 @@ public class PatientDTO implements Serializable {
 	private String userupdate;
 	private boolean active;
 	private String email;
+	private String prettyPrint;
+	
 	//private Set<PatientCodingActorDTO> patientCodingActors = new HashSet<PatientCodingActorDTO>(0);
 
 	public PatientDTO() {
@@ -405,5 +407,28 @@ public class PatientDTO implements Serializable {
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	/**
+	 * @return the prettyPrint
+	 */
+	public String getPrettyPrint() {
+		return prettyPrint;
+	}
+
+	/**
+	 * @param prettyPrint the prettyPrint to set
+	 */
+	public void setPrettyPrint(String prettyPrint) {
+		this.prettyPrint = prettyPrint;
+	}
+	
+	/**
+	 * @return
+	 */
+	public PatientDTO buildExtendedObject() {
+		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+		this.setPrettyPrint(this.getName() + " " + this.getSurname() + " (" + df.format(this.getDateofbirth()) + ")");
+		return this;
 	}
 }

@@ -1,5 +1,7 @@
 package it.clevercom.echo.rd.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -73,7 +75,7 @@ public class Patient_rd_Controller {
 	public @ResponseBody PatientDTO get(@PathVariable Long id) throws Exception {
 		Patient entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(Patient_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, PatientDTO.class);
+		return dozerMapper.map(entity, PatientDTO.class).buildExtendedObject();
 	}
 	
 	/**
@@ -130,14 +132,14 @@ public class Patient_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(Patient_rd_Controller.entity, page);
 		
 		// map list
-		List<PatientDTO> patientDTO = new ArrayList<PatientDTO>();
+		List<PatientDTO> patientDTOList = new ArrayList<PatientDTO>();
 		for (Patient s: entity) {
-			patientDTO.add(dozerMapper.map(s, PatientDTO.class));
+			patientDTOList.add(dozerMapper.map(s, PatientDTO.class).buildExtendedObject());
 		}
 		
 		// assembly dto
 		PagedDTO<PatientDTO> dto = new PagedDTO<PatientDTO>();
-		dto.setElements(patientDTO);
+		dto.setElements(patientDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);
