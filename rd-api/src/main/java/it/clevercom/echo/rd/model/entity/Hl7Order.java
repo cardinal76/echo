@@ -1,13 +1,10 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 7-mar-2017 22.12.30 by Hibernate Tools 5.2.2.Final
+// Generated 8-mar-2017 10.59.59 by Hibernate Tools 5.2.2.Final
 
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.SEQUENCE;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -28,8 +25,11 @@ public class Hl7Order  implements java.io.Serializable {
     public Hl7Order() {
     }
 
+    public Hl7Order(Long idhl7order) {
+       this.idhl7order = idhl7order;
+    }
    
-     @SequenceGenerator(name="it.clevercom.echo.rd.model.entity.Hl7OrderIdGenerator")@Id @GeneratedValue(strategy=SEQUENCE, generator="it.clevercom.echo.rd.model.entity.Hl7OrderIdGenerator")
+     @Id 
 
     
     @Column(name="idhl7order", unique=true, nullable=false)

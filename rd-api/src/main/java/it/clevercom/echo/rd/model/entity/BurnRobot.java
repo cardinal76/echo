@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 7-mar-2017 22.12.30 by Hibernate Tools 5.2.2.Final
+// Generated 8-mar-2017 10.59.59 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -63,7 +63,7 @@ public class BurnRobot  implements java.io.Serializable {
        this.active = active;
     }
    
-     @GenericGenerator(name="generator", strategy="org.hibernate.id.enhanced.SequenceStyleGenerator", parameters={@Parameter(name="optimizer", value="none"), @Parameter(name="sequence_name", value="rd_burn_robot_idburnrobot_seq"), @Parameter(name="increment_size", value="1")})@Id @GeneratedValue(generator="generator")
+     @GenericGenerator(name="generator", strategy="org.hibernate.id.enhanced.SequenceStyleGenerator", parameters={@Parameter(name="optimizer", value="none"), @Parameter(name="sequence_name", value="burn_robot_idburnrobot_seq"), @Parameter(name="increment_size", value="1")})@Id @GeneratedValue(generator="generator")
 
     
     @Column(name="idburnrobot", unique=true, nullable=false)
