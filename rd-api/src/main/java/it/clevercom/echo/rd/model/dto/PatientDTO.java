@@ -7,7 +7,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userupdate","active","extendedObject"})
+@JsonIgnoreProperties({"created","updated","userupdate","active"})
 public class PatientDTO implements Serializable {
 	private static final long serialVersionUID = 8178223709710995097L;
 	
