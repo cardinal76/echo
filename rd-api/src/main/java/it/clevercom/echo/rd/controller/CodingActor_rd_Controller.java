@@ -128,14 +128,14 @@ public class CodingActor_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(CodingActor_rd_Controller.entity, page);
 		
 		// map list
-		List<CodingActorDTO> codingActorDTO = new ArrayList<CodingActorDTO>();
+		List<CodingActorDTO> codingActorDTOList = new ArrayList<CodingActorDTO>();
 		for (CodingActor s: entity) {
-			codingActorDTO.add(dozerMapper.map(s, CodingActorDTO.class));
+			codingActorDTOList.add(dozerMapper.map(s, CodingActorDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<CodingActorDTO> dto = new PagedDTO<CodingActorDTO>();
-		dto.setElements(codingActorDTO);
+		dto.setElements(codingActorDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);

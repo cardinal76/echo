@@ -128,14 +128,14 @@ public class Province_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(Province_rd_Controller.entity, page);
 		
 		// map list
-		List<ProvinceDTO> provinceDTO = new ArrayList<ProvinceDTO>();
+		List<ProvinceDTO> provinceDTOList = new ArrayList<ProvinceDTO>();
 		for (Province s: entity) {
-			provinceDTO.add(dozerMapper.map(s, ProvinceDTO.class));
+			provinceDTOList.add(dozerMapper.map(s, ProvinceDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<ProvinceDTO> dto = new PagedDTO<ProvinceDTO>();
-		dto.setElements(provinceDTO);
+		dto.setElements(provinceDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);

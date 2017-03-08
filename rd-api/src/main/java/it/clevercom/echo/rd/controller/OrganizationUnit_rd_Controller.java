@@ -131,14 +131,14 @@ public class OrganizationUnit_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(OrganizationUnit_rd_Controller.entity, page);
 		
 		// map list
-		List<OrganizationUnitDTO> modalityTypeDTO = new ArrayList<OrganizationUnitDTO>();
+		List<OrganizationUnitDTO> modalityTypeDTOList = new ArrayList<OrganizationUnitDTO>();
 		for (OrganizationUnit s : entity) {
-			modalityTypeDTO.add(dozerMapper.map(s, OrganizationUnitDTO.class));
+			modalityTypeDTOList.add(dozerMapper.map(s, OrganizationUnitDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<OrganizationUnitDTO> dto = new PagedDTO<OrganizationUnitDTO>();
-		dto.setElements(modalityTypeDTO);
+		dto.setElements(modalityTypeDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);

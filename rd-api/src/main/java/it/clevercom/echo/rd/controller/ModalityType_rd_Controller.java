@@ -129,14 +129,14 @@ public class ModalityType_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(ModalityType_rd_Controller.entity, page);
 		
 		// map list
-		List<ModalityTypeDTO> modalityTypeDTO = new ArrayList<ModalityTypeDTO>();
+		List<ModalityTypeDTO> modalityTypeDTOList = new ArrayList<ModalityTypeDTO>();
 		for (ModalityType s: entity) {
-			modalityTypeDTO.add(dozerMapper.map(s, ModalityTypeDTO.class));
+			modalityTypeDTOList.add(dozerMapper.map(s, ModalityTypeDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<ModalityTypeDTO> dto = new PagedDTO<ModalityTypeDTO>();
-		dto.setElements(modalityTypeDTO);
+		dto.setElements(modalityTypeDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);

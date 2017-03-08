@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 10.59.59 by Hibernate Tools 5.2.2.Final
+// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -38,7 +38,7 @@ public class WorkSession  implements java.io.Serializable {
      private Date created;
      private Date updated;
      private String userupdate;
-     private boolean active;
+     private Boolean active;
      private Set<WorkReport> workReports = new HashSet<WorkReport>(0);
      private Set<WorkTask> workTasks = new HashSet<WorkTask>(0);
      private Set<Order> orders = new HashSet<Order>(0);
@@ -47,7 +47,7 @@ public class WorkSession  implements java.io.Serializable {
     }
 
 	
-    public WorkSession(Patient patient, WorkStatus workStatus, Date created, Date updated, String userupdate, boolean active) {
+    public WorkSession(Patient patient, WorkStatus workStatus, Date created, Date updated, String userupdate, Boolean active) {
         this.patient = patient;
         this.workStatus = workStatus;
         this.created = created;
@@ -55,7 +55,7 @@ public class WorkSession  implements java.io.Serializable {
         this.userupdate = userupdate;
         this.active = active;
     }
-    public WorkSession(Patient patient, WorkStatus workStatus, Date created, Date updated, String userupdate, boolean active, Set<WorkReport> workReports, Set<WorkTask> workTasks, Set<Order> orders) {
+    public WorkSession(Patient patient, WorkStatus workStatus, Date created, Date updated, String userupdate, Boolean active, Set<WorkReport> workReports, Set<WorkTask> workTasks, Set<Order> orders) {
        this.patient = patient;
        this.workStatus = workStatus;
        this.created = created;
@@ -131,11 +131,11 @@ public class WorkSession  implements java.io.Serializable {
 
     
     @Column(name="active", nullable=false)
-    public boolean isActive() {
+    public Boolean getActive() {
         return this.active;
     }
     
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 10.59.59 by Hibernate Tools 5.2.2.Final
+// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -46,7 +46,7 @@ public class WorkTask  implements java.io.Serializable {
      private String studyid;
      private Date updated;
      private String userupdate;
-     private boolean active;
+     private Boolean active;
      private Date created;
      private Set<WorkReport> workReports = new HashSet<WorkReport>(0);
      private Set<WorkTaskLog> workTaskLogs = new HashSet<WorkTaskLog>(0);
@@ -55,7 +55,7 @@ public class WorkTask  implements java.io.Serializable {
     }
 
 	
-    public WorkTask(Modality modality, Service service, User user, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, Long accessionnumber, Date scheduleddate, String studyuuid, Date updated, String userupdate, boolean active, Date created) {
+    public WorkTask(Modality modality, Service service, User user, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, Long accessionnumber, Date scheduleddate, String studyuuid, Date updated, String userupdate, Boolean active, Date created) {
         this.modality = modality;
         this.service = service;
         this.user = user;
@@ -70,7 +70,7 @@ public class WorkTask  implements java.io.Serializable {
         this.active = active;
         this.created = created;
     }
-    public WorkTask(Modality modality, Service service, User user, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, Long accessionnumber, Date scheduleddate, Date executiondate, String studyuuid, String studyid, Date updated, String userupdate, boolean active, Date created, Set<WorkReport> workReports, Set<WorkTaskLog> workTaskLogs) {
+    public WorkTask(Modality modality, Service service, User user, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, Long accessionnumber, Date scheduleddate, Date executiondate, String studyuuid, String studyid, Date updated, String userupdate, Boolean active, Date created, Set<WorkReport> workReports, Set<WorkTaskLog> workTaskLogs) {
        this.modality = modality;
        this.service = service;
        this.user = user;
@@ -234,11 +234,11 @@ public class WorkTask  implements java.io.Serializable {
 
     
     @Column(name="active", nullable=false)
-    public boolean isActive() {
+    public Boolean getActive() {
         return this.active;
     }
     
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

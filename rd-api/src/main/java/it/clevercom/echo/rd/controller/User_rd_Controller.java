@@ -129,14 +129,14 @@ public class User_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(User_rd_Controller.entity, page);
 		
 		// map list
-		List<UserDTO> userDTO = new ArrayList<UserDTO>();
+		List<UserDTO> userDTOList = new ArrayList<UserDTO>();
 		for (User s: entity) {
-			userDTO.add(dozerMapper.map(s, UserDTO.class));
+			userDTOList.add(dozerMapper.map(s, UserDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<UserDTO> dto = new PagedDTO<UserDTO>();
-		dto.setElements(userDTO);
+		dto.setElements(userDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);

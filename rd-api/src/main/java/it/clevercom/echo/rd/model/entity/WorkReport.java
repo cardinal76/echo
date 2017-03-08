@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 10.59.59 by Hibernate Tools 5.2.2.Final
+// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -43,7 +43,7 @@ public class WorkReport  implements java.io.Serializable {
      private Date created;
      private Date updated;
      private String userupdate;
-     private boolean active;
+     private Boolean active;
      private Set<WorkReportLog> workReportLogs = new HashSet<WorkReportLog>(0);
      private Set<WorkReportUser> workReportUsers = new HashSet<WorkReportUser>(0);
 
@@ -51,7 +51,7 @@ public class WorkReport  implements java.io.Serializable {
     }
 
 	
-    public WorkReport(WorkSession workSession, WorkStatus workStatus, WorkTask workTask, Date creationdate, String body, Date created, Date updated, String userupdate, boolean active) {
+    public WorkReport(WorkSession workSession, WorkStatus workStatus, WorkTask workTask, Date creationdate, String body, Date created, Date updated, String userupdate, Boolean active) {
         this.workSession = workSession;
         this.workStatus = workStatus;
         this.workTask = workTask;
@@ -62,7 +62,7 @@ public class WorkReport  implements java.io.Serializable {
         this.userupdate = userupdate;
         this.active = active;
     }
-    public WorkReport(WorkSession workSession, WorkStatus workStatus, WorkTask workTask, Long accessionnumber, Date creationdate, Date completiondate, String body, Date created, Date updated, String userupdate, boolean active, Set<WorkReportLog> workReportLogs, Set<WorkReportUser> workReportUsers) {
+    public WorkReport(WorkSession workSession, WorkStatus workStatus, WorkTask workTask, Long accessionnumber, Date creationdate, Date completiondate, String body, Date created, Date updated, String userupdate, Boolean active, Set<WorkReportLog> workReportLogs, Set<WorkReportUser> workReportUsers) {
        this.workSession = workSession;
        this.workStatus = workStatus;
        this.workTask = workTask;
@@ -192,11 +192,11 @@ public class WorkReport  implements java.io.Serializable {
 
     
     @Column(name="active", nullable=false)
-    public boolean isActive() {
+    public Boolean getActive() {
         return this.active;
     }
     
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

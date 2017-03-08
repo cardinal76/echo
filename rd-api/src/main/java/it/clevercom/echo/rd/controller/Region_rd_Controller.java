@@ -127,14 +127,14 @@ public class Region_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(Region_rd_Controller.entity, page);
 		
 		// map list
-		List<RegionDTO> regionDTO = new ArrayList<RegionDTO>();
+		List<RegionDTO> regionDTOList = new ArrayList<RegionDTO>();
 		for (Region s: entity) {
-			regionDTO.add(dozerMapper.map(s, RegionDTO.class));
+			regionDTOList.add(dozerMapper.map(s, RegionDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<RegionDTO> dto = new PagedDTO<RegionDTO>();
-		dto.setElements(regionDTO);
+		dto.setElements(regionDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);

@@ -127,14 +127,14 @@ public class Municipality_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(Municipality_rd_Controller.entity, page);
 		
 		// map list
-		List<MunicipalityDTO> municipalityDTO = new ArrayList<MunicipalityDTO>();
+		List<MunicipalityDTO> municipalityDTOList = new ArrayList<MunicipalityDTO>();
 		for (Municipality s: entity) {
-			municipalityDTO.add(dozerMapper.map(s, MunicipalityDTO.class));
+			municipalityDTOList.add(dozerMapper.map(s, MunicipalityDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<MunicipalityDTO> dto = new PagedDTO<MunicipalityDTO>();
-		dto.setElements(municipalityDTO);
+		dto.setElements(municipalityDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);

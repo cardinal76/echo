@@ -128,14 +128,14 @@ public class Country_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(Country_rd_Controller.entity, page);
 		
 		// map list
-		List<CountryDTO> countryDTO = new ArrayList<CountryDTO>();
+		List<CountryDTO> countryDTOList = new ArrayList<CountryDTO>();
 		for (Country s: entity) {
-			countryDTO.add(dozerMapper.map(s, CountryDTO.class));
+			countryDTOList.add(dozerMapper.map(s, CountryDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<CountryDTO> dto = new PagedDTO<CountryDTO>();
-		dto.setElements(countryDTO);
+		dto.setElements(countryDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);

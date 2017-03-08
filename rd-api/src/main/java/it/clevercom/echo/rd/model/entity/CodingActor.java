@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 10.59.59 by Hibernate Tools 5.2.2.Final
+// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -35,7 +35,7 @@ public class CodingActor  implements java.io.Serializable {
      private Date created;
      private String updated;
      private String userupdate;
-     private boolean active;
+     private Boolean active;
      private Set<ServiceCodingActor> serviceCodingActors = new HashSet<ServiceCodingActor>(0);
      private Set<PatientCodingActor> patientCodingActors = new HashSet<PatientCodingActor>(0);
 
@@ -43,14 +43,14 @@ public class CodingActor  implements java.io.Serializable {
     }
 
 	
-    public CodingActor(String name, Date created, String updated, String userupdate, boolean active) {
+    public CodingActor(String name, Date created, String updated, String userupdate, Boolean active) {
         this.name = name;
         this.created = created;
         this.updated = updated;
         this.userupdate = userupdate;
         this.active = active;
     }
-    public CodingActor(String name, Date created, String updated, String userupdate, boolean active, Set<ServiceCodingActor> serviceCodingActors, Set<PatientCodingActor> patientCodingActors) {
+    public CodingActor(String name, Date created, String updated, String userupdate, Boolean active, Set<ServiceCodingActor> serviceCodingActors, Set<PatientCodingActor> patientCodingActors) {
        this.name = name;
        this.created = created;
        this.updated = updated;
@@ -114,11 +114,11 @@ public class CodingActor  implements java.io.Serializable {
 
     
     @Column(name="active", nullable=false)
-    public boolean isActive() {
+    public Boolean getActive() {
         return this.active;
     }
     
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

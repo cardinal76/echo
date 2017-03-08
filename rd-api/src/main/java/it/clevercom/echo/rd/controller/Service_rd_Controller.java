@@ -130,14 +130,14 @@ public class Service_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(Service_rd_Controller.entity, page);
 		
 		// map list
-		List<ServiceDTO> serviceDTO = new ArrayList<ServiceDTO>();
+		List<ServiceDTO> serviceDTOList = new ArrayList<ServiceDTO>();
 		for (Service s: entity) {
-			serviceDTO.add(dozerMapper.map(s, ServiceDTO.class));
+			serviceDTOList.add(dozerMapper.map(s, ServiceDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<ServiceDTO> dto = new PagedDTO<ServiceDTO>();
-		dto.setElements(serviceDTO);
+		dto.setElements(serviceDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);

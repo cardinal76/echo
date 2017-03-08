@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 10.59.59 by Hibernate Tools 5.2.2.Final
+// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -51,7 +51,7 @@ public class Order  implements java.io.Serializable {
      private Date created;
      private Date updated;
      private String userupdate;
-     private boolean active;
+     private Boolean active;
      private Set<OrderLog> orderLogs = new HashSet<OrderLog>(0);
      private Set<OrderService> orderServices = new HashSet<OrderService>(0);
 
@@ -59,7 +59,7 @@ public class Order  implements java.io.Serializable {
     }
 
 	
-    public Order(WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date created, Date updated, String userupdate, boolean active) {
+    public Order(WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date created, Date updated, String userupdate, Boolean active) {
         this.workPriority = workPriority;
         this.workSession = workSession;
         this.workStatus = workStatus;
@@ -70,7 +70,7 @@ public class Order  implements java.io.Serializable {
         this.userupdate = userupdate;
         this.active = active;
     }
-    public Order(OrganizationUnit organizationUnitByOriginorganizationunitid, OrganizationUnit organizationUnitByTargetorganizationunitid, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, String requestingphysician, String orderreason, String rejectreason, String clinicalhistory, String notes, Date created, Date updated, String userupdate, boolean active, Set<OrderLog> orderLogs, Set<OrderService> orderServices) {
+    public Order(OrganizationUnit organizationUnitByOriginorganizationunitid, OrganizationUnit organizationUnitByTargetorganizationunitid, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, String requestingphysician, String orderreason, String rejectreason, String clinicalhistory, String notes, Date created, Date updated, String userupdate, Boolean active, Set<OrderLog> orderLogs, Set<OrderService> orderServices) {
        this.organizationUnitByOriginorganizationunitid = organizationUnitByOriginorganizationunitid;
        this.organizationUnitByTargetorganizationunitid = organizationUnitByTargetorganizationunitid;
        this.workPriority = workPriority;
@@ -288,11 +288,11 @@ public class Order  implements java.io.Serializable {
 
     
     @Column(name="active", nullable=false)
-    public boolean isActive() {
+    public Boolean getActive() {
         return this.active;
     }
     
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

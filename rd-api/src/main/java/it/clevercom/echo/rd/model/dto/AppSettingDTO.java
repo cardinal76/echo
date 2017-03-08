@@ -15,7 +15,7 @@ public class AppSettingDTO implements Serializable {
 	private Date created;
 	private Date updated;
 	private String userupdate;
-	private boolean active;
+	private Boolean active;
 	private String group;
 
 	public AppSettingDTO() {
@@ -131,14 +131,14 @@ public class AppSettingDTO implements Serializable {
 	/**
 	 * @return the active
 	 */
-	public boolean isActive() {
+	public Boolean isActive() {
 		return active;
 	}
 
 	/**
 	 * @param active the active to set
 	 */
-	public void setActive(boolean active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 

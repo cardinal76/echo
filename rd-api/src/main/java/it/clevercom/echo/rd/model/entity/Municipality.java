@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 10.59.59 by Hibernate Tools 5.2.2.Final
+// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -39,7 +39,7 @@ public class Municipality  implements java.io.Serializable {
      private Date created;
      private Date updated;
      private String userupdate;
-     private boolean active;
+     private Boolean active;
      private String postalcode;
      private Set<Patient> patientsForDomicileidmunicipality = new HashSet<Patient>(0);
      private Set<Patient> patientsForResidenceidmunicipality = new HashSet<Patient>(0);
@@ -50,13 +50,13 @@ public class Municipality  implements java.io.Serializable {
     }
 
 	
-    public Municipality(Date created, Date updated, String userupdate, boolean active) {
+    public Municipality(Date created, Date updated, String userupdate, Boolean active) {
         this.created = created;
         this.updated = updated;
         this.userupdate = userupdate;
         this.active = active;
     }
-    public Municipality(Province province, String municipalityname, String municipalitystdcode, Date created, Date updated, String userupdate, boolean active, String postalcode, Set<Patient> patientsForDomicileidmunicipality, Set<Patient> patientsForResidenceidmunicipality, Set<Patient> patientsForBirthplaceidmunicipality, Set<OrganizationUnit> organizationUnits) {
+    public Municipality(Province province, String municipalityname, String municipalitystdcode, Date created, Date updated, String userupdate, Boolean active, String postalcode, Set<Patient> patientsForDomicileidmunicipality, Set<Patient> patientsForResidenceidmunicipality, Set<Patient> patientsForBirthplaceidmunicipality, Set<OrganizationUnit> organizationUnits) {
        this.province = province;
        this.municipalityname = municipalityname;
        this.municipalitystdcode = municipalitystdcode;
@@ -145,11 +145,11 @@ public class Municipality  implements java.io.Serializable {
 
     
     @Column(name="active", nullable=false)
-    public boolean isActive() {
+    public Boolean getActive() {
         return this.active;
     }
     
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

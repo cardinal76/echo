@@ -128,14 +128,14 @@ public class BodyApparatus_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(BodyApparatus_rd_Controller.entity, page);
 		
 		// map list
-		List<BodyApparatusDTO> bodyApparatusDTO = new ArrayList<BodyApparatusDTO>();
+		List<BodyApparatusDTO> bodyApparatusDTOList = new ArrayList<BodyApparatusDTO>();
 		for (BodyApparatus s: entity) {
-			bodyApparatusDTO.add(dozerMapper.map(s, BodyApparatusDTO.class));
+			bodyApparatusDTOList.add(dozerMapper.map(s, BodyApparatusDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<BodyApparatusDTO> dto = new PagedDTO<BodyApparatusDTO>();
-		dto.setElements(bodyApparatusDTO);
+		dto.setElements(bodyApparatusDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);

@@ -130,14 +130,14 @@ public class AppSetting_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(AppSetting_rd_Controller.entity, page);
 		
 		// map list
-		List<AppSettingDTO> appSettingDTO = new ArrayList<AppSettingDTO>();
+		List<AppSettingDTO> appSettingDTOList = new ArrayList<AppSettingDTO>();
 		for (AppSetting s: entity) {
-			appSettingDTO.add(dozerMapper.map(s, AppSettingDTO.class));
+			appSettingDTOList.add(dozerMapper.map(s, AppSettingDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<AppSettingDTO> dto = new PagedDTO<AppSettingDTO>();
-		dto.setElements(appSettingDTO);
+		dto.setElements(appSettingDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);

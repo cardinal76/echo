@@ -24,7 +24,7 @@ public class OrganizationUnitDTO implements java.io.Serializable {
 	private Date created;
 	private Date updated;
 	private String userupdate;
-	private boolean active;
+	private Boolean active;
 	private String code;
 
 	private Set<OrganizationUnitDTO> organizationUnits = new HashSet<OrganizationUnitDTO>(0);
@@ -241,14 +241,14 @@ public class OrganizationUnitDTO implements java.io.Serializable {
 	/**
 	 * @return the active
 	 */
-	public boolean isActive() {
+	public Boolean isActive() {
 		return active;
 	}
 
 	/**
 	 * @param active the active to set
 	 */
-	public void setActive(boolean active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 

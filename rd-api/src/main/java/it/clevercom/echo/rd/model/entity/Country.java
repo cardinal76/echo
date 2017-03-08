@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 10.59.59 by Hibernate Tools 5.2.2.Final
+// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -39,7 +39,7 @@ public class Country  implements java.io.Serializable {
      private Date created;
      private Date updated;
      private String userupdate;
-     private boolean active;
+     private Boolean active;
      private Set<Patient> patientsForDomicileidcountry = new HashSet<Patient>(0);
      private Set<Patient> patientsForResidenceidcountry = new HashSet<Patient>(0);
      private Set<Region> regions = new HashSet<Region>(0);
@@ -49,13 +49,13 @@ public class Country  implements java.io.Serializable {
     }
 
 	
-    public Country(Date created, Date updated, String userupdate, boolean active) {
+    public Country(Date created, Date updated, String userupdate, Boolean active) {
         this.created = created;
         this.updated = updated;
         this.userupdate = userupdate;
         this.active = active;
     }
-    public Country(String countryname, String countrynicename, String countryiso2, String countryiso3, Long countryisonumcode, Date created, Date updated, String userupdate, boolean active, Set<Patient> patientsForDomicileidcountry, Set<Patient> patientsForResidenceidcountry, Set<Region> regions, Set<Patient> patientsForBirthplaceidcountry) {
+    public Country(String countryname, String countrynicename, String countryiso2, String countryiso3, Long countryisonumcode, Date created, Date updated, String userupdate, Boolean active, Set<Patient> patientsForDomicileidcountry, Set<Patient> patientsForResidenceidcountry, Set<Region> regions, Set<Patient> patientsForBirthplaceidcountry) {
        this.countryname = countryname;
        this.countrynicename = countrynicename;
        this.countryiso2 = countryiso2;
@@ -165,11 +165,11 @@ public class Country  implements java.io.Serializable {
 
     
     @Column(name="active", nullable=false)
-    public boolean isActive() {
+    public Boolean getActive() {
         return this.active;
     }
     
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

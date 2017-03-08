@@ -133,14 +133,14 @@ public class BurnRobot_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(BurnRobot_rd_Controller.entity, page);
 		
 		// map list
-		List<BurnRobotDTO> burnRobotDTO = new ArrayList<BurnRobotDTO>();
+		List<BurnRobotDTO> burnRobotDTOList = new ArrayList<BurnRobotDTO>();
 		for (BurnRobot s: entity) {
-			burnRobotDTO.add(dozerMapper.map(s, BurnRobotDTO.class));
+			burnRobotDTOList.add(dozerMapper.map(s, BurnRobotDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<BurnRobotDTO> dto = new PagedDTO<BurnRobotDTO>();
-		dto.setElements(burnRobotDTO);
+		dto.setElements(burnRobotDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);
