@@ -3,6 +3,7 @@ package it.clevercom.echo.common.exception.handler;
 import java.text.MessageFormat;
 
 import org.apache.log4j.Logger;
+import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -72,6 +73,20 @@ public class ControllerExceptionHandler {
 		logger.warn(e.getMessage(), e);
 		ExceptionDTO dto = new ExceptionDTO();
 		dto.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.search.nopage"), e.getEntityName(), e.getPage()));
+		return dto;
+	}
+	
+	/**
+	 * Maps {@link MappingException} to a INTERNAL_SERVER_ERROR http status
+	 * @param e exception to handle 
+	 * @return exception dto message
+	 */
+	@ExceptionHandler(MappingException.class)
+	@ResponseStatus(value=HttpStatus.NOT_FOUND)
+	public @ResponseBody ExceptionDTO handleMappingException(MappingException e) {
+		logger.fatal(e.getMessage(), e);
+		ExceptionDTO dto = new ExceptionDTO();
+		dto.setMessage(env.getProperty("echo.api.crud.dozer.mapping"));
 		return dto;
 	}
 	

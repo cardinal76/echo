@@ -1,5 +1,6 @@
 package it.clevercom.echo.rd.controller;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
@@ -55,6 +58,8 @@ public class AppSetting_rd_Controller {
 	
 	@Autowired
     private DozerBeanMapper dozerMapper;
+	
+	ObjectMapper jacksonMapper = new ObjectMapper();
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -152,20 +157,20 @@ public class AppSetting_rd_Controller {
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
 	public @ResponseBody CreateResponseDTO add(@RequestBody AppSettingDTO appSetting) throws Exception {
-		if (appSetting == null) throw new BadRequestException("Impossible to store a null ");
+		// map and save
 		AppSetting entity = dozerMapper.map(appSetting, AppSetting.class);
-		
 		AppSetting saved = repo.saveAndFlush(entity);
-		
+
 		// create standard response
 		CreateResponseDTO response = new CreateResponseDTO();
 		HashMap<String,String> ids = new HashMap<String,String>();
 		ids.put("idsetting", String.valueOf(saved.getIdsetting()));
 		response.setIds(ids);
 		response.setEntityName(AppSetting_rd_Controller.entity);
-		response.setMessage(null);
-		response.setNewValue(null);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.appsetting.saved"), AppSetting_rd_Controller.entity));
+		response.setNewValue(jacksonMapper.writeValueAsString(dozerMapper.map(saved, AppSettingDTO.class)));
 		response.setStatusCode("0");
 		
 		// return standard response
@@ -179,7 +184,11 @@ public class AppSetting_rd_Controller {
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
-	public @ResponseBody UpdateResponseDTO update() {
+	@Loggable
+	public @ResponseBody UpdateResponseDTO update(AppSettingDTO appSetting) throws Exception {
+		// map and save
+		AppSetting entity = dozerMapper.map(appSetting, AppSetting.class);
+		
 		return new UpdateResponseDTO();
 	}
 	
@@ -190,6 +199,7 @@ public class AppSetting_rd_Controller {
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
 	public @ResponseBody String delete() {
 		return "patient";
 	}

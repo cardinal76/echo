@@ -20,10 +20,30 @@
 			<artifactId>log4j</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
 		<!-- spring-mobile-device -->
 		<dependency>
 			<groupId>org.springframework.mobile</groupId>
 			<artifactId>spring-mobile-device</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- dozer mapping fw -->
+		<dependency>
+			<groupId>net.sf.dozer</groupId>
+			<artifactId>dozer</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.sf.dozer</groupId>
+			<artifactId>dozer-spring</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
 			<scope>provided</scope>
 		</dependency>
 

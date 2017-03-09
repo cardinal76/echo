@@ -151,6 +151,7 @@ public class User_rd_Controller {
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
 	public @ResponseBody CreateResponseDTO add(@RequestBody UserDTO user) throws Exception {
 		if (user == null) throw new BadRequestException("Impossible to store a null");
 		User entity = dozerMapper.map(user, User.class);
