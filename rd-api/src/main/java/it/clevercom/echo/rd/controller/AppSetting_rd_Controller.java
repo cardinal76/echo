@@ -166,7 +166,7 @@ public class AppSetting_rd_Controller {
 		// create standard response
 		CreateResponseDTO response = new CreateResponseDTO();
 		HashMap<String,String> ids = new HashMap<String,String>();
-		ids.put("idsetting", String.valueOf(saved.getIdsetting()));
+		ids.put("idsetting", String.valueOf(saved.getIdappsetting()));
 		response.setIds(ids);
 		response.setEntityName(AppSetting_rd_Controller.entity);
 		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.appsetting.saved"), AppSetting_rd_Controller.entity));

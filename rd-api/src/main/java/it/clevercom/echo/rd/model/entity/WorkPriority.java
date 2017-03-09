@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
+// Generated 9-mar-2017 19.10.26 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -27,6 +27,7 @@ import javax.persistence.TemporalType;
 public class WorkPriority  implements java.io.Serializable {
 
 
+     private Long idworkpriority;
      private String code;
      private String description;
      private Date created;
@@ -40,14 +41,16 @@ public class WorkPriority  implements java.io.Serializable {
     }
 
 	
-    public WorkPriority(String code, Date created, Date updated, String userupdate, Boolean active) {
+    public WorkPriority(Long idworkpriority, String code, Date created, Date updated, String userupdate, Boolean active) {
+        this.idworkpriority = idworkpriority;
         this.code = code;
         this.created = created;
         this.updated = updated;
         this.userupdate = userupdate;
         this.active = active;
     }
-    public WorkPriority(String code, String description, Date created, Date updated, String userupdate, Boolean active, Set<Order> orders, Set<WorkTask> workTasks) {
+    public WorkPriority(Long idworkpriority, String code, String description, Date created, Date updated, String userupdate, Boolean active, Set<Order> orders, Set<WorkTask> workTasks) {
+       this.idworkpriority = idworkpriority;
        this.code = code;
        this.description = description;
        this.created = created;
@@ -61,7 +64,17 @@ public class WorkPriority  implements java.io.Serializable {
      @Id 
 
     
-    @Column(name="code", unique=true, nullable=false, length=100)
+    @Column(name="idworkpriority", unique=true, nullable=false)
+    public Long getIdworkpriority() {
+        return this.idworkpriority;
+    }
+    
+    public void setIdworkpriority(Long idworkpriority) {
+        this.idworkpriority = idworkpriority;
+    }
+
+    
+    @Column(name="code", nullable=false, length=100)
     public String getCode() {
         return this.code;
     }

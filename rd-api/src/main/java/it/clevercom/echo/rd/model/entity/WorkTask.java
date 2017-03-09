@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
+// Generated 9-mar-2017 19.10.26 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -133,7 +133,7 @@ public class WorkTask  implements java.io.Serializable {
     }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="prioritycode", nullable=false)
+    @JoinColumn(name="idworkpriority", nullable=false)
     public WorkPriority getWorkPriority() {
         return this.workPriority;
     }
@@ -153,7 +153,7 @@ public class WorkTask  implements java.io.Serializable {
     }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="statuscode", nullable=false)
+    @JoinColumn(name="idworkstatus", nullable=false)
     public WorkStatus getWorkStatus() {
         return this.workStatus;
     }

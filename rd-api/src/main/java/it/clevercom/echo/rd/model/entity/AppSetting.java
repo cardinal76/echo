@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
+// Generated 9-mar-2017 19.10.26 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -65,11 +65,11 @@ public class AppSetting  implements java.io.Serializable {
 
     
     @Column(name="idappsetting", unique=true, nullable=false)
-    public Long getIdsetting() {
+    public Long getIdappsetting() {
         return this.idappsetting;
     }
     
-    public void setIdsetting(Long idappsetting) {
+    public void setIdappsetting(Long idappsetting) {
         this.idappsetting = idappsetting;
     }
 
@@ -152,6 +152,10 @@ public class AppSetting  implements java.io.Serializable {
     public void setFeature(String feature) {
         this.feature = feature;
     }
+
+
+
+
 }
 
 

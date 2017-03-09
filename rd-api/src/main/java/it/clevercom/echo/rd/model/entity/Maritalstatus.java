@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
+// Generated 9-mar-2017 19.10.26 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -27,7 +27,8 @@ import javax.persistence.TemporalType;
 public class Maritalstatus  implements java.io.Serializable {
 
 
-     private String code;
+     private Long idmaritalstatus;
+     private String hl7code;
      private String description;
      private Date created;
      private Date updated;
@@ -39,16 +40,18 @@ public class Maritalstatus  implements java.io.Serializable {
     }
 
 	
-    public Maritalstatus(String code, String description, Date created, Date updated, String userupdate, Boolean active) {
-        this.code = code;
+    public Maritalstatus(Long idmaritalstatus, String hl7code, String description, Date created, Date updated, String userupdate, Boolean active) {
+        this.idmaritalstatus = idmaritalstatus;
+        this.hl7code = hl7code;
         this.description = description;
         this.created = created;
         this.updated = updated;
         this.userupdate = userupdate;
         this.active = active;
     }
-    public Maritalstatus(String code, String description, Date created, Date updated, String userupdate, Boolean active, Set<Patient> patients) {
-       this.code = code;
+    public Maritalstatus(Long idmaritalstatus, String hl7code, String description, Date created, Date updated, String userupdate, Boolean active, Set<Patient> patients) {
+       this.idmaritalstatus = idmaritalstatus;
+       this.hl7code = hl7code;
        this.description = description;
        this.created = created;
        this.updated = updated;
@@ -60,13 +63,23 @@ public class Maritalstatus  implements java.io.Serializable {
      @Id 
 
     
-    @Column(name="code", unique=true, nullable=false, length=5)
-    public String getCode() {
-        return this.code;
+    @Column(name="idmaritalstatus", unique=true, nullable=false)
+    public Long getIdmaritalstatus() {
+        return this.idmaritalstatus;
     }
     
-    public void setCode(String code) {
-        this.code = code;
+    public void setIdmaritalstatus(Long idmaritalstatus) {
+        this.idmaritalstatus = idmaritalstatus;
+    }
+
+    
+    @Column(name="hl7code", nullable=false, length=5)
+    public String getHl7code() {
+        return this.hl7code;
+    }
+    
+    public void setHl7code(String hl7code) {
+        this.hl7code = hl7code;
     }
 
     

@@ -1,14 +1,12 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
+// Generated 9-mar-2017 19.10.26 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -28,7 +26,7 @@ import javax.persistence.TemporalType;
 public class ServiceCodingActor  implements java.io.Serializable {
 
 
-     private ServiceCodingActorId id;
+     private Long idservicecodingactor;
      private CodingActor codingActor;
      private Service service;
      private String externalcode;
@@ -40,8 +38,8 @@ public class ServiceCodingActor  implements java.io.Serializable {
     public ServiceCodingActor() {
     }
 
-    public ServiceCodingActor(ServiceCodingActorId id, CodingActor codingActor, Service service, String externalcode, Date created, Date updated, String userupdate, Boolean active) {
-       this.id = id;
+    public ServiceCodingActor(Long idservicecodingactor, CodingActor codingActor, Service service, String externalcode, Date created, Date updated, String userupdate, Boolean active) {
+       this.idservicecodingactor = idservicecodingactor;
        this.codingActor = codingActor;
        this.service = service;
        this.externalcode = externalcode;
@@ -51,22 +49,20 @@ public class ServiceCodingActor  implements java.io.Serializable {
        this.active = active;
     }
    
-     @EmbeddedId
+     @Id 
 
     
-    @AttributeOverrides( {
-        @AttributeOverride(name="idservice", column=@Column(name="idservice", nullable=false) ), 
-        @AttributeOverride(name="idcodingactor", column=@Column(name="idcodingactor", nullable=false) ) } )
-    public ServiceCodingActorId getId() {
-        return this.id;
+    @Column(name="idservicecodingactor", unique=true, nullable=false)
+    public Long getIdservicecodingactor() {
+        return this.idservicecodingactor;
     }
     
-    public void setId(ServiceCodingActorId id) {
-        this.id = id;
+    public void setIdservicecodingactor(Long idservicecodingactor) {
+        this.idservicecodingactor = idservicecodingactor;
     }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="idcodingactor", nullable=false, insertable=false, updatable=false)
+    @JoinColumn(name="idcodingactor", nullable=false)
     public CodingActor getCodingActor() {
         return this.codingActor;
     }
@@ -76,7 +72,7 @@ public class ServiceCodingActor  implements java.io.Serializable {
     }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="idservice", nullable=false, insertable=false, updatable=false)
+    @JoinColumn(name="idservice", nullable=false)
     public Service getService() {
         return this.service;
     }

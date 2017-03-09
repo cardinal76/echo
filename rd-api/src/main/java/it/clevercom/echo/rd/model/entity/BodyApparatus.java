@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
+// Generated 9-mar-2017 19.10.26 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -27,6 +27,7 @@ import javax.persistence.TemporalType;
 public class BodyApparatus  implements java.io.Serializable {
 
 
+     private Long idbodyapparatus;
      private char code;
      private String description;
      private Date created;
@@ -39,7 +40,8 @@ public class BodyApparatus  implements java.io.Serializable {
     }
 
 	
-    public BodyApparatus(char code, String description, Date created, Date updated, String userupdate, Boolean active) {
+    public BodyApparatus(Long idbodyapparatus, char code, String description, Date created, Date updated, String userupdate, Boolean active) {
+        this.idbodyapparatus = idbodyapparatus;
         this.code = code;
         this.description = description;
         this.created = created;
@@ -47,7 +49,8 @@ public class BodyApparatus  implements java.io.Serializable {
         this.userupdate = userupdate;
         this.active = active;
     }
-    public BodyApparatus(char code, String description, Date created, Date updated, String userupdate, Boolean active, Set<Service> services) {
+    public BodyApparatus(Long idbodyapparatus, char code, String description, Date created, Date updated, String userupdate, Boolean active, Set<Service> services) {
+       this.idbodyapparatus = idbodyapparatus;
        this.code = code;
        this.description = description;
        this.created = created;
@@ -60,7 +63,17 @@ public class BodyApparatus  implements java.io.Serializable {
      @Id 
 
     
-    @Column(name="code", unique=true, nullable=false, length=1)
+    @Column(name="idbodyapparatus", unique=true, nullable=false)
+    public Long getIdbodyapparatus() {
+        return this.idbodyapparatus;
+    }
+    
+    public void setIdbodyapparatus(Long idbodyapparatus) {
+        this.idbodyapparatus = idbodyapparatus;
+    }
+
+    
+    @Column(name="code", nullable=false, length=1)
     public char getCode() {
         return this.code;
     }

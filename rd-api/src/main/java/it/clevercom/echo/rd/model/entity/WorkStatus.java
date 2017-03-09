@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 8-mar-2017 17.12.23 by Hibernate Tools 5.2.2.Final
+// Generated 9-mar-2017 19.10.26 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -27,45 +27,58 @@ import javax.persistence.TemporalType;
 public class WorkStatus  implements java.io.Serializable {
 
 
+     private Long idworkstatus;
      private String code;
      private String description;
      private Date created;
      private Date updated;
      private String userupdate;
      private Boolean active;
-     private Set<WorkReport> workReports = new HashSet<WorkReport>(0);
+     private Set<Order> orders = new HashSet<Order>(0);
      private Set<WorkTask> workTasks = new HashSet<WorkTask>(0);
      private Set<WorkSession> workSessions = new HashSet<WorkSession>(0);
-     private Set<Order> orders = new HashSet<Order>(0);
+     private Set<WorkReport> workReports = new HashSet<WorkReport>(0);
 
     public WorkStatus() {
     }
 
 	
-    public WorkStatus(String code, Date created, Date updated, String userupdate, Boolean active) {
+    public WorkStatus(Long idworkstatus, String code, Date created, Date updated, String userupdate, Boolean active) {
+        this.idworkstatus = idworkstatus;
         this.code = code;
         this.created = created;
         this.updated = updated;
         this.userupdate = userupdate;
         this.active = active;
     }
-    public WorkStatus(String code, String description, Date created, Date updated, String userupdate, Boolean active, Set<WorkReport> workReports, Set<WorkTask> workTasks, Set<WorkSession> workSessions, Set<Order> orders) {
+    public WorkStatus(Long idworkstatus, String code, String description, Date created, Date updated, String userupdate, Boolean active, Set<Order> orders, Set<WorkTask> workTasks, Set<WorkSession> workSessions, Set<WorkReport> workReports) {
+       this.idworkstatus = idworkstatus;
        this.code = code;
        this.description = description;
        this.created = created;
        this.updated = updated;
        this.userupdate = userupdate;
        this.active = active;
-       this.workReports = workReports;
+       this.orders = orders;
        this.workTasks = workTasks;
        this.workSessions = workSessions;
-       this.orders = orders;
+       this.workReports = workReports;
     }
    
      @Id 
 
     
-    @Column(name="code", unique=true, nullable=false, length=100)
+    @Column(name="idworkstatus", unique=true, nullable=false)
+    public Long getIdworkstatus() {
+        return this.idworkstatus;
+    }
+    
+    public void setIdworkstatus(Long idworkstatus) {
+        this.idworkstatus = idworkstatus;
+    }
+
+    
+    @Column(name="code", nullable=false, length=100)
     public String getCode() {
         return this.code;
     }
@@ -125,12 +138,12 @@ public class WorkStatus  implements java.io.Serializable {
     }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="workStatus")
-    public Set<WorkReport> getWorkReports() {
-        return this.workReports;
+    public Set<Order> getOrders() {
+        return this.orders;
     }
     
-    public void setWorkReports(Set<WorkReport> workReports) {
-        this.workReports = workReports;
+    public void setOrders(Set<Order> orders) {
+        this.orders = orders;
     }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="workStatus")
@@ -152,12 +165,12 @@ public class WorkStatus  implements java.io.Serializable {
     }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="workStatus")
-    public Set<Order> getOrders() {
-        return this.orders;
+    public Set<WorkReport> getWorkReports() {
+        return this.workReports;
     }
     
-    public void setOrders(Set<Order> orders) {
-        this.orders = orders;
+    public void setWorkReports(Set<WorkReport> workReports) {
+        this.workReports = workReports;
     }
 
 
