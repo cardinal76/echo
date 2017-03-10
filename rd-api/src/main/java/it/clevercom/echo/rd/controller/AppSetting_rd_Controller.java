@@ -42,6 +42,7 @@ import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.model.dto.AppSettingDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.AppSetting;
+import it.clevercom.echo.rd.model.entity.User;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
@@ -171,11 +172,13 @@ public class AppSetting_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody CreateResponseDTO<AppSettingDTO> add(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) throws Exception {
+		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
-
+		String username = this.tokenUtils.getUsernameFromToken(authToken);		
+		
 		// map and save
 		AppSetting entity = dozerMapper.map(appSetting, AppSetting.class);
+		entity.setUser(new User());
 		entity = repo.saveAndFlush(entity);
 		appSetting = dozerMapper.map(entity, AppSettingDTO.class);
 		
@@ -199,7 +202,7 @@ public class AppSetting_rd_Controller {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO update(AppSettingDTO appSetting) throws Exception {
+	public @ResponseBody UpdateResponseDTO update(AppSettingDTO appSetting, HttpServletRequest request) throws Exception {
 		// map and save
 		AppSetting entity = dozerMapper.map(appSetting, AppSetting.class);
 		
@@ -214,7 +217,7 @@ public class AppSetting_rd_Controller {
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody String delete() {
+	public @ResponseBody String delete(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) {
 		return "patient";
 	}
 }

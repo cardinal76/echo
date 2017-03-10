@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 9-mar-2017 19.10.26 by Hibernate Tools 5.2.2.Final
+// Generated 10-mar-2017 14.22.44 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -123,7 +123,7 @@ public class WorkTask  implements java.io.Serializable {
     }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="iduser", nullable=false)
+    @JoinColumn(name="username", nullable=false)
     public User getUser() {
         return this.user;
     }

@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 9-mar-2017 19.10.26 by Hibernate Tools 5.2.2.Final
+// Generated 10-mar-2017 14.22.44 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -42,7 +42,8 @@ public class PhraseBook  implements java.io.Serializable {
     }
 
 	
-    public PhraseBook(Date created, Date updated, String userupdate, Boolean active) {
+    public PhraseBook(User user, Date created, Date updated, String userupdate, Boolean active) {
+        this.user = user;
         this.created = created;
         this.updated = updated;
         this.userupdate = userupdate;
@@ -71,7 +72,7 @@ public class PhraseBook  implements java.io.Serializable {
     }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="iduser")
+    @JoinColumn(name="username", nullable=false)
     public User getUser() {
         return this.user;
     }

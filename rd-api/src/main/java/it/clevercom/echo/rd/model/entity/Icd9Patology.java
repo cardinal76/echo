@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 9-mar-2017 19.10.26 by Hibernate Tools 5.2.2.Final
+// Generated 10-mar-2017 14.22.44 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -73,7 +73,7 @@ public class Icd9Patology  implements java.io.Serializable {
     }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="codeicd9group")
+    @JoinColumn(name="idicd9patologygroup")
     public Icd9PatologyGroup getIcd9PatologyGroup() {
         return this.icd9PatologyGroup;
     }

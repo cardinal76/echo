@@ -7,7 +7,6 @@ import java.util.Date;
 public class UserDTO implements Serializable {
 	private static final long serialVersionUID = 5153480429424037770L;
 
-	private Long iduser;
 	private Boolean active;
 	private String alternativephonenumber;
 	private Date birthdate;
@@ -22,20 +21,6 @@ public class UserDTO implements Serializable {
 	private Date updated;
 	private String username;
 	private String userupdate;
-	
-	/**
-	 * @return the iduser
-	 */
-	public Long getIduser() {
-		return iduser;
-	}
-	
-	/**
-	 * @param iduser the iduser to set
-	 */
-	public void setIduser(Long iduser) {
-		this.iduser = iduser;
-	}
 	
 	/**
 	 * @return the active
