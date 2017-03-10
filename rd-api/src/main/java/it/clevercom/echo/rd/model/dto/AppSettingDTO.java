@@ -9,14 +9,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class AppSettingDTO implements Serializable {
 	private static final long serialVersionUID = -300944911879884382L;
 	
-	private Long idsetting;
+	private Long idappsetting;
 	private String key;
 	private String value;
 	private Date created;
 	private Date updated;
 	private String userupdate;
 	private Boolean active;
-	private String group;
+	private String feature;
 
 	public AppSettingDTO() {
 	}
@@ -31,31 +31,31 @@ public class AppSettingDTO implements Serializable {
 	 * @param active
 	 * @param group
 	 */
-	public AppSettingDTO(long idsetting, String key, String value, Date created, Date updated, String userupdate,
-			boolean active, String group) {
+	public AppSettingDTO(long idappsetting, String key, String value, Date created, Date updated, String userupdate,
+			boolean active, String feature) {
 		super();
-		this.idsetting = idsetting;
+		this.idappsetting = idappsetting;
 		this.key = key;
 		this.value = value;
 		this.created = created;
 		this.updated = updated;
 		this.userupdate = userupdate;
 		this.active = active;
-		this.group = group;
+		this.feature = feature;
 	}
 
 	/**
-	 * @return the idsetting
+	 * @return the idappsetting
 	 */
-	public Long getIdsetting() {
-		return idsetting;
+	public Long getIdappsetting() {
+		return idappsetting;
 	}
 
 	/**
-	 * @param idsetting the idsetting to set
+	 * @param idappsetting the idappsetting to set
 	 */
-	public void setIdsetting(Long idsetting) {
-		this.idsetting = idsetting;
+	public void setIdappsetting(Long idappsetting) {
+		this.idappsetting = idappsetting;
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class AppSettingDTO implements Serializable {
 	/**
 	 * @return the active
 	 */
-	public Boolean isActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
@@ -143,16 +143,24 @@ public class AppSettingDTO implements Serializable {
 	}
 
 	/**
-	 * @return the group
+	 * @return the feature
 	 */
-	public String getGroup() {
-		return group;
+	public String getFeature() {
+		return feature;
 	}
 
 	/**
-	 * @param group the group to set
+	 * @param feature the feature to set
 	 */
-	public void setGroup(String group) {
-		this.group = group;
+	public void setFeature(String feature) {
+		this.feature = feature;
 	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
 }

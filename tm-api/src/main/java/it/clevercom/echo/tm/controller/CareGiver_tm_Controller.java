@@ -58,11 +58,9 @@ public class CareGiver_tm_Controller {
 		CreateResponseDTO response = new CreateResponseDTO();
 		HashMap<String,String> ids = new HashMap<String,String>();
 		ids.put("idCareGiver", String.valueOf(saved.getIdcaregiver()));
-		response.setIds(ids);
 		response.setEntityName("careGiver");
 		response.setMessage(null);
 		response.setNewValue(null);
-		response.setStatusCode("0");
 		
 		// return standard response
 		return response;

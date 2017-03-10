@@ -165,11 +165,9 @@ public class User_rd_Controller {
 		CreateResponseDTO response = new CreateResponseDTO();
 		HashMap<String,String> ids = new HashMap<String,String>();
 		ids.put("iduser", String.valueOf(saved.getIduser()));
-		response.setIds(ids);
 		response.setEntityName(User_rd_Controller.entity);
 		response.setMessage(null);
 		response.setNewValue(null);
-		response.setStatusCode("0");
 		
 		// return standard response
 		return response;

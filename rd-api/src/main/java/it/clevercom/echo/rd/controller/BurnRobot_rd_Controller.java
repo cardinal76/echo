@@ -166,11 +166,9 @@ public class BurnRobot_rd_Controller {
 		CreateResponseDTO response = new CreateResponseDTO();
 		HashMap<String,String> ids = new HashMap<String,String>();
 		ids.put("idsetting", String.valueOf(saved.getIdburnrobot()));
-		response.setIds(ids);
 		response.setEntityName(BurnRobot_rd_Controller.entity);
 		response.setMessage(null);
 		response.setNewValue(null);
-		response.setStatusCode("0");
 		
 		// return standard response
 		return response;

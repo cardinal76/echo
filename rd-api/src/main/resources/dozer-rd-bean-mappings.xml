@@ -80,4 +80,9 @@
 		<class-a>it.clevercom.echo.rd.model.entity.Maritalstatus</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.MaritalstatusDTO</class-b>
 	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.AppSetting</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.AppSettingDTO</class-b>
+	</mapping>
 </mappings>

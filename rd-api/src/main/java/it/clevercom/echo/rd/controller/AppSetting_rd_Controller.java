@@ -7,9 +7,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -35,12 +38,14 @@ import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
+import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.model.dto.AppSettingDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.AppSetting;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
+import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 
 @Controller
 @RestController
@@ -57,9 +62,16 @@ public class AppSetting_rd_Controller {
 	private IAppSetting_rd_Repository repo;
 	
 	@Autowired
+	private IUser_rd_Repository user_repo;
+	
+	@Autowired
     private DozerBeanMapper dozerMapper;
 	
-	ObjectMapper jacksonMapper = new ObjectMapper();
+	@Value("${jwt.token.header}")
+	private String tokenHeader;
+	
+	@Autowired
+	private JwtTokenUtils tokenUtils;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -98,7 +110,7 @@ public class AppSetting_rd_Controller {
 																	@RequestParam int page, 
 																	@RequestParam int size, 
 																	@RequestParam(defaultValue="asc", required=false) String sort, 
-																	@RequestParam(defaultValue="idsetting", required=false) String field) throws Exception {
+																	@RequestParam(defaultValue="idappsetting", required=false) String field) throws Exception {
 		// create paged request
 		PageRequest request = null;
 		
@@ -158,20 +170,22 @@ public class AppSetting_rd_Controller {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO add(@RequestBody AppSettingDTO appSetting) throws Exception {
+	public @ResponseBody CreateResponseDTO<AppSettingDTO> add(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) throws Exception {
+		String authToken = request.getHeader(this.tokenHeader);
+		String username = this.tokenUtils.getUsernameFromToken(authToken);
+
 		// map and save
 		AppSetting entity = dozerMapper.map(appSetting, AppSetting.class);
-		AppSetting saved = repo.saveAndFlush(entity);
-
+		entity = repo.saveAndFlush(entity);
+		appSetting = dozerMapper.map(entity, AppSettingDTO.class);
+		
 		// create standard response
-		CreateResponseDTO response = new CreateResponseDTO();
-		HashMap<String,String> ids = new HashMap<String,String>();
-		ids.put("idsetting", String.valueOf(saved.getIdappsetting()));
-		response.setIds(ids);
+		CreateResponseDTO<AppSettingDTO> response = new CreateResponseDTO<AppSettingDTO>();
 		response.setEntityName(AppSetting_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.appsetting.saved"), AppSetting_rd_Controller.entity));
-		response.setNewValue(jacksonMapper.writeValueAsString(dozerMapper.map(saved, AppSettingDTO.class)));
-		response.setStatusCode("0");
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), AppSetting_rd_Controller.entity));
+		List<AppSettingDTO> appSettingDTOs = new ArrayList<AppSettingDTO>();
+		appSettingDTOs.add(appSetting);
+		response.setNewValue(appSettingDTOs);
 		
 		// return standard response
 		return response;
