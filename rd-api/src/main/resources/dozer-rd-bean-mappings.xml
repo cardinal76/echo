@@ -84,5 +84,9 @@
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.AppSetting</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.AppSettingDTO</class-b>
+		<field>
+			<a>user.username</a>
+			<b>username</b>
+		</field>
 	</mapping>
 </mappings>

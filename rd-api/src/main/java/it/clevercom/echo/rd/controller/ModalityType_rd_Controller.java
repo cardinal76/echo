@@ -101,7 +101,7 @@ public class ModalityType_rd_Controller {
 		} else if (sort.equals("desc")) {
 			request = new PageRequest(page-1, size, Direction.DESC, field);
 		} else {
-			throw new BadRequestException(env.getProperty("echo.api.crud.search.sort.wrongsortparam"));
+			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
 		}
 		
 		// create predicate if criteria is not null

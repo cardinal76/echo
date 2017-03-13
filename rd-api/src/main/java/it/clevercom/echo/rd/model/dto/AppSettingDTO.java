@@ -17,7 +17,8 @@ public class AppSettingDTO implements Serializable {
 	private String userupdate;
 	private Boolean active;
 	private String feature;
-
+	private String username;
+	
 	public AppSettingDTO() {
 	}
 
@@ -162,5 +163,18 @@ public class AppSettingDTO implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
 }

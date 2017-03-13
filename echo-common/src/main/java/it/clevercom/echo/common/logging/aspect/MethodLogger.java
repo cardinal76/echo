@@ -23,7 +23,7 @@ public class MethodLogger {
 
 	/**
 	 * This method triggers for every {@link it.clevercom.echo.common.logging.annotation.Loggable} annotated method.
-	 * Logs method invocation with input parameters, proceeds with method execution and then logs method completition with result and execution time. 
+	 * Logs method invocation with input parameters, proceeds with method execution and then logs method completion with result and execution time. 
 	 * @param joinPoint containing method info
 	 * @return generic Object containing the result of method execution
 	 * @throws Throwable unexpected exception
