@@ -81,12 +81,36 @@
 		<class-b>it.clevercom.echo.rd.model.dto.MaritalstatusDTO</class-b>
 	</mapping>
 	
+	
+	<!-- map AppSettingDTO (a) to AppSetting (b) -->
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.AppSetting</class-a>
-		<class-b>it.clevercom.echo.rd.model.dto.AppSettingDTO</class-b>
+		<class-a>it.clevercom.echo.rd.model.dto.AppSettingDTO</class-a>
+		<class-b>it.clevercom.echo.rd.model.entity.AppSetting</class-b>
 		<field>
-			<a>user.username</a>
-			<b>username</b>
+			<a>username</a>
+			<b>user.username</b>
 		</field>
+		
+		<field-exclude type="one-way">
+			<a>created</a> 
+  			<b>created</b> 
+		</field-exclude>
+		
+		<field-exclude type="one-way">
+			<a>updated</a> 
+  			<b>updated</b> 
+		</field-exclude>
+		
+		<field-exclude type="one-way">
+			<a>userupdate</a> 
+  			<b>userupdate</b> 
+		</field-exclude>
+		
+		<field-exclude type="one-way">
+			<a>active</a> 
+  			<b>active</b> 
+		</field-exclude>
 	</mapping>
+	
+	
 </mappings>

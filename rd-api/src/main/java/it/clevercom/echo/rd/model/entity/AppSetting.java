@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 10-mar-2017 14.22.44 by Hibernate Tools 5.2.2.Final
+// Generated 13-mar-2017 9.59.07 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -15,6 +15,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -25,6 +26,7 @@ import org.hibernate.annotations.Parameter;
 @DynamicUpdate
 @DynamicInsert
 @Table(name="rd_app_setting"
+    , uniqueConstraints = @UniqueConstraint(columnNames={"key", "feature", "username"}) 
 )
 public class AppSetting  implements java.io.Serializable {
 
@@ -112,7 +114,7 @@ public class AppSetting  implements java.io.Serializable {
     public void setCreated(Date created) {
         this.created = created;
     }
-
+    
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="updated", nullable=false, length=29)
     public Date getUpdated() {

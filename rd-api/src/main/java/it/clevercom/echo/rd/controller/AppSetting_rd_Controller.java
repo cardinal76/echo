@@ -2,6 +2,7 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,11 +40,9 @@ import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.model.dto.AppSettingDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.AppSetting;
-import it.clevercom.echo.rd.model.entity.User;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
-import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 
 @Controller
 @RestController
@@ -210,30 +209,39 @@ public class AppSetting_rd_Controller {
 		// if an id is not present throw bad request
 		if(appSetting.getIdappsetting()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), AppSetting_rd_Controller.entity));
 		
-		// find entity to update
-		AppSetting oldValue = repo.findOne(appSetting.getIdappsetting()); 
-		
+		// find entity to update (oldValue)
+		AppSetting oldValueEntity = repo.findOne(appSetting.getIdappsetting()); 
 		// if an entity with given id is not found in DB throw record not found
-	/*	if (oldValue==null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity, appSetting.getIdappsetting().toString());
-		
-		entity = dozerMapper.map(appSetting, AppSetting.class);
+		if (oldValueEntity==null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity, appSetting.getIdappsetting().toString());
+		// map old value to a dto
+		AppSettingDTO oldValueDTO = dozerMapper.map(oldValueEntity, AppSettingDTO.class);
+
+		// begin update of oldValue
+		dozerMapper.map(appSetting, oldValueEntity);
 		
 		// add technical field
-		entity.setUserupdate(username);
-				
+		oldValueEntity.setUserupdate(username);
+		oldValueEntity.setUpdated(new Date());
+		
 		// save and map to out dto
-		entity = repo.saveAndFlush(entity);
-		appSetting = dozerMapper.map(entity, AppSettingDTO.class);
+		AppSetting newValueEntity = repo.saveAndFlush(oldValueEntity);
+		AppSettingDTO newValueDTO = dozerMapper.map(newValueEntity, AppSettingDTO.class);
 				
 		// create standard response
-		CreateResponseDTO<AppSettingDTO> response = new CreateResponseDTO<AppSettingDTO>();
+		UpdateResponseDTO<AppSettingDTO> response = new UpdateResponseDTO<AppSettingDTO>();
 		response.setEntityName(AppSetting_rd_Controller.entity);
 		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), AppSetting_rd_Controller.entity));
-		List<AppSettingDTO> appSettingDTOs = new ArrayList<AppSettingDTO>();
-		appSettingDTOs.add(appSetting);
-		response.setNewValue(appSettingDTOs);*/
+		// add new dtos values
+		List<AppSettingDTO> newAppSettingDTOs = new ArrayList<AppSettingDTO>();
+		newAppSettingDTOs.add(newValueDTO);
+		response.setNewValue(newAppSettingDTOs);
+		// add old dtos values
+		List<AppSettingDTO> oldAppSettingDTOs = new ArrayList<AppSettingDTO>();
+		oldAppSettingDTOs.add(oldValueDTO);
+		response.setOldValue(oldAppSettingDTOs);
 		
-		return new UpdateResponseDTO<AppSettingDTO>();
+		// return response
+		return response;
 	}
 	
 	/**
