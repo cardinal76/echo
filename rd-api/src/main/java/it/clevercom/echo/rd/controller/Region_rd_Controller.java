@@ -34,6 +34,8 @@ import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.Region;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
+import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
+import it.clevercom.echo.rd.repository.IProvince_rd_Repository;
 import it.clevercom.echo.rd.repository.IRegion_rd_Repository;
 
 @Controller
@@ -48,6 +50,12 @@ public class Region_rd_Controller {
 	
 	@Autowired
 	private IRegion_rd_Repository repo;
+	
+	@Autowired
+	private IProvince_rd_Repository repo_p;
+	
+	@Autowired
+	private IMunicipality_rd_Repository repo_m;
 	
 	@Autowired
     private DozerBeanMapper dozerMapper;
@@ -73,6 +81,23 @@ public class Region_rd_Controller {
 		return dozerMapper.map(entity, RegionDTO.class);
 	}
 	
+//	/**
+//	 * 
+//	 * @param id
+//	 * @return
+//	 * @throws EchoException
+//	 */
+//	@Transactional("rdTm")
+//	@RequestMapping(value="", method = RequestMethod.GET)
+//	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+//	@Loggable
+//	public @ResponseBody RegionDTO getByParent(@RequestParam Long idcountry) throws Exception {
+//		
+//		//Region entity = repo.find
+//		if (entity == null) throw new RecordNotFoundException(Region_rd_Controller.entity, id.toString());
+//		return dozerMapper.map(entity, RegionDTO.class);
+//	}
+	
 	/**
 	 * @param criteria
 	 * @param page
@@ -86,11 +111,11 @@ public class Region_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<RegionDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																	@RequestParam int page, 
-																	@RequestParam int size, 
-																	@RequestParam(defaultValue="asc", required=false) String sort, 
-																	@RequestParam(defaultValue="idregion", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<RegionDTO> getByCriteria (@RequestParam(defaultValue="null", required=false) String criteria, 
+															@RequestParam(defaultValue="1", required=false) int page, 
+															@RequestParam(defaultValue="500", required=false) int size, 
+															@RequestParam(defaultValue="asc", required=false) String sort, 
+															@RequestParam(defaultValue="idregion", required=false) String field) throws Exception {
 		// create paged request
 		PageRequest request = null;
 		

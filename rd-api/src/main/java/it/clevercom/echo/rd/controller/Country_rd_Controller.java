@@ -1,5 +1,6 @@
 package it.clevercom.echo.rd.controller;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -30,11 +31,20 @@ import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.rd.model.dto.CountryDTO;
+import it.clevercom.echo.rd.model.dto.MunicipalityDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
+import it.clevercom.echo.rd.model.dto.ProvinceDTO;
+import it.clevercom.echo.rd.model.dto.RegionDTO;
 import it.clevercom.echo.rd.model.entity.Country;
+import it.clevercom.echo.rd.model.entity.Municipality;
+import it.clevercom.echo.rd.model.entity.Province;
+import it.clevercom.echo.rd.model.entity.Region;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.ICountry_rd_Repository;
+import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
+import it.clevercom.echo.rd.repository.IProvince_rd_Repository;
+import it.clevercom.echo.rd.repository.IRegion_rd_Repository;
 
 @Controller
 @RestController
@@ -43,12 +53,24 @@ import it.clevercom.echo.rd.repository.ICountry_rd_Repository;
 @PropertySource("classpath:rest.rd.properties")
 
 public class Country_rd_Controller {
-
+	// hard coded data 
+	public static Long localCountryId = 1105l;
+	public static Long unknownRegionId = 0l;
+	
 	@Autowired
 	private Environment env;
 	
 	@Autowired
 	private ICountry_rd_Repository repo;
+	
+	@Autowired
+	private IRegion_rd_Repository repo_r;
+	
+	@Autowired
+	private IProvince_rd_Repository repo_p;
+	
+	@Autowired
+	private IMunicipality_rd_Repository repo_m;
 	
 	@Autowired
     private DozerBeanMapper dozerMapper;
@@ -57,6 +79,9 @@ public class Country_rd_Controller {
 	
 	// used to bind it in exception message
 	private static String entity = "Country";
+	private static String r_entity = "Region";
+	private static String p_entity = "Province";
+	private static String m_entity = "Muicipality";
 	
 	/**
 	 * 
@@ -75,6 +100,138 @@ public class Country_rd_Controller {
 	}
 	
 	/**
+	 * 
+	 * @param id
+	 * @return
+	 * @throws EchoException
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(value="/{id_country}/region", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody PagedDTO<RegionDTO> getRegionListByCountry(@PathVariable Long id_country) throws Exception {
+		List<Region> regions = new ArrayList<Region>();
+		Country country = repo.findOne(id_country);
+		
+		if (country == null) throw new RecordNotFoundException(Country_rd_Controller.entity, id_country.toString());
+		
+		if (country.getIdcountry().longValue() != localCountryId.longValue()) {
+			// return unknown region
+			regions.add(repo_r.findOne(unknownRegionId));
+		} else {
+			// return local country region
+			regions = repo_r.findByCountry(country);
+		}
+		
+		// map list
+		List<RegionDTO> regionDTOList = new ArrayList<RegionDTO>();
+		for (Region s: regions) {
+			regionDTOList.add(dozerMapper.map(s, RegionDTO.class));
+		}
+		
+		// assembly dto
+		PagedDTO<RegionDTO> dto = new PagedDTO<RegionDTO>();
+		dto.setElements(regionDTOList);
+		dto.setPageSize(500);
+		dto.setCurrentPage(1);
+		dto.setTotalPages(1);
+		dto.setTotalElements(regionDTOList.size());
+		return dto;
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 * @throws EchoException
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(value="/{id_country}/region/{id_region}/province", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody PagedDTO<ProvinceDTO> getProvinceListByRegion(@PathVariable Long id_country, @PathVariable Long id_region) throws Exception {
+		List<Province> provinces = new ArrayList<Province>();
+
+		// find selected country
+		Country country = repo.findOne(id_country);
+		if (country == null) throw new RecordNotFoundException(Country_rd_Controller.entity, id_country.toString());
+		
+		// find selected region
+		Region region = repo_r.findOne(id_region);
+		if (region == null) throw new RecordNotFoundException(Country_rd_Controller.r_entity, id_region.toString());
+		if (region.getCountry().getIdcountry().longValue() != country.getIdcountry()) {
+			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.hibernate.parentmismatch"), Country_rd_Controller.entity, id_country, Country_rd_Controller.r_entity, id_region));
+		}
+		
+		provinces.addAll(repo_p.findByRegion(region));
+		
+		// map list
+		List<ProvinceDTO> provinceDTOList = new ArrayList<ProvinceDTO>();
+		for (Province s: provinces) {
+			provinceDTOList.add(dozerMapper.map(s, ProvinceDTO.class));
+		}
+		
+		// assembly dto
+		PagedDTO<ProvinceDTO> dto = new PagedDTO<ProvinceDTO>();
+		dto.setElements(provinceDTOList);
+		dto.setPageSize(500);
+		dto.setCurrentPage(1);
+		dto.setTotalPages(1);
+		dto.setTotalElements(provinceDTOList.size());
+		return dto;
+	}
+	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 * @throws EchoException
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(value="/{id_country}/region/{id_region}/province/{id_province}/municipality", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody PagedDTO<MunicipalityDTO> getMunicipalityListByProvince(@PathVariable Long id_country, @PathVariable Long id_region, @PathVariable Long id_province) throws Exception {
+		List<Municipality> municipalities = new ArrayList<Municipality>();
+
+		// find selected country
+		Country country = repo.findOne(id_country);
+		if (country == null) throw new RecordNotFoundException(Country_rd_Controller.entity, id_country.toString());
+		
+		// find selected region
+		Region region = repo_r.findOne(id_region);
+		if (region == null) throw new RecordNotFoundException(Country_rd_Controller.r_entity, id_region.toString());
+		if (region.getCountry().getIdcountry().longValue() != country.getIdcountry()) {
+			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.hibernate.parentmismatch"), Country_rd_Controller.entity, id_country, Country_rd_Controller.r_entity, id_region));
+		}
+		
+		// find selected province
+		Province province = repo_p.findOne(id_province);
+		if (province == null) throw new RecordNotFoundException(Country_rd_Controller.p_entity, id_province.toString());
+		if (region.getCountry().getIdcountry().longValue() != country.getIdcountry()) {
+			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.hibernate.parentmismatch"), Country_rd_Controller.r_entity, id_region, Country_rd_Controller.p_entity, id_province));
+		}
+		
+		municipalities.addAll(repo_m.findByProvince(province));
+		
+		// map list
+		List<MunicipalityDTO> municipalityDTOList = new ArrayList<MunicipalityDTO>();
+		for (Municipality s: municipalities) {
+			municipalityDTOList.add(dozerMapper.map(s, MunicipalityDTO.class));
+		}
+		
+		// assembly dto
+		PagedDTO<MunicipalityDTO> dto = new PagedDTO<MunicipalityDTO>();
+		dto.setElements(municipalityDTOList);
+		dto.setPageSize(500);
+		dto.setCurrentPage(1);
+		dto.setTotalPages(1);
+		dto.setTotalElements(municipalityDTOList.size());
+		return dto;
+	}
+	
+	
+	/**
 	 * @param criteria
 	 * @param page
 	 * @param size
@@ -88,8 +245,8 @@ public class Country_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody PagedDTO<CountryDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																@RequestParam int page, 
-																@RequestParam int size, 
+																@RequestParam(defaultValue="1", required=false) int page, 
+																@RequestParam(defaultValue="500", required=false) int size, 
 																@RequestParam(defaultValue="asc", required=false) String sort, 
 																@RequestParam(defaultValue="idcountry", required=false) String field) throws Exception {
 		// create paged request

@@ -34,6 +34,7 @@ import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.Province;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
+import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
 import it.clevercom.echo.rd.repository.IProvince_rd_Repository;
 
 @Controller
@@ -49,6 +50,9 @@ public class Province_rd_Controller {
 	
 	@Autowired
 	private IProvince_rd_Repository repo;
+	
+	@Autowired
+	private IMunicipality_rd_Repository repo_m;
 	
 	@Autowired
     private DozerBeanMapper dozerMapper;
@@ -88,10 +92,10 @@ public class Province_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody PagedDTO<ProvinceDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																	@RequestParam int page, 
-																	@RequestParam int size, 
-																	@RequestParam(defaultValue="asc", required=false) String sort, 
-																	@RequestParam(defaultValue="idprovince", required=false) String field) throws Exception {
+																@RequestParam(defaultValue="1", required=false) int page, 
+																@RequestParam(defaultValue="500", required=false) int size, 
+																@RequestParam(defaultValue="asc", required=false) String sort, 
+																@RequestParam(defaultValue="idprovince", required=false) String field) throws Exception {
 		// create paged request
 		PageRequest request = null;
 		
