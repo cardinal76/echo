@@ -13,6 +13,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -119,14 +120,14 @@ public class Country_rd_Controller {
 			// return unknown region
 			regions.add(repo_r.findOne(unknownRegionId));
 		} else {
-			// return local country region
-			regions = repo_r.findByCountry(country);
+			// return local country region			
+			regions = repo_r.findByCountry(country, new Sort("regionname"));
 		}
 		
 		// map list
 		List<RegionDTO> regionDTOList = new ArrayList<RegionDTO>();
 		for (Region s: regions) {
-			regionDTOList.add(dozerMapper.map(s, RegionDTO.class));
+			regionDTOList.add(dozerMapper.map(s, RegionDTO.class, "region-no-country"));
 		}
 		
 		// assembly dto
@@ -163,12 +164,12 @@ public class Country_rd_Controller {
 			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.hibernate.parentmismatch"), Country_rd_Controller.entity, id_country, Country_rd_Controller.r_entity, id_region));
 		}
 		
-		provinces.addAll(repo_p.findByRegion(region));
+		provinces.addAll(repo_p.findByRegion(region, new Sort("provincename")));
 		
 		// map list
 		List<ProvinceDTO> provinceDTOList = new ArrayList<ProvinceDTO>();
 		for (Province s: provinces) {
-			provinceDTOList.add(dozerMapper.map(s, ProvinceDTO.class));
+			provinceDTOList.add(dozerMapper.map(s, ProvinceDTO.class, "province-no-region"));
 		}
 		
 		// assembly dto
@@ -212,12 +213,12 @@ public class Country_rd_Controller {
 			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.hibernate.parentmismatch"), Country_rd_Controller.r_entity, id_region, Country_rd_Controller.p_entity, id_province));
 		}
 		
-		municipalities.addAll(repo_m.findByProvince(province));
+		municipalities.addAll(repo_m.findByProvince(province, new Sort("municipalityname")));
 		
 		// map list
 		List<MunicipalityDTO> municipalityDTOList = new ArrayList<MunicipalityDTO>();
 		for (Municipality s: municipalities) {
-			municipalityDTOList.add(dozerMapper.map(s, MunicipalityDTO.class));
+			municipalityDTOList.add(dozerMapper.map(s, MunicipalityDTO.class, "municipality-no-province"));
 		}
 		
 		// assembly dto

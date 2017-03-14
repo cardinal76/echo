@@ -67,8 +67,45 @@
 	</mapping>
 	
 	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Region</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.RegionDTO</class-b>
+	</mapping>
+	
+	<mapping map-id="region-no-country">
+		<class-a>it.clevercom.echo.rd.model.entity.Region</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.RegionDTO</class-b>
+		<field-exclude>
+			<a>country</a> 
+  			<b>country</b> 
+		</field-exclude>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Province</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ProvinceDTO</class-b>
+	</mapping>
+	
+	<mapping map-id="province-no-region">
+		<class-a>it.clevercom.echo.rd.model.entity.Province</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ProvinceDTO</class-b>
+		<field-exclude>
+			<a>region</a> 
+  			<b>region</b> 
+		</field-exclude>
+	</mapping>
+	
+	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.Municipality</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.MunicipalityDTO</class-b>
+	</mapping>
+	
+	<mapping map-id="municipality-no-province">
+		<class-a>it.clevercom.echo.rd.model.entity.Municipality</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.MunicipalityDTO</class-b>
+		<field-exclude>
+			<a>province</a> 
+  			<b>province</b> 
+		</field-exclude>
 	</mapping>
 	
 	<mapping>
