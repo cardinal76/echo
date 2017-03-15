@@ -8,8 +8,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class MaritalstatusDTO implements java.io.Serializable {
 	private static final long serialVersionUID = 6465294662072987645L;
 
-	private String code;
-	private String description;
+	private Long idmaritalstatus;
+    private String hl7code;
+    private String description;
 	
 	// transient attributes
 	private Date created;
@@ -20,8 +21,8 @@ public class MaritalstatusDTO implements java.io.Serializable {
 	public MaritalstatusDTO() {
 	}
 
-	public MaritalstatusDTO(String code, String description, Date created, Date updated, String userupdate,	boolean active) {
-		this.code = code;
+	public MaritalstatusDTO(String hl7code, String description, Date created, Date updated, String userupdate,	boolean active) {
+		this.hl7code = hl7code;
 		this.description = description;
 		this.created = created;
 		this.updated = updated;
@@ -30,17 +31,31 @@ public class MaritalstatusDTO implements java.io.Serializable {
 	}
 
 	/**
-	 * @return the code
+	 * @return the idmaritalstatus
 	 */
-	public String getCode() {
-		return code;
+	public Long getIdmaritalstatus() {
+		return idmaritalstatus;
 	}
 
 	/**
-	 * @param code the code to set
+	 * @param idmaritalstatus the idmaritalstatus to set
 	 */
-	public void setCode(String code) {
-		this.code = code;
+	public void setIdmaritalstatus(Long idmaritalstatus) {
+		this.idmaritalstatus = idmaritalstatus;
+	}
+
+	/**
+	 * @return the hl7code
+	 */
+	public String getHl7code() {
+		return hl7code;
+	}
+
+	/**
+	 * @param hl7code the hl7code to set
+	 */
+	public void setHl7code(String hl7code) {
+		this.hl7code = hl7code;
 	}
 
 	/**
@@ -102,7 +117,7 @@ public class MaritalstatusDTO implements java.io.Serializable {
 	/**
 	 * @return the active
 	 */
-	public Boolean isActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
@@ -111,5 +126,12 @@ public class MaritalstatusDTO implements java.io.Serializable {
 	 */
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }

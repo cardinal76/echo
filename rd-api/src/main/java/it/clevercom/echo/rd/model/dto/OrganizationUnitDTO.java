@@ -12,7 +12,7 @@ public class OrganizationUnitDTO implements java.io.Serializable {
 
 	private Long idorganizationunit;
 	private MunicipalityDTO municipality;
-	private OrganizationUnitDTO organizationUnit;
+	private OrganizationUnitDTO parentOrganizationUnit;
 	private String name;
 	private String description;
 	private String address;
@@ -27,7 +27,7 @@ public class OrganizationUnitDTO implements java.io.Serializable {
 	private Boolean active;
 	private String code;
 
-	private Set<OrganizationUnitDTO> organizationUnits = new HashSet<OrganizationUnitDTO>(0);
+	private Set<OrganizationUnitDTO> childOrganizationUnit = new HashSet<OrganizationUnitDTO>(0);
 
 	public OrganizationUnitDTO() {
 	}
@@ -69,17 +69,17 @@ public class OrganizationUnitDTO implements java.io.Serializable {
 	}
 
 	/**
-	 * @return the organizationUnit
+	 * @return the parentOrganizationUnit
 	 */
-	public OrganizationUnitDTO getOrganizationUnit() {
-		return organizationUnit;
+	public OrganizationUnitDTO getParentOrganizationUnit() {
+		return parentOrganizationUnit;
 	}
 
 	/**
-	 * @param organizationUnit the organizationUnit to set
+	 * @param parentOrganizationUnit the parentOrganizationUnit to set
 	 */
-	public void setOrganizationUnit(OrganizationUnitDTO organizationUnit) {
-		this.organizationUnit = organizationUnit;
+	public void setParentOrganizationUnit(OrganizationUnitDTO parentOrganizationUnit) {
+		this.parentOrganizationUnit = parentOrganizationUnit;
 	}
 
 	/**
@@ -183,8 +183,6 @@ public class OrganizationUnitDTO implements java.io.Serializable {
 	/**
 	 * @return the type
 	 */
-
-	
 	public String getType() {
 		return type;
 	}
@@ -241,7 +239,7 @@ public class OrganizationUnitDTO implements java.io.Serializable {
 	/**
 	 * @return the active
 	 */
-	public Boolean isActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
@@ -267,16 +265,23 @@ public class OrganizationUnitDTO implements java.io.Serializable {
 	}
 
 	/**
-	 * @return the organizationUnits
+	 * @return the childOrganizationUnit
 	 */
-	public Set<OrganizationUnitDTO> getOrganizationUnits() {
-		return organizationUnits;
+	public Set<OrganizationUnitDTO> getChildOrganizationUnit() {
+		return childOrganizationUnit;
 	}
 
 	/**
-	 * @param organizationUnits the organizationUnits to set
+	 * @param childOrganizationUnit the childOrganizationUnit to set
 	 */
-	public void setOrganizationUnits(Set<OrganizationUnitDTO> organizationUnits) {
-		this.organizationUnits = organizationUnits;
+	public void setChildOrganizationUnit(Set<OrganizationUnitDTO> childOrganizationUnit) {
+		this.childOrganizationUnit = childOrganizationUnit;
+	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }

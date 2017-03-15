@@ -81,23 +81,6 @@ public class Region_rd_Controller {
 		return dozerMapper.map(entity, RegionDTO.class);
 	}
 	
-//	/**
-//	 * 
-//	 * @param id
-//	 * @return
-//	 * @throws EchoException
-//	 */
-//	@Transactional("rdTm")
-//	@RequestMapping(value="", method = RequestMethod.GET)
-//	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
-//	@Loggable
-//	public @ResponseBody RegionDTO getByParent(@RequestParam Long idcountry) throws Exception {
-//		
-//		//Region entity = repo.find
-//		if (entity == null) throw new RecordNotFoundException(Region_rd_Controller.entity, id.toString());
-//		return dozerMapper.map(entity, RegionDTO.class);
-//	}
-	
 	/**
 	 * @param criteria
 	 * @param page

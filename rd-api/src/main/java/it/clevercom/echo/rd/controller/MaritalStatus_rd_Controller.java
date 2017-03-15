@@ -37,26 +37,26 @@ import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.util.JwtTokenUtils;
-import it.clevercom.echo.rd.model.dto.AppSettingDTO;
+import it.clevercom.echo.rd.model.dto.MaritalstatusDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
-import it.clevercom.echo.rd.model.entity.AppSetting;
+import it.clevercom.echo.rd.model.entity.Maritalstatus;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
-import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
+import it.clevercom.echo.rd.repository.IMaritalStatus_rd_Repository;
 
 @Controller
 @RestController
-@RequestMapping("rd/assets/appsetting")
+@RequestMapping("rd/types/maritalstatus")
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
-public class AppSetting_rd_Controller {
+public class MaritalStatus_rd_Controller {
 	
 	@Autowired
 	private Environment env;
 	
 	@Autowired
-	private IAppSetting_rd_Repository repo;
+	private IMaritalStatus_rd_Repository repo;
 	
 	@Autowired
     private DozerBeanMapper dozerMapper;
@@ -70,7 +70,7 @@ public class AppSetting_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "AppSetting";
+	private static String entity = "Maritalstatus";
 	
 	/**
 	 * @param username
@@ -78,13 +78,13 @@ public class AppSetting_rd_Controller {
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
-	@RequestMapping(value="/{username}", method = RequestMethod.GET)
+	@RequestMapping(value="/{id}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<AppSettingDTO> get(@PathVariable String username) throws Exception {
-		PagedDTO<AppSettingDTO> dto = getByCriteria("username:" + username, 1, 1000, "asc", "idsetting");
-		if (entity == null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity, username);
-		return dto;
+	public @ResponseBody MaritalstatusDTO get(@PathVariable Long id) throws Exception {
+		Maritalstatus entity = repo.findOne(id);
+		if (entity == null) throw new RecordNotFoundException(MaritalStatus_rd_Controller.entity, id.toString());
+		return dozerMapper.map(entity, MaritalstatusDTO.class);
 	}
 	
 	/**
@@ -100,11 +100,11 @@ public class AppSetting_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<AppSettingDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
+	public @ResponseBody PagedDTO<MaritalstatusDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
 																	@RequestParam(defaultValue="1", required=false) int page, 
-																	@RequestParam(defaultValue="1000", required=false) int size, 
+																	@RequestParam(defaultValue="20", required=false) int size, 
 																	@RequestParam(defaultValue="asc", required=false) String sort, 
-																	@RequestParam(defaultValue="idappsetting", required=false) String field) throws Exception {
+																	@RequestParam(defaultValue="idmaritalstatus", required=false) String field) throws Exception {
 		// create paged request
 		PageRequest request = null;
 		
@@ -117,16 +117,16 @@ public class AppSetting_rd_Controller {
 		}
 		
 		// create predicate if criteria is not null
-		Page<AppSetting> rs = null;
+		Page<Maritalstatus> rs = null;
 		
 		if (!criteria.equals("null")) {
-	        SpecificationsBuilder<AppSetting, SpecificationQueryHelper<AppSetting>> builder = new SpecificationsBuilder<AppSetting, SpecificationQueryHelper<AppSetting>>();
+	        SpecificationsBuilder<Maritalstatus, SpecificationQueryHelper<Maritalstatus>> builder = new SpecificationsBuilder<Maritalstatus, SpecificationQueryHelper<Maritalstatus>>();
 	        Pattern pattern = Pattern.compile("(\\w+)(:|<|>)(\\w+)");
 	        Matcher matcher = pattern.matcher(criteria + ",");
 	        while (matcher.find()) {
 	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
 	        }
-	        Specification<AppSetting> spec = builder.build();
+	        Specification<Maritalstatus> spec = builder.build();
 	        
 	        // obtain records
 	        rs = repo.findAll(spec, request);
@@ -136,19 +136,19 @@ public class AppSetting_rd_Controller {
 		
 		int totalPages = rs.getTotalPages();
         long totalElements = rs.getTotalElements();
-		List<AppSetting> entity = rs.getContent();
+		List<Maritalstatus> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(AppSetting_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(MaritalStatus_rd_Controller.entity, page);
 		
 		// map list
-		List<AppSettingDTO> appSettingDTOList = new ArrayList<AppSettingDTO>();
-		for (AppSetting s: entity) {
-			appSettingDTOList.add(dozerMapper.map(s, AppSettingDTO.class));
+		List<MaritalstatusDTO> maritalStatusDTOList = new ArrayList<MaritalstatusDTO>();
+		for (Maritalstatus s: entity) {
+			maritalStatusDTOList.add(dozerMapper.map(s, MaritalstatusDTO.class));
 		}
 		
 		// assembly dto
-		PagedDTO<AppSettingDTO> dto = new PagedDTO<AppSettingDTO>();
-		dto.setElements(appSettingDTOList);
+		PagedDTO<MaritalstatusDTO> dto = new PagedDTO<MaritalstatusDTO>();
+		dto.setElements(maritalStatusDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);
@@ -164,29 +164,28 @@ public class AppSetting_rd_Controller {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<AppSettingDTO> add(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) throws Exception {
+	public @ResponseBody CreateResponseDTO<MaritalstatusDTO> add(@RequestBody MaritalstatusDTO maritalStatus, HttpServletRequest request) throws Exception {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
-		appSetting.setUsername(username);
 		
 		// map
-		AppSetting entity = dozerMapper.map(appSetting, AppSetting.class);
+		Maritalstatus entity = dozerMapper.map(maritalStatus, Maritalstatus.class);
 		
 		// add technical field
 		entity.setUserupdate(username);
 		
 		// save and map to out dto
 		entity = repo.saveAndFlush(entity);
-		appSetting = dozerMapper.map(entity, AppSettingDTO.class);
+		maritalStatus = dozerMapper.map(entity, MaritalstatusDTO.class);
 		
 		// create standard response
-		CreateResponseDTO<AppSettingDTO> response = new CreateResponseDTO<AppSettingDTO>();
-		response.setEntityName(AppSetting_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), AppSetting_rd_Controller.entity));
-		List<AppSettingDTO> appSettingDTOs = new ArrayList<AppSettingDTO>();
-		appSettingDTOs.add(appSetting);
-		response.setNewValue(appSettingDTOs);
+		CreateResponseDTO<MaritalstatusDTO> response = new CreateResponseDTO<MaritalstatusDTO>();
+		response.setEntityName(MaritalStatus_rd_Controller.entity);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), MaritalStatus_rd_Controller.entity));
+		List<MaritalstatusDTO> maritalStatusDTOs = new ArrayList<MaritalstatusDTO>();
+		maritalStatusDTOs.add(maritalStatus);
+		response.setNewValue(maritalStatusDTOs);
 		
 		// return standard response
 		return response;
@@ -200,45 +199,44 @@ public class AppSetting_rd_Controller {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<AppSettingDTO> update(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<MaritalstatusDTO> update(@RequestBody MaritalstatusDTO maritalStatus, HttpServletRequest request) throws Exception {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
-		appSetting.setUsername(username);
 		
 		// if an id is not present throw bad request
-		if(appSetting.getIdappsetting()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), AppSetting_rd_Controller.entity));
+		if(maritalStatus.getIdmaritalstatus()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), MaritalStatus_rd_Controller.entity));
 		
 		// find entity to update (oldValue)
-		AppSetting oldValueEntity = repo.findOne(appSetting.getIdappsetting()); 
+		Maritalstatus oldValueEntity = repo.findOne(maritalStatus.getIdmaritalstatus()); 
 		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity==null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity, appSetting.getIdappsetting().toString());
+		if (oldValueEntity==null) throw new RecordNotFoundException(MaritalStatus_rd_Controller.entity, maritalStatus.getIdmaritalstatus().toString());
 		// map old value to a dto
-		AppSettingDTO oldValueDTO = dozerMapper.map(oldValueEntity, AppSettingDTO.class);
+		MaritalstatusDTO oldValueDTO = dozerMapper.map(oldValueEntity, MaritalstatusDTO.class);
 
 		// begin update of oldValue
-		dozerMapper.map(appSetting, oldValueEntity);
+		dozerMapper.map(maritalStatus, oldValueEntity);
 		
 		// add technical field
 		oldValueEntity.setUserupdate(username);
 		oldValueEntity.setUpdated(new Date());
 		
 		// save and map to out dto
-		AppSetting newValueEntity = repo.saveAndFlush(oldValueEntity);
-		AppSettingDTO newValueDTO = dozerMapper.map(newValueEntity, AppSettingDTO.class);
+		Maritalstatus newValueEntity = repo.saveAndFlush(oldValueEntity);
+		MaritalstatusDTO newValueDTO = dozerMapper.map(newValueEntity, MaritalstatusDTO.class);
 				
 		// create standard response
-		UpdateResponseDTO<AppSettingDTO> response = new UpdateResponseDTO<AppSettingDTO>();
-		response.setEntityName(AppSetting_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), AppSetting_rd_Controller.entity));
+		UpdateResponseDTO<MaritalstatusDTO> response = new UpdateResponseDTO<MaritalstatusDTO>();
+		response.setEntityName(MaritalStatus_rd_Controller.entity);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), MaritalStatus_rd_Controller.entity));
 		// add new dtos values
-		List<AppSettingDTO> newAppSettingDTOs = new ArrayList<AppSettingDTO>();
-		newAppSettingDTOs.add(newValueDTO);
-		response.setNewValue(newAppSettingDTOs);
+		List<MaritalstatusDTO> newMaritalstatusDTOs = new ArrayList<MaritalstatusDTO>();
+		newMaritalstatusDTOs.add(newValueDTO);
+		response.setNewValue(newMaritalstatusDTOs);
 		// add old dtos values
-		List<AppSettingDTO> oldAppSettingDTOs = new ArrayList<AppSettingDTO>();
-		oldAppSettingDTOs.add(oldValueDTO);
-		response.setOldValue(oldAppSettingDTOs);
+		List<MaritalstatusDTO> oldMaritalstatusDTOs = new ArrayList<MaritalstatusDTO>();
+		oldMaritalstatusDTOs.add(oldValueDTO);
+		response.setOldValue(oldMaritalstatusDTOs);
 		
 		// return response
 		return response;
@@ -252,7 +250,7 @@ public class AppSetting_rd_Controller {
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody String delete(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) {
-		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), AppSetting_rd_Controller.entity);
+	public @ResponseBody String delete(@RequestBody MaritalstatusDTO maritalStatus, HttpServletRequest request) {
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), MaritalStatus_rd_Controller.entity);
 	}
 }

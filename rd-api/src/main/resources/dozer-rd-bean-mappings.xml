@@ -1,124 +1,189 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mappings xmlns="http://dozer.sourceforge.net"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
-	
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
 	<!-- general mapping -->
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.BodyApparatus</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.BodyApparatusDTO</class-b>
 	</mapping>
-	
+
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.ModalityType</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.ModalityTypeDTO</class-b>
 	</mapping>
-	
+
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.Service</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.ServiceDTO</class-b>
-	</mapping>	
-	
+	</mapping>
+
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.Patient</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.PatientDTO</class-b>
+		
 		<field>
 			<a>countryByDomicileidcountry</a>
 			<b>docimicileCountry</b>
 		</field>
+		
 		<field>
 			<a>countryByResidenceidcountry</a>
 			<b>residenceCountry</b>
 		</field>
+		
 		<field>
 			<a>countryByBirthplaceidcountry</a>
 			<b>birthplaceCountry</b>
 		</field>
+		
 		<field>
 			<a>municipalityByDomicileidmunicipality</a>
 			<b>domicileMunicipality</b>
 		</field>
+		
 		<field>
 			<a>municipalityByResidenceidmunicipality</a>
 			<b>residenceMunicipality</b>
 		</field>
+		
 		<field>
 			<a>municipalityByBirthplaceidmunicipality</a>
 			<b>birthplaceMunicipality</b>
 		</field>
+		
 		<field>
 			<a>organizationUnitByIdintorganizationunit</a>
 			<b>internalOrgUnit</b>
 		</field>
+		
 		<field>
 			<a>organizationUnitByIdextorganizationunit</a>
 			<b>externalOrgUnit</b>
 		</field>
 	</mapping>
 	
+	<mapping map-id="patient-plain">
+		<class-a>it.clevercom.echo.rd.model.entity.Patient</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.PatientDTO</class-b>
+		
+		<field-exclude>
+		     <a>municipalityByResidenceidmunicipality.province</a>
+		     <b>residenceMunicipality.province</b>
+		</field-exclude>
+		
+		<field>
+			<a>countryByDomicileidcountry</a>
+			<b>docimicileCountry</b>
+		</field>
+		
+		<field>
+			<a>countryByResidenceidcountry</a>
+			<b>residenceCountry</b>
+		</field>
+		
+		<field>
+			<a>countryByBirthplaceidcountry</a>
+			<b>birthplaceCountry</b>
+		</field>
+		
+		<field map-id="municipality-no-province">
+			<a>municipalityByDomicileidmunicipality</a>
+			<b>domicileMunicipality</b>
+		</field>
+		
+		<field map-id="municipality-no-province">
+			<a>municipalityByResidenceidmunicipality</a>
+			<b>residenceMunicipality</b>
+		</field>
+		
+		<field map-id="municipality-no-province">
+			<a>municipalityByBirthplaceidmunicipality</a>
+			<b>birthplaceMunicipality</b>
+		</field>
+		
+		<field>
+			<a>organizationUnitByIdintorganizationunit</a>
+			<b>internalOrgUnit</b>
+		</field>
+		
+		<field>
+			<a>organizationUnitByIdextorganizationunit</a>
+			<b>externalOrgUnit</b>
+		</field>
+	</mapping>
+
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.Citizenship</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.CitizenshipDTO</class-b>
 	</mapping>
-	
+
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.Country</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.CountryDTO</class-b>
 	</mapping>
-	
+
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.Region</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.RegionDTO</class-b>
 	</mapping>
-	
+
 	<mapping map-id="region-no-country">
 		<class-a>it.clevercom.echo.rd.model.entity.Region</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.RegionDTO</class-b>
 		<field-exclude>
-			<a>country</a> 
-  			<b>country</b> 
+			<a>country</a>
+			<b>country</b>
 		</field-exclude>
 	</mapping>
-	
+
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.Province</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.ProvinceDTO</class-b>
 	</mapping>
-	
+
 	<mapping map-id="province-no-region">
 		<class-a>it.clevercom.echo.rd.model.entity.Province</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.ProvinceDTO</class-b>
 		<field-exclude>
-			<a>region</a> 
-  			<b>region</b> 
+			<a>region</a>
+			<b>region</b>
 		</field-exclude>
 	</mapping>
-	
+
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.Municipality</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.MunicipalityDTO</class-b>
 	</mapping>
-	
+
 	<mapping map-id="municipality-no-province">
 		<class-a>it.clevercom.echo.rd.model.entity.Municipality</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.MunicipalityDTO</class-b>
 		<field-exclude>
-			<a>province</a> 
-  			<b>province</b> 
+			<a>province</a>
+			<b>province</b>
 		</field-exclude>
 	</mapping>
-	
+
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.OrganizationUnit</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.OrganizationUnitDTO</class-b>
+		<field>
+			<a>organizationUnit</a>
+			<b>parentOrganizationUnit</b>
+		</field>
+		<field>
+			<a>organizationUnits</a>
+			<b>childOrganizationUnit</b>
+		</field>
 	</mapping>
-	
+
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.Maritalstatus</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.MaritalstatusDTO</class-b>
 	</mapping>
-	
-	
+
+
 	<!-- map AppSettingDTO (a) to AppSetting (b) -->
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.dto.AppSettingDTO</class-a>
@@ -127,27 +192,27 @@
 			<a>username</a>
 			<b>user.username</b>
 		</field>
-		
+
 		<field-exclude type="one-way">
-			<a>created</a> 
-  			<b>created</b> 
+			<a>created</a>
+			<b>created</b>
 		</field-exclude>
-		
+
 		<field-exclude type="one-way">
-			<a>updated</a> 
-  			<b>updated</b> 
+			<a>updated</a>
+			<b>updated</b>
 		</field-exclude>
-		
+
 		<field-exclude type="one-way">
-			<a>userupdate</a> 
-  			<b>userupdate</b> 
+			<a>userupdate</a>
+			<b>userupdate</b>
 		</field-exclude>
-		
+
 		<field-exclude type="one-way">
-			<a>active</a> 
-  			<b>active</b> 
+			<a>active</a>
+			<b>active</b>
 		</field-exclude>
 	</mapping>
-	
-	
+
+
 </mappings>

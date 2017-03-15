@@ -89,8 +89,8 @@ public class User_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody PagedDTO<UserDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-															@RequestParam int page, 
-															@RequestParam int size, 
+															@RequestParam(defaultValue="1", required=false) int page, 
+															@RequestParam(defaultValue="15", required=false) int size, 
 															@RequestParam(defaultValue="asc", required=false) String sort, 
 															@RequestParam(defaultValue="iduser", required=false) String field) throws Exception {
 		// create paged request
