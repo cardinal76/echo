@@ -50,7 +50,7 @@ public class Municipality_rd_Controller {
 	private IMunicipality_rd_Repository repo;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -70,7 +70,7 @@ public class Municipality_rd_Controller {
 	public @ResponseBody MunicipalityDTO get(@PathVariable Long id) throws Exception {
 		Municipality entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(Municipality_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, MunicipalityDTO.class);
+		return rdDozerMapper.map(entity, MunicipalityDTO.class);
 	}
 	
 	/**
@@ -129,7 +129,7 @@ public class Municipality_rd_Controller {
 		// map list
 		List<MunicipalityDTO> municipalityDTOList = new ArrayList<MunicipalityDTO>();
 		for (Municipality s: entity) {
-			municipalityDTOList.add(dozerMapper.map(s, MunicipalityDTO.class));
+			municipalityDTOList.add(rdDozerMapper.map(s, MunicipalityDTO.class));
 		}
 		
 		// assembly dto

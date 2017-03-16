@@ -59,7 +59,7 @@ public class MaritalStatus_rd_Controller {
 	private IMaritalStatus_rd_Repository repo;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	@Value("${jwt.token.header}")
 	private String tokenHeader;
@@ -84,7 +84,7 @@ public class MaritalStatus_rd_Controller {
 	public @ResponseBody MaritalstatusDTO get(@PathVariable Long id) throws Exception {
 		Maritalstatus entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(MaritalStatus_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, MaritalstatusDTO.class);
+		return rdDozerMapper.map(entity, MaritalstatusDTO.class);
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class MaritalStatus_rd_Controller {
 		// map list
 		List<MaritalstatusDTO> maritalStatusDTOList = new ArrayList<MaritalstatusDTO>();
 		for (Maritalstatus s: entity) {
-			maritalStatusDTOList.add(dozerMapper.map(s, MaritalstatusDTO.class));
+			maritalStatusDTOList.add(rdDozerMapper.map(s, MaritalstatusDTO.class));
 		}
 		
 		// assembly dto
@@ -170,14 +170,14 @@ public class MaritalStatus_rd_Controller {
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 		
 		// map
-		Maritalstatus entity = dozerMapper.map(maritalStatus, Maritalstatus.class);
+		Maritalstatus entity = rdDozerMapper.map(maritalStatus, Maritalstatus.class);
 		
 		// add technical field
 		entity.setUserupdate(username);
 		
 		// save and map to out dto
 		entity = repo.saveAndFlush(entity);
-		maritalStatus = dozerMapper.map(entity, MaritalstatusDTO.class);
+		maritalStatus = rdDozerMapper.map(entity, MaritalstatusDTO.class);
 		
 		// create standard response
 		CreateResponseDTO<MaritalstatusDTO> response = new CreateResponseDTO<MaritalstatusDTO>();
@@ -212,10 +212,10 @@ public class MaritalStatus_rd_Controller {
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity==null) throw new RecordNotFoundException(MaritalStatus_rd_Controller.entity, maritalStatus.getIdmaritalstatus().toString());
 		// map old value to a dto
-		MaritalstatusDTO oldValueDTO = dozerMapper.map(oldValueEntity, MaritalstatusDTO.class);
+		MaritalstatusDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, MaritalstatusDTO.class);
 
 		// begin update of oldValue
-		dozerMapper.map(maritalStatus, oldValueEntity);
+		rdDozerMapper.map(maritalStatus, oldValueEntity);
 		
 		// add technical field
 		oldValueEntity.setUserupdate(username);
@@ -223,7 +223,7 @@ public class MaritalStatus_rd_Controller {
 		
 		// save and map to out dto
 		Maritalstatus newValueEntity = repo.saveAndFlush(oldValueEntity);
-		MaritalstatusDTO newValueDTO = dozerMapper.map(newValueEntity, MaritalstatusDTO.class);
+		MaritalstatusDTO newValueDTO = rdDozerMapper.map(newValueEntity, MaritalstatusDTO.class);
 				
 		// create standard response
 		UpdateResponseDTO<MaritalstatusDTO> response = new UpdateResponseDTO<MaritalstatusDTO>();

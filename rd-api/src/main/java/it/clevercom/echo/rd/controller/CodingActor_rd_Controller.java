@@ -51,7 +51,7 @@ public class CodingActor_rd_Controller {
 	private ICodingActor_rd_Repository repo;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -71,7 +71,7 @@ public class CodingActor_rd_Controller {
 	public @ResponseBody CodingActorDTO get(@PathVariable Long id) throws Exception {
 		CodingActor entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(CodingActor_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, CodingActorDTO.class);
+		return rdDozerMapper.map(entity, CodingActorDTO.class);
 	}
 	
 	/**
@@ -130,7 +130,7 @@ public class CodingActor_rd_Controller {
 		// map list
 		List<CodingActorDTO> codingActorDTOList = new ArrayList<CodingActorDTO>();
 		for (CodingActor s: entity) {
-			codingActorDTOList.add(dozerMapper.map(s, CodingActorDTO.class));
+			codingActorDTOList.add(rdDozerMapper.map(s, CodingActorDTO.class));
 		}
 		
 		// assembly dto

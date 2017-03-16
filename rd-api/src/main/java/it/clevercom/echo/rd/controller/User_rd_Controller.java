@@ -53,7 +53,7 @@ public class User_rd_Controller {
 	private IUser_rd_Repository repo;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -72,7 +72,7 @@ public class User_rd_Controller {
 	public @ResponseBody UserDTO get(@PathVariable Long id) throws Exception {
 		User entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(User_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, UserDTO.class);
+		return rdDozerMapper.map(entity, UserDTO.class);
 	}
 	
 	/**
@@ -131,7 +131,7 @@ public class User_rd_Controller {
 		// map list
 		List<UserDTO> userDTOList = new ArrayList<UserDTO>();
 		for (User s: entity) {
-			userDTOList.add(dozerMapper.map(s, UserDTO.class));
+			userDTOList.add(rdDozerMapper.map(s, UserDTO.class));
 		}
 		
 		// assembly dto
@@ -154,7 +154,7 @@ public class User_rd_Controller {
 	@Loggable
 	public @ResponseBody CreateResponseDTO add(@RequestBody UserDTO user) throws Exception {
 		if (user == null) throw new BadRequestException("Impossible to store a null");
-		User entity = dozerMapper.map(user, User.class);
+		User entity = rdDozerMapper.map(user, User.class);
 		entity.setActive(true);
 		entity.setUserupdate("pippobaudo");
 		entity.setUpdated(new Timestamp(System.currentTimeMillis()));

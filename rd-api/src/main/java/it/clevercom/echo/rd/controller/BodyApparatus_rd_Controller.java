@@ -51,7 +51,7 @@ public class BodyApparatus_rd_Controller {
 	private IBodyApparatus_rd_Repository repo;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -71,7 +71,7 @@ public class BodyApparatus_rd_Controller {
 	public @ResponseBody BodyApparatusDTO get(@PathVariable Character code) throws Exception {
 		BodyApparatus entity = repo.findOne(code);
 		if (entity == null) throw new RecordNotFoundException(BodyApparatus_rd_Controller.entity, code.toString());
-		return dozerMapper.map(entity, BodyApparatusDTO.class);
+		return rdDozerMapper.map(entity, BodyApparatusDTO.class);
 	}
 	
 	/**
@@ -130,7 +130,7 @@ public class BodyApparatus_rd_Controller {
 		// map list
 		List<BodyApparatusDTO> bodyApparatusDTOList = new ArrayList<BodyApparatusDTO>();
 		for (BodyApparatus s: entity) {
-			bodyApparatusDTOList.add(dozerMapper.map(s, BodyApparatusDTO.class));
+			bodyApparatusDTOList.add(rdDozerMapper.map(s, BodyApparatusDTO.class));
 		}
 		
 		// assembly dto

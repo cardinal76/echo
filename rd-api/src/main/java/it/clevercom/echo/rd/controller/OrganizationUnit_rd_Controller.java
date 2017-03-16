@@ -55,7 +55,7 @@ public class OrganizationUnit_rd_Controller {
 	private IOrganizationUnit_rd_Repository repo;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -74,7 +74,7 @@ public class OrganizationUnit_rd_Controller {
 	public @ResponseBody OrganizationUnitDTO get(@PathVariable Long id) throws Exception {
 		OrganizationUnit entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(OrganizationUnit_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, OrganizationUnitDTO.class);
+		return rdDozerMapper.map(entity, OrganizationUnitDTO.class);
 	}
 	
 	/**
@@ -133,7 +133,7 @@ public class OrganizationUnit_rd_Controller {
 		// map list
 		List<OrganizationUnitDTO> modalityTypeDTOList = new ArrayList<OrganizationUnitDTO>();
 		for (OrganizationUnit s : entity) {
-			modalityTypeDTOList.add(dozerMapper.map(s, OrganizationUnitDTO.class));
+			modalityTypeDTOList.add(rdDozerMapper.map(s, OrganizationUnitDTO.class));
 		}
 		
 		// assembly dto

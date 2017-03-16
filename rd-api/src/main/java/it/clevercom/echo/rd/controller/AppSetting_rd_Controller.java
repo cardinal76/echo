@@ -59,7 +59,7 @@ public class AppSetting_rd_Controller {
 	private IAppSetting_rd_Repository repo;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	@Value("${jwt.token.header}")
 	private String tokenHeader;
@@ -143,7 +143,7 @@ public class AppSetting_rd_Controller {
 		// map list
 		List<AppSettingDTO> appSettingDTOList = new ArrayList<AppSettingDTO>();
 		for (AppSetting s: entity) {
-			appSettingDTOList.add(dozerMapper.map(s, AppSettingDTO.class));
+			appSettingDTOList.add(rdDozerMapper.map(s, AppSettingDTO.class));
 		}
 		
 		// assembly dto
@@ -171,14 +171,14 @@ public class AppSetting_rd_Controller {
 		appSetting.setUsername(username);
 		
 		// map
-		AppSetting entity = dozerMapper.map(appSetting, AppSetting.class);
+		AppSetting entity = rdDozerMapper.map(appSetting, AppSetting.class);
 		
 		// add technical field
 		entity.setUserupdate(username);
 		
 		// save and map to out dto
 		entity = repo.saveAndFlush(entity);
-		appSetting = dozerMapper.map(entity, AppSettingDTO.class);
+		appSetting = rdDozerMapper.map(entity, AppSettingDTO.class);
 		
 		// create standard response
 		CreateResponseDTO<AppSettingDTO> response = new CreateResponseDTO<AppSettingDTO>();
@@ -214,10 +214,10 @@ public class AppSetting_rd_Controller {
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity==null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity, appSetting.getIdappsetting().toString());
 		// map old value to a dto
-		AppSettingDTO oldValueDTO = dozerMapper.map(oldValueEntity, AppSettingDTO.class);
+		AppSettingDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, AppSettingDTO.class);
 
 		// begin update of oldValue
-		dozerMapper.map(appSetting, oldValueEntity);
+		rdDozerMapper.map(appSetting, oldValueEntity);
 		
 		// add technical field
 		oldValueEntity.setUserupdate(username);
@@ -225,7 +225,7 @@ public class AppSetting_rd_Controller {
 		
 		// save and map to out dto
 		AppSetting newValueEntity = repo.saveAndFlush(oldValueEntity);
-		AppSettingDTO newValueDTO = dozerMapper.map(newValueEntity, AppSettingDTO.class);
+		AppSettingDTO newValueDTO = rdDozerMapper.map(newValueEntity, AppSettingDTO.class);
 				
 		// create standard response
 		UpdateResponseDTO<AppSettingDTO> response = new UpdateResponseDTO<AppSettingDTO>();

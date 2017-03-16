@@ -55,7 +55,7 @@ public class Province_rd_Controller {
 	private IMunicipality_rd_Repository repo_m;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -75,7 +75,7 @@ public class Province_rd_Controller {
 	public @ResponseBody ProvinceDTO get(@PathVariable Long id) throws Exception {
 		Province entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(Province_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, ProvinceDTO.class);
+		return rdDozerMapper.map(entity, ProvinceDTO.class);
 	}
 	
 	/**
@@ -134,7 +134,7 @@ public class Province_rd_Controller {
 		// map list
 		List<ProvinceDTO> provinceDTOList = new ArrayList<ProvinceDTO>();
 		for (Province s: entity) {
-			provinceDTOList.add(dozerMapper.map(s, ProvinceDTO.class));
+			provinceDTOList.add(rdDozerMapper.map(s, ProvinceDTO.class));
 		}
 		
 		// assembly dto

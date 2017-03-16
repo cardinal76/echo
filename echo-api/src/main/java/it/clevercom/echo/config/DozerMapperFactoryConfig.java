@@ -14,8 +14,8 @@ public class DozerMapperFactoryConfig {
 	public DozerBeanMapper configDozerBeanMapper() {
 		DozerBeanMapper mapper = new DozerBeanMapper();
 		List<String> mappingFileUrls = new ArrayList<String>();
-		mappingFileUrls.add("dozer-rd-bean-mappings.xml");
 		mappingFileUrls.add("dozer-tm-bean-mappings.xml");
+		mappingFileUrls.add("dozer-bean-mappings.xml");
 		mapper.setMappingFiles(mappingFileUrls);
 		return mapper;
 	}

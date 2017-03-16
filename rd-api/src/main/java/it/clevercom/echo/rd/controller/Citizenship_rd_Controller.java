@@ -59,7 +59,7 @@ public class Citizenship_rd_Controller {
 	private ICitizenship_rd_Repository repo;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	@Value("${jwt.token.header}")
 	private String tokenHeader;
@@ -84,7 +84,7 @@ public class Citizenship_rd_Controller {
 	public @ResponseBody CitizenshipDTO get(@PathVariable Long id) throws Exception {
 		Citizenship entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(Citizenship_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, CitizenshipDTO.class);
+		return rdDozerMapper.map(entity, CitizenshipDTO.class);
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class Citizenship_rd_Controller {
 		// map list
 		List<CitizenshipDTO> citizenshipDTOList = new ArrayList<CitizenshipDTO>();
 		for (Citizenship s: entity) {
-			citizenshipDTOList.add(dozerMapper.map(s, CitizenshipDTO.class));
+			citizenshipDTOList.add(rdDozerMapper.map(s, CitizenshipDTO.class));
 		}
 		
 		// assembly dto
@@ -170,14 +170,14 @@ public class Citizenship_rd_Controller {
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 		
 		// map
-		Citizenship entity = dozerMapper.map(citizenship, Citizenship.class);
+		Citizenship entity = rdDozerMapper.map(citizenship, Citizenship.class);
 		
 		// add technical field
 		entity.setUserupdate(username);
 		
 		// save and map to out dto
 		entity = repo.saveAndFlush(entity);
-		citizenship = dozerMapper.map(entity, CitizenshipDTO.class);
+		citizenship = rdDozerMapper.map(entity, CitizenshipDTO.class);
 		
 		// create standard response
 		CreateResponseDTO<CitizenshipDTO> response = new CreateResponseDTO<CitizenshipDTO>();
@@ -212,10 +212,10 @@ public class Citizenship_rd_Controller {
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity==null) throw new RecordNotFoundException(Citizenship_rd_Controller.entity, citizenship.getIdcitizenship().toString());
 		// map old value to a dto
-		CitizenshipDTO oldValueDTO = dozerMapper.map(oldValueEntity, CitizenshipDTO.class);
+		CitizenshipDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, CitizenshipDTO.class);
 
 		// begin update of oldValue
-		dozerMapper.map(citizenship, oldValueEntity);
+		rdDozerMapper.map(citizenship, oldValueEntity);
 		
 		// add technical field
 		oldValueEntity.setUserupdate(username);
@@ -223,7 +223,7 @@ public class Citizenship_rd_Controller {
 		
 		// save and map to out dto
 		Citizenship newValueEntity = repo.saveAndFlush(oldValueEntity);
-		CitizenshipDTO newValueDTO = dozerMapper.map(newValueEntity, CitizenshipDTO.class);
+		CitizenshipDTO newValueDTO = rdDozerMapper.map(newValueEntity, CitizenshipDTO.class);
 				
 		// create standard response
 		UpdateResponseDTO<CitizenshipDTO> response = new UpdateResponseDTO<CitizenshipDTO>();

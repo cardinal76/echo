@@ -52,7 +52,7 @@ public class ModalityType_rd_Controller {
 	private IModalityType_rd_Repository repo;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -72,7 +72,7 @@ public class ModalityType_rd_Controller {
 	public @ResponseBody ServiceDTO get(@PathVariable Long id) throws Exception {
 		ModalityType entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(ModalityType_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, ServiceDTO.class);
+		return rdDozerMapper.map(entity, ServiceDTO.class);
 	}
 	
 	/**
@@ -131,7 +131,7 @@ public class ModalityType_rd_Controller {
 		// map list
 		List<ModalityTypeDTO> modalityTypeDTOList = new ArrayList<ModalityTypeDTO>();
 		for (ModalityType s: entity) {
-			modalityTypeDTOList.add(dozerMapper.map(s, ModalityTypeDTO.class));
+			modalityTypeDTOList.add(rdDozerMapper.map(s, ModalityTypeDTO.class));
 		}
 		
 		// assembly dto

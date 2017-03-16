@@ -53,7 +53,7 @@ public class Service_rd_Controller {
 	private IService_rd_Repository repo;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -73,7 +73,7 @@ public class Service_rd_Controller {
 	public @ResponseBody ServiceDTO get(@PathVariable Long id) throws Exception {
 		Service entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(Service_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, ServiceDTO.class);
+		return rdDozerMapper.map(entity, ServiceDTO.class);
 	}
 	
 	/**
@@ -132,7 +132,7 @@ public class Service_rd_Controller {
 		// map list
 		List<ServiceDTO> serviceDTOList = new ArrayList<ServiceDTO>();
 		for (Service s: entity) {
-			serviceDTOList.add(dozerMapper.map(s, ServiceDTO.class));
+			serviceDTOList.add(rdDozerMapper.map(s, ServiceDTO.class));
 		}
 		
 		// assembly dto

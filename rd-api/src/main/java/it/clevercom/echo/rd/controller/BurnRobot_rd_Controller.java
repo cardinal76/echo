@@ -56,7 +56,7 @@ public class BurnRobot_rd_Controller {
 	private IBurnRobot_rd_Repository repo;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -76,7 +76,7 @@ public class BurnRobot_rd_Controller {
 	public @ResponseBody BurnRobotDTO get(@PathVariable Long id) throws Exception {
 		BurnRobot entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(BurnRobot_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, BurnRobotDTO.class);
+		return rdDozerMapper.map(entity, BurnRobotDTO.class);
 	}
 	
 	/**
@@ -135,7 +135,7 @@ public class BurnRobot_rd_Controller {
 		// map list
 		List<BurnRobotDTO> burnRobotDTOList = new ArrayList<BurnRobotDTO>();
 		for (BurnRobot s: entity) {
-			burnRobotDTOList.add(dozerMapper.map(s, BurnRobotDTO.class));
+			burnRobotDTOList.add(rdDozerMapper.map(s, BurnRobotDTO.class));
 		}
 		
 		// assembly dto
@@ -158,7 +158,7 @@ public class BurnRobot_rd_Controller {
 	@Loggable
 	public @ResponseBody CreateResponseDTO add(@RequestBody BurnRobotDTO burnrobot) throws Exception {
 		if (burnrobot == null) throw new BadRequestException("Impossible to store a null ");
-		BurnRobot entity = dozerMapper.map(burnrobot, BurnRobot.class);
+		BurnRobot entity = rdDozerMapper.map(burnrobot, BurnRobot.class);
 		
 		BurnRobot saved = repo.saveAndFlush(entity);
 		

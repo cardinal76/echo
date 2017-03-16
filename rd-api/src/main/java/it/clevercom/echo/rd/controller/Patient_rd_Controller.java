@@ -62,7 +62,7 @@ public class Patient_rd_Controller {
 	private IPatient_rd_Repository repo;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	@Value("${jwt.token.header}")
 	private String tokenHeader;
@@ -87,7 +87,7 @@ public class Patient_rd_Controller {
 	public @ResponseBody PatientDTO get(@PathVariable Long id) throws Exception {
 		Patient entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(Patient_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, PatientDTO.class, "patient-plain").buildExtendedObject();
+		return rdDozerMapper.map(entity, PatientDTO.class, "patient-plain").buildExtendedObject();
 	}
 	
 	/**
@@ -146,7 +146,7 @@ public class Patient_rd_Controller {
 		// map list
 		List<PatientDTO> patientDTOList = new ArrayList<PatientDTO>();
 		for (Patient s: entity) {
-			patientDTOList.add(dozerMapper.map(s, PatientDTO.class).buildExtendedObject());
+			patientDTOList.add(rdDozerMapper.map(s, PatientDTO.class, "patient-plain").buildExtendedObject());
 		}
 		
 		// assembly dto
@@ -173,14 +173,14 @@ public class Patient_rd_Controller {
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 		
 		// map
-		Patient entity = dozerMapper.map(patient, Patient.class);
+		Patient entity = rdDozerMapper.map(patient, Patient.class);
 		
 		// add technical field
 		entity.setUserupdate(username);
 		
 		// save and map to out dto
 		entity = repo.saveAndFlush(entity);
-		patient = dozerMapper.map(entity, PatientDTO.class);
+		patient = rdDozerMapper.map(entity, PatientDTO.class, "patient-plain");
 				
 		// create standard response
 		CreateResponseDTO<PatientDTO> response = new CreateResponseDTO<PatientDTO>();
@@ -215,10 +215,10 @@ public class Patient_rd_Controller {
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity==null) throw new RecordNotFoundException(Patient_rd_Controller.entity, patient.getIdpatient().toString());
 		// map old value to a dto
-		PatientDTO oldValueDTO = dozerMapper.map(oldValueEntity, PatientDTO.class);
+		PatientDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, PatientDTO.class);
 
 		// begin update of oldValue
-		dozerMapper.map(patient, oldValueEntity);
+		rdDozerMapper.map(patient, oldValueEntity);
 		
 		// add technical field
 		oldValueEntity.setUserupdate(username);
@@ -226,7 +226,7 @@ public class Patient_rd_Controller {
 		
 		// save and map to out dto
 		Patient newValueEntity = repo.saveAndFlush(oldValueEntity);
-		PatientDTO newValueDTO = dozerMapper.map(newValueEntity, PatientDTO.class);
+		PatientDTO newValueDTO = rdDozerMapper.map(newValueEntity, PatientDTO.class);
 				
 		// create standard response
 		UpdateResponseDTO<PatientDTO> response = new UpdateResponseDTO<PatientDTO>();

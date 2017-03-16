@@ -74,7 +74,7 @@ public class Country_rd_Controller {
 	private IMunicipality_rd_Repository repo_m;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper rdDozerMapper;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -97,7 +97,7 @@ public class Country_rd_Controller {
 	public @ResponseBody CountryDTO get(@PathVariable Long id) throws Exception {
 		Country entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(Country_rd_Controller.entity, id.toString());
-		return dozerMapper.map(entity, CountryDTO.class);
+		return rdDozerMapper.map(entity, CountryDTO.class);
 	}
 	
 	/**
@@ -127,7 +127,7 @@ public class Country_rd_Controller {
 		// map list
 		List<RegionDTO> regionDTOList = new ArrayList<RegionDTO>();
 		for (Region s: regions) {
-			regionDTOList.add(dozerMapper.map(s, RegionDTO.class, "region-no-country"));
+			regionDTOList.add(rdDozerMapper.map(s, RegionDTO.class, "region-no-country"));
 		}
 		
 		// assembly dto
@@ -169,7 +169,7 @@ public class Country_rd_Controller {
 		// map list
 		List<ProvinceDTO> provinceDTOList = new ArrayList<ProvinceDTO>();
 		for (Province s: provinces) {
-			provinceDTOList.add(dozerMapper.map(s, ProvinceDTO.class, "province-no-region"));
+			provinceDTOList.add(rdDozerMapper.map(s, ProvinceDTO.class, "province-no-region"));
 		}
 		
 		// assembly dto
@@ -218,7 +218,7 @@ public class Country_rd_Controller {
 		// map list
 		List<MunicipalityDTO> municipalityDTOList = new ArrayList<MunicipalityDTO>();
 		for (Municipality s: municipalities) {
-			municipalityDTOList.add(dozerMapper.map(s, MunicipalityDTO.class, "municipality-no-province"));
+			municipalityDTOList.add(rdDozerMapper.map(s, MunicipalityDTO.class, "municipality-no-province"));
 		}
 		
 		// assembly dto
@@ -288,7 +288,7 @@ public class Country_rd_Controller {
 		// map list
 		List<CountryDTO> countryDTOList = new ArrayList<CountryDTO>();
 		for (Country s: entity) {
-			countryDTOList.add(dozerMapper.map(s, CountryDTO.class));
+			countryDTOList.add(rdDozerMapper.map(s, CountryDTO.class));
 		}
 		
 		// assembly dto
