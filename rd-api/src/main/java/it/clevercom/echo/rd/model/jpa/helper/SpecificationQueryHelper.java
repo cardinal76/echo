@@ -7,11 +7,9 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import it.clevercom.echo.rd.model.entity.Service;
-
 public class SpecificationQueryHelper<T> implements Specification<T> {
-    private SearchCriteria criteria;
-    
+	private SearchCriteria criteria;
+
 	public SpecificationQueryHelper(SearchCriteria criteria) {
 		super();
 		this.criteria = criteria;
@@ -20,20 +18,34 @@ public class SpecificationQueryHelper<T> implements Specification<T> {
 	@Override
 	public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 		if (criteria.getOperation().equalsIgnoreCase(">")) {
-            return cb.greaterThanOrEqualTo(
-              root.<String> get(criteria.getKey()), criteria.getValue().toString());
-        } 
-        else if (criteria.getOperation().equalsIgnoreCase("<")) {
-            return cb.lessThanOrEqualTo(
-              root.<String> get(criteria.getKey()), criteria.getValue().toString());
-        } 
-        else if (criteria.getOperation().equalsIgnoreCase(":")) {
-            if (root.get(criteria.getKey()).getJavaType() == String.class) {
-                return cb.like(cb.lower(root.<String> get(criteria.getKey())), "%" + criteria.getValue().toString().toLowerCase() + "%");
-            } else {
-                return cb.equal(root.get(criteria.getKey()), criteria.getValue());
-            }
-        }
-        return null;
+			return cb.greaterThanOrEqualTo(root.<String>get(criteria.getKey()), criteria.getValue().toString());
+		} else if (criteria.getOperation().equalsIgnoreCase("<")) {
+			return cb.lessThanOrEqualTo(root.<String>get(criteria.getKey()), criteria.getValue().toString());
+		} else if (criteria.getOperation().equalsIgnoreCase(":")) {
+			// middle like
+			if (root.get(criteria.getKey()).getJavaType() == String.class) {
+				return cb.like(cb.lower(root.<String>get(criteria.getKey())),
+						"%" + criteria.getValue().toString().toLowerCase() + "%");
+			} else {
+				return cb.equal(root.get(criteria.getKey()), criteria.getValue());
+			}
+		} else if (criteria.getOperation().equalsIgnoreCase(":>")) {
+			// left fixed like
+			if (root.get(criteria.getKey()).getJavaType() == String.class) {
+				return cb.like(cb.lower(root.<String>get(criteria.getKey())),
+						criteria.getValue().toString().toLowerCase() + "%");
+			} else {
+				return cb.equal(root.get(criteria.getKey()), criteria.getValue());
+			}
+		} else if (criteria.getOperation().equalsIgnoreCase("<:")) {
+			// right fixed like
+			if (root.get(criteria.getKey()).getJavaType() == String.class) {
+				return cb.like(cb.lower(root.<String>get(criteria.getKey())),
+						"%" + criteria.getValue().toString().toLowerCase());
+			} else {
+				return cb.equal(root.get(criteria.getKey()), criteria.getValue());
+			}
+		}
+		return null;
 	}
 }
