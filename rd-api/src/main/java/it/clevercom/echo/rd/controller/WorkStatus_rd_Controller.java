@@ -212,6 +212,8 @@ public class WorkStatus_rd_Controller {
 		WorkStatus oldValueEntity = repo.findOne(workStatus.getIdworkstatus()); 
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity==null) throw new RecordNotFoundException(WorkStatus_rd_Controller.entity, workStatus.getIdworkstatus().toString());
+		// get created date
+		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
 		WorkStatusDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, WorkStatusDTO.class);
 
@@ -221,6 +223,7 @@ public class WorkStatus_rd_Controller {
 		// add technical field
 		oldValueEntity.setUserupdate(username);
 		oldValueEntity.setUpdated(new Date());
+		oldValueEntity.setCreated(created);
 		
 		// save and map to out dto
 		WorkStatus newValueEntity = repo.saveAndFlush(oldValueEntity);

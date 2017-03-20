@@ -213,6 +213,8 @@ public class AppSetting_rd_Controller {
 		AppSetting oldValueEntity = repo.findOne(appSetting.getIdappsetting()); 
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity==null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity, appSetting.getIdappsetting().toString());
+		// get created date
+		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
 		AppSettingDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, AppSettingDTO.class);
 
@@ -222,6 +224,7 @@ public class AppSetting_rd_Controller {
 		// add technical field
 		oldValueEntity.setUserupdate(username);
 		oldValueEntity.setUpdated(new Date());
+		oldValueEntity.setCreated(created);
 		
 		// save and map to out dto
 		AppSetting newValueEntity = repo.saveAndFlush(oldValueEntity);

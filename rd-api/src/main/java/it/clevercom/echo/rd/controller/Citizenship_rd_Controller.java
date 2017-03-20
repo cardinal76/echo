@@ -211,6 +211,8 @@ public class Citizenship_rd_Controller {
 		Citizenship oldValueEntity = repo.findOne(citizenship.getIdcitizenship()); 
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity==null) throw new RecordNotFoundException(Citizenship_rd_Controller.entity, citizenship.getIdcitizenship().toString());
+		// get created date
+		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
 		CitizenshipDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, CitizenshipDTO.class);
 
@@ -220,6 +222,7 @@ public class Citizenship_rd_Controller {
 		// add technical field
 		oldValueEntity.setUserupdate(username);
 		oldValueEntity.setUpdated(new Date());
+		oldValueEntity.setCreated(created);
 		
 		// save and map to out dto
 		Citizenship newValueEntity = repo.saveAndFlush(oldValueEntity);

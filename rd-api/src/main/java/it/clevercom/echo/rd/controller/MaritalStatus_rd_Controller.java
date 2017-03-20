@@ -211,6 +211,8 @@ public class MaritalStatus_rd_Controller {
 		Maritalstatus oldValueEntity = repo.findOne(maritalStatus.getIdmaritalstatus()); 
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity==null) throw new RecordNotFoundException(MaritalStatus_rd_Controller.entity, maritalStatus.getIdmaritalstatus().toString());
+		// get created date
+		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
 		MaritalstatusDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, MaritalstatusDTO.class);
 
@@ -220,6 +222,7 @@ public class MaritalStatus_rd_Controller {
 		// add technical field
 		oldValueEntity.setUserupdate(username);
 		oldValueEntity.setUpdated(new Date());
+		oldValueEntity.setCreated(created);
 		
 		// save and map to out dto
 		Maritalstatus newValueEntity = repo.saveAndFlush(oldValueEntity);

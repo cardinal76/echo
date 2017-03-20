@@ -213,6 +213,8 @@ public class BurnRobot_rd_Controller {
 		BurnRobot oldValueEntity = repo.findOne(burnRobot.getIdburnrobot()); 
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity==null) throw new RecordNotFoundException(BurnRobot_rd_Controller.entity, burnRobot.getIdburnrobot().toString());
+		// get created date
+		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
 		BurnRobotDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, BurnRobotDTO.class);
 
@@ -222,6 +224,7 @@ public class BurnRobot_rd_Controller {
 		// add technical field
 		oldValueEntity.setUserupdate(username);
 		oldValueEntity.setUpdated(new Date());
+		oldValueEntity.setCreated(created);
 		
 		// save and map to out dto
 		BurnRobot newValueEntity = repo.saveAndFlush(oldValueEntity);

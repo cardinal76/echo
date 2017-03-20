@@ -213,6 +213,8 @@ public class BodyApparatus_rd_Controller {
 		BodyApparatus oldValueEntity = repo.findOne(bodyApparatus.getIdbodyapparatus()); 
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity==null) throw new RecordNotFoundException(BodyApparatus_rd_Controller.entity, bodyApparatus.getIdbodyapparatus().toString());
+		// get created date
+		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
 		BodyApparatusDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, BodyApparatusDTO.class);
 
@@ -222,6 +224,7 @@ public class BodyApparatus_rd_Controller {
 		// add technical field
 		oldValueEntity.setUserupdate(username);
 		oldValueEntity.setUpdated(new Date());
+		oldValueEntity.setCreated(created);
 		
 		// save and map to out dto
 		BodyApparatus newValueEntity = repo.saveAndFlush(oldValueEntity);

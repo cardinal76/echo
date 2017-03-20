@@ -212,6 +212,8 @@ public class WorkPriority_rd_Controller {
 		WorkPriority oldValueEntity = repo.findOne(bodyApparatus.getIdworkpriority()); 
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity==null) throw new RecordNotFoundException(WorkPriority_rd_Controller.entity, bodyApparatus.getIdworkpriority().toString());
+		// get created date
+		Date created = oldValueEntity.getCreated();		
 		// map old value to a dto
 		WorkPriorityDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, WorkPriorityDTO.class);
 
@@ -221,6 +223,7 @@ public class WorkPriority_rd_Controller {
 		// add technical field
 		oldValueEntity.setUserupdate(username);
 		oldValueEntity.setUpdated(new Date());
+		oldValueEntity.setCreated(created);
 		
 		// save and map to out dto
 		WorkPriority newValueEntity = repo.saveAndFlush(oldValueEntity);

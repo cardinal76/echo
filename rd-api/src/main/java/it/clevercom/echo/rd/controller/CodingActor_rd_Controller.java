@@ -213,6 +213,8 @@ public class CodingActor_rd_Controller {
 		CodingActor oldValueEntity = repo.findOne(codingactor.getIdcodingactor()); 
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity==null) throw new RecordNotFoundException(CodingActor_rd_Controller.entity, codingactor.getIdcodingactor().toString());
+		// get created date
+		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
 		CodingActorDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, CodingActorDTO.class);
 
@@ -222,6 +224,7 @@ public class CodingActor_rd_Controller {
 		// add technical field
 		oldValueEntity.setUserupdate(username);
 		oldValueEntity.setUpdated(new Date());
+		oldValueEntity.setCreated(created);
 		
 		// save and map to out dto
 		CodingActor newValueEntity = repo.saveAndFlush(oldValueEntity);
