@@ -1,23 +1,9 @@
 package it.clevercom.echo.rd.model.dto;
 
+import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
-public class WorkPriorityDTO implements java.io.Serializable {
+public class WorkPriorityDTO implements Serializable {
 	private static final long serialVersionUID = 1525861965899783971L;
 
 	private Long idworkpriority;

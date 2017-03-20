@@ -4,9 +4,9 @@
 	
 	<configuration>
 		<custom-converters>
-			<converter type="it.clevercom.echo.rd.model.converter.Municipality2MunicipalityDTO_PlainConverter">
-				<class-a>it.clevercom.echo.rd.model.entity.Municipality</class-a>
-				<class-b>it.clevercom.echo.rd.model.dto.MunicipalityDTO</class-b>
+			<converter type="it.clevercom.echo.rd.model.converter.Patient2PatientDTO">
+				<class-a>it.clevercom.echo.rd.model.entity.Patient</class-a>
+				<class-b>it.clevercom.echo.rd.model.dto.PatientDTO</class-b>
 			</converter>
 		</custom-converters>
 	</configuration>
@@ -53,51 +53,6 @@
 	</mapping>
 
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.Patient</class-a>
-		<class-b>it.clevercom.echo.rd.model.dto.PatientDTO</class-b>
-
-		<field>
-			<a>countryByDomicileidcountry</a>
-			<b>docimicileCountry</b>
-		</field>
-
-		<field>
-			<a>countryByResidenceidcountry</a>
-			<b>residenceCountry</b>
-		</field>
-
-		<field>
-			<a>countryByBirthplaceidcountry</a>
-			<b>birthplaceCountry</b>
-		</field>
-
-		<field>
-			<a>municipalityByDomicileidmunicipality</a>
-			<b>domicileMunicipality</b>
-		</field>
-
-		<field>
-			<a>municipalityByResidenceidmunicipality</a>
-			<b>residenceMunicipality</b>
-		</field>
-
-		<field>
-			<a>municipalityByBirthplaceidmunicipality</a>
-			<b>birthplaceMunicipality</b>
-		</field>
-
-		<field>
-			<a>organizationUnitByIdintorganizationunit</a>
-			<b>internalOrgUnit</b>
-		</field>
-
-		<field>
-			<a>organizationUnitByIdextorganizationunit</a>
-			<b>externalOrgUnit</b>
-		</field>
-	</mapping>
-
-	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.OrganizationUnit</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.OrganizationUnitDTO</class-b>
 		<field>
@@ -137,57 +92,6 @@
 
 	<!-- customized mapping -->
 
-	<mapping map-id="patient-plain" map-null="false">
-		<class-a>it.clevercom.echo.rd.model.entity.Patient</class-a>
-		<class-b>it.clevercom.echo.rd.model.dto.PatientDTO</class-b>
-
-		<field>
-			<a>countryByDomicileidcountry</a>
-			<b>docimicileCountry</b>
-		</field>
-
-		<field>
-			<a>countryByResidenceidcountry</a>
-			<b>residenceCountry</b>
-		</field>
-
-		<field>
-			<a>countryByBirthplaceidcountry</a>
-			<b>birthplaceCountry</b>
-		</field>
-
-		<field custom-converter="it.clevercom.echo.rd.model.converter.Municipality2MunicipalityDTO_PlainConverter">
-			<a>municipalityByDomicileidmunicipality</a>
-			<b>domicileMunicipality</b>
-			<a-hint>it.clevercom.echo.rd.model.entity.Municipality</a-hint>
-			<b-hint>it.clevercom.echo.rd.model.dto.MunicipalityDTO</b-hint>
-		</field>
-
-		<field custom-converter="it.clevercom.echo.rd.model.converter.Municipality2MunicipalityDTO_PlainConverter">
-			<a>municipalityByResidenceidmunicipality</a>
-			<b>residenceMunicipality</b>
-			<a-hint>it.clevercom.echo.rd.model.entity.Municipality</a-hint>
-			<b-hint>it.clevercom.echo.rd.model.dto.MunicipalityDTO</b-hint>
-		</field>
-
-		<field custom-converter="it.clevercom.echo.rd.model.converter.Municipality2MunicipalityDTO_PlainConverter">
-			<a>municipalityByBirthplaceidmunicipality</a>
-			<b>birthplaceMunicipality</b>
-			<a-hint>it.clevercom.echo.rd.model.entity.Municipality</a-hint>
-			<b-hint>it.clevercom.echo.rd.model.dto.MunicipalityDTO</b-hint>
-		</field>
-
-		<field>
-			<a>organizationUnitByIdintorganizationunit</a>
-			<b>internalOrgUnit</b>
-		</field>
-
-		<field>
-			<a>organizationUnitByIdextorganizationunit</a>
-			<b>externalOrgUnit</b>
-		</field>
-	</mapping>
-
 	<mapping map-id="region-no-country">
 		<class-a>it.clevercom.echo.rd.model.entity.Region</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.RegionDTO</class-b>
@@ -214,5 +118,59 @@
 			<b>province</b>
 		</field-exclude>
 	</mapping>
+	
+	<mapping map-id="patient-plain" wildcard="false">
+		<class-a>it.clevercom.echo.rd.model.entity.Patient</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.PatientDTO</class-b>
 
+		<field>
+			<a>idpatient</a>
+			<b>idpatient</b>
+		</field>
+
+		<field>
+			<a>name</a>
+			<b>name</b>
+		</field>
+
+		<field>
+			<a>surname</a>
+			<b>surname</b>
+		</field>
+
+		<field>
+			<a>dateofbirth</a>
+			<b>dateofbirth</b>
+		</field>
+
+		<field>
+			<a>deathdate</a>
+			<b>deathdate</b>
+		</field>
+
+		<field>
+			<a>email</a>
+			<b>email</b>
+		</field>
+
+		<field>
+			<a>gender</a>
+			<b>gender</b>
+		</field>
+
+		<field>
+			<a>healthcode</a>
+			<b>healthcode</b>
+		</field>
+		
+		<field>
+			<a>phonenumber</a>
+			<b>phonenumber</b>
+		</field>
+		
+		<field>
+			<a>taxcode</a>
+			<b>taxcode</b>
+		</field>
+	</mapping>
 </mappings>

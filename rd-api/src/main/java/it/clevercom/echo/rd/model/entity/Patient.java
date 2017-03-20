@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 20-mar-2017 9.52.47 by Hibernate Tools 5.2.2.Final
+// Generated 20-mar-2017 16.22.52 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -57,6 +57,7 @@ public class Patient  implements java.io.Serializable {
      private String userupdate;
      private Boolean active;
      private String email;
+     private String healthcode;
      private Set<Hl7Patient> hl7Patients = new HashSet<Hl7Patient>(0);
      private Set<PatientCodingActor> patientCodingActors = new HashSet<PatientCodingActor>(0);
      private Set<WorkSession> workSessions = new HashSet<WorkSession>(0);
@@ -71,7 +72,7 @@ public class Patient  implements java.io.Serializable {
         this.userupdate = userupdate;
         this.active = active;
     }
-    public Patient(Citizenship citizenship, Country countryByDomicileidcountry, Country countryByResidenceidcountry, Country countryByBirthplaceidcountry, Maritalstatus maritalstatus, Municipality municipalityByDomicileidmunicipality, Municipality municipalityByResidenceidmunicipality, Municipality municipalityByBirthplaceidmunicipality, OrganizationUnit organizationUnitByIdintorganizationunit, OrganizationUnit organizationUnitByIdextorganizationunit, String name, String surname, Date dateofbirth, String gender, String residencestreetaddress, String domicilestreetaddress, Date deathdate, String taxcode, String phonenumber, Date created, Date updated, String userupdate, Boolean active, String email, Set<Hl7Patient> hl7Patients, Set<PatientCodingActor> patientCodingActors, Set<WorkSession> workSessions) {
+    public Patient(Citizenship citizenship, Country countryByDomicileidcountry, Country countryByResidenceidcountry, Country countryByBirthplaceidcountry, Maritalstatus maritalstatus, Municipality municipalityByDomicileidmunicipality, Municipality municipalityByResidenceidmunicipality, Municipality municipalityByBirthplaceidmunicipality, OrganizationUnit organizationUnitByIdintorganizationunit, OrganizationUnit organizationUnitByIdextorganizationunit, String name, String surname, Date dateofbirth, String gender, String residencestreetaddress, String domicilestreetaddress, Date deathdate, String taxcode, String phonenumber, Date created, Date updated, String userupdate, Boolean active, String email, String healthcode, Set<Hl7Patient> hl7Patients, Set<PatientCodingActor> patientCodingActors, Set<WorkSession> workSessions) {
        this.citizenship = citizenship;
        this.countryByDomicileidcountry = countryByDomicileidcountry;
        this.countryByResidenceidcountry = countryByResidenceidcountry;
@@ -96,6 +97,7 @@ public class Patient  implements java.io.Serializable {
        this.userupdate = userupdate;
        this.active = active;
        this.email = email;
+       this.healthcode = healthcode;
        this.hl7Patients = hl7Patients;
        this.patientCodingActors = patientCodingActors;
        this.workSessions = workSessions;
@@ -351,6 +353,16 @@ public class Patient  implements java.io.Serializable {
     
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    
+    @Column(name="healthcode")
+    public String getHealthcode() {
+        return this.healthcode;
+    }
+    
+    public void setHealthcode(String healthcode) {
+        this.healthcode = healthcode;
     }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="patient")

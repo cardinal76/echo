@@ -1,11 +1,12 @@
 package it.clevercom.echo.rd.model.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"created","updated","userupdate","active"})
-public class BodyApparatusDTO implements java.io.Serializable {
+public class BodyApparatusDTO implements Serializable {
 	private static final long serialVersionUID = -9001955080302115293L;
 	
 	private Long idbodyapparatus;

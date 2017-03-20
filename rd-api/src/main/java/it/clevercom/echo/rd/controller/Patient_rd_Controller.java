@@ -38,10 +38,8 @@ import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.util.JwtTokenUtils;
-import it.clevercom.echo.rd.model.dto.AppSettingDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.dto.PatientDTO;
-import it.clevercom.echo.rd.model.entity.AppSetting;
 import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
@@ -87,7 +85,7 @@ public class Patient_rd_Controller {
 	public @ResponseBody PatientDTO get(@PathVariable Long id) throws Exception {
 		Patient entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(Patient_rd_Controller.entity, id.toString());
-		return rdDozerMapper.map(entity, PatientDTO.class, "patient-plain").buildExtendedObject();
+		return rdDozerMapper.map(entity, PatientDTO.class);
 	}
 	
 	/**

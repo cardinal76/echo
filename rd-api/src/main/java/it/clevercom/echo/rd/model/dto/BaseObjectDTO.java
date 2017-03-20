@@ -5,21 +5,33 @@ import java.io.Serializable;
 public class BaseObjectDTO implements Serializable {
 	private static final long serialVersionUID = -6326932178674963831L;
 	
-	private Long id;
+	private String id;
 	private String name;
 	private String code;
 	
+	public BaseObjectDTO() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public BaseObjectDTO(String id, String name, String code) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.code = code;
+	}
+
 	/**
 	 * @return the id
 	 */
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 	
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	

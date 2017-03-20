@@ -11,34 +11,32 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class PatientDTO implements Serializable {
 	private static final long serialVersionUID = 8178223709710995097L;
 	
-	private Long idpatient;
-	private CitizenshipDTO citizenship;
-	private CountryDTO docimicileCountry;
-	private CountryDTO residenceCountry;
-	private CountryDTO birthplaceCountry;
-	private MaritalstatusDTO maritalStatus;
-	private MunicipalityDTO domicileMunicipality;
-	private MunicipalityDTO residenceMunicipality;
-	private MunicipalityDTO birthplaceMunicipality;
-	private OrganizationUnitDTO internalOrgUnit;
-	private OrganizationUnitDTO externalOrgUnit;
+	private Long idpatient;	
 	private String name;
 	private String surname;
 	private Date dateofbirth;
 	private String gender;
-	private String residencestreetaddress;
-	private String domicilestreetaddress;
-	private Date deathdate;
 	private String taxcode;
+	private String healthCode;
 	private String phonenumber;
+	private String email;
+	
+	private Date deathdate;
+	
 	private Date created;
 	private Date updated;
 	private String userupdate;
 	private Boolean active;
-	private String email;
+	
 	private String prettyPrint;
 	
-	//private Set<PatientCodingActorDTO> patientCodingActors = new HashSet<PatientCodingActorDTO>(0);
+	private BaseObjectDTO citizenship;
+	private BaseObjectDTO maritalStatus;
+	private BaseObjectDTO intOrganizationUnit;
+	private BaseObjectDTO extOrganizationUnit;
+	private LocalityDTO birthPlace;
+	private AddressDTO residence;
+	private AddressDTO domicile;
 
 	public PatientDTO() {
 		super();
@@ -50,6 +48,15 @@ public class PatientDTO implements Serializable {
 		this.updated = updated;
 		this.userupdate = userupdate;
 		this.active = active;
+	}
+	
+	/**
+	 * @return
+	 */
+	public PatientDTO buildExtendedObject() {
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+		this.setPrettyPrint(this.getName() + " " + this.getSurname() + " (" + df.format(this.getDateofbirth()) + ")");
+		return this;
 	}
 
 	/**
@@ -64,146 +71,6 @@ public class PatientDTO implements Serializable {
 	 */
 	public void setIdpatient(Long idpatient) {
 		this.idpatient = idpatient;
-	}
-
-	/**
-	 * @return the citizenship
-	 */
-	public CitizenshipDTO getCitizenship() {
-		return citizenship;
-	}
-
-	/**
-	 * @param citizenship the citizenship to set
-	 */
-	public void setCitizenship(CitizenshipDTO citizenship) {
-		this.citizenship = citizenship;
-	}
-
-	/**
-	 * @return the docimicileCountry
-	 */
-	public CountryDTO getDocimicileCountry() {
-		return docimicileCountry;
-	}
-
-	/**
-	 * @param docimicileCountry the docimicileCountry to set
-	 */
-	public void setDocimicileCountry(CountryDTO docimicileCountry) {
-		this.docimicileCountry = docimicileCountry;
-	}
-
-	/**
-	 * @return the residenceCountry
-	 */
-	public CountryDTO getResidenceCountry() {
-		return residenceCountry;
-	}
-
-	/**
-	 * @param residenceCountry the residenceCountry to set
-	 */
-	public void setResidenceCountry(CountryDTO residenceCountry) {
-		this.residenceCountry = residenceCountry;
-	}
-
-	/**
-	 * @return the birthplaceCountry
-	 */
-	public CountryDTO getBirthplaceCountry() {
-		return birthplaceCountry;
-	}
-
-	/**
-	 * @param birthplaceCountry the birthplaceCountry to set
-	 */
-	public void setBirthplaceCountry(CountryDTO birthplaceCountry) {
-		this.birthplaceCountry = birthplaceCountry;
-	}
-
-	/**
-	 * @return the maritalStatus
-	 */
-	public MaritalstatusDTO getMaritalStatus() {
-		return maritalStatus;
-	}
-
-	/**
-	 * @param maritalStatus the maritalStatus to set
-	 */
-	public void setMaritalStatus(MaritalstatusDTO maritalStatus) {
-		this.maritalStatus = maritalStatus;
-	}
-
-	/**
-	 * @return the domicileMunicipality
-	 */
-	public MunicipalityDTO getDomicileMunicipality() {
-		return domicileMunicipality;
-	}
-
-	/**
-	 * @param domicileMunicipality the domicileMunicipality to set
-	 */
-	public void setDomicileMunicipality(MunicipalityDTO domicileMunicipality) {
-		this.domicileMunicipality = domicileMunicipality;
-	}
-
-	/**
-	 * @return the residenceMunicipality
-	 */
-	public MunicipalityDTO getResidenceMunicipality() {
-		return residenceMunicipality;
-	}
-
-	/**
-	 * @param residenceMunicipality the residenceMunicipality to set
-	 */
-	public void setResidenceMunicipality(MunicipalityDTO residenceMunicipality) {
-		this.residenceMunicipality = residenceMunicipality;
-	}
-
-	/**
-	 * @return the birthplaceMunicipality
-	 */
-	public MunicipalityDTO getBirthplaceMunicipality() {
-		return birthplaceMunicipality;
-	}
-
-	/**
-	 * @param birthplaceMunicipality the birthplaceMunicipality to set
-	 */
-	public void setBirthplaceMunicipality(MunicipalityDTO birthplaceMunicipality) {
-		this.birthplaceMunicipality = birthplaceMunicipality;
-	}
-
-	/**
-	 * @return the internalOrgUnit
-	 */
-	public OrganizationUnitDTO getInternalOrgUnit() {
-		return internalOrgUnit;
-	}
-
-	/**
-	 * @param internalOrgUnit the internalOrgUnit to set
-	 */
-	public void setInternalOrgUnit(OrganizationUnitDTO internalOrgUnit) {
-		this.internalOrgUnit = internalOrgUnit;
-	}
-
-	/**
-	 * @return the externalOrgUnit
-	 */
-	public OrganizationUnitDTO getExternalOrgUnit() {
-		return externalOrgUnit;
-	}
-
-	/**
-	 * @param externalOrgUnit the externalOrgUnit to set
-	 */
-	public void setExternalOrgUnit(OrganizationUnitDTO externalOrgUnit) {
-		this.externalOrgUnit = externalOrgUnit;
 	}
 
 	/**
@@ -263,48 +130,6 @@ public class PatientDTO implements Serializable {
 	}
 
 	/**
-	 * @return the residencestreetaddress
-	 */
-	public String getResidencestreetaddress() {
-		return residencestreetaddress;
-	}
-
-	/**
-	 * @param residencestreetaddress the residencestreetaddress to set
-	 */
-	public void setResidencestreetaddress(String residencestreetaddress) {
-		this.residencestreetaddress = residencestreetaddress;
-	}
-
-	/**
-	 * @return the domicilestreetaddress
-	 */
-	public String getDomicilestreetaddress() {
-		return domicilestreetaddress;
-	}
-
-	/**
-	 * @param domicilestreetaddress the domicilestreetaddress to set
-	 */
-	public void setDomicilestreetaddress(String domicilestreetaddress) {
-		this.domicilestreetaddress = domicilestreetaddress;
-	}
-
-	/**
-	 * @return the deathdate
-	 */
-	public Date getDeathdate() {
-		return deathdate;
-	}
-
-	/**
-	 * @param deathdate the deathdate to set
-	 */
-	public void setDeathdate(Date deathdate) {
-		this.deathdate = deathdate;
-	}
-
-	/**
 	 * @return the taxcode
 	 */
 	public String getTaxcode() {
@@ -319,6 +144,20 @@ public class PatientDTO implements Serializable {
 	}
 
 	/**
+	 * @return the healthCode
+	 */
+	public String getHealthCode() {
+		return healthCode;
+	}
+
+	/**
+	 * @param healthCode the healthCode to set
+	 */
+	public void setHealthCode(String healthCode) {
+		this.healthCode = healthCode;
+	}
+
+	/**
 	 * @return the phonenumber
 	 */
 	public String getPhonenumber() {
@@ -330,6 +169,34 @@ public class PatientDTO implements Serializable {
 	 */
 	public void setPhonenumber(String phonenumber) {
 		this.phonenumber = phonenumber;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
+	 * @return the deathdate
+	 */
+	public Date getDeathdate() {
+		return deathdate;
+	}
+
+	/**
+	 * @param deathdate the deathdate to set
+	 */
+	public void setDeathdate(Date deathdate) {
+		this.deathdate = deathdate;
 	}
 
 	/**
@@ -377,7 +244,7 @@ public class PatientDTO implements Serializable {
 	/**
 	 * @return the active
 	 */
-	public Boolean isActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
@@ -386,27 +253,6 @@ public class PatientDTO implements Serializable {
 	 */
 	public void setActive(Boolean active) {
 		this.active = active;
-	}
-
-	/**
-	 * @return the email
-	 */
-	public String getEmail() {
-		return email;
-	}
-
-	/**
-	 * @param email the email to set
-	 */
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	/**
-	 * @return the serialversionuid
-	 */
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 
 	/**
@@ -422,13 +268,109 @@ public class PatientDTO implements Serializable {
 	public void setPrettyPrint(String prettyPrint) {
 		this.prettyPrint = prettyPrint;
 	}
-	
+
 	/**
-	 * @return
+	 * @return the citizenship
 	 */
-	public PatientDTO buildExtendedObject() {
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		this.setPrettyPrint(this.getName() + " " + this.getSurname() + " (" + df.format(this.getDateofbirth()) + ")");
-		return this;
+	public BaseObjectDTO getCitizenship() {
+		return citizenship;
+	}
+
+	/**
+	 * @param citizenship the citizenship to set
+	 */
+	public void setCitizenship(BaseObjectDTO citizenship) {
+		this.citizenship = citizenship;
+	}
+
+	/**
+	 * @return the maritalStatus
+	 */
+	public BaseObjectDTO getMaritalStatus() {
+		return maritalStatus;
+	}
+
+	/**
+	 * @param maritalStatus the maritalStatus to set
+	 */
+	public void setMaritalStatus(BaseObjectDTO maritalStatus) {
+		this.maritalStatus = maritalStatus;
+	}
+
+	/**
+	 * @return the intOrganizationUnit
+	 */
+	public BaseObjectDTO getIntOrganizationUnit() {
+		return intOrganizationUnit;
+	}
+
+	/**
+	 * @param intOrganizationUnit the intOrganizationUnit to set
+	 */
+	public void setIntOrganizationUnit(BaseObjectDTO intOrganizationUnit) {
+		this.intOrganizationUnit = intOrganizationUnit;
+	}
+
+	/**
+	 * @return the extOrganizationUnit
+	 */
+	public BaseObjectDTO getExtOrganizationUnit() {
+		return extOrganizationUnit;
+	}
+
+	/**
+	 * @param extOrganizationUnit the extOrganizationUnit to set
+	 */
+	public void setExtOrganizationUnit(BaseObjectDTO extOrganizationUnit) {
+		this.extOrganizationUnit = extOrganizationUnit;
+	}
+
+	/**
+	 * @return the birthPlace
+	 */
+	public LocalityDTO getBirthPlace() {
+		return birthPlace;
+	}
+
+	/**
+	 * @param birthPlace the birthPlace to set
+	 */
+	public void setBirthPlace(LocalityDTO birthPlace) {
+		this.birthPlace = birthPlace;
+	}
+
+	/**
+	 * @return the residence
+	 */
+	public AddressDTO getResidence() {
+		return residence;
+	}
+
+	/**
+	 * @param residence the residence to set
+	 */
+	public void setResidence(AddressDTO residence) {
+		this.residence = residence;
+	}
+
+	/**
+	 * @return the domicile
+	 */
+	public AddressDTO getDomicile() {
+		return domicile;
+	}
+
+	/**
+	 * @param domicile the domicile to set
+	 */
+	public void setDomicile(AddressDTO domicile) {
+		this.domicile = domicile;
+	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }
