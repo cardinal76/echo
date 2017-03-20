@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import it.clevercom.echo.rd.model.entity.WorkStatus;
 
-public interface IWorkStatus_rd_Repository extends JpaRepository<WorkStatus, String>, JpaSpecificationExecutor<WorkStatus> {
+public interface IWorkStatus_rd_Repository extends JpaRepository<WorkStatus, Long>, JpaSpecificationExecutor<WorkStatus> {
 
 }

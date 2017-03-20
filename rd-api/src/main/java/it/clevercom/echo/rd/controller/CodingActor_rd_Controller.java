@@ -1,13 +1,18 @@
 package it.clevercom.echo.rd.controller;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -18,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +35,9 @@ import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
+import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
+import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
+import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.model.dto.CodingActorDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.CodingActor;
@@ -52,6 +61,12 @@ public class CodingActor_rd_Controller {
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
+	
+	@Value("${jwt.token.header}")
+	private String tokenHeader;
+	
+	@Autowired
+	private JwtTokenUtils tokenUtils;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -141,5 +156,103 @@ public class CodingActor_rd_Controller {
 		dto.setTotalPages(totalPages);
 		dto.setTotalElements(totalElements);
 		return dto;
+	}
+	
+	/*
+	 * 
+	 * @return
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(method = RequestMethod.POST)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody CreateResponseDTO<CodingActorDTO> add(@RequestBody CodingActorDTO codingactor, HttpServletRequest request) throws Exception {
+		// get user info
+		String authToken = request.getHeader(this.tokenHeader);
+		String username = this.tokenUtils.getUsernameFromToken(authToken);
+		
+		// map
+		CodingActor entity = rdDozerMapper.map(codingactor, CodingActor.class);
+		
+		// add technical field
+		entity.setUserupdate(username);
+		
+		// save and map to out dto
+		entity = repo.saveAndFlush(entity);
+		codingactor = rdDozerMapper.map(entity, CodingActorDTO.class);
+		
+		// create standard response
+		CreateResponseDTO<CodingActorDTO> response = new CreateResponseDTO<CodingActorDTO>();
+		response.setEntityName(CodingActor_rd_Controller.entity);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), CodingActor_rd_Controller.entity));
+		List<CodingActorDTO> codingactorDTOs = new ArrayList<CodingActorDTO>();
+		codingactorDTOs.add(codingactor);
+		response.setNewValue(codingactorDTOs);
+		
+		// return standard response
+		return response;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(method = RequestMethod.PUT)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody UpdateResponseDTO<CodingActorDTO> update(@RequestBody CodingActorDTO codingactor, HttpServletRequest request) throws Exception {
+		// get user info
+		String authToken = request.getHeader(this.tokenHeader);
+		String username = this.tokenUtils.getUsernameFromToken(authToken);
+		
+		// if an id is not present throw bad request
+		if(codingactor.getIdcodingactor()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), CodingActor_rd_Controller.entity));
+		
+		// find entity to update (oldValue)
+		CodingActor oldValueEntity = repo.findOne(codingactor.getIdcodingactor()); 
+		// if an entity with given id is not found in DB throw record not found
+		if (oldValueEntity==null) throw new RecordNotFoundException(CodingActor_rd_Controller.entity, codingactor.getIdcodingactor().toString());
+		// map old value to a dto
+		CodingActorDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, CodingActorDTO.class);
+
+		// begin update of oldValue
+		rdDozerMapper.map(codingactor, oldValueEntity);
+		
+		// add technical field
+		oldValueEntity.setUserupdate(username);
+		oldValueEntity.setUpdated(new Date());
+		
+		// save and map to out dto
+		CodingActor newValueEntity = repo.saveAndFlush(oldValueEntity);
+		CodingActorDTO newValueDTO = rdDozerMapper.map(newValueEntity, CodingActorDTO.class);
+				
+		// create standard response
+		UpdateResponseDTO<CodingActorDTO> response = new UpdateResponseDTO<CodingActorDTO>();
+		response.setEntityName(CodingActor_rd_Controller.entity);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), CodingActor_rd_Controller.entity));
+		// add new dtos values
+		List<CodingActorDTO> newCodingActorDTOs = new ArrayList<CodingActorDTO>();
+		newCodingActorDTOs.add(newValueDTO);
+		response.setNewValue(newCodingActorDTOs);
+		// add old dtos values
+		List<CodingActorDTO> oldCodingActorDTOs = new ArrayList<CodingActorDTO>();
+		oldCodingActorDTOs.add(oldValueDTO);
+		response.setOldValue(oldCodingActorDTOs);
+		
+		// return response
+		return response;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(method = RequestMethod.DELETE)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody String delete(@RequestBody CodingActorDTO codingactor, HttpServletRequest request) {
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), CodingActor_rd_Controller.entity);
 	}
 }

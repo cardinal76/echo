@@ -124,6 +124,16 @@
 			<b>username</b>
 		</field>
 	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.WorkStatus</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.WorkStatusDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.WorkPriority</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.WorkPriorityDTO</class-b>
+	</mapping>
 
 	<!-- customized mapping -->
 

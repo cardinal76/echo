@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 13-mar-2017 9.59.07 by Hibernate Tools 5.2.2.Final
+// Generated 20-mar-2017 9.52.47 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -33,7 +33,7 @@ public class CodingActor  implements java.io.Serializable {
      private Long idcodingactor;
      private String name;
      private Date created;
-     private String updated;
+     private Date updated;
      private String userupdate;
      private Boolean active;
      private Set<ServiceCodingActor> serviceCodingActors = new HashSet<ServiceCodingActor>(0);
@@ -43,14 +43,14 @@ public class CodingActor  implements java.io.Serializable {
     }
 
 	
-    public CodingActor(String name, Date created, String updated, String userupdate, Boolean active) {
+    public CodingActor(String name, Date created, Date updated, String userupdate, Boolean active) {
         this.name = name;
         this.created = created;
         this.updated = updated;
         this.userupdate = userupdate;
         this.active = active;
     }
-    public CodingActor(String name, Date created, String updated, String userupdate, Boolean active, Set<ServiceCodingActor> serviceCodingActors, Set<PatientCodingActor> patientCodingActors) {
+    public CodingActor(String name, Date created, Date updated, String userupdate, Boolean active, Set<ServiceCodingActor> serviceCodingActors, Set<PatientCodingActor> patientCodingActors) {
        this.name = name;
        this.created = created;
        this.updated = updated;
@@ -92,13 +92,13 @@ public class CodingActor  implements java.io.Serializable {
         this.created = created;
     }
 
-    
-    @Column(name="updated", nullable=false, length=100)
-    public String getUpdated() {
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="updated", nullable=false, length=29)
+    public Date getUpdated() {
         return this.updated;
     }
     
-    public void setUpdated(String updated) {
+    public void setUpdated(Date updated) {
         this.updated = updated;
     }
 

@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 13-mar-2017 9.59.07 by Hibernate Tools 5.2.2.Final
+// Generated 20-mar-2017 9.52.47 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -114,7 +114,7 @@ public class AppSetting  implements java.io.Serializable {
     public void setCreated(Date created) {
         this.created = created;
     }
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="updated", nullable=false, length=29)
     public Date getUpdated() {

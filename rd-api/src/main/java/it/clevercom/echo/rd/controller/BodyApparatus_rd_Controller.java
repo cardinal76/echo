@@ -1,13 +1,18 @@
 package it.clevercom.echo.rd.controller;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -18,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +35,9 @@ import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
+import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
+import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
+import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.model.dto.BodyApparatusDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.BodyApparatus;
@@ -53,6 +62,12 @@ public class BodyApparatus_rd_Controller {
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
 	
+	@Value("${jwt.token.header}")
+	private String tokenHeader;
+	
+	@Autowired
+	private JwtTokenUtils tokenUtils;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
@@ -68,9 +83,9 @@ public class BodyApparatus_rd_Controller {
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody BodyApparatusDTO get(@PathVariable Character code) throws Exception {
-		BodyApparatus entity = repo.findOne(code);
-		if (entity == null) throw new RecordNotFoundException(BodyApparatus_rd_Controller.entity, code.toString());
+	public @ResponseBody BodyApparatusDTO get(@PathVariable Long id) throws Exception {
+		BodyApparatus entity = repo.findOne(id);
+		if (entity == null) throw new RecordNotFoundException(BodyApparatus_rd_Controller.entity, id.toString());
 		return rdDozerMapper.map(entity, BodyApparatusDTO.class);
 	}
 	
@@ -141,5 +156,103 @@ public class BodyApparatus_rd_Controller {
 		dto.setTotalPages(totalPages);
 		dto.setTotalElements(totalElements);
 		return dto;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(method = RequestMethod.POST)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody CreateResponseDTO<BodyApparatusDTO> add(@RequestBody BodyApparatusDTO burnrobot, HttpServletRequest request) throws Exception {
+		// get user info
+		String authToken = request.getHeader(this.tokenHeader);
+		String username = this.tokenUtils.getUsernameFromToken(authToken);
+		
+		// map
+		BodyApparatus entity = rdDozerMapper.map(burnrobot, BodyApparatus.class);
+		
+		// add technical field
+		entity.setUserupdate(username);
+		
+		// save and map to out dto
+		entity = repo.saveAndFlush(entity);
+		burnrobot = rdDozerMapper.map(entity, BodyApparatusDTO.class);
+		
+		// create standard response
+		CreateResponseDTO<BodyApparatusDTO> response = new CreateResponseDTO<BodyApparatusDTO>();
+		response.setEntityName(BodyApparatus_rd_Controller.entity);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), BodyApparatus_rd_Controller.entity));
+		List<BodyApparatusDTO> bodyApparatusDTOs = new ArrayList<BodyApparatusDTO>();
+		bodyApparatusDTOs.add(burnrobot);
+		response.setNewValue(bodyApparatusDTOs);
+		
+		// return standard response
+		return response;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(method = RequestMethod.PUT)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody UpdateResponseDTO<BodyApparatusDTO> update(@RequestBody BodyApparatusDTO bodyApparatus, HttpServletRequest request) throws Exception {
+		// get user info
+		String authToken = request.getHeader(this.tokenHeader);
+		String username = this.tokenUtils.getUsernameFromToken(authToken);
+		
+		// if an id is not present throw bad request
+		if(bodyApparatus.getIdbodyapparatus()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), BodyApparatus_rd_Controller.entity));
+		
+		// find entity to update (oldValue)
+		BodyApparatus oldValueEntity = repo.findOne(bodyApparatus.getIdbodyapparatus()); 
+		// if an entity with given id is not found in DB throw record not found
+		if (oldValueEntity==null) throw new RecordNotFoundException(BodyApparatus_rd_Controller.entity, bodyApparatus.getIdbodyapparatus().toString());
+		// map old value to a dto
+		BodyApparatusDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, BodyApparatusDTO.class);
+
+		// begin update of oldValue
+		rdDozerMapper.map(bodyApparatus, oldValueEntity);
+		
+		// add technical field
+		oldValueEntity.setUserupdate(username);
+		oldValueEntity.setUpdated(new Date());
+		
+		// save and map to out dto
+		BodyApparatus newValueEntity = repo.saveAndFlush(oldValueEntity);
+		BodyApparatusDTO newValueDTO = rdDozerMapper.map(newValueEntity, BodyApparatusDTO.class);
+				
+		// create standard response
+		UpdateResponseDTO<BodyApparatusDTO> response = new UpdateResponseDTO<BodyApparatusDTO>();
+		response.setEntityName(BodyApparatus_rd_Controller.entity);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), BodyApparatus_rd_Controller.entity));
+		// add new dtos values
+		List<BodyApparatusDTO> newBodyApparatusDTOs = new ArrayList<BodyApparatusDTO>();
+		newBodyApparatusDTOs.add(newValueDTO);
+		response.setNewValue(newBodyApparatusDTOs);
+		// add old dtos values
+		List<BodyApparatusDTO> oldBodyApparatusDTOs = new ArrayList<BodyApparatusDTO>();
+		oldBodyApparatusDTOs.add(oldValueDTO);
+		response.setOldValue(oldBodyApparatusDTOs);
+		
+		// return response
+		return response;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(method = RequestMethod.DELETE)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody String delete(@RequestBody BodyApparatusDTO bodyApparatus, HttpServletRequest request) {
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), BodyApparatus_rd_Controller.entity);
 	}
 }
