@@ -1,6 +1,8 @@
-package it.clevercom.echo.config;
+package it.clevercom.echo.initializer;
 
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
+
+import it.clevercom.echo.config.SecurityConfig;
 
 /**
  * 

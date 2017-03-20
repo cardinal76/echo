@@ -36,14 +36,14 @@ public class CareGiver_tm_Controller {
 	private ApplicationContext appContext;
 	
 	@Autowired
-    private DozerBeanMapper dozerMapper;
+    private DozerBeanMapper tmDozerMapper;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	@PreAuthorize("hasRole('USER')")
 	public @ResponseBody CareGiverDTO get(@RequestParam Integer id) throws RecordNotFoundException {
 		CareGiver entity = repo.findOne(id);	
 		if (entity == null) throw new RecordNotFoundException("Impossible to find caregiver with given id=" + id);
-		CareGiverDTO dto = dozerMapper.map(entity, CareGiverDTO.class);
+		CareGiverDTO dto = tmDozerMapper.map(entity, CareGiverDTO.class);
 		return dto;
 	}
 	
@@ -51,7 +51,7 @@ public class CareGiver_tm_Controller {
 	@PreAuthorize("hasRole('ADMIN')")
 	public @ResponseBody CreateResponseDTO add(@RequestBody CareGiverDTO careGiver) throws BadRequestException {
 		if (careGiver == null) throw new BadRequestException("Impossible to store a null caregiver");
-		CareGiver entity = dozerMapper.map(careGiver, CareGiver.class);
+		CareGiver entity = tmDozerMapper.map(careGiver, CareGiver.class);
 		CareGiver saved = repo.saveAndFlush(entity);
 		
 		// create standard response

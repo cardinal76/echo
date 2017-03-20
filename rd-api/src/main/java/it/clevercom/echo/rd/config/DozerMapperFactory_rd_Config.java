@@ -17,12 +17,6 @@ public class DozerMapperFactory_rd_Config {
 		mappingFileUrls.add("dozer-rd-bean-mappings.xml");
 		mapper.setMappingFiles(mappingFileUrls);
 		
-//		Map<String, CustomConverter> customConvertersWithId = new HashMap<String, CustomConverter>();
-//		// add custom converter here
-//		customConvertersWithId.put("municipality-plain", new Municipality2MunicipalityDTO_PlainConverter(Municipality.class, MunicipalityDTO.class));
-//
-//		mapper.setCustomConvertersWithId(customConvertersWithId);
-		
 		return mapper;
 	}
 	
