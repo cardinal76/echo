@@ -8,7 +8,7 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"created","updated","userupdate","active"})
-public class OrganizationUnitDTO extends BaseObjectDTO implements Serializable {
+public class OrganizationUnitDTO implements Serializable {
 	private static final long serialVersionUID = -8750546516765816251L;
 
 	private Long idorganizationunit;

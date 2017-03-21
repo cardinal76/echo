@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties({"created","updated","userupdate","active"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CountryDTO extends BaseObjectDTO implements Serializable {
+public class CountryDTO implements Serializable {
 	private static final long serialVersionUID = 41850689146052393L;
 	
 	private Long idcountry;

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonIgnoreProperties({"created","updated","userupdate","active"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MunicipalityDTO extends BaseObjectDTO implements Serializable {
+public class MunicipalityDTO implements Serializable {
 	private static final long serialVersionUID = -1870547415190618881L;
 
 	private Long idmunicipality;
