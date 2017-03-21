@@ -20,6 +20,10 @@ import javax.persistence.TemporalType;
 @Table(name = "detection_type")
 public class DetectionType implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7787507045111993711L;
 	private long iddetectiontype;
 	private String name;
 	private String description;

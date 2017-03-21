@@ -13,47 +13,47 @@
 
 	<!-- general mapping -->
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.BodyApparatus</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.BodyApparatus</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.BodyApparatusDTO</class-b>
 	</mapping>
 
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.ModalityType</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.ModalityType</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.ModalityTypeDTO</class-b>
 	</mapping>
 
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.Service</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Service</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.ServiceDTO</class-b>
 	</mapping>
 
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.Citizenship</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Citizenship</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.CitizenshipDTO</class-b>
 	</mapping>
 
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.Country</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Country</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.CountryDTO</class-b>
 	</mapping>
 
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.Region</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Region</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.RegionDTO</class-b>
 	</mapping>
 
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.Province</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Province</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.ProvinceDTO</class-b>
 	</mapping>
 
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.Municipality</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Municipality</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.MunicipalityDTO</class-b>
 	</mapping>
 
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.OrganizationUnit</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.OrganizationUnit</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.OrganizationUnitDTO</class-b>
 		<field>
 			<a>organizationUnit</a>
@@ -66,13 +66,13 @@
 	</mapping>
 
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.Maritalstatus</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Maritalstatus</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.MaritalstatusDTO</class-b>
 	</mapping>
 
 
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.AppSetting</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.AppSetting</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.AppSettingDTO</class-b>
 		<field>
 			<a>user.username</a>
@@ -81,13 +81,27 @@
 	</mapping>
 	
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.WorkStatus</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.WorkStatus</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.WorkStatusDTO</class-b>
 	</mapping>
 	
 	<mapping>
-		<class-a>it.clevercom.echo.rd.model.entity.WorkPriority</class-a>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.WorkPriority</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.WorkPriorityDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.CodingActor</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.CodingActorDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.BurnRobot</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BurnRobotDTO</class-b>
+		<field>
+			<a>organizationUnit</a>
+			<b>organizationUnit</b>
+		</field>
 	</mapping>
 
 	<!-- customized mapping -->
@@ -119,58 +133,120 @@
 		</field-exclude>
 	</mapping>
 	
-	<mapping map-id="patient-plain" wildcard="false">
-		<class-a>it.clevercom.echo.rd.model.entity.Patient</class-a>
-		<class-b>it.clevercom.echo.rd.model.dto.PatientDTO</class-b>
-
+	<!-- base object mapping -->
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Municipality</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
 		<field>
-			<a>idpatient</a>
-			<b>idpatient</b>
+			<a>idmunicipality</a>
+			<b>id</b>
 		</field>
-
+		<field>
+			<a>municipalityname</a>
+			<b>name</b>
+		</field>
+		<field>
+			<a>municipalitystdcode</a>
+			<b>code</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Citizenship</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
+		<field>
+			<a>idcitizenship</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>description</a>
+			<b>name</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.OrganizationUnit</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
+		<field>
+			<a>idorganizationunit</a>
+			<b>id</b>
+		</field>
 		<field>
 			<a>name</a>
 			<b>name</b>
 		</field>
-
 		<field>
-			<a>surname</a>
-			<b>surname</b>
+			<a>code</a>
+			<b>code</b>
 		</field>
-
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Maritalstatus</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
 		<field>
-			<a>dateofbirth</a>
-			<b>dateofbirth</b>
+			<a>idmaritalstatus</a>
+			<b>id</b>
 		</field>
-
 		<field>
-			<a>deathdate</a>
-			<b>deathdate</b>
+			<a>description</a>
+			<b>name</b>
 		</field>
-
 		<field>
-			<a>email</a>
-			<b>email</b>
+			<a>hl7code</a>
+			<b>code</b>
 		</field>
-
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Country</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
 		<field>
-			<a>gender</a>
-			<b>gender</b>
+			<a>idcountry</a>
+			<b>id</b>
 		</field>
-
 		<field>
-			<a>healthcode</a>
-			<b>healthcode</b>
+			<a>countrynicename</a>
+			<b>name</b>
 		</field>
-		
 		<field>
-			<a>phonenumber</a>
-			<b>phonenumber</b>
+			<a>countryisonumcode</a>
+			<b>code</b>
 		</field>
-		
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Region</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
 		<field>
-			<a>taxcode</a>
-			<b>taxcode</b>
+			<a>idregion</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>regionname</a>
+			<b>name</b>
+		</field>
+		<field>
+			<a>regionstdcode</a>
+			<b>code</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Province</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
+		<field>
+			<a>idprovince</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>provincename</a>
+			<b>name</b>
+		</field>
+		<field>
+			<a>provincestdcode</a>
+			<b>code</b>
 		</field>
 	</mapping>
 </mappings>

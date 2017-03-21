@@ -19,6 +19,10 @@ import javax.persistence.TemporalType;
 @Table(name = "detection_result")
 public class DetectionResult implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8428580145595635847L;
 	private long iddetectionresult;
 	private DetectionTask detectionTask;
 	private MeasurementType measurementType;

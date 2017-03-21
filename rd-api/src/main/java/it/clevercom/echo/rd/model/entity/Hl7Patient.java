@@ -28,7 +28,11 @@ import javax.persistence.TemporalType;
 public class Hl7Patient  implements java.io.Serializable {
 
 
-     private Hl7PatientId id;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -628984708044730098L;
+	private Hl7PatientId id;
      private Patient patient;
      private String idauthority;
      private String idtypecode;

@@ -26,7 +26,11 @@ import org.hibernate.annotations.Parameter;
 public class Hl7OutboundMessage  implements java.io.Serializable {
 
 
-     private Long idoutboundmessage;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4144542091061529709L;
+	private Long idoutboundmessage;
      private String messagecontrolid;
      private String message;
      private String status;

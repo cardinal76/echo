@@ -21,6 +21,10 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "application", uniqueConstraints = @UniqueConstraint(columnNames = "code"))
 public class Application implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 79892493699539882L;
 	private long idapplication;
 	private String code;
 	private String description;

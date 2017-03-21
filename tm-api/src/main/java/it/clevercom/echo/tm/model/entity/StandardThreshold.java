@@ -22,6 +22,10 @@ import javax.persistence.TemporalType;
 @Table(name = "standard_threshold")
 public class StandardThreshold implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -948437248651831035L;
 	private long idstandardthreshold;
 	private MeasurementType measurementType;
 	private Double valuefrom;

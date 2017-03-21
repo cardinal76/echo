@@ -31,7 +31,11 @@ import org.hibernate.annotations.Parameter;
 public class OrderService  implements java.io.Serializable {
 
 
-     private Long idorderservice;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5290050944726030734L;
+	private Long idorderservice;
      private Order order;
      private Service service;
      private Date created;

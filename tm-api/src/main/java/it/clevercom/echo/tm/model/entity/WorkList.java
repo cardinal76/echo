@@ -20,6 +20,10 @@ import javax.persistence.TemporalType;
 @Table(name = "work_list")
 public class WorkList implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8691329828188413422L;
 	private long idworklist;
 	private String username;
 	private Date created;

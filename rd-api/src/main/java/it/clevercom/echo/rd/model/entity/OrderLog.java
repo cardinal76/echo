@@ -29,7 +29,11 @@ import org.hibernate.annotations.Parameter;
 public class OrderLog  implements java.io.Serializable {
 
 
-     private Long idorderlog;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8772326966623661723L;
+	private Long idorderlog;
      private Order order;
      private Long idworksession;
      private Long idworkstatus;

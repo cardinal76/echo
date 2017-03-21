@@ -10,6 +10,10 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class PatientCaregiverId implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 608900375409861294L;
 	private long idpatient;
 	private long idcaregiver;
 

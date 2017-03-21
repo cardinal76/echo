@@ -20,6 +20,10 @@ import javax.persistence.TemporalType;
 @Table(name = "measurement_type")
 public class MeasurementType implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5006268290186110961L;
 	private long idmeasurementtype;
 	private String name;
 	private String description;

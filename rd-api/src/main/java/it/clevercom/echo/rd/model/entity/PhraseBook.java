@@ -29,7 +29,11 @@ import org.hibernate.annotations.Parameter;
 public class PhraseBook  implements java.io.Serializable {
 
 
-     private Long idphrasebook;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8447716027134804009L;
+	private Long idphrasebook;
      private User user;
      private String title;
      private String body;

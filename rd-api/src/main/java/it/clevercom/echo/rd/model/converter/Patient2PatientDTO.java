@@ -10,6 +10,11 @@ import it.clevercom.echo.rd.model.dto.AddressDTO;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.LocalityDTO;
 import it.clevercom.echo.rd.model.dto.PatientDTO;
+import it.clevercom.echo.rd.model.entity.Citizenship;
+import it.clevercom.echo.rd.model.entity.Country;
+import it.clevercom.echo.rd.model.entity.Maritalstatus;
+import it.clevercom.echo.rd.model.entity.Municipality;
+import it.clevercom.echo.rd.model.entity.OrganizationUnit;
 import it.clevercom.echo.rd.model.entity.Patient;
 
 public class Patient2PatientDTO implements CustomConverter, MapperAware {
@@ -35,6 +40,7 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			
 			// disclaimer: spaghetti code here
 			
+			// map standard patient data
 			target.setIdpatient((source.getIdpatient() != null) ? source.getIdpatient() : null);
 			target.setName((source.getName() != null) ? source.getName() : null);
 			target.setSurname((source.getSurname() != null) ? source.getSurname() : null);
@@ -46,22 +52,11 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			target.setPhonenumber((source.getPhonenumber() != null) ? source.getPhonenumber() : null);
 			target.setTaxcode((source.getTaxcode() != null) ? source.getTaxcode() : null);
 			
-			// map complex entities
-			target.setCitizenship((source.getCitizenship() != null) ? new BaseObjectDTO(source.getCitizenship().getIdcitizenship().toString(), 
-					source.getCitizenship().getDescription(), 
-					null) : null);			
-			
-			target.setExtOrganizationUnit((source.getOrganizationUnitByIdextorganizationunit() != null) ? new BaseObjectDTO(source.getOrganizationUnitByIdextorganizationunit().getIdorganizationunit().toString(), 
-					source.getOrganizationUnitByIdextorganizationunit().getName(), 
-					source.getOrganizationUnitByIdextorganizationunit().getCode()) : null);
-			
-			target.setIntOrganizationUnit((source.getOrganizationUnitByIdintorganizationunit() != null) ? new BaseObjectDTO(source.getOrganizationUnitByIdintorganizationunit().getIdorganizationunit().toString(),
-					source.getOrganizationUnitByIdintorganizationunit().getName(),
-					source.getOrganizationUnitByIdintorganizationunit().getCode()) : null);
-			
-			target.setMaritalStatus((source.getMaritalstatus() != null) ? new BaseObjectDTO(source.getMaritalstatus().getIdmaritalstatus().toString(), 
-					source.getMaritalstatus().getDescription(), 
-					source.getMaritalstatus().getHl7code()) : null);		
+			// map related complex object
+			if (source.getCitizenship()!=null) target.setCitizenship(rdDozerMapper.map(source.getCitizenship(), BaseObjectDTO.class));
+			if (source.getOrganizationUnitByIdextorganizationunit()!=null) target.setExtOrganizationUnit(rdDozerMapper.map(source.getOrganizationUnitByIdextorganizationunit(), BaseObjectDTO.class));
+			if (source.getOrganizationUnitByIdintorganizationunit()!=null) target.setIntOrganizationUnit(rdDozerMapper.map(source.getOrganizationUnitByIdintorganizationunit(), BaseObjectDTO.class));
+			if (source.getMaritalstatus()!=null) target.setMaritalStatus(rdDozerMapper.map(source.getMaritalstatus(), BaseObjectDTO.class));
 			
 			/**
 			 * convert birthplace data
@@ -71,27 +66,14 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			BaseObjectDTO birthPlaceRegion = null;
 			BaseObjectDTO birthPlaceCountry = null;
 			if (source.getMunicipalityByBirthplaceidmunicipality()!=null) {
-				 birthPlaceMunicipality = new BaseObjectDTO(source.getMunicipalityByBirthplaceidmunicipality().getIdmunicipality().toString(),
-						source.getMunicipalityByBirthplaceidmunicipality().getMunicipalityname(),
-						source.getMunicipalityByBirthplaceidmunicipality().getMunicipalitystdcode());
-				 
-				 birthPlaceProvince = new BaseObjectDTO(source.getMunicipalityByBirthplaceidmunicipality().getProvince().getIdprovince().toString(), 
-						 source.getMunicipalityByBirthplaceidmunicipality().getProvince().getProvincename(), 
-						 source.getMunicipalityByBirthplaceidmunicipality().getProvince().getProvincestdcode());
-				 
-				 birthPlaceRegion = new BaseObjectDTO(source.getMunicipalityByBirthplaceidmunicipality().getProvince().getRegion().getIdregion().toString(), 
-						 source.getMunicipalityByBirthplaceidmunicipality().getProvince().getRegion().getRegionname().toString(), 
-						 source.getMunicipalityByBirthplaceidmunicipality().getProvince().getRegion().getRegionstdcode().toString());
-				 
-				 birthPlaceCountry = new BaseObjectDTO(source.getMunicipalityByBirthplaceidmunicipality().getProvince().getRegion().getCountry().getIdcountry().toString(),
-						 source.getMunicipalityByBirthplaceidmunicipality().getProvince().getRegion().getCountry().getCountrynicename().toString(),
-						 source.getMunicipalityByBirthplaceidmunicipality().getProvince().getRegion().getCountry().getCountryisonumcode().toString());				 
+				birthPlaceMunicipality = rdDozerMapper.map(source.getMunicipalityByBirthplaceidmunicipality(), BaseObjectDTO.class);
+				birthPlaceProvince = rdDozerMapper.map(source.getMunicipalityByBirthplaceidmunicipality().getProvince(), BaseObjectDTO.class);
+				birthPlaceRegion = rdDozerMapper.map(source.getMunicipalityByBirthplaceidmunicipality().getProvince().getRegion(), BaseObjectDTO.class);
+				birthPlaceCountry = rdDozerMapper.map(source.getMunicipalityByBirthplaceidmunicipality().getProvince().getRegion().getCountry(), BaseObjectDTO.class);
 			} else {
 				if (source.getCountryByBirthplaceidcountry()!=null) {
 					// birthplace country
-					birthPlaceCountry = new BaseObjectDTO(source.getCountryByBirthplaceidcountry().getIdcountry().toString(), 
-							source.getCountryByBirthplaceidcountry().getCountrynicename(),
-							source.getCountryByBirthplaceidcountry().getCountryisonumcode().toString());
+					birthPlaceCountry = rdDozerMapper.map(source.getCountryByBirthplaceidcountry(), BaseObjectDTO.class);
 				}
 			}
 
@@ -107,34 +89,21 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			BaseObjectDTO residenceProvince = null;
 			BaseObjectDTO residenceRegion = null;
 			BaseObjectDTO residenceCountry = null;
-			if (source.getMunicipalityByResidenceidmunicipality()!=null) {
-				 residenceMunicipality = new BaseObjectDTO(source.getMunicipalityByResidenceidmunicipality().getIdmunicipality().toString(),
-						source.getMunicipalityByResidenceidmunicipality().getMunicipalityname(),
-						source.getMunicipalityByResidenceidmunicipality().getMunicipalitystdcode());
-				 
-				 residenceProvince = new BaseObjectDTO(source.getMunicipalityByResidenceidmunicipality().getProvince().getIdprovince().toString(), 
-						 source.getMunicipalityByResidenceidmunicipality().getProvince().getProvincename(), 
-						 source.getMunicipalityByResidenceidmunicipality().getProvince().getProvincestdcode());
-				 
-				 residenceRegion = new BaseObjectDTO(source.getMunicipalityByResidenceidmunicipality().getProvince().getRegion().getIdregion().toString(), 
-						 source.getMunicipalityByResidenceidmunicipality().getProvince().getRegion().getRegionname().toString(), 
-						 source.getMunicipalityByResidenceidmunicipality().getProvince().getRegion().getRegionstdcode().toString());
-				 
-				 residenceCountry = new BaseObjectDTO(source.getMunicipalityByResidenceidmunicipality().getProvince().getRegion().getCountry().getIdcountry().toString(),
-						 source.getMunicipalityByResidenceidmunicipality().getProvince().getRegion().getCountry().getCountrynicename().toString(),
-						 source.getMunicipalityByResidenceidmunicipality().getProvince().getRegion().getCountry().getCountryisonumcode().toString());				 
+			if (source.getMunicipalityByResidenceidmunicipality()!=null) {		
+				residenceMunicipality = rdDozerMapper.map(source.getMunicipalityByResidenceidmunicipality(), BaseObjectDTO.class);
+				residenceProvince = rdDozerMapper.map(source.getMunicipalityByResidenceidmunicipality().getProvince(), BaseObjectDTO.class);
+				residenceRegion = rdDozerMapper.map(source.getMunicipalityByResidenceidmunicipality().getProvince().getRegion(), BaseObjectDTO.class);
+				residenceCountry = rdDozerMapper.map(source.getMunicipalityByResidenceidmunicipality().getProvince().getRegion().getCountry(), BaseObjectDTO.class);
 			} else {
 				if (source.getCountryByResidenceidcountry()!=null) {
-					// birthplace country
-					residenceCountry = new BaseObjectDTO(source.getCountryByResidenceidcountry().getIdcountry().toString(), 
-							source.getCountryByBirthplaceidcountry().getCountrynicename(),
-							source.getCountryByBirthplaceidcountry().getCountryisonumcode().toString());
+					// residence country
+					birthPlaceCountry = rdDozerMapper.map(source.getCountryByResidenceidcountry(), BaseObjectDTO.class);
 				}
 			}
 			
 			AddressDTO residence = null;
 			if ((residenceCountry != null) || (residenceMunicipality != null)) {
-				residence = new AddressDTO(new LocalityDTO(residenceCountry, residenceRegion, residenceProvince, residenceMunicipality), source.getResidencestreetaddress());
+				residence = new AddressDTO(new LocalityDTO(residenceCountry, residenceRegion, residenceProvince, residenceMunicipality), (source.getResidencestreetaddress()!=null) ? source.getResidencestreetaddress() : null);
 			}
 		
 			/**
@@ -144,34 +113,21 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			BaseObjectDTO domicileProvince = null;
 			BaseObjectDTO domicileRegion = null;
 			BaseObjectDTO domicileCountry = null;
-			if (source.getMunicipalityByDomicileidmunicipality()!=null) {
-				domicileCountry = new BaseObjectDTO(source.getMunicipalityByDomicileidmunicipality().getIdmunicipality().toString(),
-						source.getMunicipalityByDomicileidmunicipality().getMunicipalityname(),
-						source.getMunicipalityByDomicileidmunicipality().getMunicipalitystdcode());
-				 
-				 domicileProvince = new BaseObjectDTO(source.getMunicipalityByDomicileidmunicipality().getProvince().getIdprovince().toString(), 
-						 source.getMunicipalityByDomicileidmunicipality().getProvince().getProvincename(), 
-						 source.getMunicipalityByDomicileidmunicipality().getProvince().getProvincestdcode());
-				 
-				 domicileRegion = new BaseObjectDTO(source.getMunicipalityByDomicileidmunicipality().getProvince().getRegion().getIdregion().toString(), 
-						 source.getMunicipalityByDomicileidmunicipality().getProvince().getRegion().getRegionname().toString(), 
-						 source.getMunicipalityByDomicileidmunicipality().getProvince().getRegion().getRegionstdcode().toString());
-				 
-				 domicileCountry = new BaseObjectDTO(source.getMunicipalityByDomicileidmunicipality().getProvince().getRegion().getCountry().getIdcountry().toString(),
-						 source.getMunicipalityByDomicileidmunicipality().getProvince().getRegion().getCountry().getCountrynicename().toString(),
-						 source.getMunicipalityByDomicileidmunicipality().getProvince().getRegion().getCountry().getCountryisonumcode().toString());				 
+			if (source.getMunicipalityByDomicileidmunicipality()!=null) {				 
+				 domicileMunicipality = rdDozerMapper.map(source.getMunicipalityByDomicileidmunicipality(), BaseObjectDTO.class);
+				 domicileProvince = rdDozerMapper.map(source.getMunicipalityByDomicileidmunicipality().getProvince(), BaseObjectDTO.class);
+				 domicileRegion = rdDozerMapper.map(source.getMunicipalityByDomicileidmunicipality().getProvince().getRegion(), BaseObjectDTO.class);
+				 domicileCountry = rdDozerMapper.map(source.getMunicipalityByDomicileidmunicipality().getProvince().getRegion().getCountry(), BaseObjectDTO.class);
 			} else {
 				if (source.getCountryByDomicileidcountry()!=null) {
 					// birthplace country
-					domicileCountry = new BaseObjectDTO(source.getCountryByDomicileidcountry().getIdcountry().toString(), 
-							source.getCountryByBirthplaceidcountry().getCountrynicename(),
-							source.getCountryByBirthplaceidcountry().getCountryisonumcode().toString());
+					domicileCountry = rdDozerMapper.map(source.getCountryByDomicileidcountry(), BaseObjectDTO.class);
 				}
 			}			
 			
 			AddressDTO domicile = null;
 			if ((domicileCountry != null) || (domicileMunicipality != null)) { 
-				domicile = new AddressDTO(new LocalityDTO(domicileCountry, domicileRegion, domicileProvince, domicileMunicipality), source.getDomicilestreetaddress());
+				domicile = new AddressDTO(new LocalityDTO(domicileCountry, domicileRegion, domicileProvince, domicileMunicipality), (source.getDomicilestreetaddress()!=null) ? source.getDomicilestreetaddress() : null);
 			}
 		
 			// inject locality and addresses data
@@ -198,9 +154,82 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 				target = (Patient) destinationFieldValue;
 			}
 			
+			// disclaimer: spaghetti code here
+			
+			// map standard patient data
+			target.setIdpatient((source.getIdpatient() != null) ? source.getIdpatient() : null);
+			target.setName((source.getName() != null) ? source.getName() : null);
+			target.setSurname((source.getSurname() != null) ? source.getSurname() : null);
+			target.setDateofbirth((source.getDateofbirth() != null) ? source.getDateofbirth() : null);
+			target.setDeathdate((source.getDeathdate() != null) ? source.getDeathdate() : null);
+			target.setEmail((source.getEmail() != null) ? source.getEmail() : null);
+			target.setGender((source.getGender() != null) ? source.getGender() : null);
+			target.setHealthcode((source.getHealthCode() != null) ? source.getHealthCode() : null);
+			target.setPhonenumber((source.getPhonenumber() != null) ? source.getPhonenumber() : null);
+			target.setTaxcode((source.getTaxcode() != null) ? source.getTaxcode() : null);
+			
+			// map related complex object
+			if (source.getCitizenship()!=null) target.setCitizenship(rdDozerMapper.map(source.getCitizenship(), Citizenship.class));
+			if (source.getExtOrganizationUnit()!=null) target.setOrganizationUnitByIdextorganizationunit(rdDozerMapper.map(source.getExtOrganizationUnit(), OrganizationUnit.class));
+			if (source.getIntOrganizationUnit()!=null) target.setOrganizationUnitByIdintorganizationunit(rdDozerMapper.map(source.getIntOrganizationUnit(), OrganizationUnit.class));
+			if (source.getMaritalStatus()!=null) target.setMaritalstatus(rdDozerMapper.map(source.getMaritalStatus(), Maritalstatus.class));
+			
+			/**
+			 * convert birthplace data
+			 */
+			Municipality birthPlaceMunicipality = null;
+			Country birthPlaceCountry = null;
+			if (source.getBirthPlace()!=null) {
+				if (source.getBirthPlace().getMunicipality()!=null) {
+					birthPlaceMunicipality = rdDozerMapper.map(source.getBirthPlace().getMunicipality(), Municipality.class);
+				}
+				if (source.getBirthPlace().getCountry()!=null) {
+					birthPlaceCountry = rdDozerMapper.map(source.getBirthPlace().getCountry(), Country.class);
+				}
+			}
+
+			target.setCountryByBirthplaceidcountry(birthPlaceCountry);
+			target.setMunicipalityByBirthplaceidmunicipality(birthPlaceMunicipality);
+			
+			/**
+			 * convert residence data
+			 */
+			Municipality residenceMunicipality = null;
+			Country residenceCountry = null;
+			if (source.getResidence()!=null) {
+				if (source.getResidence().getLocality().getMunicipality()!=null) {
+					residenceMunicipality = rdDozerMapper.map(source.getResidence().getLocality().getMunicipality(), Municipality.class);
+				}
+				if (source.getResidence().getLocality().getCountry()!=null) {
+					residenceCountry = rdDozerMapper.map(source.getResidence().getLocality().getCountry(), Country.class);
+				}
+			}
+
+			target.setCountryByResidenceidcountry(residenceCountry);
+			target.setMunicipalityByResidenceidmunicipality(residenceMunicipality);
+			target.setResidencestreetaddress((source.getResidence().getStreet()!=null) ? source.getResidence().getStreet() : null);
+			
+			/**
+			 * convert domicile data
+			 */
+			Municipality domicileMunicipality = null;
+			Country domicileCountry = null;
+			if (source.getDomicile()!=null) {
+				if (source.getDomicile().getLocality().getMunicipality()!=null) {
+					domicileMunicipality = rdDozerMapper.map(source.getDomicile().getLocality().getMunicipality(), Municipality.class);
+				}
+				if (source.getDomicile().getLocality().getCountry()!=null) {
+					domicileCountry = rdDozerMapper.map(source.getDomicile().getLocality().getCountry(), Country.class);
+				}
+			}
+
+			target.setCountryByDomicileidcountry(domicileCountry);
+			target.setMunicipalityByDomicileidmunicipality(domicileMunicipality);
+			target.setDomicilestreetaddress((source.getDomicile().getStreet()!=null) ? source.getDomicile().getStreet() : null);
+			
 			return target;
 		} else {
-			throw new MappingException("Converter OrganizationUnit2BaseObjectDTO " + "used incorrectly. Arguments passed in were:" + destinationFieldValue + " and " + sourceFieldValue);
+			throw new MappingException("Converter Patient2PatientDTO " + "used incorrectly. Arguments passed in were:" + destinationFieldValue + " and " + sourceFieldValue);
 		}
 	}
 

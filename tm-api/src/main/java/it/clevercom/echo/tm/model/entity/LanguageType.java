@@ -16,6 +16,10 @@ import javax.persistence.TemporalType;
 @Table(name = "language_type")
 public class LanguageType implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3453767993449863960L;
 	private long idlanguagetype;
 	private String code;
 	private String description;

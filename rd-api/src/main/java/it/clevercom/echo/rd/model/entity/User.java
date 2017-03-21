@@ -27,7 +27,11 @@ import javax.persistence.TemporalType;
 public class User  implements java.io.Serializable {
 
 
-     private String username;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5679111981870892603L;
+	private String username;
      private String type;
      private String name;
      private String surname;

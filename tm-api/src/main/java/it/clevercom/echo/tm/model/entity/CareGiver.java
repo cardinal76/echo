@@ -23,6 +23,10 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "care_giver", uniqueConstraints = @UniqueConstraint(columnNames = "taxcode"))
 public class CareGiver implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3941171803433733259L;
 	private long idcaregiver;
 	private Municipality municipality;
 	private String name;

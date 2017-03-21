@@ -29,7 +29,11 @@ import org.hibernate.annotations.Parameter;
 public class BurnRobot  implements java.io.Serializable {
 
 
-     private Long idburnrobot;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2968199138577262971L;
+	private Long idburnrobot;
      private OrganizationUnit organizationUnit;
      private String name;
      private String hostname;

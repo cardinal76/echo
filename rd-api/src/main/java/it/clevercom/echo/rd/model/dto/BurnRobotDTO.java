@@ -10,7 +10,7 @@ public class BurnRobotDTO implements Serializable {
 	private static final long serialVersionUID = 3123910630712760988L;
 
 	private Long idburnrobot;
-	private OrganizationUnitDTO organizationUnit;
+	private BaseObjectDTO organizationUnit;
 	private String name;
 	private String hostname;
 	private String ipaddress;
@@ -40,15 +40,29 @@ public class BurnRobotDTO implements Serializable {
 	/**
 	 * @return the organizationUnit
 	 */
-	public OrganizationUnitDTO getOrganizationUnit() {
+	public BaseObjectDTO getOrganizationUnit() {
 		return organizationUnit;
 	}
 
 	/**
 	 * @param organizationUnit the organizationUnit to set
 	 */
-	public void setOrganizationUnit(OrganizationUnitDTO organizationUnit) {
+	public void setOrganizationUnit(BaseObjectDTO organizationUnit) {
 		this.organizationUnit = organizationUnit;
+	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public Boolean getActive() {
+		return active;
 	}
 
 	/**

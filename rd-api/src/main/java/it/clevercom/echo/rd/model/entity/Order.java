@@ -32,7 +32,11 @@ import org.hibernate.annotations.Parameter;
 public class Order  implements java.io.Serializable {
 
 
-     private Long idorder;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1422564216453086476L;
+	private Long idorder;
      private OrganizationUnit organizationUnitByOriginorganizationunitid;
      private OrganizationUnit organizationUnitByTargetorganizationunitid;
      private WorkPriority workPriority;

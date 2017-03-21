@@ -31,7 +31,11 @@ import org.hibernate.annotations.Parameter;
 public class PatientCodingActor  implements java.io.Serializable {
 
 
-     private Long idpatientcodingactor;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7615018347308599667L;
+	private Long idpatientcodingactor;
      private CodingActor codingActor;
      private Patient patient;
      private String externalcode;

@@ -19,6 +19,10 @@ import javax.persistence.TemporalType;
 @Table(name = "health_device")
 public class HealthDevice implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -551466894227667442L;
 	private long idhealthdevice;
 	private HealthDevicetype healthDevicetype;
 	private HealthKit healthKit;

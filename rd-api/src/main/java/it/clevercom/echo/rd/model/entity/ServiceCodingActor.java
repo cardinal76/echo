@@ -29,7 +29,11 @@ import org.hibernate.annotations.Parameter;
 public class ServiceCodingActor  implements java.io.Serializable {
 
 
-     private Long idservicecodingactor;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7633304966784557076L;
+	private Long idservicecodingactor;
      private CodingActor codingActor;
      private Service service;
      private String externalcode;

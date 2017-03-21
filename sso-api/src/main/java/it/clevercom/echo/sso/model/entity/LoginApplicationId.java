@@ -10,6 +10,10 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class LoginApplicationId implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3451460316992467948L;
 	private long applicationIdapplication;
 	private long loginIdlogin;
 

@@ -30,7 +30,11 @@ import org.hibernate.annotations.Parameter;
 public class Citizenship  implements java.io.Serializable {
 
 
-     private Long idcitizenship;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1088985338676855021L;
+	private Long idcitizenship;
      private String description;
      private Date created;
      private Date updated;

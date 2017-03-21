@@ -19,6 +19,10 @@ import javax.persistence.TemporalType;
 @Table(name = "message")
 public class Message implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3571843511600902439L;
 	private long idmessage;
 	private Patient patient;
 	private Physician physician;

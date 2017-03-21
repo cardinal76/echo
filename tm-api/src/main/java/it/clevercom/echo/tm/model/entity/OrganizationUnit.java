@@ -22,6 +22,10 @@ import javax.persistence.TemporalType;
 @Table(name = "organization_unit")
 public class OrganizationUnit implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -814512854223421523L;
 	private long idorganizationunit;
 	private OrganizationUnit organizationUnit;
 	private String name;

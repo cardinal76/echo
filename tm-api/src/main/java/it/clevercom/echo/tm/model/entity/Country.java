@@ -20,6 +20,10 @@ import javax.persistence.TemporalType;
 @Table(name = "country")
 public class Country implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3319217522126977582L;
 	private long idcountry;
 	private String countryname;
 	private String countrynicename;

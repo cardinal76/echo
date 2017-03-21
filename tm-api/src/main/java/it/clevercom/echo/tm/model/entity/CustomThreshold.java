@@ -19,6 +19,10 @@ import javax.persistence.TemporalType;
 @Table(name = "custom_threshold")
 public class CustomThreshold implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3353028354381695520L;
 	private long idcustomthreshold;
 	private Patient patient;
 	private StandardThreshold standardThreshold;

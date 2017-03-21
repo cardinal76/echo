@@ -21,6 +21,10 @@ import javax.persistence.TemporalType;
 @Table(name = "physician_organizationunit")
 public class PhysicianOrganizationunit implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8278489103810058326L;
 	private PhysicianOrganizationunitId id;
 	private OrganizationUnit organizationUnit;
 	private Physician physician;

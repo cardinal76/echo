@@ -30,7 +30,11 @@ import org.hibernate.annotations.Parameter;
 public class ModalityType  implements java.io.Serializable {
 
 
-     private Long idmodalitytype;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6326556764319338342L;
+	private Long idmodalitytype;
      private String type;
      private Date created;
      private Date updated;

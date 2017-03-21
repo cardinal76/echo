@@ -30,7 +30,11 @@ import org.hibernate.annotations.Parameter;
 public class Icd9PatologyGroup  implements java.io.Serializable {
 
 
-     private Long idicd9patologygroup;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6502776496961089679L;
+	private Long idicd9patologygroup;
      private String codeicd9group;
      private String description;
      private Date created;

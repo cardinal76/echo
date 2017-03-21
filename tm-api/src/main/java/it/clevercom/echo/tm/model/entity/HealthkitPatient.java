@@ -18,6 +18,10 @@ import javax.persistence.Table;
 @Table(name = "healthkit_patient")
 public class HealthkitPatient implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9075936319722586733L;
 	private HealthkitPatientId id;
 	private HealthKit healthKit;
 	private Patient patient;

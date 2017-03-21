@@ -30,7 +30,11 @@ import org.hibernate.annotations.Parameter;
 public class BodyApparatus  implements java.io.Serializable {
 
 
-     private Long idbodyapparatus;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1699979589975681190L;
+	private Long idbodyapparatus;
      private char code;
      private String description;
      private Date created;

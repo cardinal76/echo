@@ -23,6 +23,10 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "detection_task", uniqueConstraints = @UniqueConstraint(columnNames = "taskuuid"))
 public class DetectionTask implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2029843330298251495L;
 	private long iddetectiontask;
 	private DetectionPlan detectionPlan;
 	private DetectionType detectionType;

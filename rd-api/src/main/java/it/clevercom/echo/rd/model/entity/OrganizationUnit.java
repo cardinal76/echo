@@ -32,7 +32,11 @@ import org.hibernate.annotations.Parameter;
 public class OrganizationUnit  implements java.io.Serializable {
 
 
-     private Long idorganizationunit;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3918516626763581582L;
+	private Long idorganizationunit;
      private Municipality municipality;
      private OrganizationUnit organizationUnit;
      private String name;

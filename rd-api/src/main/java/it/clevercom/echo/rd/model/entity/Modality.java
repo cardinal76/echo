@@ -32,7 +32,11 @@ import org.hibernate.annotations.Parameter;
 public class Modality  implements java.io.Serializable {
 
 
-     private Long idmodality;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7188294067115157391L;
+	private Long idmodality;
      private OrganizationUnit organizationUnit;
      private String name;
      private String description;

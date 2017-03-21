@@ -30,7 +30,11 @@ import org.hibernate.annotations.Parameter;
 public class Maritalstatus  implements java.io.Serializable {
 
 
-     private Long idmaritalstatus;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8666151491139748973L;
+	private Long idmaritalstatus;
      private String hl7code;
      private String description;
      private Date created;

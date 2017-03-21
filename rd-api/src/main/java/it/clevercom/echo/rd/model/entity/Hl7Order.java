@@ -20,7 +20,11 @@ import org.hibernate.annotations.DynamicUpdate;
 public class Hl7Order  implements java.io.Serializable {
 
 
-     private Long idhl7order;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6127086148747918034L;
+	private Long idhl7order;
 
     public Hl7Order() {
     }

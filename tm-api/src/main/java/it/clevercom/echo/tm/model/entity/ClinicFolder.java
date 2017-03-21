@@ -22,6 +22,10 @@ import javax.persistence.TemporalType;
 @Table(name = "clinic_folder")
 public class ClinicFolder implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6826962338767318914L;
 	private long idclinicfolder;
 	private OrganizationUnit organizationUnit;
 	private Patient patient;

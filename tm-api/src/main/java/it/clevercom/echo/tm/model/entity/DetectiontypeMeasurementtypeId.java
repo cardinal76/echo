@@ -10,6 +10,10 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class DetectiontypeMeasurementtypeId implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3069336120532121021L;
 	private long iddetectiontype;
 	private long idmeasurementtype;
 

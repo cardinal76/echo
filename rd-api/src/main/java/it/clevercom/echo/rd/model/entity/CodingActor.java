@@ -30,7 +30,11 @@ import org.hibernate.annotations.Parameter;
 public class CodingActor  implements java.io.Serializable {
 
 
-     private Long idcodingactor;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5168821791145428587L;
+	private Long idcodingactor;
      private String name;
      private Date created;
      private Date updated;

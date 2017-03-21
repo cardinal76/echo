@@ -32,7 +32,11 @@ import org.hibernate.annotations.Parameter;
 public class Region  implements java.io.Serializable {
 
 
-     private Long idregion;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3557505260466990932L;
+	private Long idregion;
      private Country country;
      private String regionname;
      private String regionstdcode;

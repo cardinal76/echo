@@ -30,7 +30,11 @@ import org.hibernate.annotations.Parameter;
 public class Country  implements java.io.Serializable {
 
 
-     private Long idcountry;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3073033438796823534L;
+	private Long idcountry;
      private String countryname;
      private String countrynicename;
      private String countryiso2;

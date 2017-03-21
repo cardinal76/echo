@@ -32,7 +32,11 @@ import org.hibernate.annotations.Parameter;
 public class Municipality  implements java.io.Serializable {
 
 
-     private Long idmunicipality;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7089038873193029558L;
+	private Long idmunicipality;
      private Province province;
      private String municipalityname;
      private String municipalitystdcode;

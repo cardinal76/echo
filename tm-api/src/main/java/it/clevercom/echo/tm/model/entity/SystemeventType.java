@@ -20,6 +20,10 @@ import javax.persistence.TemporalType;
 @Table(name = "systemevent_type")
 public class SystemeventType implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6037180010544344547L;
 	private long idsystemeventtype;
 	private String description;
 	private String action;

@@ -16,6 +16,10 @@ import javax.persistence.TemporalType;
 @Table(name = "measurement_unit")
 public class MeasurementUnit implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4674174841879985494L;
 	private long idmeasurementunit;
 	private String name;
 	private String description;

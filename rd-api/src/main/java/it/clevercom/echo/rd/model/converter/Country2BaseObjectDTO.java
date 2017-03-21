@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.entity.Country;
-
+@Deprecated
 public class Country2BaseObjectDTO implements CustomConverter {
 	@Autowired
 	private Mapper rdDozerMapper;

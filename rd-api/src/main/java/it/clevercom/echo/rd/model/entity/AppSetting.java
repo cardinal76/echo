@@ -31,7 +31,11 @@ import org.hibernate.annotations.Parameter;
 public class AppSetting  implements java.io.Serializable {
 
 
-     private Long idappsetting;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5782238847096255573L;
+	private Long idappsetting;
      private User user;
      private String key;
      private String value;

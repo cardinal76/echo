@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.entity.Citizenship;
-
+@Deprecated
 public class Citizenship2BaseObjectDTO implements CustomConverter {
 	@Autowired
 	private Mapper rdDozerMapper;
@@ -22,7 +22,7 @@ public class Citizenship2BaseObjectDTO implements CustomConverter {
 			BaseObjectDTO target = null; 
 			Citizenship source = (Citizenship) sourceFieldValue;
 			
-			// check to see if the object already exists
+			// c@Deprecatedheck to see if the object already exists
 			if (destinationFieldValue == null) {
 				target = new BaseObjectDTO();
 			} else {

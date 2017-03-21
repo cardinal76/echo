@@ -23,6 +23,10 @@ import javax.persistence.TemporalType;
 @Table(name = "nurse")
 public class Nurse implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2482201508679294785L;
 	private long idnurse;
 	private String name;
 	private String surname;

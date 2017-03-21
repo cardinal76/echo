@@ -19,6 +19,10 @@ import javax.persistence.TemporalType;
 @Table(name = "meeting_request")
 public class MeetingRequest implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -799952048875260280L;
 	private long idmeetingrequest;
 	private Patient patient;
 	private Physician physician;

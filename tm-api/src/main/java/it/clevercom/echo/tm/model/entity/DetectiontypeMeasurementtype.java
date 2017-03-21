@@ -22,6 +22,10 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "detectiontype_measurementtype", uniqueConstraints = @UniqueConstraint(columnNames = "idmeasurementtype"))
 public class DetectiontypeMeasurementtype implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6333051564254961806L;
 	private DetectiontypeMeasurementtypeId id;
 	private DetectionType detectionType;
 	private MeasurementType measurementType;

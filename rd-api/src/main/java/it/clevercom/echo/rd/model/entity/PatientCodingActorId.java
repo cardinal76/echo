@@ -12,7 +12,11 @@ import javax.persistence.Embeddable;
 public class PatientCodingActorId  implements java.io.Serializable {
 
 
-     private Long idpatient;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7021881627548183613L;
+	private Long idpatient;
      private Long idcodingactor;
 
     public PatientCodingActorId() {

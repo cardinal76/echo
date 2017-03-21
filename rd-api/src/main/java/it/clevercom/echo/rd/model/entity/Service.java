@@ -32,7 +32,11 @@ import org.hibernate.annotations.Parameter;
 public class Service  implements java.io.Serializable {
 
 
-     private Long idservice;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -9122524311240902278L;
+	private Long idservice;
      private BodyApparatus bodyApparatus;
      private ModalityType modalityType;
      private String description;

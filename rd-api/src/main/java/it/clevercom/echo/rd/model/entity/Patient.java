@@ -32,7 +32,11 @@ import org.hibernate.annotations.Parameter;
 public class Patient  implements java.io.Serializable {
 
 
-     private Long idpatient;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -583304125332900259L;
+	private Long idpatient;
      private Citizenship citizenship;
      private Country countryByDomicileidcountry;
      private Country countryByResidenceidcountry;

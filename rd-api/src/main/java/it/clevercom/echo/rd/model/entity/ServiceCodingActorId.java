@@ -12,7 +12,11 @@ import javax.persistence.Embeddable;
 public class ServiceCodingActorId  implements java.io.Serializable {
 
 
-     private Long idservice;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8314733163778253375L;
+	private Long idservice;
      private Long idcodingactor;
 
     public ServiceCodingActorId() {

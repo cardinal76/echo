@@ -19,6 +19,10 @@ import javax.persistence.TemporalType;
 @Table(name = "notification")
 public class Notification implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5232313884560076139L;
 	private long idnotification;
 	private NotificationType notificationType;
 	private String description;

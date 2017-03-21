@@ -21,6 +21,10 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "login", uniqueConstraints = @UniqueConstraint(columnNames = "username"))
 public class Login implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -606177131208943675L;
 	private long idlogin;
 	private String username;
 	private String password;

@@ -21,6 +21,10 @@ import javax.persistence.TemporalType;
 @Table(name = "login_application")
 public class LoginApplication implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8898043161530631707L;
 	private LoginApplicationId id;
 	private Application application;
 	private Login login;

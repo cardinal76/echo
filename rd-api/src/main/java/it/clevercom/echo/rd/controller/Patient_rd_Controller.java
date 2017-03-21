@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -122,7 +124,7 @@ public class Patient_rd_Controller {
 		
 		if (!criteria.equals("null")) {
 	        SpecificationsBuilder<Patient, SpecificationQueryHelper<Patient>> builder = new SpecificationsBuilder<Patient, SpecificationQueryHelper<Patient>>();
-	        Pattern pattern = Pattern.compile("(\\w+)(:|<|>)(\\w+)");
+	        Pattern pattern = Pattern.compile("(\\w+)(:|<|>|:>|<:)(\\w+)");
 	        Matcher matcher = pattern.matcher(criteria + ",");
 	        while (matcher.find()) {
 	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
@@ -144,7 +146,7 @@ public class Patient_rd_Controller {
 		// map list
 		List<PatientDTO> patientDTOList = new ArrayList<PatientDTO>();
 		for (Patient s: entity) {
-			patientDTOList.add(rdDozerMapper.map(s, PatientDTO.class, "patient-plain").buildExtendedObject());
+			patientDTOList.add(rdDozerMapper.map(s, PatientDTO.class).buildExtendedObject());
 		}
 		
 		// assembly dto
@@ -178,14 +180,15 @@ public class Patient_rd_Controller {
 		
 		// save and map to out dto
 		entity = repo.saveAndFlush(entity);
-		patient = rdDozerMapper.map(entity, PatientDTO.class, "patient-plain");
+		// patient = rdDozerMapper.map(entity, PatientDTO.class);
+		patient.setIdpatient(entity.getIdpatient());
 				
 		// create standard response
 		CreateResponseDTO<PatientDTO> response = new CreateResponseDTO<PatientDTO>();
 		response.setEntityName(Patient_rd_Controller.entity);
 		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Patient_rd_Controller.entity));
 		List<PatientDTO> patientDTOs = new ArrayList<PatientDTO>();
-		patientDTOs.add(patient);
+		patientDTOs.add(patient.buildExtendedObject());
 		response.setNewValue(patientDTOs);
 		
 		// return standard response

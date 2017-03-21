@@ -12,7 +12,11 @@ import javax.persistence.Embeddable;
 public class Hl7PatientId  implements java.io.Serializable {
 
 
-     private String idhl7patient;
+     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 677667584778129386L;
+	private String idhl7patient;
      private String idauthoritynamespaceid;
 
     public Hl7PatientId() {

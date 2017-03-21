@@ -23,6 +23,10 @@ import javax.persistence.TemporalType;
 @Table(name = "specialty_type")
 public class SpecialtyType implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5702387496199886639L;
 	private long idspecialtytype;
 	private SpecialtyType specialtyType;
 	private String description;
