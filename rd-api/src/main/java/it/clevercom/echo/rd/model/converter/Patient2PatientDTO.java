@@ -46,8 +46,8 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			target.setIdpatient((source.getIdpatient() != null) ? source.getIdpatient() : null);
 			target.setName((source.getName() != null) ? source.getName() : null);
 			target.setSurname((source.getSurname() != null) ? source.getSurname() : null);
-			target.setDateofbirth((source.getDateofbirth() != null) ? Long.valueOf(source.getDateofbirth().getTime()/1000l) : null);
-			target.setDeathdate((source.getDeathdate() != null) ? Long.valueOf(source.getDeathdate().getTime()/1000l) : null);
+			target.setDateofbirth((source.getDateofbirth() != null) ? Long.valueOf(source.getDateofbirth().getTime()) : null);
+			target.setDeathdate((source.getDeathdate() != null) ? Long.valueOf(source.getDeathdate().getTime()) : null);
 			target.setEmail((source.getEmail() != null) ? source.getEmail() : null);
 			target.setGender((source.getGender() != null) ? source.getGender() : null);
 			target.setHealthCode((source.getHealthcode() != null) ? source.getHealthcode() : null);
@@ -162,8 +162,8 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			target.setIdpatient((source.getIdpatient() != null) ? source.getIdpatient() : null);
 			target.setName((source.getName() != null) ? source.getName() : null);
 			target.setSurname((source.getSurname() != null) ? source.getSurname() : null);
-			target.setDateofbirth((source.getDateofbirth() != null) ? new Date(source.getDateofbirth()*1000l) : null);
-			target.setDeathdate((source.getDeathdate() != null) ? new Date(source.getDeathdate()*1000l) : null);
+			target.setDateofbirth((source.getDateofbirth() != null) ? new Date(source.getDateofbirth()) : null);
+			target.setDeathdate((source.getDeathdate() != null) ? new Date(source.getDeathdate()) : null);
 			target.setEmail((source.getEmail() != null) ? source.getEmail() : null);
 			target.setGender((source.getGender() != null) ? source.getGender() : null);
 			target.setHealthcode((source.getHealthCode() != null) ? source.getHealthCode() : null);

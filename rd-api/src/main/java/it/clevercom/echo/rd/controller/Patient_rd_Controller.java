@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
-import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
@@ -85,7 +84,7 @@ public class Patient_rd_Controller {
 	/**
 	 * @param id
 	 * @return
-	 * @throws EchoException
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -97,6 +96,11 @@ public class Patient_rd_Controller {
 		return rdDozerMapper.map(entity, PatientDTO.class);
 	}
 
+	/**
+	 * @param extcode
+	 * @return
+	 * @throws Exception
+	 */
 	@Transactional("rdTm")
 	@RequestMapping(value = "/extcode/{extcode}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
@@ -133,7 +137,7 @@ public class Patient_rd_Controller {
 	 * @param page
 	 * @param size
 	 * @param sort
-	 * @param param
+	 * @param field
 	 * @return
 	 * @throws Exception
 	 */
@@ -200,8 +204,10 @@ public class Patient_rd_Controller {
 	}
 
 	/**
-	 * 
+	 * @param patient
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.POST)
@@ -238,8 +244,10 @@ public class Patient_rd_Controller {
 	}
 
 	/**
-	 * 
+	 * @param patient
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.PUT)
@@ -277,8 +285,7 @@ public class Patient_rd_Controller {
 		// save and map to out dto
 		Patient newValueEntity = repo.saveAndFlush(oldValueEntity);
 		// TODO map newValueDTO instead of using input patient
-		// PatientDTO newValueDTO = rdDozerMapper.map(newValueEntity,
-		// PatientDTO.class);
+		// PatientDTO newValueDTO = rdDozerMapper.map(newValueEntity, PatientDTO.class);
 
 		// create standard response
 		UpdateResponseDTO<PatientDTO> response = new UpdateResponseDTO<PatientDTO>();
@@ -299,7 +306,6 @@ public class Patient_rd_Controller {
 	}
 
 	/**
-	 * 
 	 * @return
 	 */
 	@Transactional("rdTm")

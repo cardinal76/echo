@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 20-mar-2017 16.22.52 by Hibernate Tools 5.2.2.Final
+// Generated 22-mar-2017 16.57.37 by Hibernate Tools 5.2.2.Final
 
 
 import javax.persistence.Column;
@@ -12,11 +12,7 @@ import javax.persistence.Embeddable;
 public class Hl7PatientId  implements java.io.Serializable {
 
 
-     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 677667584778129386L;
-	private String idhl7patient;
+     private String idhl7patient;
      private String idauthoritynamespaceid;
 
     public Hl7PatientId() {

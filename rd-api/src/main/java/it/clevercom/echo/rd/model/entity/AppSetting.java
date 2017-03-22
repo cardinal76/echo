@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 20-mar-2017 16.22.52 by Hibernate Tools 5.2.2.Final
+// Generated 22-mar-2017 16.57.37 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -31,11 +31,7 @@ import org.hibernate.annotations.Parameter;
 public class AppSetting  implements java.io.Serializable {
 
 
-     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 5782238847096255573L;
-	private Long idappsetting;
+     private Long idappsetting;
      private User user;
      private String key;
      private String value;

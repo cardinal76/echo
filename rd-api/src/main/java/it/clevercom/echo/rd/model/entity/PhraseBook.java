@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 20-mar-2017 16.22.52 by Hibernate Tools 5.2.2.Final
+// Generated 22-mar-2017 16.57.37 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -29,11 +29,7 @@ import org.hibernate.annotations.Parameter;
 public class PhraseBook  implements java.io.Serializable {
 
 
-     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -8447716027134804009L;
-	private Long idphrasebook;
+     private Long idphrasebook;
      private User user;
      private String title;
      private String body;

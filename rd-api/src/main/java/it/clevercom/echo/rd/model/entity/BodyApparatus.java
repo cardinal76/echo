@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 20-mar-2017 16.22.52 by Hibernate Tools 5.2.2.Final
+// Generated 22-mar-2017 16.57.37 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -30,11 +30,7 @@ import org.hibernate.annotations.Parameter;
 public class BodyApparatus  implements java.io.Serializable {
 
 
-     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -1699979589975681190L;
-	private Long idbodyapparatus;
+     private Long idbodyapparatus;
      private char code;
      private String description;
      private Date created;

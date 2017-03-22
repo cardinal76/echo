@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 20-mar-2017 16.22.52 by Hibernate Tools 5.2.2.Final
+// Generated 22-mar-2017 16.57.37 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -29,11 +29,7 @@ import org.hibernate.annotations.Parameter;
 public class Icd9Patology  implements java.io.Serializable {
 
 
-     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 5949680854852796495L;
-	private Long idicd9patology;
+     private Long idicd9patology;
      private Icd9PatologyGroup icd9PatologyGroup;
      private String code;
      private String description;

@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 20-mar-2017 16.22.52 by Hibernate Tools 5.2.2.Final
+// Generated 22-mar-2017 16.57.37 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -32,11 +32,7 @@ import org.hibernate.annotations.Parameter;
 public class Order  implements java.io.Serializable {
 
 
-     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -1422564216453086476L;
-	private Long idorder;
+     private Long idorder;
      private OrganizationUnit organizationUnitByOriginorganizationunitid;
      private OrganizationUnit organizationUnitByTargetorganizationunitid;
      private WorkPriority workPriority;
@@ -63,9 +59,8 @@ public class Order  implements java.io.Serializable {
     }
 
 	
-    public Order(WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date created, Date updated, String userupdate, Boolean active) {
+    public Order(WorkPriority workPriority, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date created, Date updated, String userupdate, Boolean active) {
         this.workPriority = workPriority;
-        this.workSession = workSession;
         this.workStatus = workStatus;
         this.acquisitionchannel = acquisitionchannel;
         this.creationdate = creationdate;
@@ -141,7 +136,7 @@ public class Order  implements java.io.Serializable {
     }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="idworksession", nullable=false)
+    @JoinColumn(name="idworksession")
     public WorkSession getWorkSession() {
         return this.workSession;
     }
