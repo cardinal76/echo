@@ -14,14 +14,14 @@ public class PatientDTO implements Serializable {
 	private Long idpatient;	
 	private String name;
 	private String surname;
-	private Date dateofbirth;
+	private Long dateofbirth;
 	private String gender;
 	private String taxcode;
 	private String healthCode;
 	private String phonenumber;
 	private String email;
 	
-	private Date deathdate;
+	private Long deathdate;
 	
 	private Date created;
 	private Date updated;
@@ -104,14 +104,14 @@ public class PatientDTO implements Serializable {
 	/**
 	 * @return the dateofbirth
 	 */
-	public Date getDateofbirth() {
+	public Long getDateofbirth() {
 		return dateofbirth;
 	}
 
 	/**
 	 * @param dateofbirth the dateofbirth to set
 	 */
-	public void setDateofbirth(Date dateofbirth) {
+	public void setDateofbirth(Long dateofbirth) {
 		this.dateofbirth = dateofbirth;
 	}
 
@@ -188,14 +188,14 @@ public class PatientDTO implements Serializable {
 	/**
 	 * @return the deathdate
 	 */
-	public Date getDeathdate() {
+	public Long getDeathdate() {
 		return deathdate;
 	}
 
 	/**
 	 * @param deathdate the deathdate to set
 	 */
-	public void setDeathdate(Date deathdate) {
+	public void setDeathdate(Long deathdate) {
 		this.deathdate = deathdate;
 	}
 
