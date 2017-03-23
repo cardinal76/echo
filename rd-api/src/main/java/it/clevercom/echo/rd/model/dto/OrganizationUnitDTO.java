@@ -12,8 +12,8 @@ public class OrganizationUnitDTO implements Serializable {
 	private static final long serialVersionUID = -8750546516765816251L;
 
 	private Long idorganizationunit;
-	private MunicipalityDTO municipality;
-	private OrganizationUnitDTO parentOrganizationUnit;
+	private BaseObjectDTO municipality;
+	private BaseObjectDTO parentOrganizationUnit;
 	private String name;
 	private String description;
 	private String address;
@@ -58,28 +58,28 @@ public class OrganizationUnitDTO implements Serializable {
 	/**
 	 * @return the municipality
 	 */
-	public MunicipalityDTO getMunicipality() {
+	public BaseObjectDTO getMunicipality() {
 		return municipality;
 	}
 
 	/**
 	 * @param municipality the municipality to set
 	 */
-	public void setMunicipality(MunicipalityDTO municipality) {
+	public void setMunicipality(BaseObjectDTO municipality) {
 		this.municipality = municipality;
 	}
 
 	/**
 	 * @return the parentOrganizationUnit
 	 */
-	public OrganizationUnitDTO getParentOrganizationUnit() {
+	public BaseObjectDTO getParentOrganizationUnit() {
 		return parentOrganizationUnit;
 	}
 
 	/**
 	 * @param parentOrganizationUnit the parentOrganizationUnit to set
 	 */
-	public void setParentOrganizationUnit(OrganizationUnitDTO parentOrganizationUnit) {
+	public void setParentOrganizationUnit(BaseObjectDTO parentOrganizationUnit) {
 		this.parentOrganizationUnit = parentOrganizationUnit;
 	}
 

@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"created","updated","userupdate","active"})
 public class OrderDTO implements Serializable {
 	private static final long serialVersionUID = 3464811952700440696L;
 
@@ -29,7 +32,7 @@ public class OrderDTO implements Serializable {
 	private String userupdate;
 	private Boolean active;
 	private Set<OrderLogDTO> orderLogs = new HashSet<OrderLogDTO>(0);
-	private Set<OrderServiceDTO> orderServices = new HashSet<OrderServiceDTO>(0);
+	private Set<BaseObjectDTO> services = new HashSet<BaseObjectDTO>(0);
 	
 	/**
 	 * @return the idorder
@@ -326,19 +329,19 @@ public class OrderDTO implements Serializable {
 	}
 	
 	/**
-	 * @return the orderServices
+	 * @return the services
 	 */
-	public Set<OrderServiceDTO> getOrderServices() {
-		return orderServices;
+	public Set<BaseObjectDTO> getServices() {
+		return services;
 	}
-	
+
 	/**
-	 * @param orderServices the orderServices to set
+	 * @param services the services to set
 	 */
-	public void setOrderServices(Set<OrderServiceDTO> orderServices) {
-		this.orderServices = orderServices;
+	public void setServices(Set<BaseObjectDTO> services) {
+		this.services = services;
 	}
-	
+
 	/**
 	 * @return the serialversionuid
 	 */

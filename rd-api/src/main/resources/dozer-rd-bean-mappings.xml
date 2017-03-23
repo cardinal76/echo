@@ -296,4 +296,17 @@
 			<b>code</b>
 		</field>
 	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Service</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
+		<field>
+			<a>idservice</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>description</a>
+			<b>name</b>
+		</field>
+	</mapping>
 </mappings>
