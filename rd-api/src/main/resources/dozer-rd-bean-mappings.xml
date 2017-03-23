@@ -262,4 +262,38 @@
 			<b>name</b>
 		</field>
 	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.WorkStatus</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
+		<field>
+			<a>idworkstatus</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>description</a>
+			<b>name</b>
+		</field>
+		<field>
+			<a>code</a>
+			<b>code</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.WorkPriority</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
+		<field>
+			<a>idworkpriority</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>description</a>
+			<b>name</b>
+		</field>
+		<field>
+			<a>code</a>
+			<b>code</b>
+		</field>
+	</mapping>
 </mappings>

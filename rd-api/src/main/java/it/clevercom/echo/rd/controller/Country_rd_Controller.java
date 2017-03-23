@@ -213,7 +213,12 @@ public class Country_rd_Controller {
 			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.hibernate.parentmismatch"), Country_rd_Controller.r_entity, id_region, Country_rd_Controller.p_entity, id_province));
 		}
 		
-		municipalities.addAll(repo_m.findByProvince(province, new Sort("municipalityname")));
+		// find selected municipalities
+		List<Municipality> municipality = repo_m.findByProvince(province, new Sort("municipalityname")); 
+		if (municipality == null || municipality.size()==0) throw new RecordNotFoundException(Country_rd_Controller.m_entity);
+
+		// add to list
+		municipalities.addAll(municipality);
 		
 		// map list
 		List<MunicipalityDTO> municipalityDTOList = new ArrayList<MunicipalityDTO>();

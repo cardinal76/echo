@@ -166,27 +166,27 @@ public class BodyApparatus_rd_Controller {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<BodyApparatusDTO> add(@RequestBody BodyApparatusDTO burnrobot, HttpServletRequest request) throws Exception {
+	public @ResponseBody CreateResponseDTO<BodyApparatusDTO> add(@RequestBody BodyApparatusDTO bodyapparatus, HttpServletRequest request) throws Exception {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 		
 		// map
-		BodyApparatus entity = rdDozerMapper.map(burnrobot, BodyApparatus.class);
+		BodyApparatus entity = rdDozerMapper.map(bodyapparatus, BodyApparatus.class);
 		
 		// add technical field
 		entity.setUserupdate(username);
 		
 		// save and map to out dto
 		entity = repo.saveAndFlush(entity);
-		burnrobot = rdDozerMapper.map(entity, BodyApparatusDTO.class);
+		bodyapparatus = rdDozerMapper.map(entity, BodyApparatusDTO.class);
 		
 		// create standard response
 		CreateResponseDTO<BodyApparatusDTO> response = new CreateResponseDTO<BodyApparatusDTO>();
 		response.setEntityName(BodyApparatus_rd_Controller.entity);
 		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), BodyApparatus_rd_Controller.entity));
 		List<BodyApparatusDTO> bodyApparatusDTOs = new ArrayList<BodyApparatusDTO>();
-		bodyApparatusDTOs.add(burnrobot);
+		bodyApparatusDTOs.add(bodyapparatus);
 		response.setNewValue(bodyApparatusDTOs);
 		
 		// return standard response

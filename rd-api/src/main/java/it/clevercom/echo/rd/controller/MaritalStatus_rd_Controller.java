@@ -61,12 +61,6 @@ public class MaritalStatus_rd_Controller {
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
 	
-	@Value("${jwt.token.header}")
-	private String tokenHeader;
-	
-	@Autowired
-	private JwtTokenUtils tokenUtils;
-	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
@@ -164,31 +158,8 @@ public class MaritalStatus_rd_Controller {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<MaritalstatusDTO> add(@RequestBody MaritalstatusDTO maritalStatus, HttpServletRequest request) throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
-		
-		// map
-		Maritalstatus entity = rdDozerMapper.map(maritalStatus, Maritalstatus.class);
-		
-		// add technical field
-		entity.setUserupdate(username);
-		
-		// save and map to out dto
-		entity = repo.saveAndFlush(entity);
-		maritalStatus = rdDozerMapper.map(entity, MaritalstatusDTO.class);
-		
-		// create standard response
-		CreateResponseDTO<MaritalstatusDTO> response = new CreateResponseDTO<MaritalstatusDTO>();
-		response.setEntityName(MaritalStatus_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), MaritalStatus_rd_Controller.entity));
-		List<MaritalstatusDTO> maritalStatusDTOs = new ArrayList<MaritalstatusDTO>();
-		maritalStatusDTOs.add(maritalStatus);
-		response.setNewValue(maritalStatusDTOs);
-		
-		// return standard response
-		return response;
+	public @ResponseBody String add(@RequestBody MaritalstatusDTO maritalStatus, HttpServletRequest request) throws Exception {
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.POST.toString(), MaritalStatus_rd_Controller.entity);
 	}
 	
 	/**
@@ -199,50 +170,8 @@ public class MaritalStatus_rd_Controller {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<MaritalstatusDTO> update(@RequestBody MaritalstatusDTO maritalStatus, HttpServletRequest request) throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
-		
-		// if an id is not present throw bad request
-		if(maritalStatus.getIdmaritalstatus()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), MaritalStatus_rd_Controller.entity));
-		
-		// find entity to update (oldValue)
-		Maritalstatus oldValueEntity = repo.findOne(maritalStatus.getIdmaritalstatus()); 
-		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity==null) throw new RecordNotFoundException(MaritalStatus_rd_Controller.entity, maritalStatus.getIdmaritalstatus().toString());
-		// get created date
-		Date created = oldValueEntity.getCreated();
-		// map old value to a dto
-		MaritalstatusDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, MaritalstatusDTO.class);
-
-		// begin update of oldValue
-		rdDozerMapper.map(maritalStatus, oldValueEntity);
-		
-		// add technical field
-		oldValueEntity.setUserupdate(username);
-		oldValueEntity.setUpdated(new Date());
-		oldValueEntity.setCreated(created);
-		
-		// save and map to out dto
-		Maritalstatus newValueEntity = repo.saveAndFlush(oldValueEntity);
-		MaritalstatusDTO newValueDTO = rdDozerMapper.map(newValueEntity, MaritalstatusDTO.class);
-				
-		// create standard response
-		UpdateResponseDTO<MaritalstatusDTO> response = new UpdateResponseDTO<MaritalstatusDTO>();
-		response.setEntityName(MaritalStatus_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), MaritalStatus_rd_Controller.entity));
-		// add new dtos values
-		List<MaritalstatusDTO> newMaritalstatusDTOs = new ArrayList<MaritalstatusDTO>();
-		newMaritalstatusDTOs.add(newValueDTO);
-		response.setNewValue(newMaritalstatusDTOs);
-		// add old dtos values
-		List<MaritalstatusDTO> oldMaritalstatusDTOs = new ArrayList<MaritalstatusDTO>();
-		oldMaritalstatusDTOs.add(oldValueDTO);
-		response.setOldValue(oldMaritalstatusDTOs);
-		
-		// return response
-		return response;
+	public @ResponseBody String update(@RequestBody MaritalstatusDTO maritalStatus, HttpServletRequest request) throws Exception {
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.PUT.toString(), MaritalStatus_rd_Controller.entity);
 	}
 	
 	/**

@@ -103,7 +103,7 @@ public class WorkPriority_rd_Controller {
 	@Loggable
 	public @ResponseBody PagedDTO<WorkPriorityDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
 																	@RequestParam(defaultValue="1", required=false) int page, 
-																	@RequestParam(defaultValue="1000", required=false) int size, 
+																	@RequestParam(defaultValue="4", required=false) int size, 
 																	@RequestParam(defaultValue="asc", required=false) String sort, 
 																	@RequestParam(defaultValue="code", required=false) String field) throws Exception {
 		// create paged request
@@ -142,14 +142,14 @@ public class WorkPriority_rd_Controller {
 		if (entity.size() == 0) throw new PageNotFoundException(WorkPriority_rd_Controller.entity, page);
 		
 		// map list
-		List<WorkPriorityDTO> bodyApparatusDTOList = new ArrayList<WorkPriorityDTO>();
+		List<WorkPriorityDTO> workPriorityDTOList = new ArrayList<WorkPriorityDTO>();
 		for (WorkPriority s: entity) {
-			bodyApparatusDTOList.add(rdDozerMapper.map(s, WorkPriorityDTO.class));
+			workPriorityDTOList.add(rdDozerMapper.map(s, WorkPriorityDTO.class));
 		}
 		
 		// assembly dto
 		PagedDTO<WorkPriorityDTO> dto = new PagedDTO<WorkPriorityDTO>();
-		dto.setElements(bodyApparatusDTOList);
+		dto.setElements(workPriorityDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		dto.setTotalPages(totalPages);
@@ -165,28 +165,28 @@ public class WorkPriority_rd_Controller {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<WorkPriorityDTO> add(@RequestBody WorkPriorityDTO burnrobot, HttpServletRequest request) throws Exception {
+	public @ResponseBody CreateResponseDTO<WorkPriorityDTO> add(@RequestBody WorkPriorityDTO workpriority, HttpServletRequest request) throws Exception {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 		
 		// map
-		WorkPriority entity = rdDozerMapper.map(burnrobot, WorkPriority.class);
+		WorkPriority entity = rdDozerMapper.map(workpriority, WorkPriority.class);
 		
 		// add technical field
 		entity.setUserupdate(username);
 		
 		// save and map to out dto
 		entity = repo.saveAndFlush(entity);
-		burnrobot = rdDozerMapper.map(entity, WorkPriorityDTO.class);
+		workpriority = rdDozerMapper.map(entity, WorkPriorityDTO.class);
 		
 		// create standard response
 		CreateResponseDTO<WorkPriorityDTO> response = new CreateResponseDTO<WorkPriorityDTO>();
 		response.setEntityName(WorkPriority_rd_Controller.entity);
 		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), WorkPriority_rd_Controller.entity));
-		List<WorkPriorityDTO> bodyApparatusDTOs = new ArrayList<WorkPriorityDTO>();
-		bodyApparatusDTOs.add(burnrobot);
-		response.setNewValue(bodyApparatusDTOs);
+		List<WorkPriorityDTO> workPriorityDTOs = new ArrayList<WorkPriorityDTO>();
+		workPriorityDTOs.add(workpriority);
+		response.setNewValue(workPriorityDTOs);
 		
 		// return standard response
 		return response;
@@ -200,25 +200,25 @@ public class WorkPriority_rd_Controller {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<WorkPriorityDTO> update(@RequestBody WorkPriorityDTO bodyApparatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<WorkPriorityDTO> update(@RequestBody WorkPriorityDTO workpriority, HttpServletRequest request) throws Exception {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 		
 		// if an id is not present throw bad request
-		if(bodyApparatus.getIdworkpriority()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), WorkPriority_rd_Controller.entity));
+		if(workpriority.getIdworkpriority()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), WorkPriority_rd_Controller.entity));
 		
 		// find entity to update (oldValue)
-		WorkPriority oldValueEntity = repo.findOne(bodyApparatus.getIdworkpriority()); 
+		WorkPriority oldValueEntity = repo.findOne(workpriority.getIdworkpriority()); 
 		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity==null) throw new RecordNotFoundException(WorkPriority_rd_Controller.entity, bodyApparatus.getIdworkpriority().toString());
+		if (oldValueEntity==null) throw new RecordNotFoundException(WorkPriority_rd_Controller.entity, workpriority.getIdworkpriority().toString());
 		// get created date
 		Date created = oldValueEntity.getCreated();		
 		// map old value to a dto
 		WorkPriorityDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, WorkPriorityDTO.class);
 
 		// begin update of oldValue
-		rdDozerMapper.map(bodyApparatus, oldValueEntity);
+		rdDozerMapper.map(workpriority, oldValueEntity);
 		
 		// add technical field
 		oldValueEntity.setUserupdate(username);
@@ -254,7 +254,7 @@ public class WorkPriority_rd_Controller {
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody String delete(@RequestBody WorkPriorityDTO bodyApparatus, HttpServletRequest request) {
+	public @ResponseBody String delete(@RequestBody WorkPriorityDTO workpriority, HttpServletRequest request) {
 		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), WorkPriority_rd_Controller.entity);
 	}	
 }
