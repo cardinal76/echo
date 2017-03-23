@@ -40,6 +40,7 @@ import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.model.dto.MaritalstatusDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.Maritalstatus;
+import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IMaritalStatus_rd_Repository;
@@ -115,7 +116,7 @@ public class MaritalStatus_rd_Controller {
 		
 		if (!criteria.equals("null")) {
 	        SpecificationsBuilder<Maritalstatus, SpecificationQueryHelper<Maritalstatus>> builder = new SpecificationsBuilder<Maritalstatus, SpecificationQueryHelper<Maritalstatus>>();
-	        Pattern pattern = Pattern.compile("(\\w+)(:|<|>)(\\w+)");
+	        Pattern pattern = Pattern.compile(SearchCriteria.pattern);
 	        Matcher matcher = pattern.matcher(criteria + ",");
 	        while (matcher.find()) {
 	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));

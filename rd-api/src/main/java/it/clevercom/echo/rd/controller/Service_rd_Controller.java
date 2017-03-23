@@ -34,6 +34,7 @@ import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.dto.ServiceDTO;
 import it.clevercom.echo.rd.model.entity.Service;
+import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IService_rd_Repository;
@@ -110,7 +111,7 @@ public class Service_rd_Controller {
 		
 		if (!criteria.equals("null")) {
 	        SpecificationsBuilder<Service, SpecificationQueryHelper<Service>> builder = new SpecificationsBuilder<Service, SpecificationQueryHelper<Service>>();
-	        Pattern pattern = Pattern.compile("(\\w+)(:|<|>)(\\w+)");
+	        Pattern pattern = Pattern.compile(SearchCriteria.pattern);
 	        Matcher matcher = pattern.matcher(criteria + ",");
 	        while (matcher.find()) {
 	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));

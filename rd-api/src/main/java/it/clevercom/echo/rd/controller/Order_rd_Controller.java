@@ -40,6 +40,7 @@ import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.Order;
+import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IOrder_rd_Repository;
@@ -122,7 +123,7 @@ public class Order_rd_Controller {
 
 		if (!criteria.equals("null")) {
 			SpecificationsBuilder<Order, SpecificationQueryHelper<Order>> builder = new SpecificationsBuilder<Order, SpecificationQueryHelper<Order>>();
-			Pattern pattern = Pattern.compile("(\\w+)(:|<|>|:>|<:)(\\w+)");
+			Pattern pattern = Pattern.compile(SearchCriteria.pattern);
 			Matcher matcher = pattern.matcher(criteria + ",");
 			while (matcher.find()) {
 				builder.with(matcher.group(1), matcher.group(2), matcher.group(3));

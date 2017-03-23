@@ -36,6 +36,7 @@ import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.dto.WorkStatusDTO;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
+import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
@@ -110,7 +111,7 @@ public class WorkStatus_rd_Controller {
 		
 		if (!criteria.equals("null")) {
 	        SpecificationsBuilder<WorkStatus, SpecificationQueryHelper<WorkStatus>> builder = new SpecificationsBuilder<WorkStatus, SpecificationQueryHelper<WorkStatus>>();
-	        Pattern pattern = Pattern.compile("(\\w+)(:|<|>)(\\w+)");
+	        Pattern pattern = Pattern.compile(SearchCriteria.pattern);
 	        Matcher matcher = pattern.matcher(criteria + ",");
 	        while (matcher.find()) {
 	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));

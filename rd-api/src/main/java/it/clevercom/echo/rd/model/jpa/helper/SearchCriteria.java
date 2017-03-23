@@ -3,6 +3,7 @@ public class SearchCriteria {
     private String key;
     private String operation;
     private Object value;
+    public static String pattern = "(\\w+)(:|<|>|:>|<:|!)(\\w+)"; 
     
     public SearchCriteria(String key, String operation, Object value) {
 		super();
