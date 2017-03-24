@@ -39,13 +39,16 @@ import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.ValidationExceptionDTO;
 import it.clevercom.echo.common.util.JwtTokenUtils;
+import it.clevercom.echo.rd.enums.WorkStatusEnum;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.Order;
+import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IOrder_rd_Repository;
+import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 
 @Controller
 @RestController
@@ -61,6 +64,9 @@ public class Order_rd_Controller {
 	@Autowired
 	private IOrder_rd_Repository repo;
 
+	@Autowired
+	private IWorkStatus_rd_Repository repo_ws;
+	
 	@Autowired
 	private DozerBeanMapper rdDozerMapper;
 
@@ -235,7 +241,7 @@ public class Order_rd_Controller {
 		// begin update of oldValue
 		rdDozerMapper.map(order, oldValueEntity);
 
-		// add technical field
+		// adSchedule Dated technical field
 		oldValueEntity.setUserupdate(username);
 		oldValueEntity.setUpdated(new Date());
 		oldValueEntity.setCreated(created);
@@ -255,9 +261,9 @@ public class Order_rd_Controller {
 		// newOrderDTOs.add(newValueDTO);
 		response.setNewValue(newOrderDTOs);
 		// add old dtos values
-		List<OrderDTO> oldAppSettingDTOs = new ArrayList<OrderDTO>();
-		oldAppSettingDTOs.add(oldValueDTO);
-		response.setOldValue(oldAppSettingDTOs);
+		List<OrderDTO> oldOrderDTOs = new ArrayList<OrderDTO>();
+		oldOrderDTOs.add(oldValueDTO);
+		response.setOldValue(oldOrderDTOs);
 
 		// return response
 		return response;
@@ -267,24 +273,65 @@ public class Order_rd_Controller {
 	 * @return
 	 */
 	@Transactional("rdTm")
-	@RequestMapping(method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody String delete() {
-		return "order";
+	public @ResponseBody UpdateResponseDTO<OrderDTO> delete(@RequestParam Long id, HttpServletRequest request) {
+		// get user info
+		String authToken = request.getHeader(this.tokenHeader);
+		String username = this.tokenUtils.getUsernameFromToken(authToken);
+		
+		// get entity to update
+		Order entity = repo.findOne(id);
+		OrderDTO oldValueDTO = rdDozerMapper.map(entity, OrderDTO.class);
+		
+		// get canceled workstatus
+		WorkStatus workStatus = repo_ws.findByCode(WorkStatusEnum.CANCELED.code());
+		
+		// update entity
+		entity.setWorkStatus(workStatus);
+		entity.setActive(false);
+		entity.setUserupdate(username);
+		
+		OrderDTO newValueDTO = rdDozerMapper.map(entity, OrderDTO.class);
+		
+		// create standard response
+		UpdateResponseDTO<OrderDTO> response = new UpdateResponseDTO<OrderDTO>();
+		response.setEntityName(Order_rd_Controller.entity);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Order_rd_Controller.entity));
+		// add new dtos values
+		List<OrderDTO> newOrderDTOs = new ArrayList<OrderDTO>();
+		newOrderDTOs.add(newValueDTO);
+		// newOrderDTOs.add(newValueDTO);
+		response.setNewValue(newOrderDTOs);
+		// add old dtos values
+		List<OrderDTO> oldOrderDTOs = new ArrayList<OrderDTO>();
+		oldOrderDTOs.add(oldValueDTO);
+		response.setOldValue(oldOrderDTOs);
+
+		// return response
+		return response;
 	}
 	
-	/*
-	 * business validation methods
-	 */
+	/*-----------------------------*/
+	/* business validation methods */
+	/*-----------------------------*/
 	
 	/**
-	 * @param order
+	 * Validate a create order request
+	 * @author luca
+	 * @category request validation
+	 * @param order DTO passed to the create method
+	 * @since 1.2.0
 	 */
 	private void validateCreateRequest(OrderDTO order) throws ValidationException {
 		// these fields should not be inserted 
 		// in the create request and must be empty or null
 		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
+		
+		if (order.getIdorder() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.idorder"),env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
 		
 		if (order.getScheduleddate() != null) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.scheduledate"),env.getProperty("echo.api.crud.validation.mustbeempty"));
