@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
-	
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
 	<configuration>
 		<custom-converters>
 			<converter type="it.clevercom.echo.rd.model.converter.Patient2PatientDTO">
@@ -54,6 +52,11 @@
 	<mapping>
 		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Municipality</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.MunicipalityDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Patient</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.PatientSmartDTO</class-b>
 	</mapping>
 
 	<mapping>

@@ -7,6 +7,8 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import it.clevercom.echo.rd.model.entity.Patient;
+
 @JsonIgnoreProperties({"created","updated","userupdate","active"})
 public class OrderDTO implements Serializable {
 	private static final long serialVersionUID = 3464811952700440696L;
@@ -14,6 +16,7 @@ public class OrderDTO implements Serializable {
 	private Long idorder;
 	private BaseObjectDTO originOrganizationUnit;
 	private BaseObjectDTO targetOrganizationUnit;
+    private PatientSmartDTO patient;
 	private BaseObjectDTO workPriority;
 	private WorkSessionDTO workSession;
 	private BaseObjectDTO workStatus;
@@ -76,6 +79,20 @@ public class OrderDTO implements Serializable {
 		this.targetOrganizationUnit = targetOrganizationUnit;
 	}
 	
+	/**
+	 * @return the patient
+	 */
+	public PatientSmartDTO getPatient() {
+		return patient;
+	}
+
+	/**
+	 * @param patient the patient to set
+	 */
+	public void setPatient(PatientSmartDTO patient) {
+		this.patient = patient;
+	}
+
 	/**
 	 * @return the workPriority
 	 */

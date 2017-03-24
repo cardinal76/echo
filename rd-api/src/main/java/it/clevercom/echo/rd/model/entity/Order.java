@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 22-mar-2017 16.57.37 by Hibernate Tools 5.2.2.Final
+// Generated 24-mar-2017 8.31.09 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -35,6 +35,7 @@ public class Order  implements java.io.Serializable {
      private Long idorder;
      private OrganizationUnit organizationUnitByOriginorganizationunitid;
      private OrganizationUnit organizationUnitByTargetorganizationunitid;
+     private Patient patient;
      private WorkPriority workPriority;
      private WorkSession workSession;
      private WorkStatus workStatus;
@@ -59,7 +60,8 @@ public class Order  implements java.io.Serializable {
     }
 
 	
-    public Order(WorkPriority workPriority, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date created, Date updated, String userupdate, Boolean active) {
+    public Order(Patient patient, WorkPriority workPriority, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date created, Date updated, String userupdate, Boolean active) {
+        this.patient = patient;
         this.workPriority = workPriority;
         this.workStatus = workStatus;
         this.acquisitionchannel = acquisitionchannel;
@@ -69,9 +71,10 @@ public class Order  implements java.io.Serializable {
         this.userupdate = userupdate;
         this.active = active;
     }
-    public Order(OrganizationUnit organizationUnitByOriginorganizationunitid, OrganizationUnit organizationUnitByTargetorganizationunitid, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, String requestingphysician, String orderreason, String rejectreason, String clinicalhistory, String notes, Date created, Date updated, String userupdate, Boolean active, Set<OrderLog> orderLogs, Set<OrderService> orderServices) {
+    public Order(OrganizationUnit organizationUnitByOriginorganizationunitid, OrganizationUnit organizationUnitByTargetorganizationunitid, Patient patient, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, String requestingphysician, String orderreason, String rejectreason, String clinicalhistory, String notes, Date created, Date updated, String userupdate, Boolean active, Set<OrderLog> orderLogs, Set<OrderService> orderServices) {
        this.organizationUnitByOriginorganizationunitid = organizationUnitByOriginorganizationunitid;
        this.organizationUnitByTargetorganizationunitid = organizationUnitByTargetorganizationunitid;
+       this.patient = patient;
        this.workPriority = workPriority;
        this.workSession = workSession;
        this.workStatus = workStatus;
@@ -123,6 +126,16 @@ public class Order  implements java.io.Serializable {
     
     public void setOrganizationUnitByTargetorganizationunitid(OrganizationUnit organizationUnitByTargetorganizationunitid) {
         this.organizationUnitByTargetorganizationunitid = organizationUnitByTargetorganizationunitid;
+    }
+
+@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="idpatient", nullable=false)
+    public Patient getPatient() {
+        return this.patient;
+    }
+    
+    public void setPatient(Patient patient) {
+        this.patient = patient;
     }
 
 @ManyToOne(fetch=FetchType.LAZY)

@@ -169,15 +169,20 @@ public class Order_rd_Controller {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<OrderDTO> add(@RequestBody OrderDTO order, HttpServletRequest request)
-			throws Exception {
+	public @ResponseBody CreateResponseDTO<OrderDTO> add(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {
+	    // this field are not inserted in the create response and must be null
+		// "scheduleddate": null,
+	    // "acceptancedate": null,
+	    // "rejectreason": null,
+	    // "orderLogs": [],
+		
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 
 		// map
 		Order entity = rdDozerMapper.map(order, Order.class);
-
+		
 		// add technical field
 		entity.setUserupdate(username);
 
@@ -209,16 +214,14 @@ public class Order_rd_Controller {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order,
-			HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 
 		// if an id is not present throw bad request
 		if (order.getIdorder() == null)
-			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"),
-					Order_rd_Controller.entity));
+			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), Order_rd_Controller.entity));
 
 		// find entity to update (oldValue)
 		Order oldValueEntity = repo.findOne(order.getIdorder());
@@ -270,5 +273,9 @@ public class Order_rd_Controller {
 	@Loggable
 	public @ResponseBody String delete() {
 		return "order";
+	}
+	
+	private void validateNewOrder() {
+		
 	}
 }

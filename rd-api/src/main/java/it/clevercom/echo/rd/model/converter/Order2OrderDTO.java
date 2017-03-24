@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.OrderLogDTO;
+import it.clevercom.echo.rd.model.dto.PatientSmartDTO;
 import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
 import it.clevercom.echo.rd.model.entity.OrganizationUnit;
+import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkSession;
@@ -81,6 +83,11 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			// workstatus
 			if (source.getWorkStatus() != null) {
 				target.setWorkStatus(rdDozerMapper.map(source.getWorkStatus(), BaseObjectDTO.class));
+			}
+			
+			// patient
+			if (source.getPatient() != null) {
+				target.setPatient(rdDozerMapper.map(source.getPatient(), PatientSmartDTO.class).buildExtendedObject());
 			}
 			
 			// iterate
@@ -157,6 +164,11 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			// workstatus
 			if (source.getWorkStatus() != null) {
 				target.setWorkStatus(rdDozerMapper.map(source.getWorkStatus(), WorkStatus.class));
+			}
+			
+			// patient
+			if (source.getPatient() != null) {
+				target.setPatient(rdDozerMapper.map(source.getPatient(), Patient.class));
 			}
 			
 			// iterate
