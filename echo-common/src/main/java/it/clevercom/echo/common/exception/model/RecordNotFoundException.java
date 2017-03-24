@@ -24,8 +24,6 @@ public class RecordNotFoundException extends EchoException {
 		this.recordId = recordId;
 	}
 
-
-
 	public RecordNotFoundException(String message, Throwable cause) {
 		super(message, cause);
 	}

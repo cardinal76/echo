@@ -33,9 +33,11 @@ import org.springframework.web.bind.annotation.RestController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.exception.model.ValidationException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
+import it.clevercom.echo.common.model.dto.response.ValidationExceptionDTO;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
@@ -170,11 +172,8 @@ public class Order_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody CreateResponseDTO<OrderDTO> add(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {
-	    // this field are not inserted in the create response and must be null
-		// "scheduleddate": null,
-	    // "acceptancedate": null,
-	    // "rejectreason": null,
-	    // "orderLogs": [],
+	    // validate create request
+		this.validateCreateRequest(order);
 		
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
@@ -275,7 +274,42 @@ public class Order_rd_Controller {
 		return "order";
 	}
 	
-	private void validateNewOrder() {
+	/*
+	 * business validation methods
+	 */
+	
+	/**
+	 * @param order
+	 */
+	private void validateCreateRequest(OrderDTO order) throws ValidationException {
+		// these fields should not be inserted 
+		// in the create request and must be empty or null
+		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
 		
+		if (order.getScheduleddate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.scheduledate"),env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		if (order.getAcceptancedate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.acceptancedate"),env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+
+		if (order.getRejectreason() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.rejectreason"),env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+			
+		if ((order.getOrderLogs() != null) && (order.getOrderLogs().size() > 0)) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.orderlogs"),env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		if ((order.getWorkSession() != null)) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.worksession"),env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		if (exceptions.getFieldErrors().size()>0) {
+			throw new ValidationException(env.getProperty("echo.api.crud.validation.genericmessage"), exceptions);
+		} else {
+			exceptions = null;
+		}
 	}
 }

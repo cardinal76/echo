@@ -5,7 +5,6 @@ import java.text.MessageFormat;
 import org.apache.log4j.Logger;
 import org.dozer.MappingException;
 import org.hibernate.TransientPropertyValueException;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -19,7 +18,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.exception.model.ValidationException;
 import it.clevercom.echo.common.model.dto.response.ExceptionDTO;
+import it.clevercom.echo.common.model.dto.response.ValidationExceptionDTO;
 
 /**
  * 
@@ -119,6 +120,18 @@ public class ControllerExceptionHandler {
 		ExceptionDTO dto = new ExceptionDTO();
 		dto.setMessage(env.getProperty("echo.api.exception.hibernate.constraint.violation"));
 		return dto;
+	}
+	
+	/**
+	 * Maps {@link ValidationException} to a BAD_REQUEST http status
+	 * @param e exception to handle 
+	 * @return exception dto message
+	 */
+	@ExceptionHandler(ValidationException.class)
+	@ResponseStatus(value=HttpStatus.BAD_REQUEST)
+	public @ResponseBody ValidationExceptionDTO handleValidationException(ValidationException e) {
+		logger.error(e.getMessage(), e);
+		return e.getExceptions();
 	}
 	
 	/**
