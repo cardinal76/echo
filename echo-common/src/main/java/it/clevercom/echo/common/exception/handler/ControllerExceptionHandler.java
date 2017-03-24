@@ -134,17 +134,18 @@ public class ControllerExceptionHandler {
 		return e.getExceptions();
 	}
 	
-	/**
-	 * Maps {@link Exception} to a INTERNAL_SERVER_ERROR http status
-	 * @param e exception to handle 
-	 * @return exception dto message
-	 */
-	@ExceptionHandler(Exception.class)
-	@ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)
-	public @ResponseBody ExceptionDTO handleException(Exception e) {
-		logger.fatal(e.getMessage(), e);
-		ExceptionDTO dto = new ExceptionDTO();
-		dto.setMessage(env.getProperty("echo.api.exception.message"));
-		return dto;
-	}
+//	/**
+//	 * Maps {@link Exception} to a INTERNAL_SERVER_ERROR http status
+//	 * @param e exception to handle 
+//	 * @return exception dto message
+//	 */
+//	@ExceptionHandler(Exception.class)
+//	@ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)
+//	public @ResponseBody ExceptionDTO handleException(Exception e) {
+//		logger.fatal(e.getMessage(), e);
+//		ExceptionDTO dto = new ExceptionDTO();
+//		dto.setMessage(env.getProperty("echo.api.exception.message"));
+//		return dto;
+//	}
+	
 }

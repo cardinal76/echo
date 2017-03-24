@@ -276,7 +276,7 @@ public class Order_rd_Controller {
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<OrderDTO> delete(@RequestParam Long id, HttpServletRequest request) {
+	public @ResponseBody UpdateResponseDTO<OrderDTO> delete(@PathVariable Long id, HttpServletRequest request) {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
@@ -293,8 +293,10 @@ public class Order_rd_Controller {
 		entity.setActive(false);
 		entity.setUserupdate(username);
 		
-		OrderDTO newValueDTO = rdDozerMapper.map(entity, OrderDTO.class);
+		repo.saveAndFlush(entity);
 		
+		OrderDTO newValueDTO = rdDozerMapper.map(entity, OrderDTO.class);
+	
 		// create standard response
 		UpdateResponseDTO<OrderDTO> response = new UpdateResponseDTO<OrderDTO>();
 		response.setEntityName(Order_rd_Controller.entity);
