@@ -233,6 +233,10 @@ public class Order_rd_Controller {
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity == null)
 			throw new RecordNotFoundException(Order_rd_Controller.entity, order.getIdorder().toString());
+		
+		// validate create request
+		this.validateUpdateRequest(order, oldValueEntity);
+		
 		// get created date
 		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
@@ -359,6 +363,29 @@ public class Order_rd_Controller {
 			throw new ValidationException(env.getProperty("echo.api.crud.validation.genericmessage"), exceptions);
 		} else {
 			exceptions = null;
+		}
+	}
+	
+	/**
+	 * Validate an update order request
+	 * @author luca
+	 * @category request validation
+	 * @param order DTO passed to the create method
+	 * @since 1.2.0
+	 */
+	private void validateUpdateRequest(OrderDTO order, Order orderToUpdate) throws ValidationException {
+		
+		switch (WorkStatusEnum.valueOf(order.getWorkStatus().getName())) {
+			case ACCEPTED:
+				break;
+			case SCHEDULED:
+				break;
+			case CANCELED:
+				break;
+			case REQUESTED:
+				break;
+			default:	
+				break;
 		}
 	}
 }
