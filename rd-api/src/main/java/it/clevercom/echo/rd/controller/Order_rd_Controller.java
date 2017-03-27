@@ -335,28 +335,81 @@ public class Order_rd_Controller {
 		// in the create request and must be empty or null
 		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
 		
+		// idOrder should not be present here
 		if (order.getIdOrder() != null) {
-			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.idorder"),env.getProperty("echo.api.crud.validation.mustbeempty"));
+			exceptions.addFieldError(
+				env.getProperty("echo.api.crud.fields.idorder"), 
+				env.getProperty("echo.api.crud.validation.mustbeempty")
+			);
 		}
 		
+		// schedule date should not be present here
 		if (order.getScheduledDate() != null) {
-			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.scheduledate"),env.getProperty("echo.api.crud.validation.mustbeempty"));
+			exceptions.addFieldError(
+				env.getProperty("echo.api.crud.fields.scheduledate"), 
+				env.getProperty("echo.api.crud.validation.mustbeempty")
+			);
 		}
 		
+		// acceptance date should not be present here
 		if (order.getAcceptanceDate() != null) {
-			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.acceptancedate"),env.getProperty("echo.api.crud.validation.mustbeempty"));
+			exceptions.addFieldError(
+				env.getProperty("echo.api.crud.fields.acceptancedate"), 
+				env.getProperty("echo.api.crud.validation.mustbeempty")
+			);
 		}
 
+		// reject reason should not be present here
 		if (order.getRejectReason() != null) {
-			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.rejectreason"),env.getProperty("echo.api.crud.validation.mustbeempty"));
+			exceptions.addFieldError(
+				env.getProperty("echo.api.crud.fields.rejectreason"), 
+				env.getProperty("echo.api.crud.validation.mustbeempty")
+			);
 		}
 			
+		// order logs should not be present here 
 		if ((order.getOrderLogs() != null) && (order.getOrderLogs().size() > 0)) {
-			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.orderlogs"),env.getProperty("echo.api.crud.validation.mustbeempty"));
+			exceptions.addFieldError(
+				env.getProperty("echo.api.crud.fields.orderlogs"), 
+				env.getProperty("echo.api.crud.validation.mustbeempty")
+			);
 		}
 		
+		// work session should not be present here
 		if ((order.getWorkSession() != null)) {
-			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.worksession"),env.getProperty("echo.api.crud.validation.mustbeempty"));
+			exceptions.addFieldError(
+				env.getProperty("echo.api.crud.fields.worksession"), 
+				env.getProperty("echo.api.crud.validation.mustbeempty")
+			);
+		}
+		
+		// work status should be equal to request
+		if ((!order.getWorkStatus().getCode().equals(WorkStatusEnum.REQUESTED.code()))) {
+			exceptions.addFieldError(
+				env.getProperty("echo.api.crud.fields.workstatus"), 
+				MessageFormat.format(
+					env.getProperty("echo.api.crud.validation.mustbe"), 
+					env.getProperty("echo.api.crud.fields.workstatus"), 
+					WorkStatusEnum.REQUESTED.code())
+			);
+		}
+		
+		// check if we have some services has been selected
+		if (order.getServices().size() <= 0) {
+			exceptions.addFieldError(
+				env.getProperty("echo.api.crud.fields.service"),
+				MessageFormat.format(
+					env.getProperty("echo.api.crud.validation.emptylist"), 
+					env.getProperty("echo.api.crud.fields.service"))
+			);
+		}
+		
+		// check if a patient has been selected
+		if (!((order.getPatient() != null) && (order.getPatient().getIdPatient() != null))) {
+			exceptions.addFieldError(
+				env.getProperty("echo.api.crud.fields.patient"),
+				env.getProperty("echo.api.crud.validation.mustnotbeempty")
+			);
 		}
 		
 		if (exceptions.getFieldErrors().size()>0) {
