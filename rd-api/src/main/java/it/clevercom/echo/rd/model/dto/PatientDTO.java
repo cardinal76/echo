@@ -11,21 +11,21 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class PatientDTO implements Serializable {
 	private static final long serialVersionUID = 8178223709710995097L;
 	
-	private Long idpatient;	
+	private Long idPatient;	
 	private String name;
 	private String surname;
-	private Long dateofbirth;
+	private Long dateOfBirth;
 	private String gender;
-	private String taxcode;
+	private String taxCode;
 	private String healthCode;
-	private String phonenumber;
+	private String phoneNumber;
 	private String email;
 	
-	private Long deathdate;
+	private Long deathDate;
 	
 	private Date created;
 	private Date updated;
-	private String userupdate;
+	private String userUpdate;
 	private Boolean active;
 	
 	private String prettyPrint;
@@ -43,10 +43,10 @@ public class PatientDTO implements Serializable {
 	}
 
 	public PatientDTO(Long idpatient, Date created, Date updated, String userupdate, boolean active) {
-		this.idpatient = idpatient;
+		this.idPatient = idpatient;
 		this.created = created;
 		this.updated = updated;
-		this.userupdate = userupdate;
+		this.userUpdate = userupdate;
 		this.active = active;
 	}
 	
@@ -63,14 +63,14 @@ public class PatientDTO implements Serializable {
 	 * @return the idpatient
 	 */
 	public Long getIdpatient() {
-		return idpatient;
+		return idPatient;
 	}
 
 	/**
 	 * @param idpatient the idpatient to set
 	 */
 	public void setIdpatient(Long idpatient) {
-		this.idpatient = idpatient;
+		this.idPatient = idpatient;
 	}
 
 	/**
@@ -105,14 +105,14 @@ public class PatientDTO implements Serializable {
 	 * @return the dateofbirth
 	 */
 	public Long getDateofbirth() {
-		return dateofbirth;
+		return dateOfBirth;
 	}
 
 	/**
 	 * @param dateofbirth the dateofbirth to set
 	 */
 	public void setDateofbirth(Long dateofbirth) {
-		this.dateofbirth = dateofbirth;
+		this.dateOfBirth = dateofbirth;
 	}
 
 	/**
@@ -133,14 +133,14 @@ public class PatientDTO implements Serializable {
 	 * @return the taxcode
 	 */
 	public String getTaxcode() {
-		return taxcode;
+		return taxCode;
 	}
 
 	/**
 	 * @param taxcode the taxcode to set
 	 */
 	public void setTaxcode(String taxcode) {
-		this.taxcode = taxcode;
+		this.taxCode = taxcode;
 	}
 
 	/**
@@ -161,14 +161,14 @@ public class PatientDTO implements Serializable {
 	 * @return the phonenumber
 	 */
 	public String getPhonenumber() {
-		return phonenumber;
+		return phoneNumber;
 	}
 
 	/**
 	 * @param phonenumber the phonenumber to set
 	 */
 	public void setPhonenumber(String phonenumber) {
-		this.phonenumber = phonenumber;
+		this.phoneNumber = phonenumber;
 	}
 
 	/**
@@ -189,14 +189,14 @@ public class PatientDTO implements Serializable {
 	 * @return the deathdate
 	 */
 	public Long getDeathdate() {
-		return deathdate;
+		return deathDate;
 	}
 
 	/**
 	 * @param deathdate the deathdate to set
 	 */
 	public void setDeathdate(Long deathdate) {
-		this.deathdate = deathdate;
+		this.deathDate = deathdate;
 	}
 
 	/**
@@ -231,14 +231,14 @@ public class PatientDTO implements Serializable {
 	 * @return the userupdate
 	 */
 	public String getUserupdate() {
-		return userupdate;
+		return userUpdate;
 	}
 
 	/**
 	 * @param userupdate the userupdate to set
 	 */
 	public void setUserupdate(String userupdate) {
-		this.userupdate = userupdate;
+		this.userUpdate = userupdate;
 	}
 
 	/**
