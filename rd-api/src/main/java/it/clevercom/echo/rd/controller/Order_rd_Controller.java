@@ -195,7 +195,7 @@ public class Order_rd_Controller {
 		entity = repo.saveAndFlush(entity);
 		// TODO map entity instead of set ID
 		// order = rdDozerMapper.map(entity, OrderDTO.class);
-		order.setIdorder(entity.getIdorder());
+		order.setIdOrder(entity.getIdorder());
 
 		// create standard response
 		CreateResponseDTO<OrderDTO> response = new CreateResponseDTO<OrderDTO>();
@@ -225,14 +225,14 @@ public class Order_rd_Controller {
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 
 		// if an id is not present throw bad request
-		if (order.getIdorder() == null)
+		if (order.getIdOrder() == null)
 			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), Order_rd_Controller.entity));
 
 		// find entity to update (oldValue)
-		Order oldValueEntity = repo.findOne(order.getIdorder());
+		Order oldValueEntity = repo.findOne(order.getIdOrder());
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity == null)
-			throw new RecordNotFoundException(Order_rd_Controller.entity, order.getIdorder().toString());
+			throw new RecordNotFoundException(Order_rd_Controller.entity, order.getIdOrder().toString());
 		
 		// validate create request
 		this.validateUpdateRequest(order, oldValueEntity);
@@ -335,19 +335,19 @@ public class Order_rd_Controller {
 		// in the create request and must be empty or null
 		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
 		
-		if (order.getIdorder() != null) {
+		if (order.getIdOrder() != null) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.idorder"),env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 		
-		if (order.getScheduleddate() != null) {
+		if (order.getScheduledDate() != null) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.scheduledate"),env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 		
-		if (order.getAcceptancedate() != null) {
+		if (order.getAcceptanceDate() != null) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.acceptancedate"),env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 
-		if (order.getRejectreason() != null) {
+		if (order.getRejectReason() != null) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.rejectreason"),env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 			

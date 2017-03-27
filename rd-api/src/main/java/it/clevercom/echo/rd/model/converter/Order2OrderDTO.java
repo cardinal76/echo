@@ -46,17 +46,17 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 				target = (OrderDTO) destinationFieldValue;
 			}
 			
-			target.setAcceptancedate((source.getAcceptancedate() != null) ? source.getAcceptancedate().getTime() : null);
-			target.setAcquisitionchannel((source.getAcquisitionchannel() != null) ? source.getAcquisitionchannel() : null);
-			target.setClinicalhistory((source.getClinicalhistory() != null) ? source.getClinicalhistory() : null);
-			target.setCreationdate((source.getCreationdate() != null) ? source.getCreationdate().getTime() : null);
+			target.setAcceptanceDate((source.getAcceptancedate() != null) ? source.getAcceptancedate().getTime() : null);
+			target.setAcquisitionChannel((source.getAcquisitionchannel() != null) ? source.getAcquisitionchannel() : null);
+			target.setClinicalHistory((source.getClinicalhistory() != null) ? source.getClinicalhistory() : null);
+			target.setCreationDate((source.getCreationdate() != null) ? source.getCreationdate().getTime() : null);
 			target.setDuration((source.getDuration() != null) ? source.getDuration() : null);
-			target.setIdorder((source.getIdorder() != null) ? source.getIdorder() : null);
+			target.setIdOrder((source.getIdorder() != null) ? source.getIdorder() : null);
 			target.setNotes((source.getNotes() != null) ? source.getNotes() : null);			
-			target.setOrderreason((source.getOrderreason() != null) ? source.getOrderreason() : null);
-			target.setRejectreason((source.getRejectreason() != null) ? source.getRejectreason() : null);
-			target.setRequestingphysician(source.getRequestingphysician() != null ? source.getRequestingphysician() : null);
-			target.setScheduleddate((source.getScheduleddate() != null) ? source.getScheduleddate().getTime() : null);
+			target.setOrderReason((source.getOrderreason() != null) ? source.getOrderreason() : null);
+			target.setRejectReason((source.getRejectreason() != null) ? source.getRejectreason() : null);
+			target.setRequestingPhysician(source.getRequestingphysician() != null ? source.getRequestingphysician() : null);
+			target.setScheduledDate((source.getScheduleddate() != null) ? source.getScheduleddate().getTime() : null);
 			
 			// map related complex object
 			
@@ -112,7 +112,7 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			target.setActive(source.getActive());
 			target.setCreated(source.getCreated());
 			target.setUpdated(source.getUpdated());
-			target.setUserupdate(source.getUserupdate());
+			target.setUserUpdate(source.getUserupdate());
 			
 			// return adjusted OrderDTO
 			return target;
@@ -127,17 +127,17 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 				target = (Order) destinationFieldValue;
 			}
 			
-			target.setAcceptancedate((source.getAcceptancedate() != null) ? new Date(source.getAcceptancedate()) : null);
-			target.setAcquisitionchannel((source.getAcquisitionchannel() != null) ? source.getAcquisitionchannel() : null);
-			target.setClinicalhistory((source.getClinicalhistory() != null) ? source.getClinicalhistory() : null);
-			target.setCreationdate((source.getCreationdate() != null) ? new Date(source.getCreationdate()) : null);
+			target.setAcceptancedate((source.getAcceptanceDate() != null) ? new Date(source.getAcceptanceDate()) : null);
+			target.setAcquisitionchannel((source.getAcquisitionChannel() != null) ? source.getAcquisitionChannel() : null);
+			target.setClinicalhistory((source.getClinicalHistory() != null) ? source.getClinicalHistory() : null);
+			target.setCreationdate((source.getCreationDate() != null) ? new Date(source.getCreationDate()) : null);
 			target.setDuration((source.getDuration() != null) ? source.getDuration() : null);
-			target.setIdorder((source.getIdorder() != null) ? source.getIdorder() : null);
+			target.setIdorder((source.getIdOrder() != null) ? source.getIdOrder() : null);
 			target.setNotes((source.getNotes() != null) ? source.getNotes() : null);			
-			target.setOrderreason((source.getOrderreason() != null) ? source.getOrderreason() : null);
-			target.setRejectreason((source.getRejectreason() != null) ? source.getRejectreason() : null);
-			target.setRequestingphysician(source.getRequestingphysician() != null ? source.getRequestingphysician() : null);
-			target.setScheduleddate((source.getScheduleddate() != null) ? new Date(source.getScheduleddate()) : null);
+			target.setOrderreason((source.getOrderReason() != null) ? source.getOrderReason() : null);
+			target.setRejectreason((source.getRejectReason() != null) ? source.getRejectReason() : null);
+			target.setRequestingphysician(source.getRequestingPhysician() != null ? source.getRequestingPhysician() : null);
+			target.setScheduleddate((source.getScheduledDate() != null) ? new Date(source.getScheduledDate()) : null);
 			
 			// map related complex object
 			
@@ -197,7 +197,7 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			target.setActive(source.getActive());
 			target.setCreated(source.getCreated());
 			target.setUpdated(source.getUpdated());
-			target.setUserupdate(source.getUserupdate());
+			target.setUserupdate(source.getUserUpdate());
 			
 			return target;
 		} else {

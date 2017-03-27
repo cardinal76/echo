@@ -9,46 +9,46 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import it.clevercom.echo.rd.model.entity.Patient;
 
-@JsonIgnoreProperties({"created","updated","userupdate","active"})
+@JsonIgnoreProperties({"created","updated","userUpdate","active"})
 public class OrderDTO implements Serializable {
 	private static final long serialVersionUID = 3464811952700440696L;
 
-	private Long idorder;
+	private Long idOrder;
 	private BaseObjectDTO originOrganizationUnit;
 	private BaseObjectDTO targetOrganizationUnit;
     private PatientSmartDTO patient;
 	private BaseObjectDTO workPriority;
 	private WorkSessionDTO workSession;
 	private BaseObjectDTO workStatus;
-	private String acquisitionchannel;
-	private Long creationdate;
-	private Long scheduleddate;
-	private Long acceptancedate;
+	private String acquisitionChannel;
+	private Long creationDate;
+	private Long scheduledDate;
+	private Long acceptanceDate;
 	private Long duration;
-	private String requestingphysician;
-	private String orderreason;
-	private String rejectreason;
-	private String clinicalhistory;
+	private String requestingPhysician;
+	private String orderReason;
+	private String rejectReason;
+	private String clinicalHistory;
 	private String notes;
 	private Date created;
 	private Date updated;
-	private String userupdate;
+	private String userUpdate;
 	private Boolean active;
 	private Set<OrderLogDTO> orderLogs = new HashSet<OrderLogDTO>(0);
 	private Set<BaseObjectDTO> services = new HashSet<BaseObjectDTO>(0);
 	
 	/**
-	 * @return the idorder
+	 * @return the idOrder
 	 */
-	public Long getIdorder() {
-		return idorder;
+	public Long getIdOrder() {
+		return idOrder;
 	}
 	
 	/**
-	 * @param idorder the idorder to set
+	 * @param idOrder the idOrder to set
 	 */
-	public void setIdorder(Long idorder) {
-		this.idorder = idorder;
+	public void setIdOrder(Long idOrder) {
+		this.idOrder = idOrder;
 	}
 	
 	/**
@@ -85,14 +85,14 @@ public class OrderDTO implements Serializable {
 	public PatientSmartDTO getPatient() {
 		return patient;
 	}
-
+	
 	/**
 	 * @param patient the patient to set
 	 */
 	public void setPatient(PatientSmartDTO patient) {
 		this.patient = patient;
 	}
-
+	
 	/**
 	 * @return the workPriority
 	 */
@@ -136,59 +136,59 @@ public class OrderDTO implements Serializable {
 	}
 	
 	/**
-	 * @return the acquisitionchannel
+	 * @return the acquisitionChannel
 	 */
-	public String getAcquisitionchannel() {
-		return acquisitionchannel;
+	public String getAcquisitionChannel() {
+		return acquisitionChannel;
 	}
 	
 	/**
-	 * @param acquisitionchannel the acquisitionchannel to set
+	 * @param acquisitionChannel the acquisitionChannel to set
 	 */
-	public void setAcquisitionchannel(String acquisitionchannel) {
-		this.acquisitionchannel = acquisitionchannel;
+	public void setAcquisitionChannel(String acquisitionChannel) {
+		this.acquisitionChannel = acquisitionChannel;
 	}
 	
 	/**
-	 * @return the creationdate
+	 * @return the creationDate
 	 */
-	public Long getCreationdate() {
-		return creationdate;
+	public Long getCreationDate() {
+		return creationDate;
 	}
 	
 	/**
-	 * @param creationdate the creationdate to set
+	 * @param creationDate the creationDate to set
 	 */
-	public void setCreationdate(Long creationdate) {
-		this.creationdate = creationdate;
+	public void setCreationDate(Long creationDate) {
+		this.creationDate = creationDate;
 	}
 	
 	/**
-	 * @return the scheduleddate
+	 * @return the scheduleDate
 	 */
-	public Long getScheduleddate() {
-		return scheduleddate;
+	public Long getScheduledDate() {
+		return scheduledDate;
 	}
 	
 	/**
-	 * @param scheduleddate the scheduleddate to set
+	 * @param scheduleDate the scheduleDate to set
 	 */
-	public void setScheduleddate(Long scheduleddate) {
-		this.scheduleddate = scheduleddate;
+	public void setScheduledDate(Long scheduledDate) {
+		this.scheduledDate = scheduledDate;
 	}
 	
 	/**
-	 * @return the acceptancedate
+	 * @return the acceptanceDate
 	 */
-	public Long getAcceptancedate() {
-		return acceptancedate;
+	public Long getAcceptanceDate() {
+		return acceptanceDate;
 	}
 	
 	/**
-	 * @param acceptancedate the acceptancedate to set
+	 * @param acceptanceDate the acceptanceDate to set
 	 */
-	public void setAcceptancedate(Long acceptancedate) {
-		this.acceptancedate = acceptancedate;
+	public void setAcceptanceDate(Long acceptanceDate) {
+		this.acceptanceDate = acceptanceDate;
 	}
 	
 	/**
@@ -206,59 +206,59 @@ public class OrderDTO implements Serializable {
 	}
 	
 	/**
-	 * @return the requestingphysician
+	 * @return the requestingPhysician
 	 */
-	public String getRequestingphysician() {
-		return requestingphysician;
+	public String getRequestingPhysician() {
+		return requestingPhysician;
 	}
 	
 	/**
-	 * @param requestingphysician the requestingphysician to set
+	 * @param requestingPhysician the requestingPhysician to set
 	 */
-	public void setRequestingphysician(String requestingphysician) {
-		this.requestingphysician = requestingphysician;
+	public void setRequestingPhysician(String requestingPhysician) {
+		this.requestingPhysician = requestingPhysician;
 	}
 	
 	/**
-	 * @return the orderreason
+	 * @return the orderReason
 	 */
-	public String getOrderreason() {
-		return orderreason;
+	public String getOrderReason() {
+		return orderReason;
 	}
 	
 	/**
-	 * @param orderreason the orderreason to set
+	 * @param orderReason the orderReason to set
 	 */
-	public void setOrderreason(String orderreason) {
-		this.orderreason = orderreason;
+	public void setOrderReason(String orderReason) {
+		this.orderReason = orderReason;
 	}
 	
 	/**
-	 * @return the rejectreason
+	 * @return the rejectReason
 	 */
-	public String getRejectreason() {
-		return rejectreason;
+	public String getRejectReason() {
+		return rejectReason;
 	}
 	
 	/**
-	 * @param rejectreason the rejectreason to set
+	 * @param rejectReason the rejectReason to set
 	 */
-	public void setRejectreason(String rejectreason) {
-		this.rejectreason = rejectreason;
+	public void setRejectReason(String rejectReason) {
+		this.rejectReason = rejectReason;
 	}
 	
 	/**
-	 * @return the clinicalhistory
+	 * @return the clinicalHistory
 	 */
-	public String getClinicalhistory() {
-		return clinicalhistory;
+	public String getClinicalHistory() {
+		return clinicalHistory;
 	}
 	
 	/**
-	 * @param clinicalhistory the clinicalhistory to set
+	 * @param clinicalHistory the clinicalHistory to set
 	 */
-	public void setClinicalhistory(String clinicalhistory) {
-		this.clinicalhistory = clinicalhistory;
+	public void setClinicalHistory(String clinicalHistory) {
+		this.clinicalHistory = clinicalHistory;
 	}
 	
 	/**
@@ -304,17 +304,17 @@ public class OrderDTO implements Serializable {
 	}
 	
 	/**
-	 * @return the userupdate
+	 * @return the userUpdate
 	 */
-	public String getUserupdate() {
-		return userupdate;
+	public String getUserUpdate() {
+		return userUpdate;
 	}
 	
 	/**
-	 * @param userupdate the userupdate to set
+	 * @param userUpdate the userUpdate to set
 	 */
-	public void setUserupdate(String userupdate) {
-		this.userupdate = userupdate;
+	public void setUserUpdate(String userUpdate) {
+		this.userUpdate = userUpdate;
 	}
 	
 	/**
@@ -351,14 +351,14 @@ public class OrderDTO implements Serializable {
 	public Set<BaseObjectDTO> getServices() {
 		return services;
 	}
-
+	
 	/**
 	 * @param services the services to set
 	 */
 	public void setServices(Set<BaseObjectDTO> services) {
 		this.services = services;
 	}
-
+	
 	/**
 	 * @return the serialversionuid
 	 */
