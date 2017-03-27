@@ -7,7 +7,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userupdate","active"})
+@JsonIgnoreProperties({"created","updated","userUpdate","active"})
 public class PatientDTO implements Serializable {
 	private static final long serialVersionUID = 8178223709710995097L;
 	
@@ -37,40 +37,33 @@ public class PatientDTO implements Serializable {
 	private LocalityDTO birthPlace;
 	private AddressDTO residence;
 	private AddressDTO domicile;
-
+	
 	public PatientDTO() {
 		super();
+		// TODO Auto-generated constructor stub
 	}
 
-	public PatientDTO(Long idpatient, Date created, Date updated, String userupdate, boolean active) {
-		this.idPatient = idpatient;
-		this.created = created;
-		this.updated = updated;
-		this.userUpdate = userupdate;
-		this.active = active;
-	}
-	
 	/**
 	 * @return
 	 */
 	public PatientDTO buildExtendedObject() {
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		this.setPrettyPrint(this.getName() + " " + this.getSurname() + " (" + df.format(this.getDateofbirth()) + ")");
+		this.setPrettyPrint(this.getName() + " " + this.getSurname() + " (" + ((this.getDateOfBirth()!=null) ? df.format(new Date(this.getDateOfBirth()))  : "--/--/----") + ")");
 		return this;
 	}
 
 	/**
-	 * @return the idpatient
+	 * @return the idPatient
 	 */
-	public Long getIdpatient() {
+	public Long getIdPatient() {
 		return idPatient;
 	}
 
 	/**
-	 * @param idpatient the idpatient to set
+	 * @param idPatient the idPatient to set
 	 */
-	public void setIdpatient(Long idpatient) {
-		this.idPatient = idpatient;
+	public void setIdPatient(Long idPatient) {
+		this.idPatient = idPatient;
 	}
 
 	/**
@@ -102,17 +95,17 @@ public class PatientDTO implements Serializable {
 	}
 
 	/**
-	 * @return the dateofbirth
+	 * @return the dateOfBirth
 	 */
-	public Long getDateofbirth() {
+	public Long getDateOfBirth() {
 		return dateOfBirth;
 	}
 
 	/**
-	 * @param dateofbirth the dateofbirth to set
+	 * @param dateOfBirth the dateOfBirth to set
 	 */
-	public void setDateofbirth(Long dateofbirth) {
-		this.dateOfBirth = dateofbirth;
+	public void setDateOfBirth(Long dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
 
 	/**
@@ -130,17 +123,17 @@ public class PatientDTO implements Serializable {
 	}
 
 	/**
-	 * @return the taxcode
+	 * @return the taxCode
 	 */
-	public String getTaxcode() {
+	public String getTaxCode() {
 		return taxCode;
 	}
 
 	/**
-	 * @param taxcode the taxcode to set
+	 * @param taxCode the taxCode to set
 	 */
-	public void setTaxcode(String taxcode) {
-		this.taxCode = taxcode;
+	public void setTaxCode(String taxCode) {
+		this.taxCode = taxCode;
 	}
 
 	/**
@@ -158,17 +151,17 @@ public class PatientDTO implements Serializable {
 	}
 
 	/**
-	 * @return the phonenumber
+	 * @return the phoneNumber
 	 */
-	public String getPhonenumber() {
+	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
 	/**
-	 * @param phonenumber the phonenumber to set
+	 * @param phoneNumber the phoneNumber to set
 	 */
-	public void setPhonenumber(String phonenumber) {
-		this.phoneNumber = phonenumber;
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 	/**
@@ -186,17 +179,17 @@ public class PatientDTO implements Serializable {
 	}
 
 	/**
-	 * @return the deathdate
+	 * @return the deathDate
 	 */
-	public Long getDeathdate() {
+	public Long getDeathDate() {
 		return deathDate;
 	}
 
 	/**
-	 * @param deathdate the deathdate to set
+	 * @param deathDate the deathDate to set
 	 */
-	public void setDeathdate(Long deathdate) {
-		this.deathDate = deathdate;
+	public void setDeathDate(Long deathDate) {
+		this.deathDate = deathDate;
 	}
 
 	/**
@@ -228,17 +221,17 @@ public class PatientDTO implements Serializable {
 	}
 
 	/**
-	 * @return the userupdate
+	 * @return the userUpdate
 	 */
-	public String getUserupdate() {
+	public String getUserUpdate() {
 		return userUpdate;
 	}
 
 	/**
-	 * @param userupdate the userupdate to set
+	 * @param userUpdate the userUpdate to set
 	 */
-	public void setUserupdate(String userupdate) {
-		this.userUpdate = userupdate;
+	public void setUserUpdate(String userUpdate) {
+		this.userUpdate = userUpdate;
 	}
 
 	/**

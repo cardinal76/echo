@@ -43,16 +43,16 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			// disclaimer: spaghetti code here
 			
 			// map standard patient data
-			target.setIdpatient((source.getIdpatient() != null) ? source.getIdpatient() : null);
+			target.setIdPatient((source.getIdpatient() != null) ? source.getIdpatient() : null);
 			target.setName((source.getName() != null) ? source.getName() : null);
 			target.setSurname((source.getSurname() != null) ? source.getSurname() : null);
-			target.setDateofbirth((source.getDateofbirth() != null) ? Long.valueOf(source.getDateofbirth().getTime()) : null);
-			target.setDeathdate((source.getDeathdate() != null) ? Long.valueOf(source.getDeathdate().getTime()) : null);
+			target.setDateOfBirth((source.getDateofbirth() != null) ? Long.valueOf(source.getDateofbirth().getTime()) : null);
+			target.setDeathDate((source.getDeathdate() != null) ? Long.valueOf(source.getDeathdate().getTime()) : null);
 			target.setEmail((source.getEmail() != null) ? source.getEmail() : null);
 			target.setGender((source.getGender() != null) ? source.getGender() : null);
 			target.setHealthCode((source.getHealthcode() != null) ? source.getHealthcode() : null);
-			target.setPhonenumber((source.getPhonenumber() != null) ? source.getPhonenumber() : null);
-			target.setTaxcode((source.getTaxcode() != null) ? source.getTaxcode() : null);
+			target.setPhoneNumber((source.getPhonenumber() != null) ? source.getPhonenumber() : null);
+			target.setTaxCode((source.getTaxcode() != null) ? source.getTaxcode() : null);
 			
 			// map related complex object
 			if (source.getCitizenship()!=null) target.setCitizenship(rdDozerMapper.map(source.getCitizenship(), BaseObjectDTO.class));
@@ -71,12 +71,10 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 				birthPlaceMunicipality = rdDozerMapper.map(source.getMunicipalityByBirthplaceidmunicipality(), BaseObjectDTO.class);
 				birthPlaceProvince = rdDozerMapper.map(source.getMunicipalityByBirthplaceidmunicipality().getProvince(), BaseObjectDTO.class);
 				birthPlaceRegion = rdDozerMapper.map(source.getMunicipalityByBirthplaceidmunicipality().getProvince().getRegion(), BaseObjectDTO.class);
-				birthPlaceCountry = rdDozerMapper.map(source.getMunicipalityByBirthplaceidmunicipality().getProvince().getRegion().getCountry(), BaseObjectDTO.class);
-			} else {
-				if (source.getCountryByBirthplaceidcountry()!=null) {
-					// birthplace country
-					birthPlaceCountry = rdDozerMapper.map(source.getCountryByBirthplaceidcountry(), BaseObjectDTO.class);
-				}
+			} 
+			if (source.getCountryByBirthplaceidcountry()!=null) {
+				// birthplace country
+				birthPlaceCountry = rdDozerMapper.map(source.getCountryByBirthplaceidcountry(), BaseObjectDTO.class);
 			}
 
 			LocalityDTO birthPlace = null;
@@ -95,12 +93,10 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 				residenceMunicipality = rdDozerMapper.map(source.getMunicipalityByResidenceidmunicipality(), BaseObjectDTO.class);
 				residenceProvince = rdDozerMapper.map(source.getMunicipalityByResidenceidmunicipality().getProvince(), BaseObjectDTO.class);
 				residenceRegion = rdDozerMapper.map(source.getMunicipalityByResidenceidmunicipality().getProvince().getRegion(), BaseObjectDTO.class);
-				residenceCountry = rdDozerMapper.map(source.getMunicipalityByResidenceidmunicipality().getProvince().getRegion().getCountry(), BaseObjectDTO.class);
-			} else {
-				if (source.getCountryByResidenceidcountry()!=null) {
-					// residence country
-					birthPlaceCountry = rdDozerMapper.map(source.getCountryByResidenceidcountry(), BaseObjectDTO.class);
-				}
+			}
+			if (source.getCountryByResidenceidcountry()!=null) {
+				// residence country
+				residenceCountry = rdDozerMapper.map(source.getCountryByResidenceidcountry(), BaseObjectDTO.class);
 			}
 			
 			AddressDTO residence = null;
@@ -119,12 +115,10 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 				 domicileMunicipality = rdDozerMapper.map(source.getMunicipalityByDomicileidmunicipality(), BaseObjectDTO.class);
 				 domicileProvince = rdDozerMapper.map(source.getMunicipalityByDomicileidmunicipality().getProvince(), BaseObjectDTO.class);
 				 domicileRegion = rdDozerMapper.map(source.getMunicipalityByDomicileidmunicipality().getProvince().getRegion(), BaseObjectDTO.class);
-				 domicileCountry = rdDozerMapper.map(source.getMunicipalityByDomicileidmunicipality().getProvince().getRegion().getCountry(), BaseObjectDTO.class);
-			} else {
-				if (source.getCountryByDomicileidcountry()!=null) {
-					// birthplace country
-					domicileCountry = rdDozerMapper.map(source.getCountryByDomicileidcountry(), BaseObjectDTO.class);
-				}
+			}
+			if (source.getCountryByDomicileidcountry()!=null) {
+				// birthplace country
+				domicileCountry = rdDozerMapper.map(source.getCountryByDomicileidcountry(), BaseObjectDTO.class);
 			}			
 			
 			AddressDTO domicile = null;
@@ -141,7 +135,7 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			target.setActive(source.getActive());
 			target.setCreated(source.getCreated());
 			target.setUpdated(source.getUpdated());
-			target.setUserupdate(source.getUserupdate());
+			target.setUserUpdate(source.getUserupdate());
 			
 			// return adjusted PatientDTO
 			return target.buildExtendedObject();
@@ -159,16 +153,16 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			// disclaimer: spaghetti code here
 			
 			// map standard patient data
-			target.setIdpatient((source.getIdpatient() != null) ? source.getIdpatient() : null);
+			target.setIdpatient((source.getIdPatient() != null) ? source.getIdPatient() : null);
 			target.setName((source.getName() != null) ? source.getName() : null);
 			target.setSurname((source.getSurname() != null) ? source.getSurname() : null);
-			target.setDateofbirth((source.getDateofbirth() != null) ? new Date(source.getDateofbirth()) : null);
-			target.setDeathdate((source.getDeathdate() != null) ? new Date(source.getDeathdate()) : null);
+			target.setDateofbirth((source.getDateOfBirth() != null) ? new Date(source.getDateOfBirth()) : null);
+			target.setDeathdate((source.getDeathDate() != null) ? new Date(source.getDeathDate()) : null);
 			target.setEmail((source.getEmail() != null) ? source.getEmail() : null);
 			target.setGender((source.getGender() != null) ? source.getGender() : null);
 			target.setHealthcode((source.getHealthCode() != null) ? source.getHealthCode() : null);
-			target.setPhonenumber((source.getPhonenumber() != null) ? source.getPhonenumber() : null);
-			target.setTaxcode((source.getTaxcode() != null) ? source.getTaxcode() : null);
+			target.setPhonenumber((source.getPhoneNumber() != null) ? source.getPhoneNumber() : null);
+			target.setTaxcode((source.getTaxCode() != null) ? source.getTaxCode() : null);
 			
 			// map related complex object
 			if (source.getCitizenship()!=null) target.setCitizenship(rdDozerMapper.map(source.getCitizenship(), Citizenship.class));

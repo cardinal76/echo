@@ -106,8 +106,24 @@ public class Patient_rd_Controller {
 	@RequestMapping(value = "/extcode/{extcode}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<PatientCodingActorDTO> getByExternalCode(@PathVariable String extcode) throws Exception {
-		List<PatientCodingActor> patientCodingActorList = repo_pc.findByExternalcode(extcode, new Sort("idpatientcodingactor"));
+	public @ResponseBody PagedDTO<PatientCodingActorDTO> getByExternalCode(@PathVariable String extcode,
+																		   @RequestParam(defaultValue = "1", required = false) int page,
+																		   @RequestParam(defaultValue = "15", required = false) int size,
+																		   @RequestParam(defaultValue = "asc", required = false) String sort,
+																		   @RequestParam(defaultValue = "idpatientcodingactor", required = false) String field) throws Exception {
+		
+		// create paged request
+		PageRequest request = null;
+
+		if (sort.equals("asc")) {
+			request = new PageRequest(page - 1, size, Direction.ASC, field);
+		} else if (sort.equals("desc")) {
+			request = new PageRequest(page - 1, size, Direction.DESC, field);
+		} else {
+			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
+		}
+		
+		List<PatientCodingActor> patientCodingActorList = repo_pc.findByExternalcode(extcode, request);
 
 		if (patientCodingActorList.size() == 0)
 			throw new RecordNotFoundException(Patient_rd_Controller.entity, extcode);
@@ -230,7 +246,7 @@ public class Patient_rd_Controller {
 		entity = repo.saveAndFlush(entity);
 		// TODO map entity instead of set ID
 		// patient = rdDozerMapper.map(entity, PatientDTO.class);
-		patient.setIdpatient(entity.getIdpatient());
+		patient.setIdPatient(entity.getIdpatient());
 
 		// create standard response
 		CreateResponseDTO<PatientDTO> response = new CreateResponseDTO<PatientDTO>();
@@ -261,15 +277,15 @@ public class Patient_rd_Controller {
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 
 		// if an id is not present throw bad request
-		if (patient.getIdpatient() == null)
+		if (patient.getIdPatient() == null)
 			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"),
 					Patient_rd_Controller.entity));
 
 		// find entity to update (oldValue)
-		Patient oldValueEntity = repo.findOne(patient.getIdpatient());
+		Patient oldValueEntity = repo.findOne(patient.getIdPatient());
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity == null)
-			throw new RecordNotFoundException(Patient_rd_Controller.entity, patient.getIdpatient().toString());
+			throw new RecordNotFoundException(Patient_rd_Controller.entity, patient.getIdPatient().toString());
 		// get created date
 		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
