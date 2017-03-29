@@ -59,7 +59,7 @@ import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 @PropertySource("classpath:rest.rd.properties")
 
 public class Order_rd_Controller {
-	
+
 	@Autowired
 	private Environment env;
 
@@ -68,7 +68,7 @@ public class Order_rd_Controller {
 
 	@Autowired
 	private IWorkStatus_rd_Repository repo_ws;
-	
+
 	@Autowired
 	private DozerBeanMapper rdDozerMapper;
 
@@ -82,10 +82,12 @@ public class Order_rd_Controller {
 
 	// used to bind it in exception message
 	private static String entity = "Order";
-	
+
 	/*
 	 * @param id
+	 * 
 	 * @return
+	 * 
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -94,7 +96,8 @@ public class Order_rd_Controller {
 	@Loggable
 	public @ResponseBody OrderDTO get(@PathVariable Long id) throws Exception {
 		Order entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(Order_rd_Controller.entity, id.toString());
+		if (entity == null)
+			throw new RecordNotFoundException(Order_rd_Controller.entity, id.toString());
 		return rdDozerMapper.map(entity, OrderDTO.class);
 	}
 
@@ -169,23 +172,31 @@ public class Order_rd_Controller {
 		return dto;
 	}
 
-	
+	/**
+	 * @param status
+	 * @param page
+	 * @param size
+	 * @param sort
+	 * @param field
+	 * @return
+	 * @throws Exception
+	 */
 	@Transactional("rdTm")
 	@RequestMapping(value = "/status/{status}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<OrderDTO> getByWorkStatus (@PathVariable String status,
-														  @RequestParam(defaultValue = "1", required = false) int page,
-														  @RequestParam(defaultValue = "15", required = false) int size,
-														  @RequestParam(defaultValue = "asc", required = false) String sort,
-														  @RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
+	public @ResponseBody PagedDTO<OrderDTO> getByWorkStatus(@PathVariable String status,
+			@RequestParam(defaultValue = "1", required = false) int page,
+			@RequestParam(defaultValue = "15", required = false) int size,
+			@RequestParam(defaultValue = "asc", required = false) String sort,
+			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
 		if (!WorkStatusEnum.contains(status)) {
-			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"), 
-															   env.getProperty("echo.api.crud.fields.workstatus"),
-															   WorkStatus.class.getDeclaringClass().getEnumConstants().toString()
-															  ));
+			throw new BadRequestException(
+					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
+							env.getProperty("echo.api.crud.fields.workstatus"),
+							WorkStatus.class.getDeclaringClass().getEnumConstants().toString()));
 		}
-		
+
 		// create paged request
 		PageRequest request = null;
 
@@ -196,11 +207,11 @@ public class Order_rd_Controller {
 		} else {
 			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
 		}
-		
+
 		WorkStatus statusEntity = repo_ws.findByCode(WorkStatusEnum.valueOf(status).code());
-		
+
 		List<Order> orders = repo.findByWorkStatus(statusEntity, request);
-		
+
 		if (orders.size() == 0)
 			throw new RecordNotFoundException(Order_rd_Controller.entity, status);
 
@@ -214,58 +225,71 @@ public class Order_rd_Controller {
 		dto.setElements(orderDTOList);
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
-		dto.setTotalPages(Math.round(repo.countByWorkStatus(statusEntity)/size));
-		dto.setTotalElements(repo.countByWorkStatus(statusEntity));
+		// get total count
+		long totalCount = repo.countByWorkStatus(statusEntity);
+		dto.setTotalPages((int)Math.round(((double) totalCount) / ((double) size)));
+		dto.setTotalElements(totalCount);
 
 		return dto;
 	}
-	
+
+	/**
+	 * @param creationDate
+	 * @param page
+	 * @param size
+	 * @param sort
+	 * @param field
+	 * @return
+	 * @throws Exception
+	 */
 	@Transactional("rdTm")
 	@RequestMapping(value = "/creationdate/{creationdate}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<OrderDTO> getByCreationDate (@PathVariable Long creationDate,
-														  		@RequestParam(defaultValue = "1", required = false) int page,
-														  		@RequestParam(defaultValue = "15", required = false) int size,
-														  		@RequestParam(defaultValue = "asc", required = false) String sort,
-														  		@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
-//		// parse long parameter to Date Object
-//		Date currentDate = new Date(creationDate);
-//		
-//		// create paged request
-//		PageRequest request = null;
-//
-//		if (sort.equals("asc")) {
-//			request = new PageRequest(page - 1, size, Direction.ASC, field);
-//		} else if (sort.equals("desc")) {
-//			request = new PageRequest(page - 1, size, Direction.DESC, field);
-//		} else {
-//			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-//		}
-//
-//		
-//		//List<Order> orders = repo.findByDateInterval(, request);
-//		
-//		if (orders.size() == 0)
-//			throw new RecordNotFoundException(Order_rd_Controller.entity, status);
-//
-//		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
-//		for (Order order : orders) {
-//			orderDTOList.add(rdDozerMapper.map(order, OrderDTO.class));
-//		}
-//
-//		// assembly dto
-//		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
-//		dto.setElements(orderDTOList);
-//		dto.setPageSize(orderDTOList.size());
-//		dto.setCurrentPage(1);
-//		dto.setTotalPages(1);
-//		dto.setTotalElements(repo.countByWorkStatus(statusEntity));
-//
-//		return dto;
+	public @ResponseBody PagedDTO<OrderDTO> getByCreationDate(@PathVariable Long creationDate,
+			@RequestParam(defaultValue = "1", required = false) int page,
+			@RequestParam(defaultValue = "15", required = false) int size,
+			@RequestParam(defaultValue = "asc", required = false) String sort,
+			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
+		// // parse long parameter to Date Object
+		// Date currentDate = new Date(creationDate);
+		//
+		// // create paged request
+		// PageRequest request = null;
+		//
+		// if (sort.equals("asc")) {
+		// request = new PageRequest(page - 1, size, Direction.ASC, field);
+		// } else if (sort.equals("desc")) {
+		// request = new PageRequest(page - 1, size, Direction.DESC, field);
+		// } else {
+		// throw new
+		// BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
+		// }
+		//
+		//
+		// //List<Order> orders = repo.findByDateInterval(, request);
+		//
+		// if (orders.size() == 0)
+		// throw new RecordNotFoundException(Order_rd_Controller.entity,
+		// status);
+		//
+		// List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
+		// for (Order order : orders) {
+		// orderDTOList.add(rdDozerMapper.map(order, OrderDTO.class));
+		// }
+		//
+		// // assembly dto
+		// PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
+		// dto.setElements(orderDTOList);
+		// dto.setPageSize(orderDTOList.size());
+		// dto.setCurrentPage(1);
+		// dto.setTotalPages(1);
+		// dto.setTotalElements(repo.countByWorkStatus(statusEntity));
+		//
+		// return dto;
 		return null;
 	}
-	
+
 	/**
 	 * @param order
 	 * @param request
@@ -276,17 +300,18 @@ public class Order_rd_Controller {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<OrderDTO> add(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {
-	    // validate create request
+	public @ResponseBody CreateResponseDTO<OrderDTO> add(@RequestBody OrderDTO order, HttpServletRequest request)
+			throws Exception {
+		// validate create request
 		this.validateCreateRequest(order);
-		
+
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 
 		// map
 		Order entity = rdDozerMapper.map(order, Order.class);
-		
+
 		// add technical field
 		entity.setUserupdate(username);
 
@@ -318,24 +343,26 @@ public class Order_rd_Controller {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order, HttpServletRequest request)
+			throws Exception {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 
 		// if an id is not present throw bad request
 		if (order.getIdOrder() == null)
-			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), Order_rd_Controller.entity));
+			throw new BadRequestException(
+					MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), Order_rd_Controller.entity));
 
 		// find entity to update (oldValue)
 		Order oldValueEntity = repo.findOne(order.getIdOrder());
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity == null)
 			throw new RecordNotFoundException(Order_rd_Controller.entity, order.getIdOrder().toString());
-		
+
 		// validate create request
 		this.validateUpdateRequest(order, oldValueEntity);
-		
+
 		// get created date
 		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
@@ -352,7 +379,8 @@ public class Order_rd_Controller {
 		// save and map to out dto
 		Order newValueEntity = repo.saveAndFlush(oldValueEntity);
 		// TODO map newValueDTO instead of using input order
-		// OrderDTO newValueDTO = rdDozerMapper.map(newValueEntity, OrderDTO.class);
+		// OrderDTO newValueDTO = rdDozerMapper.map(newValueEntity,
+		// OrderDTO.class);
 
 		// create standard response
 		UpdateResponseDTO<OrderDTO> response = new UpdateResponseDTO<OrderDTO>();
@@ -373,6 +401,8 @@ public class Order_rd_Controller {
 	}
 
 	/**
+	 * @param id
+	 * @param request
 	 * @return
 	 */
 	@Transactional("rdTm")
@@ -383,23 +413,23 @@ public class Order_rd_Controller {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
-		
+
 		// get entity to update
 		Order entity = repo.findOne(id);
 		OrderDTO oldValueDTO = rdDozerMapper.map(entity, OrderDTO.class);
-		
+
 		// get canceled workstatus
 		WorkStatus workStatus = repo_ws.findByCode(WorkStatusEnum.CANCELED.code());
-		
+
 		// update entity
 		entity.setWorkStatus(workStatus);
 		entity.setActive(false);
 		entity.setUserupdate(username);
-		
+
 		repo.saveAndFlush(entity);
-		
+
 		OrderDTO newValueDTO = rdDozerMapper.map(entity, OrderDTO.class);
-	
+
 		// create standard response
 		UpdateResponseDTO<OrderDTO> response = new UpdateResponseDTO<OrderDTO>();
 		response.setEntityName(Order_rd_Controller.entity);
@@ -417,127 +447,108 @@ public class Order_rd_Controller {
 		// return response
 		return response;
 	}
-	
+
 	/*-----------------------------*/
 	/* business validation methods */
 	/*-----------------------------*/
-	
+
 	/**
 	 * Validate a create order request
+	 * 
 	 * @author luca
 	 * @category request validation
-	 * @param order DTO passed to the create method
+	 * @param order passed to the create method
 	 * @since 1.2.0
 	 */
 	private void validateCreateRequest(OrderDTO order) throws ValidationException {
-		// these fields should not be inserted 
+		// these fields should not be inserted
 		// in the create request and must be empty or null
 		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
-		
+
 		// idOrder should not be present here
 		if (order.getIdOrder() != null) {
-			exceptions.addFieldError(
-				env.getProperty("echo.api.crud.fields.idorder"), 
-				env.getProperty("echo.api.crud.validation.mustbeempty")
-			);
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.idorder"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
-		
+
 		// schedule date should not be present here
 		if (order.getScheduledDate() != null) {
-			exceptions.addFieldError(
-				env.getProperty("echo.api.crud.fields.scheduledate"), 
-				env.getProperty("echo.api.crud.validation.mustbeempty")
-			);
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.scheduledate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
-		
+
 		// acceptance date should not be present here
 		if (order.getAcceptanceDate() != null) {
-			exceptions.addFieldError(
-				env.getProperty("echo.api.crud.fields.acceptancedate"), 
-				env.getProperty("echo.api.crud.validation.mustbeempty")
-			);
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.acceptancedate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 
 		// reject reason should not be present here
 		if (order.getRejectReason() != null) {
-			exceptions.addFieldError(
-				env.getProperty("echo.api.crud.fields.rejectreason"), 
-				env.getProperty("echo.api.crud.validation.mustbeempty")
-			);
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.rejectreason"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
-			
-		// order logs should not be present here 
+
+		// order logs should not be present here
 		if ((order.getOrderLogs() != null) && (order.getOrderLogs().size() > 0)) {
-			exceptions.addFieldError(
-				env.getProperty("echo.api.crud.fields.orderlogs"), 
-				env.getProperty("echo.api.crud.validation.mustbeempty")
-			);
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.orderlogs"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
-		
+
 		// work session should not be present here
 		if ((order.getWorkSession() != null)) {
-			exceptions.addFieldError(
-				env.getProperty("echo.api.crud.fields.worksession"), 
-				env.getProperty("echo.api.crud.validation.mustbeempty")
-			);
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.worksession"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
-		
+
 		// work status should be equal to request
 		if ((!order.getWorkStatus().getCode().equals(WorkStatusEnum.REQUESTED.code()))) {
-			exceptions.addFieldError(
-				env.getProperty("echo.api.crud.fields.workstatus"), 
-				MessageFormat.format(
-					env.getProperty("echo.api.crud.validation.mustbe"), 
-					env.getProperty("echo.api.crud.fields.workstatus"), 
-					WorkStatusEnum.REQUESTED.code())
-			);
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"),
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbe"),
+							env.getProperty("echo.api.crud.fields.workstatus"), WorkStatusEnum.REQUESTED.code()));
 		}
-		
+
 		// check if we have some services has been selected
 		if (order.getServices().size() <= 0) {
-			exceptions.addFieldError(
-				env.getProperty("echo.api.crud.fields.service"),
-				MessageFormat.format(
-					env.getProperty("echo.api.crud.validation.emptylist"), 
-					env.getProperty("echo.api.crud.fields.service"))
-			);
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"),
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.emptylist"),
+							env.getProperty("echo.api.crud.fields.service")));
 		}
-		
+
 		// check if a patient has been selected
 		if (!((order.getPatient() != null) && (order.getPatient().getIdPatient() != null))) {
-			exceptions.addFieldError(
-				env.getProperty("echo.api.crud.fields.patient"),
-				env.getProperty("echo.api.crud.validation.mustnotbeempty")
-			);
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.patient"),
+					env.getProperty("echo.api.crud.validation.mustnotbeempty"));
 		}
-		
-		if (exceptions.getFieldErrors().size()>0) {
+
+		if (exceptions.getFieldErrors().size() > 0) {
 			throw new ValidationException(env.getProperty("echo.api.crud.validation.genericmessage"), exceptions);
 		} else {
 			exceptions = null;
 		}
 	}
-	
+
 	/**
 	 * Validate an update order request
+	 * 
 	 * @author luca
 	 * @category request validation
-	 * @param order DTO passed to the create method
+	 * @param order passed to the create method
 	 * @since 1.2.0
 	 */
 	private void validateUpdateRequest(OrderDTO order, Order orderToUpdate) throws ValidationException {
-		
+
 		switch (WorkStatusEnum.valueOf(order.getWorkStatus().getName())) {
-			case ACCEPTED:
-				break;
-			case SCHEDULED:
-				break;
-			case CANCELED:
-				break;
-			case REQUESTED:
-				break;
-			default:	
-				break;
+		case ACCEPTED:
+			break;
+		case SCHEDULED:
+			break;
+		case CANCELED:
+			break;
+		case REQUESTED:
+			break;
+		default:
+			break;
 		}
 	}
 }

@@ -11,4 +11,6 @@ import it.clevercom.echo.rd.model.entity.PatientCodingActor;
 
 public interface IPatientCodingActor_rd_Repository extends JpaRepository<PatientCodingActor, Long>, JpaSpecificationExecutor<PatientCodingActor> {
 	public List<PatientCodingActor> findByExternalcode (String externalcode, Pageable request);
+	public Long countByExternalcode(String externalcode);
+
 }

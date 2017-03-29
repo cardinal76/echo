@@ -141,10 +141,12 @@ public class Patient_rd_Controller {
 		// assembly dto
 		PagedDTO<PatientCodingActorDTO> dto = new PagedDTO<PatientCodingActorDTO>();
 		dto.setElements(patientCodingActorDTOList);
-		dto.setPageSize(patientCodingActorList.size());
-		dto.setCurrentPage(1);
-		dto.setTotalPages(1);
-		dto.setTotalElements(patientCodingActorList.size());
+		dto.setPageSize(size);
+		dto.setCurrentPage(page);
+		// get total count
+		long totalCount = repo_pc.countByExternalcode(extcode);
+		dto.setTotalPages((int)Math.round(((double) totalCount) / ((double) size)));
+		dto.setTotalElements(totalCount);
 
 		return dto;
 	}
