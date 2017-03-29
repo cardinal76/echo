@@ -167,6 +167,57 @@ public class Order_rd_Controller {
 		return dto;
 	}
 
+	
+	@Transactional("rdTm")
+	@RequestMapping(value = "/status/{status}", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody PagedDTO<OrderDTO> getByWorkStatus (@PathVariable String status,
+														  @RequestParam(defaultValue = "1", required = false) int page,
+														  @RequestParam(defaultValue = "15", required = false) int size,
+														  @RequestParam(defaultValue = "asc", required = false) String sort,
+														  @RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
+		if (WorkStatusEnum.valueOf(status) == null) {
+			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"), 
+															   env.getProperty("echo.api.crud.fields.workstatus"),
+															   WorkStatus.class.getDeclaringClass().getEnumConstants().toString()
+															  ));
+		}
+		
+		// create paged request
+		PageRequest request = null;
+
+		if (sort.equals("asc")) {
+			request = new PageRequest(page - 1, size, Direction.ASC, field);
+		} else if (sort.equals("desc")) {
+			request = new PageRequest(page - 1, size, Direction.DESC, field);
+		} else {
+			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
+		}
+		
+		WorkStatus statusEntity = repo_ws.findByCode(WorkStatusEnum.valueOf(status).code());
+		
+		List<Order> orders = repo.findByWorkStatus(statusEntity, request);
+		
+		if (orders.size() == 0)
+			throw new RecordNotFoundException(Order_rd_Controller.entity, status);
+
+		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
+		for (Order order : orders) {
+			orderDTOList.add(rdDozerMapper.map(order, OrderDTO.class));
+		}
+
+		// assembly dto
+		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
+		dto.setElements(orderDTOList);
+		dto.setPageSize(orderDTOList.size());
+		dto.setCurrentPage(1);
+		dto.setTotalPages(1);
+		dto.setTotalElements(repo.countByWorkStatus(statusEntity));
+
+		return dto;
+	}
+	
 	/**
 	 * @param order
 	 * @param request

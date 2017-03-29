@@ -7,4 +7,5 @@ import it.clevercom.echo.rd.model.entity.WorkStatus;
 
 public interface IWorkStatus_rd_Repository extends JpaRepository<WorkStatus, Long>, JpaSpecificationExecutor<WorkStatus> {
 	public WorkStatus findByCode(String code);
+	public Long countByCode(String code);
 }
