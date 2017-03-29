@@ -22,4 +22,14 @@ public enum WorkStatusEnum {
     public String code() {
         return code;
     }
+    
+    public static boolean contains(String test) {
+        for (WorkStatusEnum c : WorkStatusEnum.values()) {
+            if (c.name().equals(test)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

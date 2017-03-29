@@ -1,6 +1,7 @@
 package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Range;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -177,7 +179,7 @@ public class Order_rd_Controller {
 														  @RequestParam(defaultValue = "15", required = false) int size,
 														  @RequestParam(defaultValue = "asc", required = false) String sort,
 														  @RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
-		if (WorkStatusEnum.valueOf(status) == null) {
+		if (!WorkStatusEnum.contains(status)) {
 			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"), 
 															   env.getProperty("echo.api.crud.fields.workstatus"),
 															   WorkStatus.class.getDeclaringClass().getEnumConstants().toString()
@@ -210,12 +212,58 @@ public class Order_rd_Controller {
 		// assembly dto
 		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
 		dto.setElements(orderDTOList);
-		dto.setPageSize(orderDTOList.size());
-		dto.setCurrentPage(1);
-		dto.setTotalPages(1);
+		dto.setPageSize(size);
+		dto.setCurrentPage(page);
+		dto.setTotalPages(Math.round(repo.countByWorkStatus(statusEntity)/size));
 		dto.setTotalElements(repo.countByWorkStatus(statusEntity));
 
 		return dto;
+	}
+	
+	@Transactional("rdTm")
+	@RequestMapping(value = "/creationdate/{creationdate}", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody PagedDTO<OrderDTO> getByCreationDate (@PathVariable Long creationDate,
+														  		@RequestParam(defaultValue = "1", required = false) int page,
+														  		@RequestParam(defaultValue = "15", required = false) int size,
+														  		@RequestParam(defaultValue = "asc", required = false) String sort,
+														  		@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
+//		// parse long parameter to Date Object
+//		Date currentDate = new Date(creationDate);
+//		
+//		// create paged request
+//		PageRequest request = null;
+//
+//		if (sort.equals("asc")) {
+//			request = new PageRequest(page - 1, size, Direction.ASC, field);
+//		} else if (sort.equals("desc")) {
+//			request = new PageRequest(page - 1, size, Direction.DESC, field);
+//		} else {
+//			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
+//		}
+//
+//		
+//		//List<Order> orders = repo.findByDateInterval(, request);
+//		
+//		if (orders.size() == 0)
+//			throw new RecordNotFoundException(Order_rd_Controller.entity, status);
+//
+//		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
+//		for (Order order : orders) {
+//			orderDTOList.add(rdDozerMapper.map(order, OrderDTO.class));
+//		}
+//
+//		// assembly dto
+//		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
+//		dto.setElements(orderDTOList);
+//		dto.setPageSize(orderDTOList.size());
+//		dto.setCurrentPage(1);
+//		dto.setTotalPages(1);
+//		dto.setTotalElements(repo.countByWorkStatus(statusEntity));
+//
+//		return dto;
+		return null;
 	}
 	
 	/**

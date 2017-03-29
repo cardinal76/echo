@@ -27,6 +27,34 @@
 	<mapping>
 		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Service</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.ServiceDTO</class-b>
+		<field>
+			<a>idservice</a>
+			<b>idService</b>
+		</field>
+		<field>
+			<a>bodyApparatus</a>
+			<b>bodyApparatus</b>
+		</field>
+		<field>
+			<a>modalityType</a>
+			<b>modalityType</b>
+		</field>
+		<field>
+			<a>description</a>
+			<b>description</b>
+		</field>
+		<field>
+			<a>prepcode</a>
+			<b>prepCode</b>
+		</field>
+		<field>
+			<a>duration</a>
+			<b>duration</b>
+		</field>
+		<field>
+			<a>schedulable</a>
+			<b>schedulable</b>
+		</field>
 	</mapping>
 
 	<mapping>

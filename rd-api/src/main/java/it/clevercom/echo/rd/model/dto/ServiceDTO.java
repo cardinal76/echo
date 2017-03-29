@@ -5,13 +5,13 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userupdate","active"})
+@JsonIgnoreProperties({"created","updated","userUpdate","active"})
 public class ServiceDTO implements Serializable {
 	private static final long serialVersionUID = -1545199145120818140L;
 	
-	private Long idservice;
+	private Long idService;
 	private String description;
-	private Long prepcode;
+	private Long prepCode;
 	private Long duration;
 	private Boolean schedulable;
 	
@@ -22,33 +22,33 @@ public class ServiceDTO implements Serializable {
 	// transient attributes
 	private Date created;
 	private Date updated;
-	private String userupdate;
+	private String userUpdate;
 	private Boolean active;
 	
 	public ServiceDTO() {
 		super();
 	}
 
-	public ServiceDTO(Long idservice, Date created, Date updated, String userupdate, boolean active) {
-		this.idservice = idservice;
+	public ServiceDTO(Long idService, Date created, Date updated, String userUpdate, boolean active) {
+		this.idService = idService;
 		this.created = created;
 		this.updated = updated;
-		this.userupdate = userupdate;
+		this.userUpdate = userUpdate;
 		this.active = active;
 	}
 
 	/**
-	 * @return the idservice
+	 * @return the idService
 	 */
-	public long getIdservice() {
-		return idservice;
+	public Long getIdService() {
+		return idService;
 	}
 
 	/**
-	 * @param idservice the idservice to set
+	 * @param idService the idService to set
 	 */
-	public void setIdservice(Long idservice) {
-		this.idservice = idservice;
+	public void setIdService(Long idService) {
+		this.idService = idService;
 	}
 
 	/**
@@ -66,17 +66,17 @@ public class ServiceDTO implements Serializable {
 	}
 
 	/**
-	 * @return the prepcode
+	 * @return the prepCode
 	 */
-	public Long getPrepcode() {
-		return prepcode;
+	public Long getPrepCode() {
+		return prepCode;
 	}
 
 	/**
-	 * @param prepcode the prepcode to set
+	 * @param prepCode the prepCode to set
 	 */
-	public void setPrepcode(Long prepcode) {
-		this.prepcode = prepcode;
+	public void setPrepCode(Long prepCode) {
+		this.prepCode = prepCode;
 	}
 
 	/**
@@ -164,23 +164,23 @@ public class ServiceDTO implements Serializable {
 	}
 
 	/**
-	 * @return the userupdate
+	 * @return the userUpdate
 	 */
-	public String getUserupdate() {
-		return userupdate;
+	public String getUserUpdate() {
+		return userUpdate;
 	}
 
 	/**
-	 * @param userupdate the userupdate to set
+	 * @param userUpdate the userUpdate to set
 	 */
-	public void setUserupdate(String userupdate) {
-		this.userupdate = userupdate;
+	public void setUserUpdate(String userUpdate) {
+		this.userUpdate = userUpdate;
 	}
 
 	/**
 	 * @return the active
 	 */
-	public Boolean isActive() {
+	public Boolean getActive() {
 		return active;
 	}
 
