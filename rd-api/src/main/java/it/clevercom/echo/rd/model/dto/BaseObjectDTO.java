@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.model.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseObjectDTO implements Serializable {
 	private static final long serialVersionUID = -6326932178674963831L;
 	
