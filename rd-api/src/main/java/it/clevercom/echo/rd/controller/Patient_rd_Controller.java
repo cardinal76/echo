@@ -170,6 +170,7 @@ public class Patient_rd_Controller {
 			@RequestParam(defaultValue = "15", required = false) int size,
 			@RequestParam(defaultValue = "asc", required = false) String sort,
 			@RequestParam(defaultValue = "idpatient", required = false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 

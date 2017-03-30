@@ -51,6 +51,7 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			target.setEmail((source.getEmail() != null) ? source.getEmail() : null);
 			target.setGender((source.getGender() != null) ? source.getGender() : null);
 			target.setHealthCode((source.getHealthcode() != null) ? source.getHealthcode() : null);
+			target.setFullname((source.getFullname() != null) ? source.getFullname() : null);
 			target.setPhoneNumber((source.getPhonenumber() != null) ? source.getPhonenumber() : null);
 			target.setTaxCode((source.getTaxcode() != null) ? source.getTaxcode() : null);
 			
@@ -161,6 +162,7 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			target.setEmail((source.getEmail() != null) ? source.getEmail() : null);
 			target.setGender((source.getGender() != null) ? source.getGender() : null);
 			target.setHealthcode((source.getHealthCode() != null) ? source.getHealthCode() : null);
+			target.setFullname((source.getFullname() != null) ? source.getFullname() : null);
 			target.setPhonenumber((source.getPhoneNumber() != null) ? source.getPhoneNumber() : null);
 			target.setTaxcode((source.getTaxCode() != null) ? source.getTaxCode() : null);
 			

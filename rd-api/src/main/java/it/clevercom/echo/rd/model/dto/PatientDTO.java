@@ -18,6 +18,7 @@ public class PatientDTO implements Serializable {
 	private String gender;
 	private String taxCode;
 	private String healthCode;
+    private String fullname;
 	private String phoneNumber;
 	private String email;
 	
@@ -366,4 +367,19 @@ public class PatientDTO implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+
+	/**
+	 * @return the fullname
+	 */
+	public String getFullname() {
+		return fullname;
+	}
+
+	/**
+	 * @param fullname the fullname to set
+	 */
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
+	}
+	
 }

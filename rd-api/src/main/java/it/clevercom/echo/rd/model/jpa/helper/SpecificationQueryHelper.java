@@ -25,7 +25,7 @@ public class SpecificationQueryHelper<T> implements Specification<T> {
 			// middle like
 			if (root.get(criteria.getKey()).getJavaType() == String.class) {
 				return cb.like(cb.lower(root.<String>get(criteria.getKey())),
-						"%" + criteria.getValue().toString().toLowerCase() + "%");
+						"%" + criteria.getValue().toString().toLowerCase().replace(" ", "_") + "%");
 			} else {
 				return cb.equal(root.get(criteria.getKey()), criteria.getValue());
 			}
@@ -33,7 +33,7 @@ public class SpecificationQueryHelper<T> implements Specification<T> {
 			// left fixed like
 			if (root.get(criteria.getKey()).getJavaType() == String.class) {
 				return cb.like(cb.lower(root.<String>get(criteria.getKey())),
-						criteria.getValue().toString().toLowerCase() + "%");
+						criteria.getValue().toString().toLowerCase().replace(" ", "_") + "%");
 			} else {
 				return cb.equal(root.get(criteria.getKey()), criteria.getValue());
 			}
@@ -41,7 +41,7 @@ public class SpecificationQueryHelper<T> implements Specification<T> {
 			// right fixed like
 			if (root.get(criteria.getKey()).getJavaType() == String.class) {
 				return cb.like(cb.lower(root.<String>get(criteria.getKey())),
-						"%" + criteria.getValue().toString().toLowerCase());
+						"%" + criteria.getValue().toString().toLowerCase().replace(" ", "_"));
 			} else {
 				return cb.equal(root.get(criteria.getKey()), criteria.getValue());
 			}
