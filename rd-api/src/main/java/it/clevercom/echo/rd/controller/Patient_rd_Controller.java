@@ -145,7 +145,7 @@ public class Patient_rd_Controller {
 		dto.setCurrentPage(page);
 		// get total count
 		long totalCount = repo_pc.countByExternalcode(extcode);
-		dto.setTotalPages((int)Math.round(((double) totalCount) / ((double) size)));
+		dto.setTotalPages((int)Math.ceil(((double) totalCount) / ((double) size)));
 		dto.setTotalElements(totalCount);
 
 		return dto;

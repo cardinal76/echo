@@ -1,5 +1,6 @@
 package it.clevercom.echo.rd.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,31 @@ import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
 
 public interface IOrder_rd_Repository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
+	/**
+	 * @param status
+	 * @param request
+	 * @return
+	 */
 	public List<Order> findByWorkStatus(WorkStatus status, Pageable request);
+	
+	/**
+	 * @param status
+	 * @return
+	 */
 	public Long countByWorkStatus(WorkStatus status);
+	
+	/**
+	 * @param from
+	 * @param to
+	 * @param request
+	 * @return
+	 */
+	public List<Order> findByCreationdateBetween (Date from, Date to, Pageable request);
+	
+	/**
+	 * @param from
+	 * @param to
+	 * @return
+	 */
+	public Long countByCreationdateBetween (Date from, Date to);
 }

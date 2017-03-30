@@ -2,7 +2,9 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -40,6 +42,7 @@ import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.ValidationExceptionDTO;
+import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.enums.WorkStatusEnum;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
@@ -185,7 +188,8 @@ public class Order_rd_Controller {
 	@RequestMapping(value = "/status/{status}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<OrderDTO> getByWorkStatus(@PathVariable String status,
+	public @ResponseBody PagedDTO<OrderDTO> getByWorkStatus(
+			@PathVariable String status,
 			@RequestParam(defaultValue = "1", required = false) int page,
 			@RequestParam(defaultValue = "15", required = false) int size,
 			@RequestParam(defaultValue = "asc", required = false) String sort,
@@ -227,7 +231,7 @@ public class Order_rd_Controller {
 		dto.setCurrentPage(page);
 		// get total count
 		long totalCount = repo.countByWorkStatus(statusEntity);
-		dto.setTotalPages((int)Math.round(((double) totalCount) / ((double) size)));
+		dto.setTotalPages((int)Math.ceil(((double) totalCount) / ((double) size)));
 		dto.setTotalElements(totalCount);
 
 		return dto;
@@ -246,48 +250,53 @@ public class Order_rd_Controller {
 	@RequestMapping(value = "/creationdate/{creationdate}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<OrderDTO> getByCreationDate(@PathVariable Long creationDate,
+	public @ResponseBody PagedDTO<OrderDTO> getByCreationDate(@PathVariable Long creationdate,
 			@RequestParam(defaultValue = "1", required = false) int page,
 			@RequestParam(defaultValue = "15", required = false) int size,
 			@RequestParam(defaultValue = "asc", required = false) String sort,
 			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
-		// // parse long parameter to Date Object
-		// Date currentDate = new Date(creationDate);
-		//
-		// // create paged request
-		// PageRequest request = null;
-		//
-		// if (sort.equals("asc")) {
-		// request = new PageRequest(page - 1, size, Direction.ASC, field);
-		// } else if (sort.equals("desc")) {
-		// request = new PageRequest(page - 1, size, Direction.DESC, field);
-		// } else {
-		// throw new
-		// BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		// }
-		//
-		//
-		// //List<Order> orders = repo.findByDateInterval(, request);
-		//
-		// if (orders.size() == 0)
-		// throw new RecordNotFoundException(Order_rd_Controller.entity,
-		// status);
-		//
-		// List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
-		// for (Order order : orders) {
-		// orderDTOList.add(rdDozerMapper.map(order, OrderDTO.class));
-		// }
-		//
-		// // assembly dto
-		// PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
-		// dto.setElements(orderDTOList);
-		// dto.setPageSize(orderDTOList.size());
-		// dto.setCurrentPage(1);
-		// dto.setTotalPages(1);
-		// dto.setTotalElements(repo.countByWorkStatus(statusEntity));
-		//
+		
+		// parse long parameter to Date Object
+		Date currentDate = new Date(creationdate);
+		Date from = DateUtil.getStartOfDay(currentDate);
+		Calendar c = Calendar.getInstance();
+        c.setTime(from);
+        c.add(Calendar.DATE, 1);
+		Date to = DateUtil.getStartOfDay(c.getTime());
+		
+		// create paged request
+		PageRequest request = null;
+		
+		if (sort.equals("asc")) {
+			request = new PageRequest(page - 1, size, Direction.ASC, field);
+		} else if (sort.equals("desc")) {
+			request = new PageRequest(page - 1, size, Direction.DESC, field);
+		} else {
+			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
+		}
+		 
+		List<Order> orders = repo.findByCreationdateBetween(from, to, request);
+		
+		if (orders.size() == 0)
+			throw new RecordNotFoundException(Order_rd_Controller.entity, creationdate.toString());
+		
+		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
+		for (Order order : orders) {
+			orderDTOList.add(rdDozerMapper.map(order, OrderDTO.class));
+		}
+		
+		// assembly dto
+		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
+		dto.setElements(orderDTOList);
+		dto.setPageSize(size);
+		dto.setCurrentPage(page);
+		// get total count
+		long totalCount = repo.countByCreationdateBetween(from, to);
+		dto.setTotalPages((int)Math.ceil(((double) totalCount) / ((double) size)));
+		dto.setTotalElements(totalCount);
+		
 		// return dto;
-		return null;
+		return dto;
 	}
 
 	/**
