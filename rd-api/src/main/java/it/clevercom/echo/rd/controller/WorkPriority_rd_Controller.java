@@ -52,6 +52,11 @@ import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * Work Priority Controller
+ * @author luca
+ */
+
 public class WorkPriority_rd_Controller {
 	@Autowired
 	private Environment env;
@@ -71,13 +76,14 @@ public class WorkPriority_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "WorkPriority";
+	private static String entity_name = "WorkPriority";
+	private static String entity_id = "idworkpriority";
 	
 	/**
-	 * 
+	 * Get work priority by id
 	 * @param id
 	 * @return
-	 * @throws EchoException
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
@@ -85,16 +91,17 @@ public class WorkPriority_rd_Controller {
 	@Loggable
 	public @ResponseBody WorkPriorityDTO get(@PathVariable Long id) throws Exception {
 		WorkPriority entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(WorkPriority_rd_Controller.entity, id.toString());
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, WorkPriorityDTO.class);
 	}
 	
 	/**
+	 * Get work priority by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
 	 * @param sort
-	 * @param param
+	 * @param field
 	 * @return
 	 * @throws Exception
 	 */
@@ -102,11 +109,13 @@ public class WorkPriority_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<WorkPriorityDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																	@RequestParam(defaultValue="1", required=false) int page, 
-																	@RequestParam(defaultValue="4", required=false) int size, 
-																	@RequestParam(defaultValue="asc", required=false) String sort, 
-																	@RequestParam(defaultValue="code", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<WorkPriorityDTO> getByCriteria (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="4", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue="code", required=false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 		
@@ -140,7 +149,7 @@ public class WorkPriority_rd_Controller {
         long totalElements = rs.getTotalElements();
 		List<WorkPriority> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(WorkPriority_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(WorkPriority_rd_Controller.entity_name, page);
 		
 		// map list
 		List<WorkPriorityDTO> workPriorityDTOList = new ArrayList<WorkPriorityDTO>();
@@ -159,8 +168,11 @@ public class WorkPriority_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Add work priority
+	 * @param workpriority
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.POST)
@@ -183,8 +195,8 @@ public class WorkPriority_rd_Controller {
 		
 		// create standard response
 		CreateResponseDTO<WorkPriorityDTO> response = new CreateResponseDTO<WorkPriorityDTO>();
-		response.setEntityName(WorkPriority_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), WorkPriority_rd_Controller.entity));
+		response.setEntityName(WorkPriority_rd_Controller.entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), WorkPriority_rd_Controller.entity_name));
 		List<WorkPriorityDTO> workPriorityDTOs = new ArrayList<WorkPriorityDTO>();
 		workPriorityDTOs.add(workpriority);
 		response.setNewValue(workPriorityDTOs);
@@ -194,8 +206,11 @@ public class WorkPriority_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Update work priority
+	 * @param workpriority
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.PUT)
@@ -207,12 +222,12 @@ public class WorkPriority_rd_Controller {
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 		
 		// if an id is not present throw bad request
-		if(workpriority.getIdworkpriority()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), WorkPriority_rd_Controller.entity));
+		if(workpriority.getIdworkpriority()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), WorkPriority_rd_Controller.entity_name));
 		
 		// find entity to update (oldValue)
 		WorkPriority oldValueEntity = repo.findOne(workpriority.getIdworkpriority()); 
 		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity==null) throw new RecordNotFoundException(WorkPriority_rd_Controller.entity, workpriority.getIdworkpriority().toString());
+		if (oldValueEntity==null) throw new RecordNotFoundException(entity_name, entity_id, workpriority.getIdworkpriority().toString());
 		// get created date
 		Date created = oldValueEntity.getCreated();		
 		// map old value to a dto
@@ -232,8 +247,8 @@ public class WorkPriority_rd_Controller {
 				
 		// create standard response
 		UpdateResponseDTO<WorkPriorityDTO> response = new UpdateResponseDTO<WorkPriorityDTO>();
-		response.setEntityName(WorkPriority_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), WorkPriority_rd_Controller.entity));
+		response.setEntityName(WorkPriority_rd_Controller.entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), WorkPriority_rd_Controller.entity_name));
 		// add new dtos values
 		List<WorkPriorityDTO> newWorkPriorityDTOs = new ArrayList<WorkPriorityDTO>();
 		newWorkPriorityDTOs.add(newValueDTO);
@@ -248,7 +263,9 @@ public class WorkPriority_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Delete work priority
+	 * @param workpriority
+	 * @param request
 	 * @return
 	 */
 	@Transactional("rdTm")
@@ -256,6 +273,6 @@ public class WorkPriority_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody String delete(@RequestBody WorkPriorityDTO workpriority, HttpServletRequest request) {
-		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), WorkPriority_rd_Controller.entity);
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), WorkPriority_rd_Controller.entity_name);
 	}	
 }

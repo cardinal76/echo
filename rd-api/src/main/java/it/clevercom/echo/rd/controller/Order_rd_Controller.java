@@ -58,6 +58,11 @@ import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * Order Controller
+ * @author luca
+ */
+
 public class Order_rd_Controller {
 
 	@Autowired
@@ -81,13 +86,13 @@ public class Order_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 
 	// used to bind it in exception message
-	private static String entity = "Order";
+	private static String entity_name = "Order";
+	private static String entity_id = "idorder";
 
-	/*
+	/**
+	 * Get order by id
 	 * @param id
-	 * 
 	 * @return
-	 * 
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -97,11 +102,12 @@ public class Order_rd_Controller {
 	public @ResponseBody OrderDTO get(@PathVariable Long id) throws Exception {
 		Order entity = repo.findOne(id);
 		if (entity == null)
-			throw new RecordNotFoundException(Order_rd_Controller.entity, id.toString());
+			throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, OrderDTO.class);
 	}
 
 	/**
+	 * Get order list by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
@@ -120,6 +126,7 @@ public class Order_rd_Controller {
 			@RequestParam(defaultValue = "15", required = false) int size,
 			@RequestParam(defaultValue = "asc", required = false) String sort,
 			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 
@@ -154,7 +161,7 @@ public class Order_rd_Controller {
 		List<Order> entities = rs.getContent();
 
 		if (entities.size() == 0)
-			throw new PageNotFoundException(Order_rd_Controller.entity, page);
+			throw new PageNotFoundException(entity_name, page);
 
 		// map list
 		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
@@ -172,8 +179,135 @@ public class Order_rd_Controller {
 		return dto;
 	}
 
+//	/**
+//	 * @param status
+//	 * @param page
+//	 * @param size
+//	 * @param sort
+//	 * @param field
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@Transactional("rdTm")
+//	@RequestMapping(value = "/status/{status}", method = RequestMethod.GET)
+//	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+//	@Loggable
+//	public @ResponseBody PagedDTO<OrderDTO> getByWorkStatus(
+//			@PathVariable String status,
+//			@RequestParam(defaultValue = "1", required = false) int page,
+//			@RequestParam(defaultValue = "15", required = false) int size,
+//			@RequestParam(defaultValue = "asc", required = false) String sort,
+//			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
+//		if (!WorkStatusEnum.contains(status)) {
+//			throw new BadRequestException(
+//					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
+//							env.getProperty("echo.api.crud.fields.workstatus"),
+//							WorkStatus.class.getDeclaringClass().getEnumConstants().toString()));
+//		}
+//
+//		// create paged request
+//		PageRequest request = null;
+//
+//		if (sort.equalsIgnoreCase("asc")) {
+//			request = new PageRequest(page - 1, size, Direction.ASC, field);
+//		} else if (sort.equalsIgnoreCase("desc")) {
+//			request = new PageRequest(page - 1, size, Direction.DESC, field);
+//		} else {
+//			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
+//		}
+//
+//		WorkStatus statusEntity = repo_ws.findByCode(WorkStatusEnum.valueOf(status).code());
+//
+//		List<Order> orders = repo.findByWorkStatus(statusEntity, request);
+//
+//		if (orders.size() == 0)
+//			throw new RecordNotFoundException(Order_rd_Controller.entity, status);
+//
+//		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
+//		for (Order order : orders) {
+//			orderDTOList.add(rdDozerMapper.map(order, OrderDTO.class));
+//		}
+//
+//		// assembly dto
+//		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
+//		dto.setElements(orderDTOList);
+//		dto.setPageSize(size);
+//		dto.setCurrentPage(page);
+//		// get total count
+//		long totalCount = repo.countByWorkStatus(statusEntity);
+//		dto.setTotalPages((int)Math.ceil(((double) totalCount) / ((double) size)));
+//		dto.setTotalElements(totalCount);
+//
+//		return dto;
+//	}
+//
+//	/**
+//	 * @param creationDate
+//	 * @param page
+//	 * @param size
+//	 * @param sort
+//	 * @param field
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@Transactional("rdTm")
+//	@RequestMapping(value = "/creationdate/{creationdate}", method = RequestMethod.GET)
+//	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+//	@Loggable
+//	public @ResponseBody PagedDTO<OrderDTO> getByCreationDate(@PathVariable Long creationdate,
+//			@RequestParam(defaultValue = "1", required = false) int page,
+//			@RequestParam(defaultValue = "15", required = false) int size,
+//			@RequestParam(defaultValue = "asc", required = false) String sort,
+//			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
+//		
+//		// parse long parameter to Date Object
+//		Date currentDate = new Date(creationdate);
+//		Date from = DateUtil.getStartOfDay(currentDate);
+//		Calendar c = Calendar.getInstance();
+//        c.setTime(from);
+//        c.add(Calendar.DATE, 1);
+//		Date to = DateUtil.getStartOfDay(c.getTime());
+//		
+//		// create paged request
+//		PageRequest request = null;
+//		
+//		if (sort.equalsIgnoreCase("asc")) {
+//			request = new PageRequest(page - 1, size, Direction.ASC, field);
+//		} else if (sort.equalsIgnoreCase("desc")) {
+//			request = new PageRequest(page - 1, size, Direction.DESC, field);
+//		} else {
+//			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
+//		}
+//		 
+//		List<Order> orders = repo.findByCreationdateBetween(from, to, request);
+//		
+//		if (orders.size() == 0)
+//			throw new RecordNotFoundException(Order_rd_Controller.entity, creationdate.toString());
+//		
+//		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
+//		for (Order order : orders) {
+//			orderDTOList.add(rdDozerMapper.map(order, OrderDTO.class));
+//		}
+//		
+//		// assembly dto
+//		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
+//		dto.setElements(orderDTOList);
+//		dto.setPageSize(size);
+//		dto.setCurrentPage(page);
+//		// get total count
+//		long totalCount = repo.countByCreationdateBetween(from, to);
+//		dto.setTotalPages((int)Math.ceil(((double) totalCount) / ((double) size)));
+//		dto.setTotalElements(totalCount);
+//		
+//		// return dto;
+//		return dto;
+//	}
+	
 	/**
-	 * @param status
+	 * Get order by interval and status with pagination
+	 * @param from
+	 * @param to
+	 * @param workstatus
 	 * @param page
 	 * @param size
 	 * @param sort
@@ -182,84 +316,28 @@ public class Order_rd_Controller {
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
-	@RequestMapping(value = "/status/{status}", method = RequestMethod.GET)
+	@RequestMapping(value = "/from/{from}/to/{to}/workstatus/{workstatus}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<OrderDTO> getByWorkStatus(
-			@PathVariable String status,
-			@RequestParam(defaultValue = "1", required = false) int page,
-			@RequestParam(defaultValue = "15", required = false) int size,
-			@RequestParam(defaultValue = "asc", required = false) String sort,
-			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
-		if (!WorkStatusEnum.contains(status)) {
-			throw new BadRequestException(
-					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
-							env.getProperty("echo.api.crud.fields.workstatus"),
-							WorkStatus.class.getDeclaringClass().getEnumConstants().toString()));
-		}
-
-		// create paged request
-		PageRequest request = null;
-
-		if (sort.equalsIgnoreCase("asc")) {
-			request = new PageRequest(page - 1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page - 1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
-
-		WorkStatus statusEntity = repo_ws.findByCode(WorkStatusEnum.valueOf(status).code());
-
-		List<Order> orders = repo.findByWorkStatus(statusEntity, request);
-
-		if (orders.size() == 0)
-			throw new RecordNotFoundException(Order_rd_Controller.entity, status);
-
-		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
-		for (Order order : orders) {
-			orderDTOList.add(rdDozerMapper.map(order, OrderDTO.class));
-		}
-
-		// assembly dto
-		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
-		dto.setElements(orderDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		// get total count
-		long totalCount = repo.countByWorkStatus(statusEntity);
-		dto.setTotalPages((int)Math.ceil(((double) totalCount) / ((double) size)));
-		dto.setTotalElements(totalCount);
-
-		return dto;
-	}
-
-	/**
-	 * @param creationDate
-	 * @param page
-	 * @param size
-	 * @param sort
-	 * @param field
-	 * @return
-	 * @throws Exception
-	 */
-	@Transactional("rdTm")
-	@RequestMapping(value = "/creationdate/{creationdate}", method = RequestMethod.GET)
-	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
-	@Loggable
-	public @ResponseBody PagedDTO<OrderDTO> getByCreationDate(@PathVariable Long creationdate,
+	public @ResponseBody PagedDTO<OrderDTO> getByCreationDateAndWorkStatus(
+			@PathVariable Long from,
+			@PathVariable Long to,
+			@PathVariable String workstatus,
 			@RequestParam(defaultValue = "1", required = false) int page,
 			@RequestParam(defaultValue = "15", required = false) int size,
 			@RequestParam(defaultValue = "asc", required = false) String sort,
 			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
 		
 		// parse long parameter to Date Object
-		Date currentDate = new Date(creationdate);
-		Date from = DateUtil.getStartOfDay(currentDate);
-		Calendar c = Calendar.getInstance();
-        c.setTime(from);
-        c.add(Calendar.DATE, 1);
-		Date to = DateUtil.getStartOfDay(c.getTime());
+		Date t1 = DateUtil.getStartOfDay(new Date(from));
+		Date t2 = DateUtil.getStartOfDay(new Date(to));
+		
+		if (!WorkStatusEnum.contains(workstatus)) {
+			throw new BadRequestException(
+					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
+							env.getProperty("echo.api.crud.fields.workstatus"),
+							WorkStatus.class.getDeclaringClass().getEnumConstants().toString()));
+		}
 		
 		// create paged request
 		PageRequest request = null;
@@ -272,10 +350,12 @@ public class Order_rd_Controller {
 			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
 		}
 		 
-		List<Order> orders = repo.findByCreationdateBetween(from, to, request);
+		WorkStatus statusEntity = repo_ws.findByCode(WorkStatusEnum.valueOf(workstatus).code());
+		
+		List<Order> orders = repo.findByCreationdateBetweenAndWorkStatus(t1, t2, statusEntity, request);
 		
 		if (orders.size() == 0)
-			throw new RecordNotFoundException(Order_rd_Controller.entity, creationdate.toString());
+			throw new RecordNotFoundException(entity_name);
 		
 		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
 		for (Order order : orders) {
@@ -288,7 +368,7 @@ public class Order_rd_Controller {
 		dto.setPageSize(size);
 		dto.setCurrentPage(page);
 		// get total count
-		long totalCount = repo.countByCreationdateBetween(from, to);
+		long totalCount = repo.countByCreationdateBetweenAndWorkStatus(t1, t2, statusEntity);
 		dto.setTotalPages((int)Math.ceil(((double) totalCount) / ((double) size)));
 		dto.setTotalElements(totalCount);
 		
@@ -296,9 +376,8 @@ public class Order_rd_Controller {
 		return dto;
 	}
 	
-	
-
 	/**
+	 * Add order
 	 * @param order
 	 * @param request
 	 * @return
@@ -308,8 +387,7 @@ public class Order_rd_Controller {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<OrderDTO> add(@RequestBody OrderDTO order, HttpServletRequest request)
-			throws Exception {
+	public @ResponseBody CreateResponseDTO<OrderDTO> add(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {
 		// validate create request
 		this.validateCreateRequest(order);
 
@@ -331,8 +409,8 @@ public class Order_rd_Controller {
 
 		// create standard response
 		CreateResponseDTO<OrderDTO> response = new CreateResponseDTO<OrderDTO>();
-		response.setEntityName(Order_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Order_rd_Controller.entity));
+		response.setEntityName(entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 		List<OrderDTO> orderDTOs = new ArrayList<OrderDTO>();
 		orderDTOs.add(order);
 		response.setNewValue(orderDTOs);
@@ -342,6 +420,7 @@ public class Order_rd_Controller {
 	}
 
 	/**
+	 * Update order
 	 * @param order
 	 * @param request
 	 * @return
@@ -360,13 +439,13 @@ public class Order_rd_Controller {
 		// if an id is not present throw bad request
 		if (order.getIdOrder() == null)
 			throw new BadRequestException(
-					MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), Order_rd_Controller.entity));
+					MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), entity_name));
 
 		// find entity to update (oldValue)
 		Order oldValueEntity = repo.findOne(order.getIdOrder());
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity == null)
-			throw new RecordNotFoundException(Order_rd_Controller.entity, order.getIdOrder().toString());
+			throw new RecordNotFoundException(entity_name, entity_id, order.getIdOrder().toString());
 
 		// validate create request
 		this.validateUpdateRequest(order, oldValueEntity);
@@ -392,8 +471,8 @@ public class Order_rd_Controller {
 
 		// create standard response
 		UpdateResponseDTO<OrderDTO> response = new UpdateResponseDTO<OrderDTO>();
-		response.setEntityName(Order_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Order_rd_Controller.entity));
+		response.setEntityName(entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 		// add new dtos values
 		List<OrderDTO> newOrderDTOs = new ArrayList<OrderDTO>();
 		newOrderDTOs.add(order);
@@ -440,8 +519,8 @@ public class Order_rd_Controller {
 
 		// create standard response
 		UpdateResponseDTO<OrderDTO> response = new UpdateResponseDTO<OrderDTO>();
-		response.setEntityName(Order_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Order_rd_Controller.entity));
+		response.setEntityName(entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 		// add new dtos values
 		List<OrderDTO> newOrderDTOs = new ArrayList<OrderDTO>();
 		newOrderDTOs.add(newValueDTO);

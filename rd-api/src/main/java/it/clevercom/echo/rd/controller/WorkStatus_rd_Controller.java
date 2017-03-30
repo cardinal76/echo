@@ -47,6 +47,11 @@ import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * Work Status Controller
+ * @author luca
+ */
+
 public class WorkStatus_rd_Controller {
 	@Autowired
 	private Environment env;
@@ -60,9 +65,11 @@ public class WorkStatus_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "WorkStatus";
-	
+	private static String entity_name = "WorkStatus";
+	private static String entity_id = "idworkstatus";
+
 	/**
+	 * Get work status by id
 	 * @param id
 	 * @return
 	 * @throws Exception
@@ -73,11 +80,12 @@ public class WorkStatus_rd_Controller {
 	@Loggable
 	public @ResponseBody WorkStatusDTO get(@PathVariable Long id) throws Exception {
 		WorkStatus entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(WorkStatus_rd_Controller.entity, id.toString());
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, WorkStatusDTO.class);
 	}
 	
 	/**
+	 * Get work status by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
@@ -90,11 +98,13 @@ public class WorkStatus_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<WorkStatusDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																	@RequestParam(defaultValue="1", required=false) int page, 
-																	@RequestParam(defaultValue="10", required=false) int size, 
-																	@RequestParam(defaultValue="asc", required=false) String sort, 
-																	@RequestParam(defaultValue="idworkstatus", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<WorkStatusDTO> getByCriteria (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="10", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue="idworkstatus", required=false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 		
@@ -128,7 +138,7 @@ public class WorkStatus_rd_Controller {
         long totalElements = rs.getTotalElements();
 		List<WorkStatus> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(WorkStatus_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(entity_name, page);
 		
 		// map list
 		List<WorkStatusDTO> workStatusDTOList = new ArrayList<WorkStatusDTO>();
@@ -147,6 +157,7 @@ public class WorkStatus_rd_Controller {
 	}
 	
 	/**
+	 * Add work status
 	 * @param workstatus
 	 * @return
 	 * @throws Exception
@@ -156,10 +167,11 @@ public class WorkStatus_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody String add(@RequestBody WorkStatusDTO workstatus) throws Exception {
-		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.POST.toString(), WorkStatus_rd_Controller.entity);
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.POST.toString(), entity_name);
 	}
 	
 	/**
+	 * Update work status
 	 * @param workstatus
 	 * @return
 	 * @throws Exception
@@ -169,19 +181,19 @@ public class WorkStatus_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody String update(@RequestBody WorkStatusDTO workstatus) throws Exception {
-		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.PUT.toString(), WorkStatus_rd_Controller.entity);
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.PUT.toString(), entity_name);
 	}
 	
 	/**
+	 * Delete work status
 	 * @param workstatus
 	 * @return
-	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody String delete(@RequestBody WorkStatusDTO workstatus) {
-		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), WorkStatus_rd_Controller.entity);
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), entity_name);
 	}
 }

@@ -29,16 +29,12 @@ import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
-import it.clevercom.echo.rd.model.dto.ModalityTypeDTO;
 import it.clevercom.echo.rd.model.dto.OrganizationUnitDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
-import it.clevercom.echo.rd.model.dto.ServiceDTO;
-import it.clevercom.echo.rd.model.entity.ModalityType;
 import it.clevercom.echo.rd.model.entity.OrganizationUnit;
 import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
-import it.clevercom.echo.rd.repository.IModalityType_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrganizationUnit_rd_Repository;
 
 @Controller
@@ -47,6 +43,10 @@ import it.clevercom.echo.rd.repository.IOrganizationUnit_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * Organization Unit Controller
+ * @author luca
+ */
 public class OrganizationUnit_rd_Controller {
 
 	@Autowired
@@ -61,12 +61,14 @@ public class OrganizationUnit_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "OrganizationUnit";
+	private static String entity_name = "OrganizationUnit";
+	private static String entity_id = "idorganizationunit";
 	
 	/**
+	 * Get organization unit by id
 	 * @param id
 	 * @return
-	 * @throws EchoException
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
@@ -74,16 +76,17 @@ public class OrganizationUnit_rd_Controller {
 	@Loggable
 	public @ResponseBody OrganizationUnitDTO get(@PathVariable Long id) throws Exception {
 		OrganizationUnit entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(OrganizationUnit_rd_Controller.entity, id.toString());
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, OrganizationUnitDTO.class);
 	}
 	
 	/**
+	 * Get organization unit by criteria
 	 * @param criteria
 	 * @param page
 	 * @param size
 	 * @param sort
-	 * @param param
+	 * @param field
 	 * @return
 	 * @throws Exception
 	 */
@@ -91,11 +94,13 @@ public class OrganizationUnit_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<OrganizationUnitDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																		@RequestParam(defaultValue="1", required=false) int page, 
-																		@RequestParam(defaultValue="1000", required=false) int size, 
-																		@RequestParam(defaultValue="asc", required=false) String sort, 
-																		@RequestParam(defaultValue="idorganizationunit", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<OrganizationUnitDTO> getByCriteria (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="1000", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue="idorganizationunit", required=false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 		
@@ -129,7 +134,7 @@ public class OrganizationUnit_rd_Controller {
         long totalElements = rs.getTotalElements();
 		List<OrganizationUnit> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(OrganizationUnit_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(entity_name, page);
 		
 		// map list
 		List<OrganizationUnitDTO> modalityTypeDTOList = new ArrayList<OrganizationUnitDTO>();

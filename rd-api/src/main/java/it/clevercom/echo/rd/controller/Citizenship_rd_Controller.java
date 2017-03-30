@@ -51,6 +51,11 @@ import it.clevercom.echo.rd.repository.ICitizenship_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * Citizenship Controller
+ * @author luca
+ *
+ */
 public class Citizenship_rd_Controller {
 	
 	@Autowired
@@ -71,10 +76,12 @@ public class Citizenship_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "Citizenship";
+	private static String entity_name = "Citizenship";
+	private static String entity_id = "idcitizenship";
 	
 	/**
-	 * @param username
+	 * Get Citizenship by id
+	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
@@ -84,11 +91,12 @@ public class Citizenship_rd_Controller {
 	@Loggable
 	public @ResponseBody CitizenshipDTO get(@PathVariable Long id) throws Exception {
 		Citizenship entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(Citizenship_rd_Controller.entity, id.toString());
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, CitizenshipDTO.class);
 	}
 	
 	/**
+	 * Get Citizenship by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
@@ -101,11 +109,13 @@ public class Citizenship_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<CitizenshipDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																	@RequestParam(defaultValue="1", required=false) int page, 
-																	@RequestParam(defaultValue="20", required=false) int size, 
-																	@RequestParam(defaultValue="asc", required=false) String sort, 
-																	@RequestParam(defaultValue="idcitizenship", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<CitizenshipDTO> getByCriteria (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="20", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue="idcitizenship", required=false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 		
@@ -139,7 +149,7 @@ public class Citizenship_rd_Controller {
         long totalElements = rs.getTotalElements();
 		List<Citizenship> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(Citizenship_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(entity_name, page);
 		
 		// map list
 		List<CitizenshipDTO> citizenshipDTOList = new ArrayList<CitizenshipDTO>();
@@ -158,8 +168,11 @@ public class Citizenship_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Add citizenship
+	 * @param citizenship
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.POST)
@@ -182,8 +195,8 @@ public class Citizenship_rd_Controller {
 		
 		// create standard response
 		CreateResponseDTO<CitizenshipDTO> response = new CreateResponseDTO<CitizenshipDTO>();
-		response.setEntityName(Citizenship_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Citizenship_rd_Controller.entity));
+		response.setEntityName(entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 		List<CitizenshipDTO> citizenshipDTOs = new ArrayList<CitizenshipDTO>();
 		citizenshipDTOs.add(citizenship);
 		response.setNewValue(citizenshipDTOs);
@@ -193,8 +206,11 @@ public class Citizenship_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Update citizenship
+	 * @param citizenship
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.PUT)
@@ -206,12 +222,12 @@ public class Citizenship_rd_Controller {
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 		
 		// if an id is not present throw bad request
-		if(citizenship.getIdcitizenship()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), Citizenship_rd_Controller.entity));
+		if(citizenship.getIdcitizenship()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), entity_name));
 		
 		// find entity to update (oldValue)
 		Citizenship oldValueEntity = repo.findOne(citizenship.getIdcitizenship()); 
 		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity==null) throw new RecordNotFoundException(Citizenship_rd_Controller.entity, citizenship.getIdcitizenship().toString());
+		if (oldValueEntity==null) throw new RecordNotFoundException(entity_name, entity_id, citizenship.getIdcitizenship().toString());
 		// get created date
 		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
@@ -231,8 +247,8 @@ public class Citizenship_rd_Controller {
 				
 		// create standard response
 		UpdateResponseDTO<CitizenshipDTO> response = new UpdateResponseDTO<CitizenshipDTO>();
-		response.setEntityName(Citizenship_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Citizenship_rd_Controller.entity));
+		response.setEntityName(entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 		// add new dtos values
 		List<CitizenshipDTO> newCitizenshipDTOs = new ArrayList<CitizenshipDTO>();
 		newCitizenshipDTOs.add(newValueDTO);
@@ -247,7 +263,9 @@ public class Citizenship_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Delete citizenship
+	 * @param citizenship
+	 * @param request
 	 * @return
 	 */
 	@Transactional("rdTm")
@@ -255,6 +273,6 @@ public class Citizenship_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody String delete(@RequestBody CitizenshipDTO citizenship, HttpServletRequest request) {
-		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), Citizenship_rd_Controller.entity);
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), entity_name);
 	}
 }

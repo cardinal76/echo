@@ -62,7 +62,7 @@ public class ControllerExceptionHandler {
 	public @ResponseBody ExceptionDTO handleRecordNotFoundException(RecordNotFoundException e) {
 		logger.warn(e.getMessage(), e);
 		ExceptionDTO dto = new ExceptionDTO();
-		dto.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), e.getEntityName(), e.getRecordId()));
+		dto.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), e.getEntityName(), e.getParam(), e.getValue()));
 		return dto;
 	}
 	

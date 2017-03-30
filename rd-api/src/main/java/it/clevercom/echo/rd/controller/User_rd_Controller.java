@@ -46,6 +46,10 @@ import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * User controller
+ * @author luca
+ */
 public class User_rd_Controller {
 	@Autowired
 	private Environment env;
@@ -59,10 +63,13 @@ public class User_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "User";
+	private static String entity_name = "User";
+	private static String entity_id = "iduser";
+
 	
 	/**
-	 * @param username
+	 * Get user by id
+	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
@@ -72,11 +79,12 @@ public class User_rd_Controller {
 	@Loggable
 	public @ResponseBody UserDTO get(@PathVariable Long id) throws Exception {
 		User entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(User_rd_Controller.entity, id.toString());
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, UserDTO.class);
 	}
 	
 	/**
+	 * Get user by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
@@ -89,11 +97,13 @@ public class User_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<UserDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-															@RequestParam(defaultValue="1", required=false) int page, 
-															@RequestParam(defaultValue="15", required=false) int size, 
-															@RequestParam(defaultValue="asc", required=false) String sort, 
-															@RequestParam(defaultValue="iduser", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<UserDTO> getByCriteria (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="15", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue="iduser", required=false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 		
@@ -127,7 +137,7 @@ public class User_rd_Controller {
         long totalElements = rs.getTotalElements();
 		List<User> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(User_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(entity_name, page);
 		
 		// map list
 		List<UserDTO> userDTOList = new ArrayList<UserDTO>();
@@ -146,14 +156,16 @@ public class User_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Add user 
+	 * @param user
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO add(@RequestBody UserDTO user) throws Exception {
+	public @ResponseBody CreateResponseDTO<UserDTO> add(@RequestBody UserDTO user) throws Exception {
 		if (user == null) throw new BadRequestException("Impossible to store a null");
 		User entity = rdDozerMapper.map(user, User.class);
 		entity.setActive(true);
@@ -163,10 +175,10 @@ public class User_rd_Controller {
 		User saved = repo.saveAndFlush(entity);
 		
 		// create standard response
-		CreateResponseDTO response = new CreateResponseDTO();
+		CreateResponseDTO<UserDTO> response = new CreateResponseDTO<UserDTO>();
 		HashMap<String,String> ids = new HashMap<String,String>();
 		ids.put("iduser", String.valueOf(saved.getUsername()));
-		response.setEntityName(User_rd_Controller.entity);
+		response.setEntityName(entity_name);
 		response.setMessage(null);
 		response.setNewValue(null);
 		

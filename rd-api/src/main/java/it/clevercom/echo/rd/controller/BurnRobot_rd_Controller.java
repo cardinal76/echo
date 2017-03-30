@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
-import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
@@ -51,6 +50,11 @@ import it.clevercom.echo.rd.repository.IBurnRobot_rd_Repository;
 @RequestMapping("rd/assets/burnrobot")
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
+
+/**
+ * Burn Robot Controller
+ * @author luca
+ */
 
 public class BurnRobot_rd_Controller {
 
@@ -72,13 +76,14 @@ public class BurnRobot_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "BurnRobot";
+	private static String entity_name = "BurnRobot";
+	private static String entity_id = "BurnRobot";
 	
 	/**
-	 * 
+	 * Get a burn robot by id
 	 * @param id
 	 * @return
-	 * @throws EchoException
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
@@ -86,16 +91,17 @@ public class BurnRobot_rd_Controller {
 	@Loggable
 	public @ResponseBody BurnRobotDTO get(@PathVariable Long id) throws Exception {
 		BurnRobot entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(BurnRobot_rd_Controller.entity, id.toString());
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, BurnRobotDTO.class);
 	}
 	
 	/**
+	 * Get a burn robot list by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
 	 * @param sort
-	 * @param param
+	 * @param field
 	 * @return
 	 * @throws Exception
 	 */
@@ -103,11 +109,13 @@ public class BurnRobot_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<BurnRobotDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																@RequestParam(defaultValue="1", required=false) int page, 
-																@RequestParam(defaultValue="1000", required=false) int size, 
-																@RequestParam(defaultValue="asc", required=false) String sort, 
-																@RequestParam(defaultValue="idburnrobot", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<BurnRobotDTO> getByCriteria (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="1000", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue="idburnrobot", required=false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 		
@@ -141,7 +149,7 @@ public class BurnRobot_rd_Controller {
         long totalElements = rs.getTotalElements();
 		List<BurnRobot> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(BurnRobot_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(entity_name, page);
 		
 		// map list
 		List<BurnRobotDTO> burnRobotDTOList = new ArrayList<BurnRobotDTO>();
@@ -160,8 +168,11 @@ public class BurnRobot_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Add a burn robot
+	 * @param burnrobot
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.POST)
@@ -184,8 +195,8 @@ public class BurnRobot_rd_Controller {
 		
 		// create standard response
 		CreateResponseDTO<BurnRobotDTO> response = new CreateResponseDTO<BurnRobotDTO>();
-		response.setEntityName(BurnRobot_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), BurnRobot_rd_Controller.entity));
+		response.setEntityName(entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 		List<BurnRobotDTO> burnRobotDTOs = new ArrayList<BurnRobotDTO>();
 		burnRobotDTOs.add(burnrobot);
 		response.setNewValue(burnRobotDTOs);
@@ -195,8 +206,11 @@ public class BurnRobot_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Update a burn robot
+	 * @param burnRobot
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.PUT)
@@ -208,12 +222,12 @@ public class BurnRobot_rd_Controller {
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 		
 		// if an id is not present throw bad request
-		if(burnRobot.getIdburnrobot()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), BurnRobot_rd_Controller.entity));
+		if(burnRobot.getIdburnrobot()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), entity_name));
 		
 		// find entity to update (oldValue)
 		BurnRobot oldValueEntity = repo.findOne(burnRobot.getIdburnrobot()); 
 		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity==null) throw new RecordNotFoundException(BurnRobot_rd_Controller.entity, burnRobot.getIdburnrobot().toString());
+		if (oldValueEntity==null) throw new RecordNotFoundException(entity_name, entity_id, burnRobot.getIdburnrobot().toString());
 		// get created date
 		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
@@ -233,8 +247,8 @@ public class BurnRobot_rd_Controller {
 				
 		// create standard response
 		UpdateResponseDTO<BurnRobotDTO> response = new UpdateResponseDTO<BurnRobotDTO>();
-		response.setEntityName(BurnRobot_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), BurnRobot_rd_Controller.entity));
+		response.setEntityName(entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 		// add new dtos values
 		List<BurnRobotDTO> newBurnRobotDTOs = new ArrayList<BurnRobotDTO>();
 		newBurnRobotDTOs.add(newValueDTO);
@@ -249,7 +263,9 @@ public class BurnRobot_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Delete a burn robot
+	 * @param burnRobot
+	 * @param request
 	 * @return
 	 */
 	@Transactional("rdTm")
@@ -257,6 +273,6 @@ public class BurnRobot_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody String delete(@RequestBody BurnRobotDTO burnRobot, HttpServletRequest request) {
-		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), BurnRobot_rd_Controller.entity);
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), entity_name);
 	}
 }

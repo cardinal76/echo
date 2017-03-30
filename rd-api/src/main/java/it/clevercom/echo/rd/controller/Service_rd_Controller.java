@@ -45,6 +45,11 @@ import it.clevercom.echo.rd.repository.IService_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * Service controller
+ * @author luca
+ */
+
 public class Service_rd_Controller {
 	
 	@Autowired
@@ -59,10 +64,11 @@ public class Service_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "Service";
+	private static String entity_name = "Service";
+	private static String entity_id = "idservice";
 	
 	/**
-	 * 
+	 * Get service by id
 	 * @param id
 	 * @return
 	 * @throws EchoException
@@ -73,16 +79,17 @@ public class Service_rd_Controller {
 	@Loggable
 	public @ResponseBody ServiceDTO get(@PathVariable Long id) throws Exception {
 		Service entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(Service_rd_Controller.entity, id.toString());
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, ServiceDTO.class);
 	}
 	
 	/**
+	 * Get service list by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
 	 * @param sort
-	 * @param param
+	 * @param field
 	 * @return
 	 * @throws Exception
 	 */
@@ -90,11 +97,13 @@ public class Service_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<ServiceDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																@RequestParam(defaultValue="1", required=false) int page, 
-																@RequestParam(defaultValue="1000", required=false) int size, 
-																@RequestParam(defaultValue="asc", required=false) String sort, 
-																@RequestParam(defaultValue="idservice", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<ServiceDTO> getByCriteria (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="1000", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue="idservice", required=false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 		
@@ -128,7 +137,7 @@ public class Service_rd_Controller {
         long totalElements = rs.getTotalElements();
 		List<Service> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(Service_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(Service_rd_Controller.entity_name, page);
 		
 		// map list
 		List<ServiceDTO> serviceDTOList = new ArrayList<ServiceDTO>();
@@ -147,31 +156,31 @@ public class Service_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Add service 
 	 * @return
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO add() {
-		return new CreateResponseDTO();
+	public @ResponseBody CreateResponseDTO<ServiceDTO> add() {
+		return new CreateResponseDTO<ServiceDTO>();
 	}
 	
 	/**
-	 * 
+	 * Update service
 	 * @return
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO update() {
-		return new UpdateResponseDTO();
+	public @ResponseBody UpdateResponseDTO<ServiceDTO> update() {
+		return new UpdateResponseDTO<ServiceDTO>();
 	}
 	
 	/**
-	 * 
+	 * Delete service
 	 * @return
 	 */
 	@Transactional("rdTm")

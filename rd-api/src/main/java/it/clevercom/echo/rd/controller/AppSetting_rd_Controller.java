@@ -51,6 +51,11 @@ import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * Application Setting Controller
+ * @author luca
+ */
+
 public class AppSetting_rd_Controller {
 	
 	@Autowired
@@ -71,9 +76,12 @@ public class AppSetting_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "AppSetting";
+	private static String entity_name = "AppSetting";
+	private static String entity_id = "idappsetting";
+	private static String entity_uqkey1 = "username";
 	
 	/**
+	 * Get application setting list by Username
 	 * @param username
 	 * @return
 	 * @throws Exception
@@ -84,11 +92,12 @@ public class AppSetting_rd_Controller {
 	@Loggable
 	public @ResponseBody PagedDTO<AppSettingDTO> get(@PathVariable String username) throws Exception {
 		PagedDTO<AppSettingDTO> dto = getByCriteria("username:" + username, 1, 1000, "asc", "idsetting");
-		if (entity == null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity, username);
+		if (entity_name == null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity_name, entity_id, entity_uqkey1);
 		return dto;
 	}
 	
 	/**
+	 * Get application setting list by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
@@ -101,11 +110,13 @@ public class AppSetting_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<AppSettingDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																	@RequestParam(defaultValue="1", required=false) int page, 
-																	@RequestParam(defaultValue="1000", required=false) int size, 
-																	@RequestParam(defaultValue="asc", required=false) String sort, 
-																	@RequestParam(defaultValue="idappsetting", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<AppSettingDTO> getByCriteria (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="1000", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue="idappsetting", required=false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 		
@@ -139,7 +150,7 @@ public class AppSetting_rd_Controller {
         long totalElements = rs.getTotalElements();
 		List<AppSetting> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(AppSetting_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(AppSetting_rd_Controller.entity_name, page);
 		
 		// map list
 		List<AppSettingDTO> appSettingDTOList = new ArrayList<AppSettingDTO>();
@@ -158,8 +169,11 @@ public class AppSetting_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Add application setting
+	 * @param appSetting
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.POST)
@@ -183,8 +197,8 @@ public class AppSetting_rd_Controller {
 		
 		// create standard response
 		CreateResponseDTO<AppSettingDTO> response = new CreateResponseDTO<AppSettingDTO>();
-		response.setEntityName(AppSetting_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), AppSetting_rd_Controller.entity));
+		response.setEntityName(AppSetting_rd_Controller.entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), AppSetting_rd_Controller.entity_name));
 		List<AppSettingDTO> appSettingDTOs = new ArrayList<AppSettingDTO>();
 		appSettingDTOs.add(appSetting);
 		response.setNewValue(appSettingDTOs);
@@ -194,8 +208,11 @@ public class AppSetting_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Update an application setting
+	 * @param appSetting
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.PUT)
@@ -208,12 +225,12 @@ public class AppSetting_rd_Controller {
 		appSetting.setUsername(username);
 		
 		// if an id is not present throw bad request
-		if(appSetting.getIdappsetting()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), AppSetting_rd_Controller.entity));
+		if(appSetting.getIdappsetting()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), AppSetting_rd_Controller.entity_name));
 		
 		// find entity to update (oldValue)
 		AppSetting oldValueEntity = repo.findOne(appSetting.getIdappsetting()); 
 		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity==null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity, appSetting.getIdappsetting().toString());
+		if (oldValueEntity==null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity_name, entity_id, appSetting.getIdappsetting().toString());
 		// get created date
 		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
@@ -233,8 +250,8 @@ public class AppSetting_rd_Controller {
 				
 		// create standard response
 		UpdateResponseDTO<AppSettingDTO> response = new UpdateResponseDTO<AppSettingDTO>();
-		response.setEntityName(AppSetting_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), AppSetting_rd_Controller.entity));
+		response.setEntityName(AppSetting_rd_Controller.entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), AppSetting_rd_Controller.entity_name));
 		// add new dtos values
 		List<AppSettingDTO> newAppSettingDTOs = new ArrayList<AppSettingDTO>();
 		newAppSettingDTOs.add(newValueDTO);
@@ -249,7 +266,9 @@ public class AppSetting_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Delete an application setting
+	 * @param appSetting
+	 * @param request
 	 * @return
 	 */
 	@Transactional("rdTm")
@@ -257,6 +276,6 @@ public class AppSetting_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody String delete(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) {
-		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), AppSetting_rd_Controller.entity);
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), AppSetting_rd_Controller.entity_name);
 	}
 }

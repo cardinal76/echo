@@ -56,6 +56,11 @@ import it.clevercom.echo.rd.repository.IPatient_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * Patient Controller
+ * @author luca
+ */
+
 public class Patient_rd_Controller {
 
 	@Autowired
@@ -79,9 +84,12 @@ public class Patient_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 
 	// used to bind it in exception message
-	private static String entity = "Patient";
+	private static String entity_name = "Patient";
+	private static String entity_id = "idpatient";
+
 
 	/**
+	 * Get patient by id
 	 * @param id
 	 * @return
 	 * @throws Exception
@@ -92,12 +100,17 @@ public class Patient_rd_Controller {
 	@Loggable
 	public @ResponseBody PatientDTO get(@PathVariable Long id) throws Exception {
 		Patient entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(Patient_rd_Controller.entity, id.toString());
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, PatientDTO.class);
 	}
 
 	/**
+	 * Get patient by external code with pagination
 	 * @param extcode
+	 * @param page
+	 * @param size
+	 * @param sort
+	 * @param field
 	 * @return
 	 * @throws Exception
 	 */
@@ -105,11 +118,12 @@ public class Patient_rd_Controller {
 	@RequestMapping(value = "/extcode/{extcode}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<PatientCodingActorDTO> getByExternalCode(@PathVariable String extcode,
-																		   @RequestParam(defaultValue = "1", required = false) int page,
-																		   @RequestParam(defaultValue = "15", required = false) int size,
-																		   @RequestParam(defaultValue = "asc", required = false) String sort,
-																		   @RequestParam(defaultValue = "idpatientcodingactor", required = false) String field) throws Exception {
+	public @ResponseBody PagedDTO<PatientCodingActorDTO> getByExternalCode(
+			@PathVariable String extcode,
+			@RequestParam(defaultValue = "1", required = false) int page,
+			@RequestParam(defaultValue = "15", required = false) int size,
+			@RequestParam(defaultValue = "asc", required = false) String sort,
+			@RequestParam(defaultValue = "idpatientcodingactor", required = false) String field) throws Exception {
 		
 		// create paged request
 		PageRequest request = null;
@@ -125,7 +139,7 @@ public class Patient_rd_Controller {
 		List<PatientCodingActor> patientCodingActorList = repo_pc.findByExternalcode(extcode, request);
 
 		if (patientCodingActorList.size() == 0)
-			throw new RecordNotFoundException(Patient_rd_Controller.entity, extcode);
+			throw new RecordNotFoundException(entity_name, entity_id, extcode);
 
 		List<PatientCodingActorDTO> patientCodingActorDTOList = new ArrayList<PatientCodingActorDTO>();
 		for (PatientCodingActor patientCodingActor : patientCodingActorList) {
@@ -151,6 +165,7 @@ public class Patient_rd_Controller {
 	}
 
 	/**
+	 * Get patient by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
@@ -204,7 +219,7 @@ public class Patient_rd_Controller {
 		List<Patient> entities = rs.getContent();
 
 		if (entities.size() == 0)
-			throw new PageNotFoundException(Patient_rd_Controller.entity, page);
+			throw new PageNotFoundException(Patient_rd_Controller.entity_name, page);
 
 		// map list
 		List<PatientDTO> patientDTOList = new ArrayList<PatientDTO>();
@@ -223,6 +238,7 @@ public class Patient_rd_Controller {
 	}
 
 	/**
+	 * Add patient 
 	 * @param patient
 	 * @param request
 	 * @return
@@ -252,8 +268,8 @@ public class Patient_rd_Controller {
 
 		// create standard response
 		CreateResponseDTO<PatientDTO> response = new CreateResponseDTO<PatientDTO>();
-		response.setEntityName(Patient_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Patient_rd_Controller.entity));
+		response.setEntityName(Patient_rd_Controller.entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Patient_rd_Controller.entity_name));
 		List<PatientDTO> patientDTOs = new ArrayList<PatientDTO>();
 		patientDTOs.add(patient.buildExtendedObject());
 		response.setNewValue(patientDTOs);
@@ -263,6 +279,7 @@ public class Patient_rd_Controller {
 	}
 
 	/**
+	 * Update patient
 	 * @param patient
 	 * @param request
 	 * @return
@@ -281,13 +298,13 @@ public class Patient_rd_Controller {
 		// if an id is not present throw bad request
 		if (patient.getIdPatient() == null)
 			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"),
-					Patient_rd_Controller.entity));
+					Patient_rd_Controller.entity_name));
 
 		// find entity to update (oldValue)
 		Patient oldValueEntity = repo.findOne(patient.getIdPatient());
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity == null)
-			throw new RecordNotFoundException(Patient_rd_Controller.entity, patient.getIdPatient().toString());
+			throw new RecordNotFoundException(entity_name, entity_id, patient.getIdPatient().toString());
 		// get created date
 		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
@@ -308,8 +325,8 @@ public class Patient_rd_Controller {
 
 		// create standard response
 		UpdateResponseDTO<PatientDTO> response = new UpdateResponseDTO<PatientDTO>();
-		response.setEntityName(Patient_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Patient_rd_Controller.entity));
+		response.setEntityName(Patient_rd_Controller.entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Patient_rd_Controller.entity_name));
 		// add new dtos values
 		List<PatientDTO> newPatientDTOs = new ArrayList<PatientDTO>();
 		newPatientDTOs.add(patient);
@@ -325,6 +342,7 @@ public class Patient_rd_Controller {
 	}
 
 	/**
+	 * Delete patient
 	 * @return
 	 */
 	@Transactional("rdTm")

@@ -54,6 +54,11 @@ import it.clevercom.echo.rd.repository.IRegion_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * Country Controller
+ * @author luca
+ */
+
 public class Country_rd_Controller {
 	// hard coded data 
 	public static Long localCountryId = 1105l;
@@ -80,16 +85,20 @@ public class Country_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "Country";
-	private static String r_entity = "Region";
-	private static String p_entity = "Province";
-	private static String m_entity = "Muicipality";
+	private static String entity_name = "Country";
+	private static String entity_id = "idcountry";
+	private static String r_entity_name = "Region";
+	private static String r_entity_id = "idregion";
+	private static String p_entity_name = "Province";
+	private static String p_entity_id = "idprovince";
+	private static String m_entity_name = "Municipality";
+	private static String m_entity_id = "idmunicipality";
 	
 	/**
-	 * 
+	 * Get country by id
 	 * @param id
 	 * @return
-	 * @throws EchoException
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
@@ -97,15 +106,15 @@ public class Country_rd_Controller {
 	@Loggable
 	public @ResponseBody CountryDTO get(@PathVariable Long id) throws Exception {
 		Country entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(Country_rd_Controller.entity, id.toString());
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, CountryDTO.class);
 	}
 	
 	/**
-	 * 
-	 * @param id
+	 * Get region by country 
+	 * @param id_country
 	 * @return
-	 * @throws EchoException
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="/{id_country}/region", method = RequestMethod.GET)
@@ -115,7 +124,7 @@ public class Country_rd_Controller {
 		List<Region> regions = new ArrayList<Region>();
 		Country country = repo.findOne(id_country);
 		
-		if (country == null) throw new RecordNotFoundException(Country_rd_Controller.entity, id_country.toString());
+		if (country == null) throw new RecordNotFoundException(entity_name, entity_id, id_country.toString());
 		
 		if (country.getIdcountry().longValue() != localCountryId.longValue()) {
 			// return unknown region
@@ -142,10 +151,11 @@ public class Country_rd_Controller {
 	}
 	
 	/**
-	 * 
-	 * @param id
+	 * Get province by country and region
+	 * @param id_country
+	 * @param id_region
 	 * @return
-	 * @throws EchoException
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="/{id_country}/region/{id_region}/province", method = RequestMethod.GET)
@@ -156,13 +166,13 @@ public class Country_rd_Controller {
 
 		// find selected country
 		Country country = repo.findOne(id_country);
-		if (country == null) throw new RecordNotFoundException(Country_rd_Controller.entity, id_country.toString());
+		if (country == null) throw new RecordNotFoundException(entity_name, entity_id, id_country.toString());
 		
 		// find selected region
 		Region region = repo_r.findOne(id_region);
-		if (region == null) throw new RecordNotFoundException(Country_rd_Controller.r_entity, id_region.toString());
+		if (region == null) throw new RecordNotFoundException(r_entity_name, r_entity_id, id_region.toString());
 		if (region.getCountry().getIdcountry().longValue() != country.getIdcountry()) {
-			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.hibernate.parentmismatch"), Country_rd_Controller.entity, id_country, Country_rd_Controller.r_entity, id_region));
+			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.hibernate.parentmismatch"), entity_name, id_country, r_entity_name, id_region));
 		}
 		
 		provinces.addAll(repo_p.findByRegion(region, new Sort("provincename")));
@@ -184,10 +194,12 @@ public class Country_rd_Controller {
 	}
 	
 	/**
-	 * 
-	 * @param id
+	 * Get municipalities by country, region, province
+	 * @param id_country
+	 * @param id_region
+	 * @param id_province
 	 * @return
-	 * @throws EchoException
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="/{id_country}/region/{id_region}/province/{id_province}/municipality", method = RequestMethod.GET)
@@ -198,25 +210,25 @@ public class Country_rd_Controller {
 
 		// find selected country
 		Country country = repo.findOne(id_country);
-		if (country == null) throw new RecordNotFoundException(Country_rd_Controller.entity, id_country.toString());
+		if (country == null) throw new RecordNotFoundException(entity_name, entity_id, id_country.toString());
 		
 		// find selected region
 		Region region = repo_r.findOne(id_region);
-		if (region == null) throw new RecordNotFoundException(Country_rd_Controller.r_entity, id_region.toString());
+		if (region == null) throw new RecordNotFoundException(r_entity_name, r_entity_id, id_region.toString());
 		if (region.getCountry().getIdcountry().longValue() != country.getIdcountry()) {
-			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.hibernate.parentmismatch"), Country_rd_Controller.entity, id_country, Country_rd_Controller.r_entity, id_region));
+			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.hibernate.parentmismatch"), entity_name, id_country, r_entity_name, id_region));
 		}
 		
 		// find selected province
 		Province province = repo_p.findOne(id_province);
-		if (province == null) throw new RecordNotFoundException(Country_rd_Controller.p_entity, id_province.toString());
+		if (province == null) throw new RecordNotFoundException(p_entity_name, p_entity_id, id_province.toString());
 		if (region.getCountry().getIdcountry().longValue() != country.getIdcountry()) {
-			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.hibernate.parentmismatch"), Country_rd_Controller.r_entity, id_region, Country_rd_Controller.p_entity, id_province));
+			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.hibernate.parentmismatch"), r_entity_name, id_region, p_entity_name, id_province));
 		}
 		
 		// find selected municipalities
 		List<Municipality> municipality = repo_m.findByProvince(province, new Sort("municipalityname")); 
-		if (municipality == null || municipality.size()==0) throw new RecordNotFoundException(Country_rd_Controller.m_entity);
+		if (municipality == null || municipality.size()==0) throw new RecordNotFoundException(m_entity_name, p_entity_id, province.getIdprovince().toString());
 
 		// add to list
 		municipalities.addAll(municipality);
@@ -239,11 +251,12 @@ public class Country_rd_Controller {
 	
 	
 	/**
+	 * Get country by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
 	 * @param sort
-	 * @param param
+	 * @param field
 	 * @return
 	 * @throws Exception
 	 */
@@ -251,11 +264,13 @@ public class Country_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<CountryDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																@RequestParam(defaultValue="1", required=false) int page, 
-																@RequestParam(defaultValue="500", required=false) int size, 
-																@RequestParam(defaultValue="asc", required=false) String sort, 
-																@RequestParam(defaultValue="idcountry", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<CountryDTO> getByCriteria (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="500", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue="idcountry", required=false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 		
@@ -289,7 +304,7 @@ public class Country_rd_Controller {
         long totalElements = rs.getTotalElements();
 		List<Country> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(Country_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(entity_name, page);
 		
 		// map list
 		List<CountryDTO> countryDTOList = new ArrayList<CountryDTO>();

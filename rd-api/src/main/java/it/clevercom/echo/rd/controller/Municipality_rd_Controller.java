@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
-import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
@@ -43,6 +42,11 @@ import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * Municipality Controller
+ * @author luca
+ */
+
 public class Municipality_rd_Controller {
 	@Autowired
 	private Environment env;
@@ -56,13 +60,14 @@ public class Municipality_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "Municipality";
+	private static String entity_name = "Municipality";
+	private static String entity_id = "idmunicipality";
 	
 	/**
-	 * 
+	 * Get municipality by id
 	 * @param id
 	 * @return
-	 * @throws EchoException
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
@@ -70,16 +75,17 @@ public class Municipality_rd_Controller {
 	@Loggable
 	public @ResponseBody MunicipalityDTO get(@PathVariable Long id) throws Exception {
 		Municipality entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(Municipality_rd_Controller.entity, id.toString());
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, MunicipalityDTO.class);
 	}
 	
 	/**
+	 * Get municipality list by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
 	 * @param sort
-	 * @param param
+	 * @param field
 	 * @return
 	 * @throws Exception
 	 */
@@ -87,11 +93,13 @@ public class Municipality_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<MunicipalityDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																	@RequestParam(defaultValue="1", required=false) int page, 
-																	@RequestParam(defaultValue="20000", required=false) int size, 
-																	@RequestParam(defaultValue="asc", required=false) String sort, 
-																	@RequestParam(defaultValue="idmunicipality", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<MunicipalityDTO> getByCriteria (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="20000", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue="idmunicipality", required=false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 		
@@ -125,7 +133,7 @@ public class Municipality_rd_Controller {
         long totalElements = rs.getTotalElements();
 		List<Municipality> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(Municipality_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(Municipality_rd_Controller.entity_name, page);
 		
 		// map list
 		List<MunicipalityDTO> municipalityDTOList = new ArrayList<MunicipalityDTO>();

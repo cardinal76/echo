@@ -52,6 +52,11 @@ import it.clevercom.echo.rd.repository.IBodyApparatus_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * Body Apparatus Controller
+ * @author luca
+ */
+
 public class BodyApparatus_rd_Controller {
 
 	@Autowired
@@ -72,13 +77,14 @@ public class BodyApparatus_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "BodyApparatus";
-	
+	private static String entity_name = "BodyApparatus";
+	private static String entity_id = "idbodyapparatus";
+
 	/**
-	 * 
+	 * Get a body apparatus by id
 	 * @param id
 	 * @return
-	 * @throws EchoException
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
@@ -86,16 +92,17 @@ public class BodyApparatus_rd_Controller {
 	@Loggable
 	public @ResponseBody BodyApparatusDTO get(@PathVariable Long id) throws Exception {
 		BodyApparatus entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(BodyApparatus_rd_Controller.entity, id.toString());
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, BodyApparatusDTO.class);
 	}
 	
 	/**
+	 * Get a body apparatus list by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
 	 * @param sort
-	 * @param param
+	 * @param field
 	 * @return
 	 * @throws Exception
 	 */
@@ -103,11 +110,13 @@ public class BodyApparatus_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<BodyApparatusDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																	@RequestParam(defaultValue="1", required=false) int page, 
-																	@RequestParam(defaultValue="1000", required=false) int size, 
-																	@RequestParam(defaultValue="asc", required=false) String sort, 
-																	@RequestParam(defaultValue="code", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<BodyApparatusDTO> getByCriteria (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="1000", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue="code", required=false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 		
@@ -141,7 +150,7 @@ public class BodyApparatus_rd_Controller {
         long totalElements = rs.getTotalElements();
 		List<BodyApparatus> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(BodyApparatus_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(entity_name, page);
 		
 		// map list
 		List<BodyApparatusDTO> bodyApparatusDTOList = new ArrayList<BodyApparatusDTO>();
@@ -160,8 +169,11 @@ public class BodyApparatus_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Add a body apparatus
+	 * @param bodyapparatus
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.POST)
@@ -184,8 +196,8 @@ public class BodyApparatus_rd_Controller {
 		
 		// create standard response
 		CreateResponseDTO<BodyApparatusDTO> response = new CreateResponseDTO<BodyApparatusDTO>();
-		response.setEntityName(BodyApparatus_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), BodyApparatus_rd_Controller.entity));
+		response.setEntityName(entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 		List<BodyApparatusDTO> bodyApparatusDTOs = new ArrayList<BodyApparatusDTO>();
 		bodyApparatusDTOs.add(bodyapparatus);
 		response.setNewValue(bodyApparatusDTOs);
@@ -195,8 +207,11 @@ public class BodyApparatus_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Update a body apparatus
+	 * @param bodyApparatus
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.PUT)
@@ -208,12 +223,12 @@ public class BodyApparatus_rd_Controller {
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 		
 		// if an id is not present throw bad request
-		if(bodyApparatus.getIdbodyapparatus()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), BodyApparatus_rd_Controller.entity));
+		if(bodyApparatus.getIdbodyapparatus()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), entity_name));
 		
 		// find entity to update (oldValue)
 		BodyApparatus oldValueEntity = repo.findOne(bodyApparatus.getIdbodyapparatus()); 
 		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity==null) throw new RecordNotFoundException(BodyApparatus_rd_Controller.entity, bodyApparatus.getIdbodyapparatus().toString());
+		if (oldValueEntity==null) throw new RecordNotFoundException(entity_name, entity_id, bodyApparatus.getIdbodyapparatus().toString());
 		// get created date
 		Date created = oldValueEntity.getCreated();
 		// map old value to a dto
@@ -233,8 +248,8 @@ public class BodyApparatus_rd_Controller {
 				
 		// create standard response
 		UpdateResponseDTO<BodyApparatusDTO> response = new UpdateResponseDTO<BodyApparatusDTO>();
-		response.setEntityName(BodyApparatus_rd_Controller.entity);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), BodyApparatus_rd_Controller.entity));
+		response.setEntityName(entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 		// add new dtos values
 		List<BodyApparatusDTO> newBodyApparatusDTOs = new ArrayList<BodyApparatusDTO>();
 		newBodyApparatusDTOs.add(newValueDTO);
@@ -249,7 +264,9 @@ public class BodyApparatus_rd_Controller {
 	}
 	
 	/**
-	 * 
+	 * Delete a body apparatus 
+	 * @param bodyApparatus
+	 * @param request
 	 * @return
 	 */
 	@Transactional("rdTm")
@@ -257,6 +274,6 @@ public class BodyApparatus_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody String delete(@RequestBody BodyApparatusDTO bodyApparatus, HttpServletRequest request) {
-		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), BodyApparatus_rd_Controller.entity);
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), entity_name);
 	}
 }

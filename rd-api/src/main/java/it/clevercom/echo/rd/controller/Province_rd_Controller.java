@@ -25,12 +25,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
-import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
-import it.clevercom.echo.rd.model.dto.ProvinceDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
+import it.clevercom.echo.rd.model.dto.ProvinceDTO;
 import it.clevercom.echo.rd.model.entity.Province;
 import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
@@ -44,6 +43,11 @@ import it.clevercom.echo.rd.repository.IProvince_rd_Repository;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
+/**
+ * Province Controller
+ * @author luca
+ *
+ */
 public class Province_rd_Controller {
 
 	@Autowired
@@ -61,13 +65,14 @@ public class Province_rd_Controller {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity = "Province";
+	private static String entity_name = "Province";
+	private static String entity_id = "idprovince";
 	
 	/**
-	 * 
+	 * Get province by id
 	 * @param id
 	 * @return
-	 * @throws EchoException
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
@@ -75,16 +80,17 @@ public class Province_rd_Controller {
 	@Loggable
 	public @ResponseBody ProvinceDTO get(@PathVariable Long id) throws Exception {
 		Province entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(Province_rd_Controller.entity, id.toString());
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		return rdDozerMapper.map(entity, ProvinceDTO.class);
 	}
 	
 	/**
+	 * Get province list by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
 	 * @param sort
-	 * @param param
+	 * @param field
 	 * @return
 	 * @throws Exception
 	 */
@@ -92,11 +98,13 @@ public class Province_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<ProvinceDTO> getByCriteria (	@RequestParam(defaultValue="null", required=false) String criteria, 
-																@RequestParam(defaultValue="1", required=false) int page, 
-																@RequestParam(defaultValue="500", required=false) int size, 
-																@RequestParam(defaultValue="asc", required=false) String sort, 
-																@RequestParam(defaultValue="idprovince", required=false) String field) throws Exception {
+	public @ResponseBody PagedDTO<ProvinceDTO> getByCriteria (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="500", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue="idprovince", required=false) String field) throws Exception {
+		
 		// create paged request
 		PageRequest request = null;
 		
@@ -130,7 +138,7 @@ public class Province_rd_Controller {
         long totalElements = rs.getTotalElements();
 		List<Province> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(Province_rd_Controller.entity, page);
+		if (entity.size() == 0) throw new PageNotFoundException(Province_rd_Controller.entity_name, page);
 		
 		// map list
 		List<ProvinceDTO> provinceDTOList = new ArrayList<ProvinceDTO>();

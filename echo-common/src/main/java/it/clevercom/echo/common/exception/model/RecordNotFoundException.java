@@ -12,18 +12,32 @@ public class RecordNotFoundException extends EchoException {
 	private static final long serialVersionUID = 1L;
 	
 	private String entityName;
-	private String recordId;
+	private String param;
+	private String value;
 	
+	/**
+	 * @param message
+	 */
 	public RecordNotFoundException(String message) {
 		super(message);
 	}
 
-	public RecordNotFoundException(String entityName, String recordId) {
+	/**
+	 * @param entityName
+	 * @param param
+	 * @param value
+	 */
+	public RecordNotFoundException(String entityName, String param, String value) {
 		super("no record has been found.");
 		this.entityName = entityName;
-		this.recordId = recordId;
+		this.param = param;
+		this.value = value;
 	}
 
+	/**
+	 * @param message
+	 * @param cause
+	 */
 	public RecordNotFoundException(String message, Throwable cause) {
 		super(message, cause);
 	}
@@ -43,17 +57,31 @@ public class RecordNotFoundException extends EchoException {
 	}
 
 	/**
-	 * @return the recordId
+	 * @return the param
 	 */
-	public String getRecordId() {
-		return recordId;
+	public String getParam() {
+		return param;
 	}
 
 	/**
-	 * @param recordId the recordId to set
+	 * @param param the param to set
 	 */
-	public void setRecordId(String recordId) {
-		this.recordId = recordId;
+	public void setParam(String param) {
+		this.param = param;
+	}
+
+	/**
+	 * @return the value
+	 */
+	public String getValue() {
+		return value;
+	}
+
+	/**
+	 * @param value the value to set
+	 */
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	/**
