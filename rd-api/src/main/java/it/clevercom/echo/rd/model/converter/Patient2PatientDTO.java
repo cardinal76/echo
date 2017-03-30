@@ -56,10 +56,10 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			target.setTaxCode((source.getTaxcode() != null) ? source.getTaxcode() : null);
 			
 			// map related complex object
-			if (source.getCitizenship()!=null) target.setCitizenship(rdDozerMapper.map(source.getCitizenship(), BaseObjectDTO.class));
-			if (source.getOrganizationUnitByIdextorganizationunit()!=null) target.setExtOrganizationUnit(rdDozerMapper.map(source.getOrganizationUnitByIdextorganizationunit(), BaseObjectDTO.class));
-			if (source.getOrganizationUnitByIdintorganizationunit()!=null) target.setIntOrganizationUnit(rdDozerMapper.map(source.getOrganizationUnitByIdintorganizationunit(), BaseObjectDTO.class));
-			if (source.getMaritalstatus()!=null) target.setMaritalStatus(rdDozerMapper.map(source.getMaritalstatus(), BaseObjectDTO.class));
+			target.setCitizenship((source.getCitizenship()!=null) ? rdDozerMapper.map(source.getCitizenship(), BaseObjectDTO.class) : null);
+			target.setExtOrganizationUnit((source.getOrganizationUnitByIdextorganizationunit()!=null) ? rdDozerMapper.map(source.getOrganizationUnitByIdextorganizationunit(), BaseObjectDTO.class) : null);
+			target.setIntOrganizationUnit((source.getOrganizationUnitByIdintorganizationunit()!=null) ? rdDozerMapper.map(source.getOrganizationUnitByIdintorganizationunit(), BaseObjectDTO.class) : null);
+			target.setMaritalStatus((source.getMaritalstatus()!=null) ? rdDozerMapper.map(source.getMaritalstatus(), BaseObjectDTO.class) : null);
 			
 			/**
 			 * convert birthplace data
@@ -167,10 +167,10 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			target.setTaxcode((source.getTaxCode() != null) ? source.getTaxCode() : null);
 			
 			// map related complex object
-			if (source.getCitizenship()!=null) target.setCitizenship(rdDozerMapper.map(source.getCitizenship(), Citizenship.class));
-			if (source.getExtOrganizationUnit()!=null) target.setOrganizationUnitByIdextorganizationunit(rdDozerMapper.map(source.getExtOrganizationUnit(), OrganizationUnit.class));
-			if (source.getIntOrganizationUnit()!=null) target.setOrganizationUnitByIdintorganizationunit(rdDozerMapper.map(source.getIntOrganizationUnit(), OrganizationUnit.class));
-			if (source.getMaritalStatus()!=null) target.setMaritalstatus(rdDozerMapper.map(source.getMaritalStatus(), Maritalstatus.class));
+			target.setCitizenship((source.getCitizenship()!=null) ? rdDozerMapper.map(source.getCitizenship(), Citizenship.class) : null);
+			target.setOrganizationUnitByIdextorganizationunit((source.getExtOrganizationUnit()!=null) ? rdDozerMapper.map(source.getExtOrganizationUnit(), OrganizationUnit.class) : null);
+			target.setOrganizationUnitByIdintorganizationunit((source.getIntOrganizationUnit()!=null) ? rdDozerMapper.map(source.getIntOrganizationUnit(), OrganizationUnit.class) : null);
+			target.setMaritalstatus((source.getMaritalStatus()!=null) ? rdDozerMapper.map(source.getMaritalStatus(), Maritalstatus.class) : null);
 			
 			/**
 			 * convert birthplace data
