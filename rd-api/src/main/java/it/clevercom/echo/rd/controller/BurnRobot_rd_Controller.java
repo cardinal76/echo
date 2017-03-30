@@ -111,9 +111,9 @@ public class BurnRobot_rd_Controller {
 		// create paged request
 		PageRequest request = null;
 		
-		if (sort.equals("asc")) {
+		if (sort.equalsIgnoreCase("asc")) {
 			 request = new PageRequest(page-1, size, Direction.ASC, field);
-		} else if (sort.equals("desc")) {
+		} else if (sort.equalsIgnoreCase("desc")) {
 			request = new PageRequest(page-1, size, Direction.DESC, field);
 		} else {
 			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));

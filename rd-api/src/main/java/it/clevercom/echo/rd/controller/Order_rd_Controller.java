@@ -1,8 +1,6 @@
 package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,7 +18,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Range;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -126,9 +123,9 @@ public class Order_rd_Controller {
 		// create paged request
 		PageRequest request = null;
 
-		if (sort.equals("asc")) {
+		if (sort.equalsIgnoreCase("asc")) {
 			request = new PageRequest(page - 1, size, Direction.ASC, field);
-		} else if (sort.equals("desc")) {
+		} else if (sort.equalsIgnoreCase("desc")) {
 			request = new PageRequest(page - 1, size, Direction.DESC, field);
 		} else {
 			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
@@ -204,9 +201,9 @@ public class Order_rd_Controller {
 		// create paged request
 		PageRequest request = null;
 
-		if (sort.equals("asc")) {
+		if (sort.equalsIgnoreCase("asc")) {
 			request = new PageRequest(page - 1, size, Direction.ASC, field);
-		} else if (sort.equals("desc")) {
+		} else if (sort.equalsIgnoreCase("desc")) {
 			request = new PageRequest(page - 1, size, Direction.DESC, field);
 		} else {
 			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
@@ -267,9 +264,9 @@ public class Order_rd_Controller {
 		// create paged request
 		PageRequest request = null;
 		
-		if (sort.equals("asc")) {
+		if (sort.equalsIgnoreCase("asc")) {
 			request = new PageRequest(page - 1, size, Direction.ASC, field);
-		} else if (sort.equals("desc")) {
+		} else if (sort.equalsIgnoreCase("desc")) {
 			request = new PageRequest(page - 1, size, Direction.DESC, field);
 		} else {
 			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
@@ -298,6 +295,8 @@ public class Order_rd_Controller {
 		// return dto;
 		return dto;
 	}
+	
+	
 
 	/**
 	 * @param order

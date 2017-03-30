@@ -17,7 +17,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -115,9 +114,9 @@ public class Patient_rd_Controller {
 		// create paged request
 		PageRequest request = null;
 
-		if (sort.equals("asc")) {
+		if (sort.equalsIgnoreCase("asc")) {
 			request = new PageRequest(page - 1, size, Direction.ASC, field);
-		} else if (sort.equals("desc")) {
+		} else if (sort.equalsIgnoreCase("desc")) {
 			request = new PageRequest(page - 1, size, Direction.DESC, field);
 		} else {
 			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
@@ -174,9 +173,9 @@ public class Patient_rd_Controller {
 		// create paged request
 		PageRequest request = null;
 
-		if (sort.equals("asc")) {
+		if (sort.equalsIgnoreCase("asc")) {
 			request = new PageRequest(page - 1, size, Direction.ASC, field);
-		} else if (sort.equals("desc")) {
+		} else if (sort.equalsIgnoreCase("desc")) {
 			request = new PageRequest(page - 1, size, Direction.DESC, field);
 		} else {
 			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
