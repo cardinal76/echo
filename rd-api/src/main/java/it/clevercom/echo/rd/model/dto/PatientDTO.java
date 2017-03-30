@@ -49,7 +49,7 @@ public class PatientDTO implements Serializable {
 	 */
 	public PatientDTO buildExtendedObject() {
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-		this.setPrettyPrint(this.getName() + " " + this.getSurname() + " (" + ((this.getDateOfBirth()!=null) ? df.format(new Date(this.getDateOfBirth()))  : "--/--/----") + ")");
+		this.setPrettyPrint(this.getSurname() + " " + this.getName() + " (" + ((this.getDateOfBirth()!=null) ? df.format(new Date(this.getDateOfBirth()))  : "--/--/----") + ")");
 		return this;
 	}
 

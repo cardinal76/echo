@@ -38,4 +38,19 @@ public interface IOrder_rd_Repository extends JpaRepository<Order, Long>, JpaSpe
 	 * @return
 	 */
 	public Long countByCreationdateBetween (Date from, Date to);
+	
+	/**
+	 * @param from
+	 * @param to
+	 * @param request
+	 * @return
+	 */
+	public List<Order> findByCreationdateBetweenAndWorkStatus (Date from, Date to, WorkStatus status, Pageable request);
+	
+	/**
+	 * @param from
+	 * @param to
+	 * @return
+	 */
+	public Long countByCreationdateBetween (Date from, Date to, WorkStatus status);
 }
