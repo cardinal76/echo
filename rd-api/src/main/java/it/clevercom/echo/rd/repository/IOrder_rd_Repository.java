@@ -3,6 +3,7 @@ package it.clevercom.echo.rd.repository;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,7 +32,7 @@ public interface IOrder_rd_Repository extends JpaRepository<Order, Long>, JpaSpe
 	 * @param request
 	 * @return
 	 */
-	public List<Order> findByCreationdateBetween (Date from, Date to, Pageable request);
+	public Page<Order> findByCreationdateBetween (Date from, Date to, Pageable request);
 	
 	/**
 	 * @param from
@@ -40,13 +41,28 @@ public interface IOrder_rd_Repository extends JpaRepository<Order, Long>, JpaSpe
 	 */
 	public Long countByCreationdateBetween (Date from, Date to);
 	
+//	/**
+//	 * @param from
+//	 * @param to
+//	 * @param request
+//	 * @return
+//	 */
+//	public Page<Order> findByCreationdateBetween (Date from, Date to, Specification<Order> specification, Pageable request);
+//	
+//	/**
+//	 * @param from
+//	 * @param to
+//	 * @return
+//	 */
+//	public Long countByCreationdateBetween (Date from, Date to, Specification<Order> specification);
+	
 	/**
 	 * @param from
 	 * @param to
 	 * @param request
 	 * @return
 	 */
-	public List<Order> findByCreationdateBetweenAndWorkStatus (Date from, Date to, WorkStatus status, Pageable request);
+	public Page<Order> findByCreationdateBetweenAndWorkStatus (Date from, Date to, WorkStatus status, Pageable request);
 	
 	/**
 	 * @param from
@@ -55,18 +71,18 @@ public interface IOrder_rd_Repository extends JpaRepository<Order, Long>, JpaSpe
 	 */
 	public Long countByCreationdateBetweenAndWorkStatus (Date from, Date to, WorkStatus status);
 	
-	/**
-	 * @param from
-	 * @param to
-	 * @param request
-	 * @return
-	 */
-	public List<Order> findByCreationdateBetweenAndWorkStatus (Date from, Date to, WorkStatus status, Specification<Order> specification, Pageable request);
-	
-	/**
-	 * @param from
-	 * @param to
-	 * @return
-	 */
-	public Long countByCreationdateBetweenAndWorkStatus (Date from, Date to, WorkStatus status, Specification<Order> specification);
+//	/**
+//	 * @param from
+//	 * @param to
+//	 * @param request
+//	 * @return
+//	 */
+//	public Page<Order> findByCreationdateBetweenAndWorkStatus (Date from, Date to, WorkStatus status, Specification<Order> specification, Pageable request);
+//	
+//	/**
+//	 * @param from
+//	 * @param to
+//	 * @return
+//	 */
+//	public Long countByCreationdateBetweenAndWorkStatus (Date from, Date to, WorkStatus status, Specification<Order> specification);
 }

@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -19,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +67,7 @@ import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
  * @author luca
  */
 
-public class Order_rd_Controller extends EchoController{
+public class Order_rd_Controller extends EchoController {
 
 	@Autowired
 	private Environment env;
@@ -121,14 +126,31 @@ public class Order_rd_Controller extends EchoController{
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody PagedDTO<OrderDTO> getByCriteria(
-			@RequestParam(defaultValue = "today", required = false) Long from,
-			@RequestParam(defaultValue = "tomorrow", required = false) Long to,
-			@RequestParam(defaultValue = "REQUESTED", required = false) String status,
+			@RequestParam(defaultValue = "today_start", required = false) Long from,
+			@RequestParam(defaultValue = "today_end", required = false) Long to,
+			@RequestParam(defaultValue = "*", required = false) String status,
 			@RequestParam(defaultValue = "null", required = false) String criteria,
 			@RequestParam(defaultValue = "1", required = false) int page,
 			@RequestParam(defaultValue = "15", required = false) int size,
 			@RequestParam(defaultValue = "asc", required = false) String sort,
 			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
+		
+		// parse long parameter to Date Object
+		Date t1 = DateUtil.getStartOfDay(new Date(from));
+		Date t2 = DateUtil.getEndOfDay(new Date(to));
+		
+		// check status code
+		WorkStatus statusEntity = new WorkStatus();
+		if ((!status.equals("*")) && (!WorkStatusEnum.contains(status))) {
+			throw new BadRequestException(
+					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
+							env.getProperty("echo.api.crud.fields.workstatus"),
+							WorkStatus.class.getDeclaringClass().getEnumConstants().toString()));
+		} else if ((!status.equals("*")) && (WorkStatusEnum.contains(status))) {
+			statusEntity = repo_ws.findByCode(WorkStatusEnum.valueOf(status).code());
+		}
+		
+		final Long statusId = statusEntity.getIdworkstatus();
 		
 		// create paged request
 		PageRequest request = null;
@@ -152,11 +174,46 @@ public class Order_rd_Controller extends EchoController{
 				builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
 			}
 			Specification<Order> spec = builder.build();
-
-			// obtain records
+			
+			// set date interval lower limit
+			Specification<Order> t1s = new Specification<Order>() {
+				@Override
+				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+					return cb.greaterThanOrEqualTo(root.<Date>get("creationdate"), t1);
+				}
+			};
+			
+			// set date interval upper limit
+			Specification<Order> t2s = new Specification<Order>() {
+				@Override
+				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+					return cb.lessThanOrEqualTo(root.<Date>get("creationdate"), t2);
+				}
+			};
+			
+			// add to specification list
+			spec =  Specifications.where(spec).and(t1s).and(t2s);
+			
+			// check status and add it to specification
+			if (!status.equals("*")) {
+				Specification<Order> ss = new Specification<Order>() {
+					@Override
+					public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+						return cb.equal(root.<Long>get("idworkstatus"), statusId);
+					}
+				};
+				
+				// add to specification list
+				spec =  Specifications.where(spec).and(ss);
+			}
+			
 			rs = repo.findAll(spec, request);
 		} else {
-			rs = repo.findAll(request);
+			if (status.equals("*")) {
+				rs = repo.findByCreationdateBetween(t1, t2, request);
+			} else {
+				rs = repo.findByCreationdateBetweenAndWorkStatus(t1, t2, statusEntity, request);
+			}
 		}
 
 		int totalPages = rs.getTotalPages();
@@ -182,78 +239,78 @@ public class Order_rd_Controller extends EchoController{
 		return dto;
 	}
 
-	/**
-	 * Get order by interval and status with pagination
-	 * @param from
-	 * @param to
-	 * @param workstatus
-	 * @param page
-	 * @param size
-	 * @param sort
-	 * @param field
-	 * @return
-	 * @throws Exception
-	 */
-	@Transactional("rdTm")
-	@RequestMapping(value = "/from/{from}/to/{to}/workstatus/{status}", method = RequestMethod.GET)
-	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
-	@Loggable
-	public @ResponseBody PagedDTO<OrderDTO> getByCreationDateAndWorkStatus(
-			@PathVariable Long from,
-			@PathVariable Long to,
-			@PathVariable String status,
-			@RequestParam(defaultValue = "1", required = false) int page,
-			@RequestParam(defaultValue = "15", required = false) int size,
-			@RequestParam(defaultValue = "asc", required = false) String sort,
-			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
-		
-		// parse long parameter to Date Object
-		Date t1 = DateUtil.getStartOfDay(new Date(from));
-		Date t2 = DateUtil.getStartOfDay(new Date(to));
-		
-		if (!WorkStatusEnum.contains(status)) {
-			throw new BadRequestException(
-					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
-							env.getProperty("echo.api.crud.fields.workstatus"),
-							WorkStatus.class.getDeclaringClass().getEnumConstants().toString()));
-		}
-		
-		// create paged request
-		PageRequest request = null;
-		
-		if (sort.equalsIgnoreCase("asc")) {
-			request = new PageRequest(page - 1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page - 1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
-		 
-		WorkStatus statusEntity = repo_ws.findByCode(WorkStatusEnum.valueOf(status).code());
-		
-		List<Order> orders = repo.findByCreationdateBetweenAndWorkStatus(t1, t2, statusEntity, request);
-		
-		if (orders.size() == 0)
-			throw new RecordNotFoundException(entity_name, entity_cd1, statusEntity.getCode());
-		
-		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
-		for (Order order : orders) {
-			orderDTOList.add(rdDozerMapper.map(order, OrderDTO.class));
-		}
-		
-		// assembly dto
-		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
-		dto.setElements(orderDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		// get total count
-		long totalCount = repo.countByCreationdateBetweenAndWorkStatus(t1, t2, statusEntity);
-		dto.setTotalPages((int)Math.ceil(((double) totalCount) / ((double) size)));
-		dto.setTotalElements(totalCount);
-		
-		// return dto;
-		return dto;
-	}
+//	/**
+//	 * Get order by interval and status with pagination
+//	 * @param from
+//	 * @param to
+//	 * @param workstatus
+//	 * @param page
+//	 * @param size
+//	 * @param sort
+//	 * @param field
+//	 * @return
+//	 * @throws Exception
+//	 */
+//	@Transactional("rdTm")
+//	@RequestMapping(value = "/from/{from}/to/{to}/workstatus/{status}", method = RequestMethod.GET)
+//	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+//	@Loggable
+//	public @ResponseBody PagedDTO<OrderDTO> getByCreationDateAndWorkStatus(
+//			@PathVariable Long from,
+//			@PathVariable Long to,
+//			@PathVariable String status,
+//			@RequestParam(defaultValue = "1", required = false) int page,
+//			@RequestParam(defaultValue = "15", required = false) int size,
+//			@RequestParam(defaultValue = "asc", required = false) String sort,
+//			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
+//		
+//		// parse long parameter to Date Object
+//		Date t1 = DateUtil.getStartOfDay(new Date(from));
+//		Date t2 = DateUtil.getStartOfDay(new Date(to));
+//		
+//		if (!WorkStatusEnum.contains(status)) {
+//			throw new BadRequestException(
+//					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
+//							env.getProperty("echo.api.crud.fields.workstatus"),
+//							WorkStatus.class.getDeclaringClass().getEnumConstants().toString()));
+//		}
+//		
+//		// create paged request
+//		PageRequest request = null;
+//		
+//		if (sort.equalsIgnoreCase("asc")) {
+//			request = new PageRequest(page - 1, size, Direction.ASC, field);
+//		} else if (sort.equalsIgnoreCase("desc")) {
+//			request = new PageRequest(page - 1, size, Direction.DESC, field);
+//		} else {
+//			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
+//		}
+//		 
+//		WorkStatus statusEntity = repo_ws.findByCode(WorkStatusEnum.valueOf(status).code());
+//		
+//		Page<Order> orders = repo.findByCreationdateBetweenAndWorkStatus(t1, t2, statusEntity, request);
+//		
+//		if (orders.getContent().size() == 0)
+//			throw new RecordNotFoundException(entity_name, entity_cd1, statusEntity.getCode());
+//		
+//		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
+//		for (Order order : orders) {
+//			orderDTOList.add(rdDozerMapper.map(order, OrderDTO.class));
+//		}
+//		
+//		// assembly dto
+//		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
+//		dto.setElements(orderDTOList);
+//		dto.setPageSize(size);
+//		dto.setCurrentPage(page);
+//		// get total count
+//		long totalCount = repo.countByCreationdateBetweenAndWorkStatus(t1, t2, statusEntity);
+//		dto.setTotalPages((int)Math.ceil(((double) totalCount) / ((double) size)));
+//		dto.setTotalElements(totalCount);
+//		
+//		// return dto;
+//		return dto;
+//	}
 	
 	/**
 	 * Add order
