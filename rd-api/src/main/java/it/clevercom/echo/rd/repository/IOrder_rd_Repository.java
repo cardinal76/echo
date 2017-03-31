@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -53,4 +54,19 @@ public interface IOrder_rd_Repository extends JpaRepository<Order, Long>, JpaSpe
 	 * @return
 	 */
 	public Long countByCreationdateBetweenAndWorkStatus (Date from, Date to, WorkStatus status);
+	
+	/**
+	 * @param from
+	 * @param to
+	 * @param request
+	 * @return
+	 */
+	public List<Order> findByCreationdateBetweenAndWorkStatus (Date from, Date to, WorkStatus status, Specification<Order> specification, Pageable request);
+	
+	/**
+	 * @param from
+	 * @param to
+	 * @return
+	 */
+	public Long countByCreationdateBetweenAndWorkStatus (Date from, Date to, WorkStatus status, Specification<Order> specification);
 }
