@@ -32,4 +32,14 @@ public enum WorkStatusEnum {
 
         return false;
     }
+    
+    public static String enumValuesToString() {
+    	String output = "[";
+    	WorkStatusEnum[] array = WorkStatusEnum.class.getEnumConstants();
+    	for (WorkStatusEnum workStatusEnum : array) {
+			output += workStatusEnum.toString() + ", ";
+		}
+    	output += "]";
+    	return output;
+    }
 }

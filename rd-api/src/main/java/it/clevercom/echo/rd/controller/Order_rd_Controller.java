@@ -1,9 +1,11 @@
 package it.clevercom.echo.rd.controller;
 
+import java.lang.reflect.Array;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.jsonwebtoken.lang.Arrays;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
@@ -45,15 +48,20 @@ import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.ValidationExceptionDTO;
 import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.JwtTokenUtils;
+import it.clevercom.echo.rd.enums.WorkPriorityEnum;
 import it.clevercom.echo.rd.enums.WorkStatusEnum;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.Order;
+import it.clevercom.echo.rd.model.entity.OrderService;
+import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
+import it.clevercom.echo.rd.repository.IOrderService_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrder_rd_Repository;
+import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 
 @Controller
@@ -74,10 +82,16 @@ public class Order_rd_Controller extends EchoController {
 
 	@Autowired
 	private IOrder_rd_Repository repo;
-
+	
+	@Autowired
+	private IOrderService_rd_Repository repo_os;
+	
 	@Autowired
 	private IWorkStatus_rd_Repository repo_ws;
 
+	@Autowired
+	private IWorkPriority_rd_Repository repo_wp;
+	
 	@Autowired
 	private DozerBeanMapper rdDozerMapper;
 
@@ -129,6 +143,7 @@ public class Order_rd_Controller extends EchoController {
 			@RequestParam(defaultValue = "today_start", required = false) Long from,
 			@RequestParam(defaultValue = "today_end", required = false) Long to,
 			@RequestParam(defaultValue = "*", required = false) String status,
+			@RequestParam(defaultValue = "*", required = false) String priority,
 			@RequestParam(defaultValue = "null", required = false) String criteria,
 			@RequestParam(defaultValue = "1", required = false) int page,
 			@RequestParam(defaultValue = "15", required = false) int size,
@@ -136,8 +151,8 @@ public class Order_rd_Controller extends EchoController {
 			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
 		
 		// parse long parameter to Date Object
-		Date t1 = DateUtil.getStartOfDay(new Date(from));
-		Date t2 = DateUtil.getEndOfDay(new Date(to));
+		final Date t1 = DateUtil.getStartOfDay(new Date(from));
+		final Date t2 = DateUtil.getEndOfDay(new Date(to));
 		
 		// check status code
 		WorkStatus statusEntity = new WorkStatus();
@@ -145,12 +160,23 @@ public class Order_rd_Controller extends EchoController {
 			throw new BadRequestException(
 					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
 							env.getProperty("echo.api.crud.fields.workstatus"),
-							WorkStatus.class.getDeclaringClass().getEnumConstants().toString()));
+							WorkStatusEnum.enumValuesToString()));
 		} else if ((!status.equals("*")) && (WorkStatusEnum.contains(status))) {
 			statusEntity = repo_ws.findByCode(WorkStatusEnum.valueOf(status).code());
 		}
-		
 		final Long statusId = statusEntity.getIdworkstatus();
+		
+		// check priority code
+		WorkPriority priorityEntity = new WorkPriority();
+		if ((!priority.equals("*")) && (!WorkPriorityEnum.contains(priority))) {
+			throw new BadRequestException(
+					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
+							env.getProperty("echo.api.crud.fields.workpriority"),
+							WorkPriorityEnum.enumValuesToString()));
+		} else if ((!priority.equals("*")) && (WorkPriorityEnum.contains(priority))) {
+			priorityEntity = repo_wp.findByCode(WorkPriorityEnum.valueOf(priority).code());
+		}
+		final Long priorityId = priorityEntity.getIdworkpriority();
 		
 		// create paged request
 		PageRequest request = null;
@@ -165,7 +191,8 @@ public class Order_rd_Controller extends EchoController {
 
 		// create predicate if criteria is not null
 		Page<Order> rs = null;
-
+		Specification<Order> spec = null;
+		
 		if (!criteria.equals("null")) {
 			SpecificationsBuilder<Order, SpecificationQueryHelper<Order>> builder = new SpecificationsBuilder<Order, SpecificationQueryHelper<Order>>();
 			Pattern pattern = Pattern.compile(SearchCriteria.pattern);
@@ -173,48 +200,56 @@ public class Order_rd_Controller extends EchoController {
 			while (matcher.find()) {
 				builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
 			}
-			Specification<Order> spec = builder.build();
+			spec = builder.build();
+		}
 			
-			// set date interval lower limit
-			Specification<Order> t1s = new Specification<Order>() {
+		// set date interval lower limit
+		Specification<Order> t1s = new Specification<Order>() {
+			@Override
+			public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				return cb.greaterThanOrEqualTo(root.<Date>get("creationdate"), t1);
+			}
+		};
+		
+		// set date interval upper limit
+		Specification<Order> t2s = new Specification<Order>() {
+			@Override
+			public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				return cb.lessThanOrEqualTo(root.<Date>get("creationdate"), t2);
+			}
+		};
+		
+		// add to specification list
+		spec =  Specifications.where(spec).and(t1s).and(t2s);
+		
+		// check status and add it to specification
+		if (!status.equals("*")) {
+			Specification<Order> ss = new Specification<Order>() {
 				@Override
 				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-					return cb.greaterThanOrEqualTo(root.<Date>get("creationdate"), t1);
-				}
-			};
-			
-			// set date interval upper limit
-			Specification<Order> t2s = new Specification<Order>() {
-				@Override
-				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-					return cb.lessThanOrEqualTo(root.<Date>get("creationdate"), t2);
+					return cb.equal(root.<WorkStatus>get("workStatus").<Long>get("idworkstatus"), statusId);
 				}
 			};
 			
 			// add to specification list
-			spec =  Specifications.where(spec).and(t1s).and(t2s);
-			
-			// check status and add it to specification
-			if (!status.equals("*")) {
-				Specification<Order> ss = new Specification<Order>() {
-					@Override
-					public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-						return cb.equal(root.<Long>get("idworkstatus"), statusId);
-					}
-				};
-				
-				// add to specification list
-				spec =  Specifications.where(spec).and(ss);
-			}
-			
-			rs = repo.findAll(spec, request);
-		} else {
-			if (status.equals("*")) {
-				rs = repo.findByCreationdateBetween(t1, t2, request);
-			} else {
-				rs = repo.findByCreationdateBetweenAndWorkStatus(t1, t2, statusEntity, request);
-			}
+			spec =  Specifications.where(spec).and(ss);
 		}
+		
+		// check status and add it to specification
+		if (!priority.equals("*")) {
+			Specification<Order> sp = new Specification<Order>() {
+				@Override
+				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+					return cb.equal(root.<WorkPriority>get("workPriority").<Long>get("idworkpriority"), priorityId);
+				}
+			};
+			
+			// add to specification list
+			spec =  Specifications.where(spec).and(sp);
+		}
+		
+		// find with specification and pagination
+		rs = repo.findAll(spec, request);
 
 		int totalPages = rs.getTotalPages();
 		long totalElements = rs.getTotalElements();
@@ -339,6 +374,11 @@ public class Order_rd_Controller extends EchoController {
 
 		// save and map to out dto
 		entity = repo.saveAndFlush(entity);
+		Set<OrderService> associations = entity.getOrderServices();
+		for (OrderService orderService : associations) {
+			repo_os.saveAndFlush(orderService);
+		}
+		
 		// TODO map entity instead of set ID
 		// order = rdDozerMapper.map(entity, OrderDTO.class);
 		order.setIdOrder(entity.getIdorder());

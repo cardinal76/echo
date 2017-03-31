@@ -47,9 +47,11 @@ public class ControllerExceptionHandler {
 	 */
 	@ExceptionHandler(BadRequestException.class)
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST)
-	public @ResponseBody String handleBadRequestException(BadRequestException e) {
+	public @ResponseBody ExceptionDTO handleBadRequestException(BadRequestException e) {
 		logger.error("BadRequestException occurred : ", e);
-		return e.getMessage();
+		ExceptionDTO dto = new ExceptionDTO();
+		dto.setMessage(e.getMessage());
+		return dto;
 	}
 	
 	/**
