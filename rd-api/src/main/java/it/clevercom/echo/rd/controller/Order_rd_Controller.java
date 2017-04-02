@@ -1,10 +1,12 @@
 package it.clevercom.echo.rd.controller;
 
-import java.lang.reflect.Array;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +39,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.jsonwebtoken.lang.Arrays;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
@@ -50,10 +51,12 @@ import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.enums.WorkPriorityEnum;
 import it.clevercom.echo.rd.enums.WorkStatusEnum;
+import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderService;
+import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
@@ -273,79 +276,6 @@ public class Order_rd_Controller extends EchoController {
 		dto.setTotalElements(totalElements);
 		return dto;
 	}
-
-//	/**
-//	 * Get order by interval and status with pagination
-//	 * @param from
-//	 * @param to
-//	 * @param workstatus
-//	 * @param page
-//	 * @param size
-//	 * @param sort
-//	 * @param field
-//	 * @return
-//	 * @throws Exception
-//	 */
-//	@Transactional("rdTm")
-//	@RequestMapping(value = "/from/{from}/to/{to}/workstatus/{status}", method = RequestMethod.GET)
-//	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
-//	@Loggable
-//	public @ResponseBody PagedDTO<OrderDTO> getByCreationDateAndWorkStatus(
-//			@PathVariable Long from,
-//			@PathVariable Long to,
-//			@PathVariable String status,
-//			@RequestParam(defaultValue = "1", required = false) int page,
-//			@RequestParam(defaultValue = "15", required = false) int size,
-//			@RequestParam(defaultValue = "asc", required = false) String sort,
-//			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
-//		
-//		// parse long parameter to Date Object
-//		Date t1 = DateUtil.getStartOfDay(new Date(from));
-//		Date t2 = DateUtil.getStartOfDay(new Date(to));
-//		
-//		if (!WorkStatusEnum.contains(status)) {
-//			throw new BadRequestException(
-//					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
-//							env.getProperty("echo.api.crud.fields.workstatus"),
-//							WorkStatus.class.getDeclaringClass().getEnumConstants().toString()));
-//		}
-//		
-//		// create paged request
-//		PageRequest request = null;
-//		
-//		if (sort.equalsIgnoreCase("asc")) {
-//			request = new PageRequest(page - 1, size, Direction.ASC, field);
-//		} else if (sort.equalsIgnoreCase("desc")) {
-//			request = new PageRequest(page - 1, size, Direction.DESC, field);
-//		} else {
-//			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-//		}
-//		 
-//		WorkStatus statusEntity = repo_ws.findByCode(WorkStatusEnum.valueOf(status).code());
-//		
-//		Page<Order> orders = repo.findByCreationdateBetweenAndWorkStatus(t1, t2, statusEntity, request);
-//		
-//		if (orders.getContent().size() == 0)
-//			throw new RecordNotFoundException(entity_name, entity_cd1, statusEntity.getCode());
-//		
-//		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
-//		for (Order order : orders) {
-//			orderDTOList.add(rdDozerMapper.map(order, OrderDTO.class));
-//		}
-//		
-//		// assembly dto
-//		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
-//		dto.setElements(orderDTOList);
-//		dto.setPageSize(size);
-//		dto.setCurrentPage(page);
-//		// get total count
-//		long totalCount = repo.countByCreationdateBetweenAndWorkStatus(t1, t2, statusEntity);
-//		dto.setTotalPages((int)Math.ceil(((double) totalCount) / ((double) size)));
-//		dto.setTotalElements(totalCount);
-//		
-//		// return dto;
-//		return dto;
-//	}
 	
 	/**
 	 * Add order
@@ -406,19 +336,18 @@ public class Order_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order, HttpServletRequest request)
-			throws Exception {
+	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 
 		// if an id is not present throw bad request
 		if (order.getIdOrder() == null)
-			throw new BadRequestException(
-					MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), entity_name));
+			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), entity_name));
 
 		// find entity to update (oldValue)
 		Order oldValueEntity = repo.findOne(order.getIdOrder());
+		
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity == null)
 			throw new RecordNotFoundException(entity_name, entity_id, order.getIdOrder().toString());
@@ -426,21 +355,63 @@ public class Order_rd_Controller extends EchoController {
 		// validate create request
 		this.validateUpdateRequest(order, oldValueEntity);
 
-		// get created date
+		// save created date
 		Date created = oldValueEntity.getCreated();
-		// map old value to a dto
+		// save old value to a dto
 		OrderDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, OrderDTO.class);
-
-		// begin update of oldValue
+		
+		// save old order services
+		Set<OrderService> oldOrderService = oldValueEntity.getOrderServices();
+		Map<Long, BaseObjectDTO> oldService = new HashMap<Long, BaseObjectDTO>();
+		for (OrderService orderService : oldOrderService) {
+			oldService.put(orderService.getIdorderservice(),rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class));
+		}
+		
+		// map new value to entity
 		rdDozerMapper.map(order, oldValueEntity);
 
-		// adSchedule Dated technical field
+		// set technical field
 		oldValueEntity.setUserupdate(username);
 		oldValueEntity.setUpdated(new Date());
 		oldValueEntity.setCreated(created);
+		oldValueEntity.setActive(true);
 
-		// save and map to out dto
+		/**
+		 * SAVE data
+		 */
+		
+		// save updated entity
 		Order newValueEntity = repo.saveAndFlush(oldValueEntity);
+		
+		// check new item
+		for (BaseObjectDTO service : order.getServices()) {
+			if (!oldService.containsValue(service)) {
+				OrderService orderService = new OrderService();
+				orderService.setActive(true);
+				orderService.setCreated(new Date());
+				orderService.setOrder(newValueEntity);
+				orderService.setService(rdDozerMapper.map(service, Service.class));
+				orderService.setUpdated(new Date());
+				orderService.setUserupdate(username);
+				
+				// save new item
+				repo_os.saveAndFlush(orderService);
+			}
+		}
+
+		// check disabled item
+		for (OrderService orderService : oldOrderService) {
+			BaseObjectDTO current = rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class);
+			if (!order.getServices().contains(current)) {
+				// save new item
+				orderService.setUserupdate(username);
+				orderService.setActive(false);
+				repo_os.saveAndFlush(orderService);
+			}
+		}
+		
+		// TODO save order logs
+		
 		// TODO map newValueDTO instead of using input order
 		// OrderDTO newValueDTO = rdDozerMapper.map(newValueEntity,
 		// OrderDTO.class);
@@ -601,17 +572,17 @@ public class Order_rd_Controller extends EchoController {
 	 */
 	private void validateUpdateRequest(OrderDTO order, Order orderToUpdate) throws ValidationException {
 
-		switch (WorkStatusEnum.valueOf(order.getWorkStatus().getName())) {
-		case ACCEPTED:
-			break;
-		case SCHEDULED:
-			break;
-		case CANCELED:
-			break;
-		case REQUESTED:
-			break;
-		default:
-			break;
-		}
+//		switch (WorkStatusEnum.valueOf(order.getWorkStatus().getName())) {
+//		case ACCEPTED:
+//			break;
+//		case SCHEDULED:
+//			break;
+//		case CANCELED:
+//			break;
+//		case REQUESTED:
+//			break;
+//		default:
+//			break;
+//		}
 	}
 }

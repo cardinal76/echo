@@ -65,4 +65,65 @@ public class BaseObjectDTO implements Serializable {
 	public void setCode(String code) {
 		this.code = code;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		int prime = 37;
+		int result = 17;
+        result = prime * result + ((id==null) ? 0 : id.hashCode());
+        result = prime * result + ((name==null) ? 0 : name.hashCode());
+        result = prime * result + ((code==null) ? 0 : code.hashCode());
+        return result;
+	}
+
+	/**
+	 * @param obj
+	 * @return
+	 */
+	@Override
+	public boolean equals(Object object) {
+		boolean flag = true;
+		if (!(object instanceof BaseObjectDTO)) {
+			return flag &= false;
+		} else {
+			BaseObjectDTO obj = (BaseObjectDTO) object;
+			
+			if ((this.id == null) ^ (obj.id == null)) {
+				flag &= false;
+			} else if ((this.id != null) && (obj.id != null) && (!this.id.equalsIgnoreCase(obj.id))) {
+				flag &= false;
+			} else if ((this.id != null) && (obj.id != null) && (this.id.equalsIgnoreCase(obj.id))) {
+				flag &= true;
+			}
+			
+			if ((this.name == null) ^ (obj.name == null)) {
+				flag &= false;
+			} else if ((this.name != null) && (obj.name != null) && (!this.name.equalsIgnoreCase(obj.name))) {
+				flag &= false;
+			} else if ((this.name != null) && (obj.name != null) && (this.name.equalsIgnoreCase(obj.name))) {
+				flag &= true;
+			}
+			
+			if ((this.code == null) ^ (obj.code == null)) {
+				flag &= false;
+			} else if ((this.code != null) && (obj.code != null) && (!this.code.equalsIgnoreCase(obj.code))) {
+				flag &= false;
+			} else if ((this.code != null) && (obj.code != null) && (this.code.equalsIgnoreCase(obj.code))) {
+				flag &= true;
+			}
+			
+			return flag;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "[id=" + id + ", name=" + name + ", code=" + "code" + "]";
+	}	
 }

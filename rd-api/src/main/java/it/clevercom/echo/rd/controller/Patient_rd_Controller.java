@@ -289,25 +289,26 @@ public class Patient_rd_Controller {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<PatientDTO> update(@RequestBody PatientDTO patient,
-			HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<PatientDTO> update(@RequestBody PatientDTO patient, HttpServletRequest request) throws Exception {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 
 		// if an id is not present throw bad request
 		if (patient.getIdPatient() == null)
-			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"),
-					Patient_rd_Controller.entity_name));
+			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), entity_name));
 
 		// find entity to update (oldValue)
 		Patient oldValueEntity = repo.findOne(patient.getIdPatient());
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity == null)
 			throw new RecordNotFoundException(entity_name, entity_id, patient.getIdPatient().toString());
-		// get created date
+		
+		// validation
+		
+		// save created date
 		Date created = oldValueEntity.getCreated();
-		// map old value to a dto
+		// save old value to a dto
 		PatientDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, PatientDTO.class);
 
 		// begin update of oldValue
