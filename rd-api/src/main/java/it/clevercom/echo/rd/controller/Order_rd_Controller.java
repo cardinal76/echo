@@ -637,22 +637,38 @@ public class Order_rd_Controller extends EchoController {
 	 * @since 1.2.0
 	 */
 	private void validateUpdateRequest(OrderDTO updatedOrder, Order orderToUpdate) throws ValidationException {
-//		// validate status switch
-//		switch (WorkStatusEnum.valueOf(orderToUpdate.getWorkStatus().getCode())) {
-//			case ACCEPTED:
-//				break;
-//			case SCHEDULED:
-//				break;
-//			case CANCELED:
-//				break;
-//			case REQUESTED:
-//				break;
-//			default:
-//				break;
-//		}
-//		
-//		// check target status necessary fields
-//		
+		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
+		
+		switch (WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode())) {
+			case ACCEPTED: {
+				// validate status switch 				
+				if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.ACCEPTED) &&  
+				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.EXECUTED) &&
+				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.CANCELED)) {
+						exceptions.addFieldError(env.getProperty("echo.api.crud.fields.idorder"), env.getProperty("echo.api.crud.validation.mustbeempty"));
+				} 
+				
+				break;
+			}
+			case SCHEDULED: {
+				
+				break;
+			}
+			case CANCELED: {
+				
+				break;
+			}
+			case REQUESTED: {
+				
+				break;
+			}
+			default: {
+				break;
+			}
+		}
+		
+		// check target status necessary fields
+		
 		
 	}
 }
