@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 3-apr-2017 10.51.18 by Hibernate Tools 5.2.2.Final
+// Generated 3-apr-2017 11.29.02 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -55,12 +55,8 @@ public class OrderLog  implements java.io.Serializable {
     }
 
 	
-    public OrderLog(Order order, Long idworksession, Long idworkstatus, Long idworkpriority, String acquisitionchannel, Date creationdate, Date created, Date updated, String userupdate, Boolean active) {
+    public OrderLog(Order order, Date creationdate, Date created, Date updated, String userupdate, Boolean active) {
         this.order = order;
-        this.idworksession = idworksession;
-        this.idworkstatus = idworkstatus;
-        this.idworkpriority = idworkpriority;
-        this.acquisitionchannel = acquisitionchannel;
         this.creationdate = creationdate;
         this.created = created;
         this.updated = updated;
@@ -90,7 +86,7 @@ public class OrderLog  implements java.io.Serializable {
        this.active = active;
     }
    
-     @GenericGenerator(name="generator", strategy="org.hibernate.id.enhanced.SequenceStyleGenerator", parameters={@Parameter(name="optimizer", value="none"), @Parameter(name="sequence_name", value="order_log_idorderlog_seq"), @Parameter(name="increment_size", value="1")})@Id @GeneratedValue(generator="generator")
+     @GenericGenerator(name="generator", strategy="org.hibernate.id.enhanced.SequenceStyleGenerator", parameters={@Parameter(name="optimizer", value="none"), @Parameter(name="sequence_name", value="orderlog_idorderlog_seq"), @Parameter(name="increment_size", value="1")})@Id @GeneratedValue(generator="generator")
 
     
     @Column(name="idorderlog", unique=true, nullable=false)
@@ -113,7 +109,7 @@ public class OrderLog  implements java.io.Serializable {
     }
 
     
-    @Column(name="idworksession", nullable=false)
+    @Column(name="idworksession")
     public Long getIdworksession() {
         return this.idworksession;
     }
@@ -123,7 +119,7 @@ public class OrderLog  implements java.io.Serializable {
     }
 
     
-    @Column(name="idworkstatus", nullable=false)
+    @Column(name="idworkstatus")
     public Long getIdworkstatus() {
         return this.idworkstatus;
     }
@@ -133,7 +129,7 @@ public class OrderLog  implements java.io.Serializable {
     }
 
     
-    @Column(name="idworkpriority", nullable=false)
+    @Column(name="idworkpriority")
     public Long getIdworkpriority() {
         return this.idworkpriority;
     }
@@ -143,7 +139,7 @@ public class OrderLog  implements java.io.Serializable {
     }
 
     
-    @Column(name="acquisitionchannel", nullable=false, length=20)
+    @Column(name="acquisitionchannel", length=20)
     public String getAcquisitionchannel() {
         return this.acquisitionchannel;
     }

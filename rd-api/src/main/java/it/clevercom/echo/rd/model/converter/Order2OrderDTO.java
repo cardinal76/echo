@@ -103,15 +103,6 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 					}
 				}
 			}
-						
-			// iterate
-			Set<OrderLog> orderLogs = source.getOrderLogs();
-			if ((!(orderLogs.isEmpty()))) {
-				target.setOrderLogs(new HashSet<OrderLogDTO>());
-				for (OrderLog orderLog : orderLogs) {
-					target.getOrderLogs().add(rdDozerMapper.map(orderLog, OrderLogDTO.class));
-				}
-			}
 			
 			// inject tech fields
 			target.setActive(source.getActive());
@@ -186,15 +177,6 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 					orderService.setService(service);
 					orderService.setOrder(target);
 					target.getOrderServices().add(orderService);
-				}
-			}
-						
-			// iterate
-			Set<OrderLogDTO> orderLogs = source.getOrderLogs();
-			if ((!(orderLogs.isEmpty()))) {
-				target.setOrderLogs(new HashSet<OrderLog>());
-				for (OrderLogDTO orderLog : orderLogs) {
-					target.getOrderLogs().add(rdDozerMapper.map(orderLog, OrderLog.class));
 				}
 			}
 			

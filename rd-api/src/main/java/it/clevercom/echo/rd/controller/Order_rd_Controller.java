@@ -534,12 +534,6 @@ public class Order_rd_Controller extends EchoController {
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 
-		// order logs should not be present here
-		if ((order.getOrderLogs() != null) && (order.getOrderLogs().size() > 0)) {
-			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.orderlogs"),
-					env.getProperty("echo.api.crud.validation.mustbeempty"));
-		}
-
 		// work session should not be present here
 		if ((order.getWorkSession() != null)) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.worksession"),

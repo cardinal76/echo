@@ -32,7 +32,6 @@ public class OrderDTO implements Serializable {
 	private Date updated;
 	private String userUpdate;
 	private Boolean active;
-	private Set<OrderLogDTO> orderLogs = new HashSet<OrderLogDTO>(0);
 	private Set<BaseObjectDTO> services = new HashSet<BaseObjectDTO>(0);
 	private Set<BaseObjectDTO> canceledServices = new HashSet<BaseObjectDTO>();
 	
@@ -328,20 +327,6 @@ public class OrderDTO implements Serializable {
 	 */
 	public void setActive(Boolean active) {
 		this.active = active;
-	}
-	
-	/**
-	 * @return the orderLogs
-	 */
-	public Set<OrderLogDTO> getOrderLogs() {
-		return orderLogs;
-	}
-	
-	/**
-	 * @param orderLogs the orderLogs to set
-	 */
-	public void setOrderLogs(Set<OrderLogDTO> orderLogs) {
-		this.orderLogs = orderLogs;
 	}
 	
 	/**
