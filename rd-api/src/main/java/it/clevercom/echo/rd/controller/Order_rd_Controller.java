@@ -4,7 +4,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -124,7 +123,7 @@ public class Order_rd_Controller extends EchoController {
 	public @ResponseBody OrderDTO get(@PathVariable Long id) throws Exception {
 		Order entity = repo.findOne(id);
 		if (entity == null)
-			throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+			throw new RecordNotFoundException(entity_name, entity_id, id.toString());		
 		return rdDozerMapper.map(entity, OrderDTO.class);
 	}
 

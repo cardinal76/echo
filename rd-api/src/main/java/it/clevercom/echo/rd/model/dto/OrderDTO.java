@@ -36,6 +36,7 @@ public class OrderDTO implements Serializable {
 	private Boolean active;
 	private Set<OrderLogDTO> orderLogs = new HashSet<OrderLogDTO>(0);
 	private Set<BaseObjectDTO> services = new HashSet<BaseObjectDTO>(0);
+	private Set<BaseObjectDTO> canceledServices = new HashSet<BaseObjectDTO>();
 	
 	/**
 	 * @return the idOrder
@@ -359,6 +360,20 @@ public class OrderDTO implements Serializable {
 		this.services = services;
 	}
 	
+	/**
+	 * @return the canceledServices
+	 */
+	public Set<BaseObjectDTO> getCanceledServices() {
+		return canceledServices;
+	}
+
+	/**
+	 * @param canceledServices the canceledServices to set
+	 */
+	public void setCanceledServices(Set<BaseObjectDTO> canceledServices) {
+		this.canceledServices = canceledServices;
+	}
+
 	/**
 	 * @return the serialversionuid
 	 */
