@@ -56,6 +56,7 @@ import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
+import it.clevercom.echo.rd.model.entity.OrganizationUnit;
 import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
@@ -156,6 +157,9 @@ public class Order_rd_Controller extends EchoController {
 			@RequestParam(defaultValue = "*", required = false) String name,
 			@RequestParam(defaultValue = "*", required = false) String surname,
 			@RequestParam(defaultValue = "*", required = false) String taxCode,
+			@RequestParam(defaultValue = "*", required = false) String channel,
+			@RequestParam(defaultValue = "*", required = false) Long originorgid,
+			@RequestParam(defaultValue = "*", required = false) Long targetorgid,
 			@RequestParam(defaultValue = "1", required = false) int page,
 			@RequestParam(defaultValue = "15", required = false) int size,
 			@RequestParam(defaultValue = "asc", required = false) String sort,
@@ -280,6 +284,45 @@ public class Order_rd_Controller extends EchoController {
 				@Override
 				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 					return cb.equal(cb.lower(root.<Patient>get("patient").<String>get("taxcode")), taxCode.toLowerCase());
+				}
+			};
+			
+			// add to specification list
+			spec =  Specifications.where(spec).and(sp);
+		}
+		
+		// check channel
+		if (!channel.equals("*")) {
+			Specification<Order> sp = new Specification<Order>() {
+				@Override
+				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+					return cb.equal(cb.lower(root.<String>get("acquisitionChannel")), channel.toLowerCase());
+				}
+			};
+			
+			// add to specification list
+			spec =  Specifications.where(spec).and(sp);
+		}
+		
+		// check target organization unit
+		if (!targetorgid.equals("*")) {
+			Specification<Order> sp = new Specification<Order>() {
+				@Override
+				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+					return cb.equal(root.<OrganizationUnit>get("organizationUnitByTargetorganizationunitid").<Long>get("idorganizationunit"), targetorgid);
+				}
+			};
+			
+			// add to specification list
+			spec =  Specifications.where(spec).and(sp);
+		}
+		
+		// check origin organization unit
+		if (!originorgid.equals("*")) {
+			Specification<Order> sp = new Specification<Order>() {
+				@Override
+				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+					return cb.equal(root.<OrganizationUnit>get("organizationUnitByOriginorganizationunitid").<Long>get("idorganizationunit"), originorgid);
 				}
 			};
 			
