@@ -56,6 +56,7 @@ import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
+import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
@@ -152,6 +153,9 @@ public class Order_rd_Controller extends EchoController {
 			@RequestParam(defaultValue = "*", required = false) String status,
 			@RequestParam(defaultValue = "*", required = false) String priority,
 			@RequestParam(defaultValue = "null", required = false) String criteria,
+			@RequestParam(defaultValue = "*", required = false) String name,
+			@RequestParam(defaultValue = "*", required = false) String surname,
+			@RequestParam(defaultValue = "*", required = false) String taxCode,
 			@RequestParam(defaultValue = "1", required = false) int page,
 			@RequestParam(defaultValue = "15", required = false) int size,
 			@RequestParam(defaultValue = "asc", required = false) String sort,
@@ -226,7 +230,7 @@ public class Order_rd_Controller extends EchoController {
 			}
 		};
 		
-		// add to specification list
+		// add date interval to specification list
 		spec =  Specifications.where(spec).and(t1s).and(t2s);
 		
 		// check status and add it to specification
@@ -248,6 +252,34 @@ public class Order_rd_Controller extends EchoController {
 				@Override
 				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 					return cb.equal(root.<WorkPriority>get("workPriority").<Long>get("idworkpriority"), priorityId);
+				}
+			};
+			
+			// add to specification list
+			spec =  Specifications.where(spec).and(sp);
+		}
+		
+		// check patient name and surname
+		if ((!name.equals("*")) && (!surname.equals("*"))) {
+			Specification<Order> sp = new Specification<Order>() {
+				@Override
+				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+					Predicate surname_p = cb.equal(cb.lower(root.<Patient>get("patient").<String>get("surname")), surname.toLowerCase());
+					Predicate name_p = cb.equal(cb.lower(root.<Patient>get("patient").<String>get("name")), name.toLowerCase());
+					return cb.and(surname_p, name_p);
+				}
+			};
+			
+			// add to specification list
+			spec =  Specifications.where(spec).and(sp);
+		}
+		
+		// check patient taxcode
+		if (!taxCode.equals("*")) {
+			Specification<Order> sp = new Specification<Order>() {
+				@Override
+				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+					return cb.equal(cb.lower(root.<Patient>get("patient").<String>get("taxcode")), taxCode.toLowerCase());
 				}
 			};
 			
