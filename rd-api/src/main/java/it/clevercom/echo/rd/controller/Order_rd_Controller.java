@@ -305,6 +305,7 @@ public class Order_rd_Controller extends EchoController {
 		entity = repo.saveAndFlush(entity);
 		Set<OrderService> associations = entity.getOrderServices();
 		for (OrderService orderService : associations) {
+			orderService.setUserupdate(username);
 			repo_os.saveAndFlush(orderService);
 		}
 		
