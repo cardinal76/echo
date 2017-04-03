@@ -54,6 +54,7 @@ import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.Order;
+import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
@@ -61,6 +62,7 @@ import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
+import it.clevercom.echo.rd.repository.IOrderLog_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderService_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrder_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
@@ -87,6 +89,9 @@ public class Order_rd_Controller extends EchoController {
 	
 	@Autowired
 	private IOrderService_rd_Repository repo_os;
+	
+	@Autowired
+	private IOrderLog_rd_Repository repo_ol;
 	
 	@Autowired
 	private IWorkStatus_rd_Repository repo_ws;
@@ -348,6 +353,10 @@ public class Order_rd_Controller extends EchoController {
 		// find entity to update (oldValue)
 		Order oldValueEntity = repo.findOne(order.getIdOrder());
 		
+		// create log
+		OrderLog log = rdDozerMapper.map(oldValueEntity, OrderLog.class);
+		log.setUserupdate(username);
+		
 		// if an entity with given id is not found in DB throw record not found
 		if (oldValueEntity == null)
 			throw new RecordNotFoundException(entity_name, entity_id, order.getIdOrder().toString());
@@ -411,6 +420,8 @@ public class Order_rd_Controller extends EchoController {
 		}
 		
 		// TODO save order logs
+		repo_ol.saveAndFlush(log);
+		
 		
 		// TODO map newValueDTO instead of using input order
 		// OrderDTO newValueDTO = rdDozerMapper.map(newValueEntity,

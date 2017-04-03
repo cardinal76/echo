@@ -7,8 +7,6 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import it.clevercom.echo.rd.model.entity.Patient;
-
 @JsonIgnoreProperties({"created","updated","userUpdate","active"})
 public class OrderDTO implements Serializable {
 	private static final long serialVersionUID = 3464811952700440696L;

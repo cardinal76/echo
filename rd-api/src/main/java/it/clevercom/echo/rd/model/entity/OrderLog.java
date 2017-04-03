@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 30-mar-2017 10.52.53 by Hibernate Tools 5.2.2.Final
+// Generated 3-apr-2017 10.51.18 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -33,7 +33,7 @@ public class OrderLog  implements java.io.Serializable {
      private Order order;
      private Long idworksession;
      private Long idworkstatus;
-     private String prioritycode;
+     private Long idworkpriority;
      private String acquisitionchannel;
      private Date creationdate;
      private Date scheduleddate;
@@ -55,11 +55,11 @@ public class OrderLog  implements java.io.Serializable {
     }
 
 	
-    public OrderLog(Order order, Long idworksession, Long idworkstatus, String prioritycode, String acquisitionchannel, Date creationdate, Date created, Date updated, String userupdate, Boolean active) {
+    public OrderLog(Order order, Long idworksession, Long idworkstatus, Long idworkpriority, String acquisitionchannel, Date creationdate, Date created, Date updated, String userupdate, Boolean active) {
         this.order = order;
         this.idworksession = idworksession;
         this.idworkstatus = idworkstatus;
-        this.prioritycode = prioritycode;
+        this.idworkpriority = idworkpriority;
         this.acquisitionchannel = acquisitionchannel;
         this.creationdate = creationdate;
         this.created = created;
@@ -67,11 +67,11 @@ public class OrderLog  implements java.io.Serializable {
         this.userupdate = userupdate;
         this.active = active;
     }
-    public OrderLog(Order order, Long idworksession, Long idworkstatus, String prioritycode, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, Long originorganizationunitid, Long targetorganizationunitid, String requestingphysician, String orderreason, String rejectreason, String clinicalhistory, String notes, Date created, Date updated, String userupdate, Boolean active) {
+    public OrderLog(Order order, Long idworksession, Long idworkstatus, Long idworkpriority, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, Long originorganizationunitid, Long targetorganizationunitid, String requestingphysician, String orderreason, String rejectreason, String clinicalhistory, String notes, Date created, Date updated, String userupdate, Boolean active) {
        this.order = order;
        this.idworksession = idworksession;
        this.idworkstatus = idworkstatus;
-       this.prioritycode = prioritycode;
+       this.idworkpriority = idworkpriority;
        this.acquisitionchannel = acquisitionchannel;
        this.creationdate = creationdate;
        this.scheduleddate = scheduleddate;
@@ -133,13 +133,13 @@ public class OrderLog  implements java.io.Serializable {
     }
 
     
-    @Column(name="prioritycode", nullable=false, length=100)
-    public String getPrioritycode() {
-        return this.prioritycode;
+    @Column(name="idworkpriority", nullable=false)
+    public Long getIdworkpriority() {
+        return this.idworkpriority;
     }
     
-    public void setPrioritycode(String prioritycode) {
-        this.prioritycode = prioritycode;
+    public void setIdworkpriority(Long idworkpriority) {
+        this.idworkpriority = idworkpriority;
     }
 
     
