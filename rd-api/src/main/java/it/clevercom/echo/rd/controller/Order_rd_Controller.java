@@ -153,13 +153,12 @@ public class Order_rd_Controller extends EchoController {
 			@RequestParam(defaultValue = "today_end", required = false) Long to,
 			@RequestParam(defaultValue = "*", required = false) String status,
 			@RequestParam(defaultValue = "*", required = false) String priority,
+			@RequestParam(defaultValue = "0", required = false) Long originorgid,
+			@RequestParam(defaultValue = "0", required = false) Long targetorgid,
 			@RequestParam(defaultValue = "null", required = false) String criteria,
 			@RequestParam(defaultValue = "*", required = false) String name,
 			@RequestParam(defaultValue = "*", required = false) String surname,
 			@RequestParam(defaultValue = "*", required = false) String taxCode,
-			@RequestParam(defaultValue = "*", required = false) String channel,
-			@RequestParam(defaultValue = "*", required = false) Long originorgid,
-			@RequestParam(defaultValue = "*", required = false) Long targetorgid,
 			@RequestParam(defaultValue = "1", required = false) int page,
 			@RequestParam(defaultValue = "15", required = false) int size,
 			@RequestParam(defaultValue = "asc", required = false) String sort,
@@ -291,21 +290,8 @@ public class Order_rd_Controller extends EchoController {
 			spec =  Specifications.where(spec).and(sp);
 		}
 		
-		// check channel
-		if (!channel.equals("*")) {
-			Specification<Order> sp = new Specification<Order>() {
-				@Override
-				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-					return cb.equal(cb.lower(root.<String>get("acquisitionChannel")), channel.toLowerCase());
-				}
-			};
-			
-			// add to specification list
-			spec =  Specifications.where(spec).and(sp);
-		}
-		
 		// check target organization unit
-		if (!targetorgid.equals("*")) {
+		if (!targetorgid.equals(Long.valueOf(0))) {
 			Specification<Order> sp = new Specification<Order>() {
 				@Override
 				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -316,9 +302,9 @@ public class Order_rd_Controller extends EchoController {
 			// add to specification list
 			spec =  Specifications.where(spec).and(sp);
 		}
-		
+
 		// check origin organization unit
-		if (!originorgid.equals("*")) {
+		if (!originorgid.equals(Long.valueOf(0))) {
 			Specification<Order> sp = new Specification<Order>() {
 				@Override
 				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -428,17 +414,17 @@ public class Order_rd_Controller extends EchoController {
 		// find entity to update (oldValue)
 		Order oldValueEntity = repo.findOne(order.getIdOrder());
 		
+		// if an entity with given id is not found in DB throw record not found
+		if (oldValueEntity == null)
+			throw new RecordNotFoundException(entity_name, entity_id, order.getIdOrder().toString());
+		
+		// validate create request
+		this.validateUpdateRequest(order, oldValueEntity);
+
 		// create log
 		OrderLog log = rdDozerMapper.map(oldValueEntity, OrderLog.class);
 		log.setUserupdate(username);
 		
-		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity == null)
-			throw new RecordNotFoundException(entity_name, entity_id, order.getIdOrder().toString());
-
-		// validate create request
-		this.validateUpdateRequest(order, oldValueEntity);
-
 		// save created date
 		Date created = oldValueEntity.getCreated();
 		// save old value to a dto
@@ -650,19 +636,23 @@ public class Order_rd_Controller extends EchoController {
 	 * @param order passed to the create method
 	 * @since 1.2.0
 	 */
-	private void validateUpdateRequest(OrderDTO order, Order orderToUpdate) throws ValidationException {
-
-//		switch (WorkStatusEnum.valueOf(order.getWorkStatus().getName())) {
-//		case ACCEPTED:
-//			break;
-//		case SCHEDULED:
-//			break;
-//		case CANCELED:
-//			break;
-//		case REQUESTED:
-//			break;
-//		default:
-//			break;
+	private void validateUpdateRequest(OrderDTO updatedOrder, Order orderToUpdate) throws ValidationException {
+//		// validate status switch
+//		switch (WorkStatusEnum.valueOf(orderToUpdate.getWorkStatus().getCode())) {
+//			case ACCEPTED:
+//				break;
+//			case SCHEDULED:
+//				break;
+//			case CANCELED:
+//				break;
+//			case REQUESTED:
+//				break;
+//			default:
+//				break;
 //		}
+//		
+//		// check target status necessary fields
+//		
+		
 	}
 }
