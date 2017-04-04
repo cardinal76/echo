@@ -46,7 +46,15 @@ public class SpecificationQueryHelper<T> implements Specification<T> {
 				return cb.equal(root.get(criteria.getKey()), criteria.getValue());
 			}
 		} else if (criteria.getOperation().equalsIgnoreCase("!")) {
-			return cb.equal(root.get(criteria.getKey()), criteria.getValue());
+			if (root.get(criteria.getKey()).getJavaType() == Boolean.class) {
+				if (criteria.getValue().toString().equalsIgnoreCase("false")) {
+					return cb.isFalse(root.<Boolean> get(criteria.getKey()));
+				} else if (criteria.getValue().toString().equalsIgnoreCase("true")) {
+					return cb.isTrue(root.<Boolean> get(criteria.getKey()));
+				}
+			} else {
+				return cb.equal(root.get(criteria.getKey()), criteria.getValue());
+			}
 		}
 		return null;
 	}

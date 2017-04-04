@@ -670,6 +670,8 @@ public class Order_rd_Controller extends EchoController {
 				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.REQUESTED) {
 					// if update request is REQUESTED do some business validation
 					// 1) some fields should be preserved
+					// 2) some fields should not be present
+					
 					
 				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.SCHEDULED) {
 					// if update request is SCHEDULED do some business validation
