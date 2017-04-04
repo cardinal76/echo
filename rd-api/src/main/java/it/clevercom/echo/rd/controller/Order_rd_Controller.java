@@ -320,6 +320,20 @@ public class Order_rd_Controller extends EchoController {
 			spec =  Specifications.where(spec).and(sp);
 		}
 		
+		// include only active if active!false is not specified in criteria
+		if ((criteria.equals("null")) || ((!criteria.equals("null")) && (!criteria.contains("active!false")) && (!criteria.contains("active!true")))) {
+			Specification<Order> sp = new Specification<Order>() {
+				// add standard active=true
+				@Override
+				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+					return cb.isTrue(root.<Boolean>get("active"));
+				}
+			};
+			
+			// add to specification list
+			spec =  Specifications.where(spec).and(sp);
+		}
+		
 		// find with specification and pagination
 		rs = repo.findAll(spec, request);
 
