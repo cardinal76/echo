@@ -28,6 +28,7 @@ public class OrderDTO implements Serializable {
 	private String rejectReason;
 	private String clinicalHistory;
 	private String notes;
+	private String cancelReason;
 	private Date created;
 	private Date updated;
 	private String userUpdate;
@@ -355,6 +356,20 @@ public class OrderDTO implements Serializable {
 	 */
 	public void setCanceledServices(Set<BaseObjectDTO> canceledServices) {
 		this.canceledServices = canceledServices;
+	}
+	
+	/**
+	 * @return the cancelReason
+	 */
+	public String getCancelReason() {
+		return cancelReason;
+	}
+
+	/**
+	 * @param cancelReason the cancelReason to set
+	 */
+	public void setCancelReason(String cancelReason) {
+		this.cancelReason = cancelReason;
 	}
 
 	/**

@@ -57,6 +57,7 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			target.setRejectReason((source.getRejectreason() != null) ? source.getRejectreason() : null);
 			target.setRequestingPhysician(source.getRequestingphysician() != null ? source.getRequestingphysician() : null);
 			target.setScheduledDate((source.getScheduleddate() != null) ? source.getScheduleddate().getTime() : null);
+			target.setCancelReason((source.getCancelreason() != null) ? source.getCancelreason() : null);
 			
 			// map related complex object
 			
@@ -134,7 +135,8 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			target.setRejectreason((source.getRejectReason() != null) ? source.getRejectReason() : null);
 			target.setRequestingphysician(source.getRequestingPhysician() != null ? source.getRequestingPhysician() : null);
 			target.setScheduleddate((source.getScheduledDate() != null) ? new Date(source.getScheduledDate()) : null);
-			
+			target.setCancelreason((source.getCancelReason() != null) ? source.getCancelReason() : null);
+
 			// map related complex object
 			
 			// origin org unit

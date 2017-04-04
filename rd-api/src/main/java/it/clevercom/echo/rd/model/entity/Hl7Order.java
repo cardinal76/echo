@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 3-apr-2017 11.29.02 by Hibernate Tools 5.2.2.Final
+// Generated 4-apr-2017 12.19.49 by Hibernate Tools 5.2.2.Final
 
 
 import javax.persistence.Column;
