@@ -17,7 +17,7 @@ import it.clevercom.echo.common.util.DateUtil;
 @PropertySource("classpath:rest.rd.properties")
 
 /**
- * Order Controller
+ * Echo Generic Controller
  * @author luca
  */
 
