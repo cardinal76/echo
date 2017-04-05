@@ -123,6 +123,7 @@ public class Order_rd_Controller extends EchoController {
 	 * @category standard get order by id REST method
 	 * @param id
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -146,6 +147,7 @@ public class Order_rd_Controller extends EchoController {
 	 * @param sort
 	 * @param field
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -367,6 +369,7 @@ public class Order_rd_Controller extends EchoController {
 	 * @param order
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -418,6 +421,7 @@ public class Order_rd_Controller extends EchoController {
 	 * @param order
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -535,6 +539,7 @@ public class Order_rd_Controller extends EchoController {
 	 * @param id
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -634,8 +639,8 @@ public class Order_rd_Controller extends EchoController {
 							env.getProperty("echo.api.crud.fields.workstatus"), WorkStatusEnum.REQUESTED.code()));
 		}
 
-		// check if we have some services has been selected
-		if (order.getServices().size() <= 0) {
+		// check if some services has been selected
+		if (order.getServices().size() == 0) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"),
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.emptylist"),
 							env.getProperty("echo.api.crud.fields.service")));
@@ -660,265 +665,434 @@ public class Order_rd_Controller extends EchoController {
 	 * @category business request validation
 	 * @param updatedOrder
 	 * @param orderToUpdate
-	 * @throws ValidationException
 	 * @since 1.2.0
+	 * @throws ValidationException
 	 */
 	private void validateUpdateRequest(OrderDTO updatedOrder, Order orderToUpdate) throws ValidationException {
+		// create exception dto
 		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
+		
+		// --------------------------------------------------------
+		// generic constraints valid for all update operation
+		// all the following update are not permitted at this stage
+		// --------------------------------------------------------
+		
+		// acquisition channel cannot never be updated
+		if (!updatedOrder.getAcquisitionChannel().equals(orderToUpdate.getAcquisitionchannel())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.acquisitionchannel"), 
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
+							entity_name,
+							env.getProperty("echo.api.crud.fields.acquisitionchannel")));
+		}
+		
+		// acquisition channel cannot never be updated
+		if (!updatedOrder.getCreationDate().equals((Long)orderToUpdate.getCreationdate().getTime())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.creationdate"),
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
+							entity_name,
+							env.getProperty("echo.api.crud.fields.creationdate")));
+		}
+		
+		// requesting physician cannot never be updated
+		if (!updatedOrder.getRequestingPhysician().equals(orderToUpdate.getRequestingphysician())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.requestingphysician"),
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
+							entity_name,
+							env.getProperty("echo.api.crud.fields.requestingphysician")));
+		}
+		
+		// order reason cannot never be updated
+		if (!updatedOrder.getOrderReason().equals(orderToUpdate.getOrderreason())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.orderreason"),
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
+							entity_name,
+							env.getProperty("echo.api.crud.fields.orderreason")));
+		}
+		
+		// clinical history cannot never be updated
+		if (!updatedOrder.getClinicalHistory().equals(orderToUpdate.getClinicalhistory())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.clinicalhistory"),
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
+							entity_name,
+							env.getProperty("echo.api.crud.fields.clinicalhistory")));
+		}
+		
+		// patient cannot never be updated
+		if (!updatedOrder.getPatient().getIdPatient().equals(orderToUpdate.getPatient().getIdpatient())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.patient"),
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
+							entity_name,
+							env.getProperty("echo.api.crud.fields.patient")));
+		}
+		
+		// --------------------------
+		// generic service validation
+		// --------------------------
+		
+		// services must not be empty
+		if (updatedOrder.getServices().size() == 0) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"),
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.emptylist"),
+							env.getProperty("echo.api.crud.fields.service")));
+		}
+		
+		// ------------------------
+		// status switch validation
+		// ------------------------
 		
 		// check order update ratio from source (orderToUpdate) to destination (updateOrder)
 		switch (WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode())) {
-			
 			// validate a switch from REQUESTED status
 			case REQUESTED: {
-				// validate status switch 				
-				if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.REQUESTED) &&  
-				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.SCHEDULED) &&
-				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.CANCELED)) {
-						exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"), 
-								MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
-										entity_name,
-										WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
-										WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
-						);
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.REQUESTED) {
-					// if update request is REQUESTED do some business validation
-					// 1) some fields should be preserved
-					// 2) some fields should not be present
-					
-					
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.SCHEDULED) {
-					// if update request is SCHEDULED do some business validation
-					// 1) schedule date must be present and must be in the future
-					
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.CANCELED) {
-					// if update request is CANCELED do some business validation
-					// 1) cancel reason must be present (add field to order DB table)
-					
-				}
+				exceptions.addFieldErrorList(this.validateFromRequestedStatus(updatedOrder, orderToUpdate));
 				break;
 			}
-			
 			// validate a switch from SCHEDULED status
 			case SCHEDULED: {
-				// validate status switch 				
-				if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.SCHEDULED) &&  
-				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.ACCEPTED) &&
-				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.CANCELED)) {
-						exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"), 
-								MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
-										entity_name,
-										WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
-										WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
-						);
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.SCHEDULED) {
-					// if update request is SCHEDULED do some business validation
-					// 1) some fields should be preserved
-					
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.ACCEPTED) {
-					// if update request is ACCEPTED do some business validation
-					// 1) some fields should be preserved
-					
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.CANCELED) {
-					// if update request is CANCELED do some business validation
-					// 1) cancel reason must be present (add field to order DB table)
-					
-				} 
+				exceptions.addFieldErrorList(this.validateFromScheduledStatus(updatedOrder, orderToUpdate));
 				break;
 			}
-			
 			// validate a switch from ACCEPTED status
 			case ACCEPTED: {
-				// validate status switch 				
-				if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.ACCEPTED) &&  
-				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.EXECUTED) &&
-				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.CANCELED)) {
-						exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"), 
-								MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
-										entity_name,
-										WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
-										WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
-						);
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.ACCEPTED) {
-					// if update request is ACCEPTED do some business validation
-					// 1) some fields should be preserved
-					
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.EXECUTED) {
-					// if update request is EXECUTED do some business validation
-					// 1) every order service must be executed
-					
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.CANCELED) {
-					// if update request is CANCELED do some business validation
-					// 1) cancel reason must be present (add field to order DB table)
-					
-				}
-				
+				exceptions.addFieldErrorList(this.validateFromAcceptedStatus(updatedOrder, orderToUpdate));
 				break;
 			}
-			
 			// validate a switch from EXECUTED status
 			case EXECUTED: {
-				// validate status switch 				
-				if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.EXECUTED) &&  
-				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.REPORTED)) {
-						exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"), 
-								MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
-										entity_name,
-										WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
-										WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
-						);
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.EXECUTED) {
-					// if update request is EXECUTED do some business validation
-					// 1) some fields should be preserved
-					
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.REPORTED) {
-					// if update request is REPORTED do some business validation
-					// 1) check that every service has been reported
-					
-				}
+				exceptions.addFieldErrorList(this.validateFromExecutedStatus(updatedOrder, orderToUpdate));
 				break;
 			}
-			
 			// validate a switch from REPORTED status
 			case REPORTED: {
-				// validate status switch 				
-				if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.REPORTED) &&  
-				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.VALIDATED)) {
-						exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"), 
-								MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
-										entity_name,
-										WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
-										WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
-						);
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.REPORTED) {
-					// if update request is REPORTED do some business validation
-					// 1) some fields should be preserved
-					
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.VALIDATED) {
-					// if update request is VALIDATED do some business validation
-					// 1) check that every report has been validated
-					
-				}
+				exceptions.addFieldErrorList(this.validateFromReportedStatus(updatedOrder, orderToUpdate));
 				break;
 			}
-			
 			// validate a switch from VALIDATED status
 			case VALIDATED: {
-				// validate status switch 				
-				if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.VALIDATED) &&  
-				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.SIGNED)) {
-						exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"), 
-								MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
-										entity_name,
-										WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
-										WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
-						);
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.VALIDATED) {
-					// if update request is VALIDATED do some business validation
-					// 1) some fields should be preserved
-					
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.SIGNED) {
-					// if update request is SIGNED do some business validation
-					// 1) check that every report has been validated
-					
-				}
+				exceptions.addFieldErrorList(this.validateFromValidatedStatus(updatedOrder, orderToUpdate));
 				break;
 			}
-			
 			// validate a switch from SIGNED status
 			case SIGNED: {
-				// validate status switch 				
-				if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.SIGNED) &&  
-				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.DELIVERED)) {
-						exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"), 
-								MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
-										entity_name,
-										WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
-										WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
-						);
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.SIGNED) {
-					// if update request is SIGNED do some business validation
-					// 1) some fields should be preserved
-					
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.DELIVERED) {
-					// if update request is DELIVERED do some business validation
-					// 1) check something unknown
-					
-				}
+				exceptions.addFieldErrorList(this.validateFromSignedStatus(updatedOrder, orderToUpdate));
 				break;
 			}
-			
 			// validate a switch from DELIVERED status
 			case DELIVERED: {
-				// validate status switch 				
-				if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.DELIVERED) &&  
-				    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.ARCHIVED)) {
-						exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"), 
-								MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
-										entity_name,
-										WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
-										WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
-						);
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.DELIVERED) {
-					// if update request is DELIVERED do some business validation
-					// 1) some fields should be preserved
-					
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.ARCHIVED) {
-					// if update request is ARCHIVED do some business validation
-					// 1) check something unknown
-					
-				}
+				exceptions.addFieldErrorList(this.validateFromDeliveredStatus(updatedOrder, orderToUpdate));
 				break;
 			}
-			
 			// validate a switch from ARCHIVED status
 			case ARCHIVED: {
-				// validate status switch 				
-				if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.ARCHIVED) {
-						exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"), 
-								MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
-										entity_name,
-										WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
-										WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
-						);
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.ARCHIVED) {
-					// if update request is ARCHIVED do some business validation
-					// 1) some fields should be preserved
-					
-				}
+				exceptions.addFieldErrorList(this.validateFromArchivedStatus(updatedOrder, orderToUpdate));
 				break;
 			}
-			
 			// validate a switch from CANCELED status
 			case CANCELED: {
-				// validate status switch 				
-				if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.CANCELED) {
-						exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"), 
-								MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
-										entity_name,
-										WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
-										WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
-						);		
-				} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.CANCELED) {
-					// if update request is CANCELED do some business validation
-					// 1) some fields should be preserved
-					
-				}
+				exceptions.addFieldErrorList(this.validateFromCanceledStatus(updatedOrder, orderToUpdate));
 				break;
 			}
-			
 			default: {
 				break;
 			}
 		}
 		
-		// check target status necessary fields
-		
-		
+		// throws an exception if field error are > 0
 		if (exceptions.getFieldErrors().size() > 0) {
 			throw new ValidationException(env.getProperty("echo.api.crud.validation.genericmessage"), exceptions);
 		} else {
 			exceptions = null;
 		}
+	}
+
+	/**
+	 * 
+	 * @author luca
+	 * @category business request validation
+	 * @param updatedOrder
+	 * @param orderToUpdate
+	 * @since 1.2.0
+	 * @return
+	 */
+	private Map<String, String> validateFromCanceledStatus(OrderDTO updatedOrder, Order orderToUpdate) {
+		Map<String, String> out = new HashMap<String, String>();
+		// validate status switch 				
+		if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.CANCELED) {
+			out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
+								entity_name,
+								WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
+								WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
+				);		
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.CANCELED) {
+			
+		}
+		return out;
+	}
+
+	/**
+	 * 
+	 * @author luca
+	 * @category business request validation
+	 * @param updatedOrder
+	 * @param orderToUpdate
+	 * @since 1.2.0
+	 * @return
+	 */
+	private Map<String, String> validateFromArchivedStatus(OrderDTO updatedOrder, Order orderToUpdate) {
+		Map<String, String> out = new HashMap<String, String>();
+		// validate status switch 				
+		if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.ARCHIVED) {
+				out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
+								entity_name,
+								WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
+								WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
+				);
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.ARCHIVED) {
+
+		}
+		return out;
+	}
+
+	/**
+	 * 
+	 * @author luca
+	 * @category business request validation
+	 * @param updatedOrder
+	 * @param orderToUpdate
+	 * @since 1.2.0
+	 * @return
+	 */
+	private Map<String, String> validateFromDeliveredStatus(OrderDTO updatedOrder, Order orderToUpdate) {
+		Map<String, String> out = new HashMap<String, String>();
+		// validate status switch 				
+		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.DELIVERED) &&  
+		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.ARCHIVED)) {
+				out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
+								entity_name,
+								WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
+								WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
+				);
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.DELIVERED) {
+
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.ARCHIVED) {
+
+		}
+		return out;
+	}
+
+	/**
+	 * 
+	 * @author luca
+	 * @category business request validation
+	 * @param updatedOrder
+	 * @param orderToUpdate
+	 * @since 1.2.0
+	 * @return
+	 */
+	private Map<String, String> validateFromSignedStatus(OrderDTO updatedOrder, Order orderToUpdate) {
+		Map<String, String> out = new HashMap<String, String>();
+		// validate status switch 				
+		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.SIGNED) &&  
+		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.DELIVERED)) {
+				out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
+								entity_name,
+								WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
+								WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
+				);
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.SIGNED) {
+
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.DELIVERED) {
+
+		}
+		return out;
+	}
+
+	/**
+	 * 
+	 * @author luca
+	 * @category business request validation
+	 * @param updatedOrder
+	 * @param orderToUpdate
+	 * @since 1.2.0
+	 * @return
+	 */
+	private Map<String, String> validateFromValidatedStatus(OrderDTO updatedOrder, Order orderToUpdate) {
+		Map<String, String> out = new HashMap<String, String>();
+		// validate status switch 				
+		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.VALIDATED) &&  
+		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.SIGNED)) {
+				out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
+								entity_name,
+								WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
+								WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
+				);
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.VALIDATED) {
+
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.SIGNED) {
+
+		}
+		return out;
+	}
+
+	/**
+	 * 
+	 * @author luca
+	 * @category business request validation
+	 * @param updatedOrder
+	 * @param orderToUpdate
+	 * @since 1.2.0
+	 * @return
+	 */
+	private Map<String, String> validateFromReportedStatus(OrderDTO updatedOrder, Order orderToUpdate) {
+		Map<String, String> out = new HashMap<String, String>();
+		// validate status switch 				
+		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.REPORTED) &&  
+		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.VALIDATED)) {
+				out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
+								entity_name,
+								WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
+								WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
+				);
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.REPORTED) {
+
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.VALIDATED) {
+
+		}
+		return out;
+	}
+
+	/**
+	 * 
+	 * @author luca
+	 * @category business request validation
+	 * @param updatedOrder
+	 * @param orderToUpdate
+	 * @since 1.2.0
+	 * @return
+	 */
+	private Map<String, String> validateFromExecutedStatus(OrderDTO updatedOrder, Order orderToUpdate) {
+		Map<String, String> out = new HashMap<String, String>();
+		// validate status switch 				
+		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.EXECUTED) &&  
+		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.REPORTED)) {
+				out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
+								entity_name,
+								WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
+								WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
+				);
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.EXECUTED) {
+
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.REPORTED) {
+
+		}
+		return out;
+	}
+
+	/**
+	 * 
+	 * @author luca
+	 * @category business request validation
+	 * @param updatedOrder
+	 * @param orderToUpdate
+	 * @since 1.2.0
+	 * @return
+	 */
+	private Map<String, String> validateFromAcceptedStatus(OrderDTO updatedOrder, Order orderToUpdate) {
+		Map<String, String> out = new HashMap<String, String>();
+		// validate status switch 				
+		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.ACCEPTED) &&  
+		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.EXECUTED) &&
+		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.CANCELED)) {
+				out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
+								entity_name,
+								WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
+								WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
+				);
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.ACCEPTED) {
+
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.EXECUTED) {
+
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.CANCELED) {
+
+		}
+		return out;
+	}
+
+	/**
+	 * 
+	 * @author luca
+	 * @category business request validation
+	 * @param updatedOrder
+	 * @param orderToUpdate
+	 * @since 1.2.0
+	 * @return
+	 */
+	private Map<String, String> validateFromScheduledStatus(OrderDTO updatedOrder, Order orderToUpdate) {
+		Map<String, String> out = new HashMap<String, String>();
+		// validate status switch 				
+		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.SCHEDULED) &&  
+		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.ACCEPTED) &&
+		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.CANCELED)) {
+				out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
+								entity_name,
+								WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
+								WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
+				);
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.SCHEDULED) {
+
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.ACCEPTED) {
+
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.CANCELED) {
+
+		}
+		return out;
+	}
+
+	/**
+	 * 
+	 * @author luca
+	 * @category business request validation
+	 * @param updatedOrder
+	 * @param orderToUpdate
+	 * @since 1.2.0
+	 * @return
+	 */
+	private Map<String, String> validateFromRequestedStatus(OrderDTO updatedOrder, Order orderToUpdate) {
+		Map<String, String> out = new HashMap<String, String>();
+		// work session must be null
+		if (updatedOrder.getWorkSession() != null) {
+			out.put(env.getProperty("echo.api.crud.fields.worksession"),
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
+							entity_name,
+							env.getProperty("echo.api.crud.fields.worksession")));
+		}
+		
+		// validate status switch 				
+		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.REQUESTED) &&  
+		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.SCHEDULED) &&
+		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.CANCELED)) {
+				out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
+								entity_name,
+								WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
+								WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
+				);
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.REQUESTED) {
+
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.SCHEDULED) {
+
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.CANCELED) {
+
+		}
+		return out;
 	}
 }

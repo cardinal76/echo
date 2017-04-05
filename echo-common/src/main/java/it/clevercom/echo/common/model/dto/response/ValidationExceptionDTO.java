@@ -2,7 +2,9 @@ package it.clevercom.echo.common.model.dto.response;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ValidationExceptionDTO implements Serializable {
 	private static final long serialVersionUID = 5043060582398616066L;
@@ -33,6 +35,13 @@ public class ValidationExceptionDTO implements Serializable {
     	FieldErrorDTO error = new FieldErrorDTO(field, message);
     	fieldErrors.add(error);
     	this.message = message;
+    }
+    
+    /**
+     * @param messages
+     */
+    public void addFieldErrorList(Map<String, String> messages) {
+    	messages.forEach((k,v) -> this.addFieldError(k, v));
     }
 
 	/**
