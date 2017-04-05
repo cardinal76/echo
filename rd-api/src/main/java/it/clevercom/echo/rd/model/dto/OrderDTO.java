@@ -35,7 +35,9 @@ public class OrderDTO implements Serializable {
 	private Boolean active;
 	private Set<BaseObjectDTO> services = new HashSet<BaseObjectDTO>(0);
 	private Set<BaseObjectDTO> canceledServices = new HashSet<BaseObjectDTO>();
-	
+    private String cancelreason;
+    private String identificationdocument;
+    
 	/**
 	 * @return the idOrder
 	 */
@@ -377,5 +379,33 @@ public class OrderDTO implements Serializable {
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	/**
+	 * @return the cancelreason
+	 */
+	public String getCancelreason() {
+		return cancelreason;
+	}
+
+	/**
+	 * @param cancelreason the cancelreason to set
+	 */
+	public void setCancelreason(String cancelreason) {
+		this.cancelreason = cancelreason;
+	}
+
+	/**
+	 * @return the identificationdocument
+	 */
+	public String getIdentificationdocument() {
+		return identificationdocument;
+	}
+
+	/**
+	 * @param identificationdocument the identificationdocument to set
+	 */
+	public void setIdentificationdocument(String identificationdocument) {
+		this.identificationdocument = identificationdocument;
 	}
 }
