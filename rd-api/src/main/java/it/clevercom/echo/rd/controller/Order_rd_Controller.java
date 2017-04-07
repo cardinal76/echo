@@ -757,6 +757,23 @@ public class Order_rd_Controller extends EchoController {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"),
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.emptylist"),
 							env.getProperty("echo.api.crud.fields.service")));
+		} else if (updatedOrder.getServices().size() > 0) {
+			// check that services belongs to same modality ------------------> da controllare
+			Long masterModalityType = 0l;
+			String masterModalityName = null;
+			int i = 0;
+			for (BaseObjectDTO element : updatedOrder.getServices()) {
+				Service current = repo_s.findOne(Long.valueOf(element.getId()));
+				if (i==0) {
+					masterModalityType = current.getModalityType().getIdmodalitytype();
+					masterModalityName = current.getModalityType().getType();
+				}
+				if ((i>0) && (!masterModalityType.equals(current.getModalityType().getIdmodalitytype()))) {
+					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), entity_s_name, masterModalityName));
+					break;
+				}
+				i++;
+			}
 		}
 		
 		// ------------------------
