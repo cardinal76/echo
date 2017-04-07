@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +39,10 @@ import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.dto.ServiceDTO;
+import it.clevercom.echo.rd.model.entity.ModalityType;
+import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.Service;
+import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
@@ -98,11 +107,15 @@ public class Service_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody PagedDTO<ServiceDTO> getByCriteria (
-			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="null", required=false) String criteria,
+			@RequestParam(defaultValue = "*", required = false) String modalitytype,
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="1000", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="idservice", required=false) String field) throws Exception {
+
+		// flag which indicates where to use specification
+		boolean useSpecification = false;
 		
 		// create paged request
 		PageRequest request = null;
@@ -117,6 +130,7 @@ public class Service_rd_Controller {
 		
 		// create predicate if criteria is not null
 		Page<Service> rs = null;
+		Specification<Service> spec = null;
 		
 		if (!criteria.equals("null")) {
 	        SpecificationsBuilder<Service, SpecificationQueryHelper<Service>> builder = new SpecificationsBuilder<Service, SpecificationQueryHelper<Service>>();
@@ -125,10 +139,27 @@ public class Service_rd_Controller {
 	        while (matcher.find()) {
 	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
 	        }
-	        Specification<Service> spec = builder.build();
-	        
-	        // obtain records
-	        rs = repo.findAll(spec, request);
+	        spec = builder.build();
+	        useSpecification = true;
+		}
+		
+		// check modalitytype and add it to specification
+		if (!modalitytype.equals("*")) {
+			Specification<Service> smt = new Specification<Service>() {
+				@Override
+				public Predicate toPredicate(Root<Service> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+					return cb.equal(root.<ModalityType>get("modalityType").<Long>get("idmodalitytype"), modalitytype);
+				}
+			};
+			
+			// add to specification list
+			spec =  Specifications.where(spec).and(smt);
+			useSpecification = true;
+		}
+		
+		if (useSpecification) {
+			// obtain records
+        	rs = repo.findAll(spec, request);
 		} else {
 			rs = repo.findAll(request);
 		}
