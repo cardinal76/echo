@@ -64,9 +64,11 @@ import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
+import it.clevercom.echo.rd.repository.IModalityType_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderLog_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderService_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrder_rd_Repository;
+import it.clevercom.echo.rd.repository.IService_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 
@@ -102,6 +104,9 @@ public class Order_rd_Controller extends EchoController {
 	private IWorkPriority_rd_Repository repo_wp;
 	
 	@Autowired
+	private IService_rd_Repository repo_s;
+	
+	@Autowired
 	private DozerBeanMapper rdDozerMapper;
 
 	@Value("${jwt.token.header}")
@@ -116,7 +121,8 @@ public class Order_rd_Controller extends EchoController {
 	private static String entity_name = "Order";
 	private static String entity_id = "idorder";
 	private static String entity_cd1 = "code";
-
+	private static String entity_s_name = "Service";
+	
 	/**
 	 * Get order by id
 	 * @author luca
@@ -644,6 +650,23 @@ public class Order_rd_Controller extends EchoController {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"),
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.emptylist"),
 							env.getProperty("echo.api.crud.fields.service")));
+		} else if (order.getServices().size() > 0) {
+			// check that services belongs to same modality
+			Long masterModalityType = 0l;
+			String masterModalityName = null;
+			int i = 0;
+			for (BaseObjectDTO element : order.getServices()) {
+				Service current = repo_s.findOne(Long.valueOf(element.getId()));
+				if (i==0) {
+					masterModalityType = current.getModalityType().getIdmodalitytype();
+					masterModalityName = current.getModalityType().getType();
+				}
+				if ((i>0) && (!masterModalityType.equals(current.getModalityType().getIdmodalitytype()))) {
+					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), entity_s_name, masterModalityName));
+					break;
+				}
+				i++;
+			}
 		}
 
 		// check if a patient has been selected
