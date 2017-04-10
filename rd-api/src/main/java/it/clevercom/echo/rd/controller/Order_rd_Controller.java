@@ -813,7 +813,7 @@ public class Order_rd_Controller extends EchoController {
 							env.getProperty("echo.api.crud.fields.acquisitionchannel")));
 		}
 		
-		// acquisition channel cannot never be updated
+		// creation date cannot never be updated
 		if (!updatedOrder.getCreationDate().equals((Long)orderToUpdate.getCreationdate().getTime())) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.creationdate"),
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
@@ -917,7 +917,7 @@ public class Order_rd_Controller extends EchoController {
 			}
 			// validate a switch from EXECUTED status
 			case EXECUTING: {
-				exceptions.addFieldErrorList(this.validateFromExecutedStatus(updatedOrder, orderToUpdate));
+				exceptions.addFieldErrorList(this.validateFromExecutingStatus(updatedOrder, orderToUpdate));
 				break;
 			}
 			// validate a switch from EXECUTED status
@@ -927,7 +927,7 @@ public class Order_rd_Controller extends EchoController {
 			}
 			// validate a switch from REPORTED status
 			case REPORTING: {
-				exceptions.addFieldErrorList(this.validateFromReportedStatus(updatedOrder, orderToUpdate));
+				exceptions.addFieldErrorList(this.validateFromReportingStatus(updatedOrder, orderToUpdate));
 				break;
 			}
 			// validate a switch from REPORTED status
@@ -966,6 +966,28 @@ public class Order_rd_Controller extends EchoController {
 		} else {
 			exceptions = null;
 		}
+	}
+
+	/**
+	 * 
+	 * @param updatedOrder
+	 * @param orderToUpdate
+	 * @return
+	 */
+	private Map<String, String> validateFromReportingStatus(OrderDTO updatedOrder, Order orderToUpdate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param updatedOrder
+	 * @param orderToUpdate
+	 * @return
+	 */
+	private Map<String, String> validateFromExecutingStatus(OrderDTO updatedOrder, Order orderToUpdate) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
