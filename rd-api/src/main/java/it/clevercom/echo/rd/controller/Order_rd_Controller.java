@@ -554,7 +554,10 @@ public class Order_rd_Controller extends EchoController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<OrderDTO> delete(@PathVariable Long id, @RequestParam String rejectReason, @RequestParam String cancelReason, HttpServletRequest request) throws Exception {		
+	public @ResponseBody UpdateResponseDTO<OrderDTO> delete(@PathVariable Long id, 
+			@RequestParam(defaultValue = "", required = false) String rejectReason, 
+			@RequestParam(defaultValue = "", required = false) String cancelReason, 
+			HttpServletRequest request) throws Exception {		
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
@@ -621,13 +624,24 @@ public class Order_rd_Controller extends EchoController {
 		if (!((StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(rejectReason)) ^ (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(cancelReason)))) {
 			if ((StringUtils.isNullEmptyWhiteSpaceOnly(rejectReason)) && (StringUtils.isNullEmptyWhiteSpaceOnly(cancelReason))) {
 				// 0:0
-				exceptions.addFieldError(env.getProperty(""), MessageFormat.format(env.getProperty("echo.api.crud.validation.mustprovideatleastonefield"), env.getProperty(""), env.getProperty("")));
-			} else if (((rejectReason != null ) || (!rejectReason.trim().isEmpty())) && ((cancelReason != null ) || (!cancelReason.trim().isEmpty()))) {
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason") + "or" + env.getProperty("echo.api.crud.fields.rejectreason"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.mustprovideatleastonefield"), 
+								env.getProperty("echo.api.crud.fields.cancelreason"), 
+								env.getProperty("echo.api.crud.fields.rejectreason")));
+			} else if ((StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(rejectReason)) && (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(cancelReason))) {
 				// 1:1
-				exceptions.addFieldError(env.getProperty(""), env.getProperty(""));
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason") + "or" + env.getProperty("echo.api.crud.fields.rejectreason"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.mustprovideatmaximumonefield"), 
+								env.getProperty("echo.api.crud.fields.cancelreason"), 
+								env.getProperty("echo.api.crud.fields.rejectreason")));
 			}
 		}
 		
+		if (exceptions.getFieldErrors().size() > 0) {
+			throw new ValidationException(env.getProperty("echo.api.crud.validation.genericmessage"), exceptions);
+		} else {
+			exceptions = null;
+		}
 	}
 	
 	/**
@@ -639,38 +653,38 @@ public class Order_rd_Controller extends EchoController {
 	 * @throws ValidationException
 	 */
 	private void validateCreateRequest(OrderDTO order) throws ValidationException {
-		// these fields should not be inserted
+		// these fields must not be inserted
 		// in the create request and must be empty or null
 		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
 
-		// idOrder should not be present here
+		// idOrder must not be present here
 		if (order.getIdOrder() != null) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.idorder"),
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 		
-		// work session should not be present here
+		// work session must not be present here
 		if ((order.getWorkSession() != null)) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.worksession"),
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 		
-		// work status should be equal to request
+		// work status must be equal to request
 		if ((!order.getWorkStatus().getCode().equals(WorkStatusEnum.REQUESTED.code()))) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"),
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbe"),
 							env.getProperty("echo.api.crud.fields.workstatus"), WorkStatusEnum.REQUESTED.code()));
 		}
 		
-		// work priority should correspond to a valid enum code
-		if (WorkPriorityEnum.getInstanceFromCodeValue(order.getWorkPriority().getCode()) == null) {
+		// work priority must not be null and must correspond to a valid enum code
+		if ((order.getWorkPriority()==null) || (StringUtils.isNullEmptyWhiteSpaceOnly(order.getWorkPriority().getCode())) || (WorkPriorityEnum.getInstanceFromCodeValue(order.getWorkPriority().getCode()) == null)) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workpriority"),
 					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
 							env.getProperty("echo.api.crud.fields.workpriority"), WorkPriorityEnum.enumValuesToString()));
 		}
 			
-		// acquisition channel should contains a non empty string
-		if ((order.getAcquisitionChannel() == null) || (order.getAcquisitionChannel().trim().equals(""))) {
+		// acquisition channel must contains a non empty string
+		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getAcquisitionChannel())) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.acquisitionchannel"),
 					env.getProperty("echo.api.crud.validation.mustnotbeempty"));
 		}
@@ -688,7 +702,7 @@ public class Order_rd_Controller extends EchoController {
 							new Date().toString()));
 		}
 		
-		// schedule date should not be present here
+		// schedule date must not be present here
 		if (order.getScheduledDate() != null) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.scheduledate"),
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
@@ -700,13 +714,38 @@ public class Order_rd_Controller extends EchoController {
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 
+		// TODO organization unit validation
+		// must check only target 
+		
+		// check that clinical question is not null
+		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getClinicalQuestion())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.clinicalquestion"), 
+					env.getProperty("echo.api.crud.validation.mustnotbeempty"));
+		}
+		
 		// reject reason should not be present here
 		if (order.getRejectReason() != null) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.rejectreason"),
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
-
-		// TODO organization unit validation
+		
+		// anamnesys must be not null here
+		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getAnamnesys())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.anamnesys"),
+					env.getProperty("echo.api.crud.validation.mustnotbeempty"));
+		}
+		
+		// cancel reason must not be present here
+		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getCancelReason())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// cancel reason must not be present here
+		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getIdentificationdocument())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.identificationdocument"), 
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
 		
 		// check if some services has been selected
 		if (order.getServices().size() == 0) {
@@ -790,7 +829,7 @@ public class Order_rd_Controller extends EchoController {
 							env.getProperty("echo.api.crud.fields.requestingphysician")));
 		}
 		
-		// order reason cannot never be updated
+		// clinical question cannot never be updated
 		if (!updatedOrder.getClinicalQuestion().equals(orderToUpdate.getClinicalquestion())) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.clinicalquestion"),
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
