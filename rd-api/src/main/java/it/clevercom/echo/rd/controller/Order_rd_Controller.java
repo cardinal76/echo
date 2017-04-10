@@ -49,6 +49,7 @@ import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.ValidationExceptionDTO;
 import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.JwtTokenUtils;
+import it.clevercom.echo.common.util.StringUtils;
 import it.clevercom.echo.rd.enums.WorkPriorityEnum;
 import it.clevercom.echo.rd.enums.WorkStatusEnum;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
@@ -617,10 +618,10 @@ public class Order_rd_Controller extends EchoController {
 		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
 		
 		// check that only a reason has been provided by the client		
-		if (!(((rejectReason == null ) || (rejectReason.trim().isEmpty())) ^ ((cancelReason == null ) || (cancelReason.trim().isEmpty())))) {
-			if (((rejectReason == null ) || (rejectReason.trim().isEmpty())) && ((cancelReason == null ) || (cancelReason.trim().isEmpty()))) {
+		if (!((StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(rejectReason)) ^ (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(cancelReason)))) {
+			if ((StringUtils.isNullEmptyWhiteSpaceOnly(rejectReason)) && (StringUtils.isNullEmptyWhiteSpaceOnly(cancelReason))) {
 				// 0:0
-				exceptions.addFieldError(env.getProperty(""), env.getProperty(""));
+				exceptions.addFieldError(env.getProperty(""), MessageFormat.format(env.getProperty("echo.api.crud.validation.mustprovideatleastonefield"), env.getProperty(""), env.getProperty("")));
 			} else if (((rejectReason != null ) || (!rejectReason.trim().isEmpty())) && ((cancelReason != null ) || (!cancelReason.trim().isEmpty()))) {
 				// 1:1
 				exceptions.addFieldError(env.getProperty(""), env.getProperty(""));
@@ -791,10 +792,10 @@ public class Order_rd_Controller extends EchoController {
 		
 		// order reason cannot never be updated
 		if (!updatedOrder.getClinicalQuestion().equals(orderToUpdate.getClinicalquestion())) {
-			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.orderreason"),
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.clinicalquestion"),
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
 							entity_name,
-							env.getProperty("echo.api.crud.fields.orderreason")));
+							env.getProperty("echo.api.crud.fields.clinicalquestion")));
 		}
 		
 		// anamnesys cannot never be updated
