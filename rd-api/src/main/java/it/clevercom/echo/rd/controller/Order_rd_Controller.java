@@ -17,7 +17,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +65,6 @@ import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
-import it.clevercom.echo.rd.repository.IModalityType_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderLog_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderService_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrder_rd_Repository;
@@ -622,10 +620,10 @@ public class Order_rd_Controller extends EchoController {
 		if (!(((rejectReason == null ) || (rejectReason.trim().isEmpty())) ^ ((cancelReason == null ) || (cancelReason.trim().isEmpty())))) {
 			if (((rejectReason == null ) || (rejectReason.trim().isEmpty())) && ((cancelReason == null ) || (cancelReason.trim().isEmpty()))) {
 				// 0:0
-				exceptions.addFieldError("", "");
+				exceptions.addFieldError(env.getProperty(""), env.getProperty(""));
 			} else if (((rejectReason != null ) || (!rejectReason.trim().isEmpty())) && ((cancelReason != null ) || (!cancelReason.trim().isEmpty()))) {
 				// 1:1
-				exceptions.addFieldError("", "");
+				exceptions.addFieldError(env.getProperty(""), env.getProperty(""));
 			}
 		}
 		
