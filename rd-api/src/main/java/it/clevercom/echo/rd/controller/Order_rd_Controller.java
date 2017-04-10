@@ -184,19 +184,20 @@ public class Order_rd_Controller extends EchoController {
 		
 		// check status code
 		WorkStatus statusEntity = new WorkStatus();
-		if ((!status.equals("*")) && (!WorkStatusEnum.contains(status))) {
+		if ((!status.equals("*")) && (WorkStatusEnum.getInstanceFromCodeValue(status)==null)) {
 			throw new BadRequestException(
 					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
 							env.getProperty("echo.api.crud.fields.workstatus"),
 							WorkStatusEnum.enumValuesToString()));
-		} else if ((!status.equals("*")) && (WorkStatusEnum.contains(status))) {
-			statusEntity = repo_ws.findByCode(WorkStatusEnum.valueOf(status).code());
+		} else if ((!status.equals("*")) && (WorkStatusEnum.getInstanceFromCodeValue(status) != null)) {
+			statusEntity = repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(status).code());
 		}
+		
 		final Long statusId = statusEntity.getIdworkstatus();
 		
 		// check priority code
 		WorkPriority priorityEntity = new WorkPriority();
-		if ((!priority.equals("*")) && (!WorkPriorityEnum.contains(priority))) {
+		if ((!priority.equals("*")) && (WorkPriorityEnum.getInstanceFromCodeValue(priority)==null)) {
 			throw new BadRequestException(
 					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
 							env.getProperty("echo.api.crud.fields.workpriority"),
@@ -554,13 +555,21 @@ public class Order_rd_Controller extends EchoController {
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<OrderDTO> delete(@PathVariable Long id, HttpServletRequest request) {
+	public @ResponseBody UpdateResponseDTO<OrderDTO> delete(@PathVariable Long id, @RequestParam String rejectReason, @RequestParam String cancelReason, HttpServletRequest request) throws Exception {		
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 
 		// get entity to update
 		Order entity = repo.findOne(id);
+		
+		// if an entity with given id is not found in DB throw record not found
+		if (entity == null)
+			throw new RecordNotFoundException(entity_name, entity_id, entity.getIdorder().toString());
+		
+		// validate create request
+		this.validateDeleteRequest(entity, rejectReason, cancelReason);
+				
 		OrderDTO oldValueDTO = rdDozerMapper.map(entity, OrderDTO.class);
 
 		// get canceled workstatus
@@ -597,6 +606,31 @@ public class Order_rd_Controller extends EchoController {
 	/* business validation methods */
 	/*-----------------------------*/
 
+	/**
+	 * Validate a delete order request
+	 * @author luca
+	 * @category business request validation
+	 * @param entity
+	 * @param rejectReason
+	 * @param cancelReason
+	 * @since 1.2.0
+	 */
+	private void validateDeleteRequest(Order entity, String rejectReason, String cancelReason) throws ValidationException {
+		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
+		
+		// check that only a reason has been provided by the client		
+		if (!(((rejectReason == null ) || (rejectReason.trim().isEmpty())) ^ ((cancelReason == null ) || (cancelReason.trim().isEmpty())))) {
+			if (((rejectReason == null ) || (rejectReason.trim().isEmpty())) && ((cancelReason == null ) || (cancelReason.trim().isEmpty()))) {
+				// 0:0
+				exceptions.addFieldError("", "");
+			} else if (((rejectReason != null ) || (!rejectReason.trim().isEmpty())) && ((cancelReason != null ) || (!cancelReason.trim().isEmpty()))) {
+				// 1:1
+				exceptions.addFieldError("", "");
+			}
+		}
+		
+	}
+	
 	/**
 	 * Validate a create order request
 	 * @author luca
@@ -692,7 +726,10 @@ public class Order_rd_Controller extends EchoController {
 					masterModalityName = current.getModalityType().getType();
 				}
 				if ((i>0) && (!masterModalityType.equals(current.getModalityType().getIdmodalitytype()))) {
-					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), entity_s_name, masterModalityName, masterModalityType));
+					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), 
+							entity_s_name, 
+							masterModalityName, 
+							masterModalityType));
 					break;
 				}
 				i++;
@@ -841,18 +878,23 @@ public class Order_rd_Controller extends EchoController {
 				break;
 			}
 			// validate a switch from EXECUTED status
+			case EXECUTING: {
+				exceptions.addFieldErrorList(this.validateFromExecutedStatus(updatedOrder, orderToUpdate));
+				break;
+			}
+			// validate a switch from EXECUTED status
 			case EXECUTED: {
 				exceptions.addFieldErrorList(this.validateFromExecutedStatus(updatedOrder, orderToUpdate));
 				break;
 			}
 			// validate a switch from REPORTED status
-			case REPORTED: {
+			case REPORTING: {
 				exceptions.addFieldErrorList(this.validateFromReportedStatus(updatedOrder, orderToUpdate));
 				break;
 			}
-			// validate a switch from VALIDATED status
-			case VALIDATED: {
-				exceptions.addFieldErrorList(this.validateFromValidatedStatus(updatedOrder, orderToUpdate));
+			// validate a switch from REPORTED status
+			case REPORTED: {
+				exceptions.addFieldErrorList(this.validateFromReportedStatus(updatedOrder, orderToUpdate));
 				break;
 			}
 			// validate a switch from SIGNED status
@@ -1006,16 +1048,13 @@ public class Order_rd_Controller extends EchoController {
 	private Map<String, String> validateFromValidatedStatus(OrderDTO updatedOrder, Order orderToUpdate) {
 		Map<String, String> out = new HashMap<String, String>();
 		// validate status switch 				
-		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.VALIDATED) &&  
-		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.SIGNED)) {
+		if (((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.SIGNED))) {
 				out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
 						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
 								entity_name,
 								WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
 								WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()).name())
 				);
-		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.VALIDATED) {
-
 		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.SIGNED) {
 
 		}
@@ -1034,8 +1073,7 @@ public class Order_rd_Controller extends EchoController {
 	private Map<String, String> validateFromReportedStatus(OrderDTO updatedOrder, Order orderToUpdate) {
 		Map<String, String> out = new HashMap<String, String>();
 		// validate status switch 				
-		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.REPORTED) &&  
-		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.VALIDATED)) {
+		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.REPORTED)) {
 				out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
 						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
 								entity_name,
@@ -1044,9 +1082,8 @@ public class Order_rd_Controller extends EchoController {
 				);
 		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.REPORTED) {
 
-		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.VALIDATED) {
-
 		}
+		
 		return out;
 	}
 
