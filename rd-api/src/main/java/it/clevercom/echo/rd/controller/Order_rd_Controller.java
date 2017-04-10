@@ -2,6 +2,7 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -423,7 +425,7 @@ public class Order_rd_Controller extends EchoController {
 	/**
 	 * Update order
 	 * @author luca
-	 * @category standard order update REST method
+	 * @category standard update order REST method
 	 * @param order
 	 * @param request
 	 * @return
@@ -613,7 +615,46 @@ public class Order_rd_Controller extends EchoController {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.idorder"),
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
+		
+		// work session should not be present here
+		if ((order.getWorkSession() != null)) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.worksession"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// work status should be equal to request
+		if ((!order.getWorkStatus().getCode().equals(WorkStatusEnum.REQUESTED.code()))) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"),
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbe"),
+							env.getProperty("echo.api.crud.fields.workstatus"), WorkStatusEnum.REQUESTED.code()));
+		}
+		
+		// work priority should correspond to a valid enum code
+		if (WorkPriorityEnum.getInstanceFromCodeValue(order.getWorkPriority().getCode()) == null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workpriority"),
+					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
+							env.getProperty("echo.api.crud.fields.workpriority"), WorkPriorityEnum.enumValuesToString()));
+		}
+			
+		// acquisition channel should contains a non empty string
+		if ((order.getAcquisitionChannel() == null) || (order.getAcquisitionChannel().trim().equals(""))) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.acquisitionchannel"),
+					env.getProperty("echo.api.crud.validation.mustnotbeempty"));
+		}
 
+		// creation date must be == today
+		Calendar cal1 = Calendar.getInstance();
+		Calendar cal2 = Calendar.getInstance();
+		cal1.setTime(new Date(order.getCreationDate()));
+		cal2.setTime(new Date());
+		boolean sameDay = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+		if(!sameDay) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.creationdate"), 
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbetoday"), 
+							env.getProperty("echo.api.crud.fields.creationdate"), 
+							new Date().toString()));
+		}
+		
 		// schedule date should not be present here
 		if (order.getScheduledDate() != null) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.scheduledate"),
@@ -632,19 +673,8 @@ public class Order_rd_Controller extends EchoController {
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 
-		// work session should not be present here
-		if ((order.getWorkSession() != null)) {
-			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.worksession"),
-					env.getProperty("echo.api.crud.validation.mustbeempty"));
-		}
-
-		// work status should be equal to request
-		if ((!order.getWorkStatus().getCode().equals(WorkStatusEnum.REQUESTED.code()))) {
-			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"),
-					MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbe"),
-							env.getProperty("echo.api.crud.fields.workstatus"), WorkStatusEnum.REQUESTED.code()));
-		}
-
+		// TODO organization unit validation
+		
 		// check if some services has been selected
 		if (order.getServices().size() == 0) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"),
@@ -662,7 +692,7 @@ public class Order_rd_Controller extends EchoController {
 					masterModalityName = current.getModalityType().getType();
 				}
 				if ((i>0) && (!masterModalityType.equals(current.getModalityType().getIdmodalitytype()))) {
-					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), entity_s_name, masterModalityName));
+					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), entity_s_name, masterModalityName, masterModalityType));
 					break;
 				}
 				i++;
@@ -725,19 +755,19 @@ public class Order_rd_Controller extends EchoController {
 		}
 		
 		// order reason cannot never be updated
-		if (!updatedOrder.getOrderReason().equals(orderToUpdate.getOrderreason())) {
+		if (!updatedOrder.getClinicalQuestion().equals(orderToUpdate.getClinicalquestion())) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.orderreason"),
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
 							entity_name,
 							env.getProperty("echo.api.crud.fields.orderreason")));
 		}
 		
-		// clinical history cannot never be updated
-		if (!updatedOrder.getClinicalHistory().equals(orderToUpdate.getClinicalhistory())) {
-			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.clinicalhistory"),
+		// anamnesys cannot never be updated
+		if (!updatedOrder.getAnamnesys().equals(orderToUpdate.getAnamnesys())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.anamnesys"),
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
 							entity_name,
-							env.getProperty("echo.api.crud.fields.clinicalhistory")));
+							env.getProperty("echo.api.crud.fields.anamnesys")));
 		}
 		
 		// patient cannot never be updated
@@ -758,7 +788,16 @@ public class Order_rd_Controller extends EchoController {
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.emptylist"),
 							env.getProperty("echo.api.crud.fields.service")));
 		} else if (updatedOrder.getServices().size() > 0) {
-			// check that services belongs to same modality ------------------> da controllare
+			// get old service modality type (check only the first element)
+			Long oldModalityType = 0l;
+			String oldModalityName = null;
+			for (OrderService current : orderToUpdate.getOrderServices()) {
+				oldModalityType = current.getService().getModalityType().getIdmodalitytype();
+				oldModalityName = current.getService().getModalityType().getType();
+				break;
+			}
+			
+			// check that updated services belongs to same modality
 			Long masterModalityType = 0l;
 			String masterModalityName = null;
 			int i = 0;
@@ -769,10 +808,14 @@ public class Order_rd_Controller extends EchoController {
 					masterModalityName = current.getModalityType().getType();
 				}
 				if ((i>0) && (!masterModalityType.equals(current.getModalityType().getIdmodalitytype()))) {
-					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), entity_s_name, masterModalityName));
+					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), entity_s_name, masterModalityName, masterModalityType));
 					break;
 				}
 				i++;
+			}
+			
+			if (!oldModalityType.equals(masterModalityType)) {
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), entity_s_name, oldModalityName, oldModalityType));
 			}
 		}
 		
@@ -1116,7 +1159,7 @@ public class Order_rd_Controller extends EchoController {
 							env.getProperty("echo.api.crud.fields.worksession")));
 		}
 		
-		// validate status switch 				
+		// validate status switch
 		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.REQUESTED) &&  
 		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.SCHEDULED) &&
 		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.CANCELED)) {

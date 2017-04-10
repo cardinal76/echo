@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 5-apr-2017 11.35.01 by Hibernate Tools 5.2.2.Final
+// Generated 10-apr-2017 11.15.06 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -40,7 +40,7 @@ public class Modality  implements java.io.Serializable {
      private Date updated;
      private String userupdate;
      private Boolean active;
-     private Integer dailytheoreticalcapacity;
+     private Integer dailyexamcapacity;
      private Set<ModalityService> modalityServices = new HashSet<ModalityService>(0);
      private Set<ModalityDailyAllocation> modalityDailyAllocations = new HashSet<ModalityDailyAllocation>(0);
      private Set<WorkTask> workTasks = new HashSet<WorkTask>(0);
@@ -57,7 +57,7 @@ public class Modality  implements java.io.Serializable {
         this.userupdate = userupdate;
         this.active = active;
     }
-    public Modality(OrganizationUnit organizationUnit, String name, String description, Date created, Date updated, String userupdate, Boolean active, Integer dailytheoreticalcapacity, Set<ModalityService> modalityServices, Set<ModalityDailyAllocation> modalityDailyAllocations, Set<WorkTask> workTasks) {
+    public Modality(OrganizationUnit organizationUnit, String name, String description, Date created, Date updated, String userupdate, Boolean active, Integer dailyexamcapacity, Set<ModalityService> modalityServices, Set<ModalityDailyAllocation> modalityDailyAllocations, Set<WorkTask> workTasks) {
        this.organizationUnit = organizationUnit;
        this.name = name;
        this.description = description;
@@ -65,7 +65,7 @@ public class Modality  implements java.io.Serializable {
        this.updated = updated;
        this.userupdate = userupdate;
        this.active = active;
-       this.dailytheoreticalcapacity = dailytheoreticalcapacity;
+       this.dailyexamcapacity = dailyexamcapacity;
        this.modalityServices = modalityServices;
        this.modalityDailyAllocations = modalityDailyAllocations;
        this.workTasks = workTasks;
@@ -154,13 +154,13 @@ public class Modality  implements java.io.Serializable {
     }
 
     
-    @Column(name="dailytheoreticalcapacity")
-    public Integer getDailytheoreticalcapacity() {
-        return this.dailytheoreticalcapacity;
+    @Column(name="dailyexamcapacity")
+    public Integer getDailyexamcapacity() {
+        return this.dailyexamcapacity;
     }
     
-    public void setDailytheoreticalcapacity(Integer dailytheoreticalcapacity) {
-        this.dailytheoreticalcapacity = dailytheoreticalcapacity;
+    public void setDailyexamcapacity(Integer dailyexamcapacity) {
+        this.dailyexamcapacity = dailyexamcapacity;
     }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="modality")

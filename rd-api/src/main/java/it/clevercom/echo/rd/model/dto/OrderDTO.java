@@ -24,9 +24,9 @@ public class OrderDTO implements Serializable {
 	private Long acceptanceDate;
 	private Long duration;
 	private String requestingPhysician;
-	private String orderReason;
+	private String clinicalQuestion;
 	private String rejectReason;
-	private String clinicalHistory;
+	private String anamnesys;
 	private String notes;
 	private String cancelReason;
 	private Date created;
@@ -221,20 +221,6 @@ public class OrderDTO implements Serializable {
 	}
 	
 	/**
-	 * @return the orderReason
-	 */
-	public String getOrderReason() {
-		return orderReason;
-	}
-	
-	/**
-	 * @param orderReason the orderReason to set
-	 */
-	public void setOrderReason(String orderReason) {
-		this.orderReason = orderReason;
-	}
-	
-	/**
 	 * @return the rejectReason
 	 */
 	public String getRejectReason() {
@@ -249,19 +235,33 @@ public class OrderDTO implements Serializable {
 	}
 	
 	/**
-	 * @return the clinicalHistory
+	 * @return the clinicalQuestion
 	 */
-	public String getClinicalHistory() {
-		return clinicalHistory;
+	public String getClinicalQuestion() {
+		return clinicalQuestion;
 	}
-	
+
 	/**
-	 * @param clinicalHistory the clinicalHistory to set
+	 * @param clinicalQuestion the clinicalQuestion to set
 	 */
-	public void setClinicalHistory(String clinicalHistory) {
-		this.clinicalHistory = clinicalHistory;
+	public void setClinicalQuestion(String clinicalQuestion) {
+		this.clinicalQuestion = clinicalQuestion;
 	}
-	
+
+	/**
+	 * @return the anamnesys
+	 */
+	public String getAnamnesys() {
+		return anamnesys;
+	}
+
+	/**
+	 * @param anamnesys the anamnesys to set
+	 */
+	public void setAnamnesys(String anamnesys) {
+		this.anamnesys = anamnesys;
+	}
+
 	/**
 	 * @return the notes
 	 */

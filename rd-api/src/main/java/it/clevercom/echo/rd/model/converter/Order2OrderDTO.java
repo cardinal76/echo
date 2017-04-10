@@ -48,12 +48,12 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			
 			target.setAcceptanceDate((source.getAcceptancedate() != null) ? source.getAcceptancedate().getTime() : null);
 			target.setAcquisitionChannel((source.getAcquisitionchannel() != null) ? source.getAcquisitionchannel() : null);
-			target.setClinicalHistory((source.getClinicalhistory() != null) ? source.getClinicalhistory() : null);
+			target.setAnamnesys((source.getAnamnesys() != null) ? source.getAnamnesys() : null);
 			target.setCreationDate((source.getCreationdate() != null) ? source.getCreationdate().getTime() : null);
 			target.setDuration((source.getDuration() != null) ? source.getDuration() : null);
 			target.setIdOrder((source.getIdorder() != null) ? source.getIdorder() : null);
 			target.setNotes((source.getNotes() != null) ? source.getNotes() : null);			
-			target.setOrderReason((source.getOrderreason() != null) ? source.getOrderreason() : null);
+			target.setClinicalQuestion((source.getClinicalquestion() != null) ? source.getClinicalquestion() : null);
 			target.setRejectReason((source.getRejectreason() != null) ? source.getRejectreason() : null);
 			target.setRequestingPhysician(source.getRequestingphysician() != null ? source.getRequestingphysician() : null);
 			target.setScheduledDate((source.getScheduleddate() != null) ? source.getScheduleddate().getTime() : null);
@@ -127,12 +127,12 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			
 			target.setAcceptancedate((source.getAcceptanceDate() != null) ? new Date(source.getAcceptanceDate()) : null);
 			target.setAcquisitionchannel((source.getAcquisitionChannel() != null) ? source.getAcquisitionChannel() : null);
-			target.setClinicalhistory((source.getClinicalHistory() != null) ? source.getClinicalHistory() : null);
+			target.setAnamnesys((source.getAnamnesys() != null) ? source.getAnamnesys() : null);
 			target.setCreationdate((source.getCreationDate() != null) ? new Date(source.getCreationDate()) : null);
 			target.setDuration((source.getDuration() != null) ? source.getDuration() : null);
 			target.setIdorder((source.getIdOrder() != null) ? source.getIdOrder() : null);
 			target.setNotes((source.getNotes() != null) ? source.getNotes() : null);			
-			target.setOrderreason((source.getOrderReason() != null) ? source.getOrderReason() : null);
+			target.setClinicalquestion((source.getClinicalQuestion() != null) ? source.getClinicalQuestion() : null);
 			target.setRejectreason((source.getRejectReason() != null) ? source.getRejectReason() : null);
 			target.setRequestingphysician(source.getRequestingPhysician() != null ? source.getRequestingPhysician() : null);
 			target.setScheduleddate((source.getScheduledDate() != null) ? new Date(source.getScheduledDate()) : null);

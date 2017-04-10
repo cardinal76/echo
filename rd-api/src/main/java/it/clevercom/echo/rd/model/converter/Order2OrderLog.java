@@ -36,7 +36,7 @@ public class Order2OrderLog implements CustomConverter, MapperAware {
 			target.setAcceptancedate((source.getAcceptancedate() != null) ? source.getAcceptancedate() : null);
 			target.setAcquisitionchannel((source.getAcquisitionchannel() != null) ? source.getAcquisitionchannel() : null);
 			target.setActive(true);
-			target.setClinicalhistory((source.getClinicalhistory() != null) ? source.getClinicalhistory() : null);
+			target.setClinicalhistory((source.getAnamnesys() != null) ? source.getAnamnesys() : null);
 			target.setCreated(new Date());
 			target.setCreationdate((source.getCreationdate() != null) ? source.getCreationdate() : null);
 			target.setDuration((source.getDuration() != null) ? source.getDuration() : null);
@@ -45,7 +45,7 @@ public class Order2OrderLog implements CustomConverter, MapperAware {
 			target.setIdworkstatus(((source.getWorkStatus() != null) && (source.getWorkStatus().getIdworkstatus() != null)) ? source.getWorkStatus().getIdworkstatus() : null);
 			target.setNotes((source.getNotes() != null) ? source.getNotes() : null);
 			target.setOrder(source);
-			target.setOrderreason((source.getOrderreason() != null) ? source.getOrderreason() : null);
+			target.setOrderreason((source.getClinicalquestion() != null) ? source.getClinicalquestion() : null);
 			target.setOriginorganizationunitid(((source.getOrganizationUnitByOriginorganizationunitid() != null) && (source.getOrganizationUnitByOriginorganizationunitid().getIdorganizationunit() != null)) ? source.getOrganizationUnitByOriginorganizationunitid().getIdorganizationunit() : null);
 			target.setIdworkpriority(((source.getWorkPriority() != null) && (source.getWorkPriority().getIdworkpriority() != null)) ? source.getWorkPriority().getIdworkpriority() : null);
 			target.setRejectreason((source.getRejectreason() != null) ? source.getRejectreason() : null);

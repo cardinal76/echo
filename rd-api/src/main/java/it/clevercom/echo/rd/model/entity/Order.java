@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 5-apr-2017 11.35.01 by Hibernate Tools 5.2.2.Final
+// Generated 10-apr-2017 11.15.06 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -45,9 +45,9 @@ public class Order  implements java.io.Serializable {
      private Date acceptancedate;
      private Long duration;
      private String requestingphysician;
-     private String orderreason;
+     private String clinicalquestion;
      private String rejectreason;
-     private String clinicalhistory;
+     private String anamnesys;
      private String notes;
      private Date created;
      private Date updated;
@@ -73,7 +73,7 @@ public class Order  implements java.io.Serializable {
         this.userupdate = userupdate;
         this.active = active;
     }
-    public Order(OrganizationUnit organizationUnitByOriginorganizationunitid, OrganizationUnit organizationUnitByTargetorganizationunitid, Patient patient, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, String requestingphysician, String orderreason, String rejectreason, String clinicalhistory, String notes, Date created, Date updated, String userupdate, Boolean active, String cancelreason, String identificationdocument, Set<OrderLog> orderLogs, Set<OrderService> orderServices) {
+    public Order(OrganizationUnit organizationUnitByOriginorganizationunitid, OrganizationUnit organizationUnitByTargetorganizationunitid, Patient patient, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, String requestingphysician, String clinicalquestion, String rejectreason, String anamnesys, String notes, Date created, Date updated, String userupdate, Boolean active, String cancelreason, String identificationdocument, Set<OrderLog> orderLogs, Set<OrderService> orderServices) {
        this.organizationUnitByOriginorganizationunitid = organizationUnitByOriginorganizationunitid;
        this.organizationUnitByTargetorganizationunitid = organizationUnitByTargetorganizationunitid;
        this.patient = patient;
@@ -86,9 +86,9 @@ public class Order  implements java.io.Serializable {
        this.acceptancedate = acceptancedate;
        this.duration = duration;
        this.requestingphysician = requestingphysician;
-       this.orderreason = orderreason;
+       this.clinicalquestion = clinicalquestion;
        this.rejectreason = rejectreason;
-       this.clinicalhistory = clinicalhistory;
+       this.anamnesys = anamnesys;
        this.notes = notes;
        this.created = created;
        this.updated = updated;
@@ -233,13 +233,13 @@ public class Order  implements java.io.Serializable {
     }
 
     
-    @Column(name="orderreason")
-    public String getOrderreason() {
-        return this.orderreason;
+    @Column(name="clinicalquestion")
+    public String getClinicalquestion() {
+        return this.clinicalquestion;
     }
     
-    public void setOrderreason(String orderreason) {
-        this.orderreason = orderreason;
+    public void setClinicalquestion(String clinicalquestion) {
+        this.clinicalquestion = clinicalquestion;
     }
 
     
@@ -253,13 +253,13 @@ public class Order  implements java.io.Serializable {
     }
 
     
-    @Column(name="clinicalhistory")
-    public String getClinicalhistory() {
-        return this.clinicalhistory;
+    @Column(name="anamnesys")
+    public String getAnamnesys() {
+        return this.anamnesys;
     }
     
-    public void setClinicalhistory(String clinicalhistory) {
-        this.clinicalhistory = clinicalhistory;
+    public void setAnamnesys(String anamnesys) {
+        this.anamnesys = anamnesys;
     }
 
     
