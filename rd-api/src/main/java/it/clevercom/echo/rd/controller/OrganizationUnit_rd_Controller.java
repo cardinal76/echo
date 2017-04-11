@@ -32,9 +32,9 @@ import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.rd.model.dto.OrganizationUnitDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.OrganizationUnit;
-import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
-import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
+import it.clevercom.echo.common.model.jpa.helper.SearchCriteria;
+import it.clevercom.echo.common.model.jpa.helper.SpecificationQueryHelper;
+import it.clevercom.echo.common.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IOrganizationUnit_rd_Repository;
 
 @Controller

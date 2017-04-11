@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -28,17 +27,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
-import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
-import it.clevercom.echo.common.util.JwtTokenUtils;
+import it.clevercom.echo.common.model.jpa.helper.SearchCriteria;
+import it.clevercom.echo.common.model.jpa.helper.SpecificationQueryHelper;
+import it.clevercom.echo.common.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.dto.WorkStatusDTO;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
-import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
-import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 
 @Controller

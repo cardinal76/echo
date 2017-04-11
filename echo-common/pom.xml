@@ -54,10 +54,23 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- jpa -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- hibernate core -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 

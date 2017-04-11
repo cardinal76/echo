@@ -28,12 +28,12 @@ import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
+import it.clevercom.echo.common.model.jpa.helper.SearchCriteria;
+import it.clevercom.echo.common.model.jpa.helper.SpecificationQueryHelper;
+import it.clevercom.echo.common.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.model.dto.MunicipalityDTO;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.Municipality;
-import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
-import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
 
 @Controller

@@ -41,9 +41,9 @@ import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.dto.ServiceDTO;
 import it.clevercom.echo.rd.model.entity.ModalityType;
 import it.clevercom.echo.rd.model.entity.Service;
-import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
-import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
+import it.clevercom.echo.common.model.jpa.helper.SearchCriteria;
+import it.clevercom.echo.common.model.jpa.helper.SpecificationQueryHelper;
+import it.clevercom.echo.common.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IService_rd_Repository;
 
 @Controller

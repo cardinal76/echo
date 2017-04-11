@@ -1,4 +1,4 @@
-package it.clevercom.echo.rd.model.jpa.helper;
+package it.clevercom.echo.common.model.jpa.helper;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;

@@ -1,4 +1,4 @@
-package it.clevercom.echo.rd.model.jpa.helper;
+package it.clevercom.echo.common.model.jpa.helper;
 public class SearchCriteria {
     private String key;
     private String operation;

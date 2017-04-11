@@ -41,9 +41,9 @@ import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.dto.WorkPriorityDTO;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
-import it.clevercom.echo.rd.model.jpa.helper.SearchCriteria;
-import it.clevercom.echo.rd.model.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
+import it.clevercom.echo.common.model.jpa.helper.SearchCriteria;
+import it.clevercom.echo.common.model.jpa.helper.SpecificationQueryHelper;
+import it.clevercom.echo.common.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
 
 @Controller
