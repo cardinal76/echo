@@ -858,7 +858,7 @@ public class Order_rd_Controller extends EchoController {
 		}
 		
 		// requesting physician cannot never be updated
-		if (!updatedOrder.getRequestingPhysician().equals(orderToUpdate.getRequestingphysician())) {
+		if ((orderToUpdate.getRequestingphysician() != null) &&  (!updatedOrder.getRequestingPhysician().equals(orderToUpdate.getRequestingphysician()))) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.requestingphysician"),
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
 							entity_name,
