@@ -688,7 +688,7 @@ public class Order_rd_Controller extends EchoController {
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 		
-		// work status must be equal to request
+		// work status must be equal to requested code
 		if ((!order.getWorkStatus().getCode().equals(WorkStatusEnum.REQUESTED.code()))) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"),
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbe"),
@@ -768,7 +768,7 @@ public class Order_rd_Controller extends EchoController {
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 		
-		// cancel reason must not be present here
+		// identification document must not be present here
 		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getIdentificationdocument())) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.identificationdocument"), 
 					env.getProperty("echo.api.crud.validation.mustbeempty"));

@@ -65,7 +65,7 @@ public enum OrganizationUnitTypeEnum {
     	OrganizationUnitTypeEnum[] array = OrganizationUnitTypeEnum.class.getEnumConstants();
     	int i = 0;
     	for (OrganizationUnitTypeEnum organizationUnitEnum : array) {
-			output += organizationUnitEnum.toString() + ((i<=(array.length-2)) ? ", " : "");
+			output += organizationUnitEnum.code + "[" + organizationUnitEnum.toString() + "]" + ((i<=(array.length-2)) ? ", " : "");
 			i++;
 		}
     	output += "]";

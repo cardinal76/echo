@@ -72,7 +72,7 @@ public enum WorkStatusEnum {
     	WorkStatusEnum[] array = WorkStatusEnum.class.getEnumConstants();
     	int i = 0;
     	for (WorkStatusEnum workStatusEnum : array) {
-			output += workStatusEnum.toString() + ((i<=(array.length-2)) ? ", " : "");
+			output += workStatusEnum.code + "[" + workStatusEnum.toString() + "]" + ((i<=(array.length-2)) ? ", " : "");
 			i++;
 		}
     	output += "]";
