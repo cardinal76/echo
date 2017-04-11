@@ -50,6 +50,7 @@ import it.clevercom.echo.common.model.dto.response.ValidationExceptionDTO;
 import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.common.util.StringUtils;
+import it.clevercom.echo.rd.enums.OrganizationUnitTypeEnum;
 import it.clevercom.echo.rd.enums.WorkPriorityEnum;
 import it.clevercom.echo.rd.enums.WorkStatusEnum;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
@@ -127,6 +128,7 @@ public class Order_rd_Controller extends EchoController {
 	private static String entity_id = "idorder";
 	private static String entity_cd1 = "code";
 	private static String entity_s_name = "Service";
+	private static String entity_o_name = "Organization Unit";
 	
 	/**
 	 * Get order by id
@@ -732,10 +734,15 @@ public class Order_rd_Controller extends EchoController {
 		}
 
 		// check that target organization unit is an operation unit
-//		OrganizationUnit ou = repo_os.findOne(repoorder.getTargetOrganizationUnit().getId());
-//		if () {
-//			
-//		}
+		OrganizationUnit ou = repo_ou.findOne(Long.valueOf(order.getTargetOrganizationUnit().getId()));
+		if (OrganizationUnitTypeEnum.getInstanceFromCodeValue(ou.getType())==OrganizationUnitTypeEnum.OPERATION_UNIT) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.targetorgunit"), 
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbeoftype"), 
+							entity_o_name,
+							ou.getIdorganizationunit(),
+							OrganizationUnitTypeEnum.OPERATION_UNIT.toString()
+							));
+		}
 		
 		// check that clinical question is not null
 		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getClinicalQuestion())) {
