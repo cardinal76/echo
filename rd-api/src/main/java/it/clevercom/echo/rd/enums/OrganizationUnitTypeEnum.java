@@ -3,51 +3,44 @@ package it.clevercom.echo.rd.enums;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum WorkStatusEnum {
-	
-    REQUESTED("REQ"),
-    SCHEDULED("SCH"),
-    ACCEPTED("ACC"),
-    EXECUTING("EXE1"),
-    EXECUTED("EXE2"),
-    REPORTING("REP1"),
-    REPORTED("REP2"),
-    SIGNED("SIG"),
-    DELIVERED("DEL"),
-    ARCHIVED("ARC"),
-    CANCELED("CAN");
+public enum OrganizationUnitTypeEnum {
+	HEADQUARTER("HQ"),
+	DEPARTMENT("DPT"),
+	OPERATION_UNIT("OPU"),
+	WARD("WAR"),
+	EXTERNAL("EXT");
 	
 	private String code;
-    private static Map<String, WorkStatusEnum> codeValueMap = new HashMap<String, WorkStatusEnum>(11);
-
+    private static Map<String, OrganizationUnitTypeEnum> codeValueMap = new HashMap<String, OrganizationUnitTypeEnum>(5);
+    
     static
     {
-        for (WorkStatusEnum  type : WorkStatusEnum.values())
+        for (OrganizationUnitTypeEnum  type : OrganizationUnitTypeEnum.values())
         {
             codeValueMap.put(type.code, type);
         }
     }
-
+    
     /**
      * @param code
      */
-    WorkStatusEnum(String code) {
+    OrganizationUnitTypeEnum(String code) {
         this.code = code;
     }
-
+    
     /**
      * @return
      */
     public String code() {
         return code;
     }
-
+    
     /**
      * @param test
      * @return
      */
     public static boolean contains(String test) {
-        for (WorkStatusEnum c : WorkStatusEnum.values()) {
+        for (OrganizationUnitTypeEnum c : OrganizationUnitTypeEnum.values()) {
             if (c.name().equals(test)) {
                 return true;
             }
@@ -55,12 +48,12 @@ public enum WorkStatusEnum {
 
         return false;
     }
-
+    
     /**
      * @param codeValue
      * @return
      */
-    public static WorkStatusEnum getInstanceFromCodeValue(String codeValue) {
+    public static OrganizationUnitTypeEnum getInstanceFromCodeValue(String codeValue) {
         return codeValueMap.get(codeValue);
     }
     
@@ -69,10 +62,10 @@ public enum WorkStatusEnum {
      */
     public static String enumValuesToString() {
     	String output = "[";
-    	WorkStatusEnum[] array = WorkStatusEnum.class.getEnumConstants();
+    	OrganizationUnitTypeEnum[] array = OrganizationUnitTypeEnum.class.getEnumConstants();
     	int i = 0;
-    	for (WorkStatusEnum workStatusEnum : array) {
-			output += workStatusEnum.toString() + ((i<=(array.length-2)) ? ", " : "");
+    	for (OrganizationUnitTypeEnum organizationUnitEnum : array) {
+			output += organizationUnitEnum.toString() + ((i<=(array.length-2)) ? ", " : "");
 			i++;
 		}
     	output += "]";

@@ -69,6 +69,7 @@ import it.clevercom.echo.rd.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IOrderLog_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderService_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrder_rd_Repository;
+import it.clevercom.echo.rd.repository.IOrganizationUnit_rd_Repository;
 import it.clevercom.echo.rd.repository.IService_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
@@ -97,6 +98,9 @@ public class Order_rd_Controller extends EchoController {
 	
 	@Autowired
 	private IOrderLog_rd_Repository repo_ol;
+	
+	@Autowired
+	private IOrganizationUnit_rd_Repository repo_ou;
 	
 	@Autowired
 	private IWorkStatus_rd_Repository repo_ws;
@@ -183,7 +187,7 @@ public class Order_rd_Controller extends EchoController {
 		
 		// check status code
 		WorkStatus statusEntity = new WorkStatus();
-		if ((!status.equals("*")) && (WorkStatusEnum.getInstanceFromCodeValue(status)==null)) {
+		if ((!status.equals("*")) && (WorkStatusEnum.getInstanceFromCodeValue(status) == null)) {
 			throw new BadRequestException(
 					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
 							env.getProperty("echo.api.crud.fields.workstatus"),
@@ -196,13 +200,13 @@ public class Order_rd_Controller extends EchoController {
 		
 		// check priority code
 		WorkPriority priorityEntity = new WorkPriority();
-		if ((!priority.equals("*")) && (WorkPriorityEnum.getInstanceFromCodeValue(priority)==null)) {
+		if ((!priority.equals("*")) && (WorkPriorityEnum.getInstanceFromCodeValue(priority) == null)) {
 			throw new BadRequestException(
 					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
 							env.getProperty("echo.api.crud.fields.workpriority"),
 							WorkPriorityEnum.enumValuesToString()));
-		} else if ((!priority.equals("*")) && (WorkPriorityEnum.contains(priority))) {
-			priorityEntity = repo_wp.findByCode(WorkPriorityEnum.valueOf(priority).code());
+		} else if ((!priority.equals("*")) && (WorkPriorityEnum.getInstanceFromCodeValue(priority) != null)) {
+			priorityEntity = repo_wp.findByCode(WorkPriorityEnum.getInstanceFromCodeValue(priority).code());
 		}
 		final Long priorityId = priorityEntity.getIdworkpriority();
 		
@@ -714,8 +718,11 @@ public class Order_rd_Controller extends EchoController {
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 
-		// TODO organization unit validation
-		// must check only target 
+		// check that target organization unit is an operation unit
+//		OrganizationUnit ou = repo_os.findOne(repoorder.getTargetOrganizationUnit().getId());
+//		if () {
+//			
+//		}
 		
 		// check that clinical question is not null
 		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getClinicalQuestion())) {
