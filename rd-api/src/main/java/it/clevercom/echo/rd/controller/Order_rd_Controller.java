@@ -280,14 +280,27 @@ public class Order_rd_Controller extends EchoController {
 			spec =  Specifications.where(spec).and(sp);
 		}
 		
-		// check patient name and surname
-		if ((!name.equals("*")) && (!surname.equals("*"))) {
+		// check patient name
+		if ((!name.equals("*"))) {
+			Specification<Order> sp = new Specification<Order>() {
+				@Override
+				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+					Predicate name_p = cb.equal(cb.lower(root.<Patient>get("patient").<String>get("name")), name.toLowerCase());
+					return cb.and(name_p);
+				}
+			};
+			
+			// add to specification list
+			spec =  Specifications.where(spec).and(sp);
+		}
+		
+		// check patient surname
+		if ((!surname.equals("*"))) {
 			Specification<Order> sp = new Specification<Order>() {
 				@Override
 				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 					Predicate surname_p = cb.equal(cb.lower(root.<Patient>get("patient").<String>get("surname")), surname.toLowerCase());
-					Predicate name_p = cb.equal(cb.lower(root.<Patient>get("patient").<String>get("name")), name.toLowerCase());
-					return cb.and(surname_p, name_p);
+					return cb.and(surname_p);
 				}
 			};
 			
