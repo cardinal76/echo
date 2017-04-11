@@ -733,15 +733,24 @@ public class Order_rd_Controller extends EchoController {
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 
-		// check that target organization unit is an operation unit
-		OrganizationUnit ou = repo_ou.findOne(Long.valueOf(order.getTargetOrganizationUnit().getId()));
-		if (OrganizationUnitTypeEnum.getInstanceFromCodeValue(ou.getType())==OrganizationUnitTypeEnum.OPERATION_UNIT) {
+		// check that target organization unit is a valid operation unit
+		if ((order.getTargetOrganizationUnit() == null) || (StringUtils.isNullEmptyWhiteSpaceOnly(order.getTargetOrganizationUnit().getId()))) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.targetorgunit"), 
-					MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbeoftype"), 
-							entity_o_name,
-							ou.getIdorganizationunit(),
-							OrganizationUnitTypeEnum.OPERATION_UNIT.toString()
-							));
+					env.getProperty("echo.api.crud.validation.invalidelement"));
+		} else {
+			OrganizationUnit ou = repo_ou.findOne(Long.valueOf(order.getTargetOrganizationUnit().getId()));
+		
+			if (ou == null) {
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.targetorgunit"), 
+						env.getProperty("echo.api.crud.validation.invalidelement"));
+			} else if (OrganizationUnitTypeEnum.getInstanceFromCodeValue(ou.getType())!=OrganizationUnitTypeEnum.OPERATION_UNIT) {
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.targetorgunit"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbeoftype"), 
+								entity_o_name,
+								ou.getIdorganizationunit(),
+								OrganizationUnitTypeEnum.OPERATION_UNIT.toString()
+								));
+			}
 		}
 		
 		// check that clinical question is not null
