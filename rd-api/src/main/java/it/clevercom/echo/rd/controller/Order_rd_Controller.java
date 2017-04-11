@@ -763,13 +763,13 @@ public class Order_rd_Controller extends EchoController {
 		}
 		
 		// cancel reason must not be present here
-		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getCancelReason())) {
+		if (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(order.getCancelReason())) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason"),
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
 		
 		// identification document must not be present here
-		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getIdentificationdocument())) {
+		if (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(order.getIdentificationdocument())) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.identificationdocument"), 
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}

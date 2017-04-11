@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 10-apr-2017 14.37.18 by Hibernate Tools 5.2.2.Final
+// Generated 11-apr-2017 12.05.18 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -34,12 +34,14 @@ public class ModalityDailyAllocation  implements java.io.Serializable {
      private Long idmodalitydailyallocation;
      private Modality modality;
      private Date day;
-     private Integer allocation;
+     private Integer serviceallocation;
      private Date created;
      private Date updated;
      private String userupdate;
      private Boolean active;
-     private Integer excess;
+     private Integer serviceexcess;
+     private Integer patientallocation;
+     private Integer patientexcess;
 
     public ModalityDailyAllocation() {
     }
@@ -51,15 +53,17 @@ public class ModalityDailyAllocation  implements java.io.Serializable {
         this.userupdate = userupdate;
         this.active = active;
     }
-    public ModalityDailyAllocation(Modality modality, Date day, Integer allocation, Date created, Date updated, String userupdate, Boolean active, Integer excess) {
+    public ModalityDailyAllocation(Modality modality, Date day, Integer serviceallocation, Date created, Date updated, String userupdate, Boolean active, Integer serviceexcess, Integer patientallocation, Integer patientexcess) {
        this.modality = modality;
        this.day = day;
-       this.allocation = allocation;
+       this.serviceallocation = serviceallocation;
        this.created = created;
        this.updated = updated;
        this.userupdate = userupdate;
        this.active = active;
-       this.excess = excess;
+       this.serviceexcess = serviceexcess;
+       this.patientallocation = patientallocation;
+       this.patientexcess = patientexcess;
     }
    
      @GenericGenerator(name="generator", strategy="org.hibernate.id.enhanced.SequenceStyleGenerator", parameters={@Parameter(name="optimizer", value="none"), @Parameter(name="sequence_name", value="modalitydailyallocation_idmodalitydailyallocation_seq"), @Parameter(name="increment_size", value="1")})@Id @GeneratedValue(generator="generator")
@@ -95,13 +99,13 @@ public class ModalityDailyAllocation  implements java.io.Serializable {
     }
 
     
-    @Column(name="allocation")
-    public Integer getAllocation() {
-        return this.allocation;
+    @Column(name="serviceallocation")
+    public Integer getServiceallocation() {
+        return this.serviceallocation;
     }
     
-    public void setAllocation(Integer allocation) {
-        this.allocation = allocation;
+    public void setServiceallocation(Integer serviceallocation) {
+        this.serviceallocation = serviceallocation;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -145,13 +149,33 @@ public class ModalityDailyAllocation  implements java.io.Serializable {
     }
 
     
-    @Column(name="excess")
-    public Integer getExcess() {
-        return this.excess;
+    @Column(name="serviceexcess")
+    public Integer getServiceexcess() {
+        return this.serviceexcess;
     }
     
-    public void setExcess(Integer excess) {
-        this.excess = excess;
+    public void setServiceexcess(Integer serviceexcess) {
+        this.serviceexcess = serviceexcess;
+    }
+
+    
+    @Column(name="patientallocation")
+    public Integer getPatientallocation() {
+        return this.patientallocation;
+    }
+    
+    public void setPatientallocation(Integer patientallocation) {
+        this.patientallocation = patientallocation;
+    }
+
+    
+    @Column(name="patientexcess")
+    public Integer getPatientexcess() {
+        return this.patientexcess;
+    }
+    
+    public void setPatientexcess(Integer patientexcess) {
+        this.patientexcess = patientexcess;
     }
 
 
