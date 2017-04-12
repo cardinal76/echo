@@ -60,6 +60,15 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			target.setCancelReason((source.getCancelreason() != null) ? source.getCancelreason() : null);
 			target.setIdentificationdocument((source.getIdentificationdocument() != null) ? source.getIdentificationdocument() : null);
 			
+			target.setExecutingDate((source.getExecutingdate() != null) ? source.getExecutingdate().getTime() : null);
+			target.setExecutedDate((source.getExecuteddate() != null) ? source.getExecuteddate().getTime() : null);
+			target.setReportingDate((source.getReportingdate() != null) ? source.getReportingdate().getTime() : null);
+			target.setReportedDate((source.getReporteddate() != null) ? source.getReporteddate().getTime() : null);
+			target.setSignedDate((source.getSigneddate() != null) ? source.getSigneddate().getTime() : null);
+			target.setDeliveredDate((source.getDelivereddate() != null) ? source.getDelivereddate().getTime() : null);
+			target.setArchivedDate((source.getArchiveddate() != null) ? source.getArchiveddate().getTime() : null);
+			target.setCanceledDate((source.getCanceleddate() != null) ? source.getCanceleddate().getTime() : null);
+			
 			// map related complex object
 			
 			// origin org unit
@@ -139,6 +148,15 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			target.setCancelreason((source.getCancelReason() != null) ? source.getCancelReason() : null);
 			target.setIdentificationdocument((source.getIdentificationdocument() != null) ? source.getIdentificationdocument() : null);
 			
+			target.setExecutingdate((source.getExecutingDate() != null) ? new Date(source.getExecutingDate()) : null);
+			target.setExecuteddate((source.getExecutedDate() != null) ? new Date(source.getExecutedDate()) : null);
+			target.setReportingdate((source.getReportingDate() != null) ? new Date(source.getReportingDate()) : null);
+			target.setReporteddate((source.getReportedDate() != null) ? new Date(source.getReportedDate()) : null);
+			target.setSigneddate((source.getSignedDate() != null) ? new Date(source.getSignedDate()) : null);
+			target.setDelivereddate((source.getDeliveredDate() != null) ? new Date(source.getDeliveredDate()) : null);
+			target.setArchiveddate((source.getArchivedDate() != null) ? new Date(source.getArchivedDate()) : null);
+			target.setCanceleddate((source.getCanceledDate() != null) ? new Date(source.getCanceledDate()) : null);
+		    
 			// map related complex object
 			
 			// origin org unit

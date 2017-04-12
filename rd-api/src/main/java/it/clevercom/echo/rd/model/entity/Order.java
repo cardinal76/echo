@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 11-apr-2017 13.42.44 by Hibernate Tools 5.2.2.Final
+// Generated 12-apr-2017 9.59.56 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -55,6 +55,14 @@ public class Order  implements java.io.Serializable {
      private Boolean active;
      private String cancelreason;
      private String identificationdocument;
+     private Date executingdate;
+     private Date executeddate;
+     private Date reportingdate;
+     private Date reporteddate;
+     private Date signeddate;
+     private Date delivereddate;
+     private Date archiveddate;
+     private Date canceleddate;
      private Set<OrderLog> orderLogs = new HashSet<OrderLog>(0);
      private Set<OrderService> orderServices = new HashSet<OrderService>(0);
 
@@ -73,7 +81,7 @@ public class Order  implements java.io.Serializable {
         this.userupdate = userupdate;
         this.active = active;
     }
-    public Order(OrganizationUnit organizationUnitByOriginorganizationunitid, OrganizationUnit organizationUnitByTargetorganizationunitid, Patient patient, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, String requestingphysician, String clinicalquestion, String rejectreason, String anamnesys, String notes, Date created, Date updated, String userupdate, Boolean active, String cancelreason, String identificationdocument, Set<OrderLog> orderLogs, Set<OrderService> orderServices) {
+    public Order(OrganizationUnit organizationUnitByOriginorganizationunitid, OrganizationUnit organizationUnitByTargetorganizationunitid, Patient patient, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, String requestingphysician, String clinicalquestion, String rejectreason, String anamnesys, String notes, Date created, Date updated, String userupdate, Boolean active, String cancelreason, String identificationdocument, Date executingdate, Date executeddate, Date reportingdate, Date reporteddate, Date signeddate, Date delivereddate, Date archiveddate, Date canceleddate, Set<OrderLog> orderLogs, Set<OrderService> orderServices) {
        this.organizationUnitByOriginorganizationunitid = organizationUnitByOriginorganizationunitid;
        this.organizationUnitByTargetorganizationunitid = organizationUnitByTargetorganizationunitid;
        this.patient = patient;
@@ -96,6 +104,14 @@ public class Order  implements java.io.Serializable {
        this.active = active;
        this.cancelreason = cancelreason;
        this.identificationdocument = identificationdocument;
+       this.executingdate = executingdate;
+       this.executeddate = executeddate;
+       this.reportingdate = reportingdate;
+       this.reporteddate = reporteddate;
+       this.signeddate = signeddate;
+       this.delivereddate = delivereddate;
+       this.archiveddate = archiveddate;
+       this.canceleddate = canceleddate;
        this.orderLogs = orderLogs;
        this.orderServices = orderServices;
     }
@@ -330,6 +346,86 @@ public class Order  implements java.io.Serializable {
     
     public void setIdentificationdocument(String identificationdocument) {
         this.identificationdocument = identificationdocument;
+    }
+
+    @Temporal(TemporalType.DATE)
+    @Column(name="executingdate", length=13)
+    public Date getExecutingdate() {
+        return this.executingdate;
+    }
+    
+    public void setExecutingdate(Date executingdate) {
+        this.executingdate = executingdate;
+    }
+
+    @Temporal(TemporalType.DATE)
+    @Column(name="executeddate", length=13)
+    public Date getExecuteddate() {
+        return this.executeddate;
+    }
+    
+    public void setExecuteddate(Date executeddate) {
+        this.executeddate = executeddate;
+    }
+
+    @Temporal(TemporalType.DATE)
+    @Column(name="reportingdate", length=13)
+    public Date getReportingdate() {
+        return this.reportingdate;
+    }
+    
+    public void setReportingdate(Date reportingdate) {
+        this.reportingdate = reportingdate;
+    }
+
+    @Temporal(TemporalType.DATE)
+    @Column(name="reporteddate", length=13)
+    public Date getReporteddate() {
+        return this.reporteddate;
+    }
+    
+    public void setReporteddate(Date reporteddate) {
+        this.reporteddate = reporteddate;
+    }
+
+    @Temporal(TemporalType.DATE)
+    @Column(name="signeddate", length=13)
+    public Date getSigneddate() {
+        return this.signeddate;
+    }
+    
+    public void setSigneddate(Date signeddate) {
+        this.signeddate = signeddate;
+    }
+
+    @Temporal(TemporalType.DATE)
+    @Column(name="delivereddate", length=13)
+    public Date getDelivereddate() {
+        return this.delivereddate;
+    }
+    
+    public void setDelivereddate(Date delivereddate) {
+        this.delivereddate = delivereddate;
+    }
+
+    @Temporal(TemporalType.DATE)
+    @Column(name="archiveddate", length=13)
+    public Date getArchiveddate() {
+        return this.archiveddate;
+    }
+    
+    public void setArchiveddate(Date archiveddate) {
+        this.archiveddate = archiveddate;
+    }
+
+    @Temporal(TemporalType.DATE)
+    @Column(name="canceleddate", length=13)
+    public Date getCanceleddate() {
+        return this.canceleddate;
+    }
+    
+    public void setCanceleddate(Date canceleddate) {
+        this.canceleddate = canceleddate;
     }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="order")

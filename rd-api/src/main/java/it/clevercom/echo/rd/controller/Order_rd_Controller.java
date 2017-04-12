@@ -47,6 +47,7 @@ import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.ValidationExceptionDTO;
+import it.clevercom.echo.common.model.jpa.helper.DateIntervalSpecification;
 import it.clevercom.echo.common.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.common.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.common.model.jpa.helper.SpecificationsBuilder;
@@ -74,6 +75,7 @@ import it.clevercom.echo.rd.repository.IOrganizationUnit_rd_Repository;
 import it.clevercom.echo.rd.repository.IService_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
+import it.clevercom.echo.rd.util.WorkStatusDateFieldDecoder;
 
 @Controller
 @RestController
@@ -236,25 +238,14 @@ public class Order_rd_Controller extends EchoController {
 			}
 			spec = builder.build();
 		}
-			
-		// set date interval lower limit
-		Specification<Order> t1s = new Specification<Order>() {
-			@Override
-			public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				return cb.greaterThanOrEqualTo(root.<Date>get("creationdate"), t1);
-			}
-		};
 		
-		// set date interval upper limit
-		Specification<Order> t2s = new Specification<Order>() {
-			@Override
-			public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-				return cb.lessThanOrEqualTo(root.<Date>get("creationdate"), t2);
-			}
-		};
+		// create standard specification based on date interval and field name
+		DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, 
+				WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(
+						(statusEntity !=null) ? WorkStatusEnum.getInstanceFromCodeValue(statusEntity.getCode()) : null));
 		
 		// add date interval to specification list
-		spec =  Specifications.where(spec).and(t1s).and(t2s);
+		spec =  Specifications.where(spec).and(interval);
 		
 		// check status and add it to specification
 		if (!status.equals("*")) {

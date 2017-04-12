@@ -36,6 +36,15 @@ public class OrderDTO implements Serializable {
 	private Set<BaseObjectDTO> services = new HashSet<BaseObjectDTO>(0);
 	private Set<BaseObjectDTO> canceledServices = new HashSet<BaseObjectDTO>();
     private String identificationdocument;
+    private Long executingDate;
+    private Long executedDate;
+    private Long reportingDate;
+    private Long reportedDate;
+    private Long signedDate;
+    private Long deliveredDate;
+    private Long archivedDate;
+    private Long canceledDate;
+    
     
 	/**
 	 * @return the idOrder
@@ -374,13 +383,6 @@ public class OrderDTO implements Serializable {
 	}
 
 	/**
-	 * @return the serialversionuid
-	 */
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	/**
 	 * @return the identificationdocument
 	 */
 	public String getIdentificationdocument() {
@@ -392,5 +394,124 @@ public class OrderDTO implements Serializable {
 	 */
 	public void setIdentificationdocument(String identificationdocument) {
 		this.identificationdocument = identificationdocument;
+	}
+	
+	/**
+	 * @return the executingDate
+	 */
+	public Long getExecutingDate() {
+		return executingDate;
+	}
+
+	/**
+	 * @param executingDate the executingDate to set
+	 */
+	public void setExecutingDate(Long executingDate) {
+		this.executingDate = executingDate;
+	}
+
+	/**
+	 * @return the executeDate
+	 */
+	public Long getExecutedDate() {
+		return executedDate;
+	}
+
+	/**
+	 * @param executeDate the executeDate to set
+	 */
+	public void setExecutedDate(Long executedDate) {
+		this.executedDate = executedDate;
+	}
+
+	/**
+	 * @return the reportingDate
+	 */
+	public Long getReportingDate() {
+		return reportingDate;
+	}
+
+	/**
+	 * @param reportingDate the reportingDate to set
+	 */
+	public void setReportingDate(Long reportingDate) {
+		this.reportingDate = reportingDate;
+	}
+
+	/**
+	 * @return the reportedDate
+	 */
+	public Long getReportedDate() {
+		return reportedDate;
+	}
+
+	/**
+	 * @param reportedDate the reportedDate to set
+	 */
+	public void setReportedDate(Long reportedDate) {
+		this.reportedDate = reportedDate;
+	}
+
+	/**
+	 * @return the signedDate
+	 */
+	public Long getSignedDate() {
+		return signedDate;
+	}
+
+	/**
+	 * @param signedDate the signedDate to set
+	 */
+	public void setSignedDate(Long signedDate) {
+		this.signedDate = signedDate;
+	}
+
+	/**
+	 * @return the deliveredDate
+	 */
+	public Long getDeliveredDate() {
+		return deliveredDate;
+	}
+
+	/**
+	 * @param deliveredDate the deliveredDate to set
+	 */
+	public void setDeliveredDate(Long deliveredDate) {
+		this.deliveredDate = deliveredDate;
+	}
+
+	/**
+	 * @return the archivedDate
+	 */
+	public Long getArchivedDate() {
+		return archivedDate;
+	}
+
+	/**
+	 * @param archivedDate the archivedDate to set
+	 */
+	public void setArchivedDate(Long archivedDate) {
+		this.archivedDate = archivedDate;
+	}
+
+	/**
+	 * @return the canceledDate
+	 */
+	public Long getCanceledDate() {
+		return canceledDate;
+	}
+
+	/**
+	 * @param canceledDate the canceledDate to set
+	 */
+	public void setCanceledDate(Long canceledDate) {
+		this.canceledDate = canceledDate;
+	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }
