@@ -12,11 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
-import it.clevercom.echo.rd.model.dto.OrderLogDTO;
 import it.clevercom.echo.rd.model.dto.PatientSmartDTO;
 import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
 import it.clevercom.echo.rd.model.entity.Order;
-import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
 import it.clevercom.echo.rd.model.entity.OrganizationUnit;
 import it.clevercom.echo.rd.model.entity.Patient;

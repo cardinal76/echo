@@ -45,21 +45,24 @@ import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.exception.model.ValidationException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
+import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.ValidationExceptionDTO;
 import it.clevercom.echo.common.model.jpa.helper.DateIntervalSpecification;
+import it.clevercom.echo.common.model.jpa.helper.PageRequestFactory;
+import it.clevercom.echo.common.model.jpa.helper.PagedDTOFactory;
 import it.clevercom.echo.common.model.jpa.helper.SearchCriteria;
 import it.clevercom.echo.common.model.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.common.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.common.util.StringUtils;
+import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.enums.OrganizationUnitTypeEnum;
 import it.clevercom.echo.rd.enums.WorkPriorityEnum;
 import it.clevercom.echo.rd.enums.WorkStatusEnum;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
-import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
@@ -122,6 +125,9 @@ public class Order_rd_Controller extends EchoController {
 
 	@Autowired
 	private JwtTokenUtils tokenUtils;
+	
+	@Autowired
+	private Validator validator;
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -173,6 +179,7 @@ public class Order_rd_Controller extends EchoController {
 			@RequestParam(defaultValue = "today_start", required = false) Long from,
 			@RequestParam(defaultValue = "today_end", required = false) Long to,
 			@RequestParam(defaultValue = "*", required = false) String status,
+			@RequestParam(defaultValue = "false", required = false) String h,
 			@RequestParam(defaultValue = "*", required = false) String priority,
 			@RequestParam(defaultValue = "0", required = false) Long originorgid,
 			@RequestParam(defaultValue = "0", required = false) Long targetorgid,
@@ -189,44 +196,32 @@ public class Order_rd_Controller extends EchoController {
 		final Date t1 = DateUtil.getStartOfDay(new Date(from));
 		final Date t2 = DateUtil.getEndOfDay(new Date(to));
 		
-		// check status code
-		WorkStatus statusEntity = new WorkStatus();
-		if ((!status.equals("*")) && (WorkStatusEnum.getInstanceFromCodeValue(status) == null)) {
-			throw new BadRequestException(
-					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
-							env.getProperty("echo.api.crud.fields.workstatus"),
-							WorkStatusEnum.enumValuesToString()));
-		} else if ((!status.equals("*")) && (WorkStatusEnum.getInstanceFromCodeValue(status) != null)) {
-			statusEntity = repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(status).code());
-		}
+		// check enum string params
+		validator.validateStatus(status);
+		validator.validatePriority(priority);
+		validator.validateSort(sort);
 		
-		final Long statusId = statusEntity.getIdworkstatus();
-		
-		// check priority code
-		WorkPriority priorityEntity = new WorkPriority();
-		if ((!priority.equals("*")) && (WorkPriorityEnum.getInstanceFromCodeValue(priority) == null)) {
-			throw new BadRequestException(
-					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
-							env.getProperty("echo.api.crud.fields.workpriority"),
-							WorkPriorityEnum.enumValuesToString()));
-		} else if ((!priority.equals("*")) && (WorkPriorityEnum.getInstanceFromCodeValue(priority) != null)) {
-			priorityEntity = repo_wp.findByCode(WorkPriorityEnum.getInstanceFromCodeValue(priority).code());
-		}
-		final Long priorityId = priorityEntity.getIdworkpriority();
-		
+		// list
+		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
+		// int totalPages = 0;
+		// long totalElements = 0;
+				
 		// create paged request
-		PageRequest request = null;
-
-		if (sort.equalsIgnoreCase("asc")) {
-			request = new PageRequest(page - 1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page - 1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
+		PageRequest request = PageRequestFactory.getPageRequest(sort, field, page, size);
+		
+		// get status entity and id
+		if (!status.equals("*")) {
+			WorkStatus statusEntity = repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(status).code());
+			final Long statusId = statusEntity.getIdworkstatus();
 		}
-
+		
+		// get priority entity and id
+		if (!priority.equals("*")) {
+			WorkPriority priorityEntity = repo_wp.findByCode(WorkPriorityEnum.getInstanceFromCodeValue(priority).code());
+			final Long priorityId = priorityEntity.getIdworkpriority();
+		}
+		
 		// create predicate if criteria is not null
-		Page<Order> rs = null;
 		Specification<Order> spec = null;
 		
 		if (!criteria.equals("null")) {
@@ -239,11 +234,11 @@ public class Order_rd_Controller extends EchoController {
 			spec = builder.build();
 		}
 		
+		
 		// create standard specification based on date interval and field name
 		DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, 
-				WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(
-						(statusEntity !=null) ? WorkStatusEnum.getInstanceFromCodeValue(statusEntity.getCode()) : null));
-		
+				WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus((statusEntity !=null) ? WorkStatusEnum.getInstanceFromCodeValue(statusEntity.getCode()) : null));
+			
 		// add date interval to specification list
 		spec =  Specifications.where(spec).and(interval);
 		
@@ -355,7 +350,7 @@ public class Order_rd_Controller extends EchoController {
 		}
 		
 		// find with specification and pagination
-		rs = repo.findAll(spec, request);
+		Page<Order> rs = repo.findAll(spec, request);
 
 		int totalPages = rs.getTotalPages();
 		long totalElements = rs.getTotalElements();
@@ -364,19 +359,19 @@ public class Order_rd_Controller extends EchoController {
 		if (entities.size() == 0)
 			throw new PageNotFoundException(entity_name, page);
 
-		// map list
-		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
 		for (Order s : entities) {
 			orderDTOList.add(rdDozerMapper.map(s, OrderDTO.class));
 		}
-
+		
 		// assembly dto
-		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
-		dto.setElements(orderDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		dto.setTotalPages(totalPages);
-		dto.setTotalElements(totalElements);
+//		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
+//		dto.setElements(orderDTOList);
+//		dto.setPageSize(size);
+//		dto.setCurrentPage(page);
+//		dto.setTotalPages(totalPages);
+//		dto.setTotalElements(totalElements);
+		
+		PagedDTO<OrderDTO> dto = PagedDTOFactory.getPagedDTO(orderDTOList, size, page, totalPages, totalElements);
 		return dto;
 	}
 	

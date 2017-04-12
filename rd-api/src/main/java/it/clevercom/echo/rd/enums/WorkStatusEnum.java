@@ -68,14 +68,13 @@ public enum WorkStatusEnum {
      * @return
      */
     public static String enumValuesToString() {
-    	String output = "[";
+    	String output = "";
     	WorkStatusEnum[] array = WorkStatusEnum.class.getEnumConstants();
     	int i = 0;
     	for (WorkStatusEnum workStatusEnum : array) {
 			output += workStatusEnum.code + "[" + workStatusEnum.toString() + "]" + ((i<=(array.length-2)) ? ", " : "");
 			i++;
 		}
-    	output += "]";
     	return output;
     }
 }

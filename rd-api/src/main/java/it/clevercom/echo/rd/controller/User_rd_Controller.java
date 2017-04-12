@@ -32,7 +32,7 @@ import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
-import it.clevercom.echo.rd.model.dto.PagedDTO;
+import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.rd.model.dto.UserDTO;
 import it.clevercom.echo.rd.model.entity.User;
 import it.clevercom.echo.common.model.jpa.helper.SearchCriteria;

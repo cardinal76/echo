@@ -61,14 +61,13 @@ public enum OrganizationUnitTypeEnum {
      * @return
      */
     public static String enumValuesToString() {
-    	String output = "[";
+    	String output = "";
     	OrganizationUnitTypeEnum[] array = OrganizationUnitTypeEnum.class.getEnumConstants();
     	int i = 0;
     	for (OrganizationUnitTypeEnum organizationUnitEnum : array) {
 			output += organizationUnitEnum.code + "[" + organizationUnitEnum.toString() + "]" + ((i<=(array.length-2)) ? ", " : "");
 			i++;
 		}
-    	output += "]";
     	return output;
     }
 }

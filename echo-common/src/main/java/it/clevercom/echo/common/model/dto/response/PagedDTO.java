@@ -1,4 +1,4 @@
-package it.clevercom.echo.rd.model.dto;
+package it.clevercom.echo.common.model.dto.response;
 
 import java.io.Serializable;
 import java.util.List;

@@ -7,6 +7,8 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
 
+// TODO implement not-equal operator
+
 public class SpecificationQueryHelper<T> implements Specification<T> {
 	private SearchCriteria criteria;
 
