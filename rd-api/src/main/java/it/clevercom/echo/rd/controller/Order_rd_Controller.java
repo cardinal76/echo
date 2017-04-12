@@ -43,17 +43,20 @@ import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.exception.model.ValidationException;
+import it.clevercom.echo.common.jpa.factory.CriteriaSpecificationFactory;
+import it.clevercom.echo.common.jpa.factory.PageRequestFactory;
+import it.clevercom.echo.common.jpa.helper.SearchCriteria;
+import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
+import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
+import it.clevercom.echo.common.jpa.specification.BooleanSpecification;
+import it.clevercom.echo.common.jpa.specification.DateIntervalSpecification;
+import it.clevercom.echo.common.jpa.specification.StringSpecification;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.ValidationExceptionDTO;
-import it.clevercom.echo.common.model.jpa.helper.DateIntervalSpecification;
-import it.clevercom.echo.common.model.jpa.helper.PageRequestFactory;
-import it.clevercom.echo.common.model.jpa.helper.PagedDTOFactory;
-import it.clevercom.echo.common.model.jpa.helper.SearchCriteria;
-import it.clevercom.echo.common.model.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.common.model.jpa.helper.SpecificationsBuilder;
+import it.clevercom.echo.common.model.factory.PagedDTOFactory;
 import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.common.util.StringUtils;
@@ -61,6 +64,9 @@ import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.enums.OrganizationUnitTypeEnum;
 import it.clevercom.echo.rd.enums.WorkPriorityEnum;
 import it.clevercom.echo.rd.enums.WorkStatusEnum;
+import it.clevercom.echo.rd.jpa.specification.OrganizationUnitSpecification;
+import it.clevercom.echo.rd.jpa.specification.WorkPrioritySpecification;
+import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.entity.Order;
@@ -203,151 +209,69 @@ public class Order_rd_Controller extends EchoController {
 		
 		// list
 		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
-		// int totalPages = 0;
-		// long totalElements = 0;
-				
+		
 		// create paged request
 		PageRequest request = PageRequestFactory.getPageRequest(sort, field, page, size);
 		
-		// get status entity and id
+		// create and set specification with criteria param
+		Specification<Order> spec = CriteriaSpecificationFactory.getCriteriaSpecification(criteria);
+		
+		// create and set status specification
 		if (!status.equals("*")) {
-			WorkStatus statusEntity = repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(status).code());
-			final Long statusId = statusEntity.getIdworkstatus();
+			WorkStatusSpecification<Order> st = new WorkStatusSpecification<Order>(repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(status).code()).getIdworkstatus());
+			spec = Specifications.where(spec).and(st);
 		}
 		
-		// get priority entity and id
+		// create and set priority specification
 		if (!priority.equals("*")) {
-			WorkPriority priorityEntity = repo_wp.findByCode(WorkPriorityEnum.getInstanceFromCodeValue(priority).code());
-			final Long priorityId = priorityEntity.getIdworkpriority();
+			WorkPrioritySpecification<Order> pr = new WorkPrioritySpecification<Order>(repo_wp.findByCode(WorkPriorityEnum.getInstanceFromCodeValue(priority).code()).getIdworkpriority());
+			spec =  Specifications.where(spec).and(pr);
 		}
 		
-		// create predicate if criteria is not null
-		Specification<Order> spec = null;
-		
-		if (!criteria.equals("null")) {
-			SpecificationsBuilder<Order, SpecificationQueryHelper<Order>> builder = new SpecificationsBuilder<Order, SpecificationQueryHelper<Order>>();
-			Pattern pattern = Pattern.compile(SearchCriteria.pattern);
-			Matcher matcher = pattern.matcher(criteria + ",");
-			while (matcher.find()) {
-				builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-			}
-			spec = builder.build();
-		}
-		
-		
-		// create standard specification based on date interval and field name
-		DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, 
-				WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus((statusEntity !=null) ? WorkStatusEnum.getInstanceFromCodeValue(statusEntity.getCode()) : null));
-			
-		// add date interval to specification list
-		spec =  Specifications.where(spec).and(interval);
-		
-		// check status and add it to specification
-		if (!status.equals("*")) {
-			Specification<Order> ss = new Specification<Order>() {
-				@Override
-				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-					return cb.equal(root.<WorkStatus>get("workStatus").<Long>get("idworkstatus"), statusId);
-				}
-			};
-			
-			// add to specification list
-			spec =  Specifications.where(spec).and(ss);
-		}
-		
-		// check status and add it to specification
-		if (!priority.equals("*")) {
-			Specification<Order> sp = new Specification<Order>() {
-				@Override
-				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-					return cb.equal(root.<WorkPriority>get("workPriority").<Long>get("idworkpriority"), priorityId);
-				}
-			};
-			
-			// add to specification list
-			spec =  Specifications.where(spec).and(sp);
-		}
-		
-		// check patient name
+		// create and set patient name specification
 		if ((!name.equals("*"))) {
-			Specification<Order> sp = new Specification<Order>() {
-				@Override
-				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-					Predicate name_p = cb.equal(cb.lower(root.<Patient>get("patient").<String>get("name")), name.toLowerCase());
-					return cb.and(name_p);
-				}
-			};
-			
-			// add to specification list
-			spec =  Specifications.where(spec).and(sp);
+			StringSpecification<Order, Patient> n = new StringSpecification<Order, Patient>("patient", "name", name.toLowerCase()); 
+			spec =  Specifications.where(spec).and(n);
 		}
 		
-		// check patient surname
+		// create and set patient surname specification
 		if ((!surname.equals("*"))) {
-			Specification<Order> sp = new Specification<Order>() {
-				@Override
-				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-					Predicate surname_p = cb.equal(cb.lower(root.<Patient>get("patient").<String>get("surname")), surname.toLowerCase());
-					return cb.and(surname_p);
-				}
-			};
-			
-			// add to specification list
-			spec =  Specifications.where(spec).and(sp);
+			StringSpecification<Order, Patient> sn = new StringSpecification<Order, Patient>("patient", "surname", surname.toLowerCase());
+			spec =  Specifications.where(spec).and(sn);
 		}
 		
 		// check patient taxcode
 		if (!taxCode.equals("*")) {
-			Specification<Order> sp = new Specification<Order>() {
-				@Override
-				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-					return cb.equal(cb.lower(root.<Patient>get("patient").<String>get("taxcode")), taxCode.toLowerCase());
-				}
-			};
-			
-			// add to specification list
-			spec =  Specifications.where(spec).and(sp);
+			StringSpecification<Order, Patient> tc = new StringSpecification<Order, Patient>("patient", "taxcode", taxCode.toLowerCase());
+			spec =  Specifications.where(spec).and(tc);
 		}
 		
 		// check target organization unit
 		if (!targetorgid.equals(Long.valueOf(0))) {
-			Specification<Order> sp = new Specification<Order>() {
-				@Override
-				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-					return cb.equal(root.<OrganizationUnit>get("organizationUnitByTargetorganizationunitid").<Long>get("idorganizationunit"), targetorgid);
-				}
-			};
-			
-			// add to specification list
-			spec =  Specifications.where(spec).and(sp);
+			OrganizationUnitSpecification<Order> tou = new OrganizationUnitSpecification<Order>("organizationUnitByTargetorganizationunitid", targetorgid);
+			spec =  Specifications.where(spec).and(tou);
 		}
 
 		// check origin organization unit
 		if (!originorgid.equals(Long.valueOf(0))) {
-			Specification<Order> sp = new Specification<Order>() {
-				@Override
-				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-					return cb.equal(root.<OrganizationUnit>get("organizationUnitByOriginorganizationunitid").<Long>get("idorganizationunit"), originorgid);
-				}
-			};
-			
-			// add to specification list
-			spec =  Specifications.where(spec).and(sp);
+			OrganizationUnitSpecification<Order> oou = new OrganizationUnitSpecification<Order>("organizationUnitByOriginorganizationunitid", originorgid);
+			spec =  Specifications.where(spec).and(oou);
 		}
 		
 		// include only active if active!false is not specified in criteria
 		if ((criteria.equals("null")) || ((!criteria.equals("null")) && (!criteria.contains("active!false")) && (!criteria.contains("active!true")))) {
-			Specification<Order> sp = new Specification<Order>() {
-				// add standard active=true
-				@Override
-				public Predicate toPredicate(Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-					return cb.isTrue(root.<Boolean>get("active"));
-				}
-			};
-			
-			// add to specification list
-			spec =  Specifications.where(spec).and(sp);
+			BooleanSpecification<Order, Order> act = new BooleanSpecification<Order, Order>(null, "active", true);
+			spec =  Specifications.where(spec).and(act);
 		}
+		
+		// create standard specification based on date interval and field name
+		DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, 
+				WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus((!status.equals("*")) ? 
+						WorkStatusEnum.getInstanceFromCodeValue(status) : 
+							null));
+		
+		// add date interval to specification list
+		spec =  Specifications.where(spec).and(interval);
 		
 		// find with specification and pagination
 		Page<Order> rs = repo.findAll(spec, request);
@@ -364,14 +288,8 @@ public class Order_rd_Controller extends EchoController {
 		}
 		
 		// assembly dto
-//		PagedDTO<OrderDTO> dto = new PagedDTO<OrderDTO>();
-//		dto.setElements(orderDTOList);
-//		dto.setPageSize(size);
-//		dto.setCurrentPage(page);
-//		dto.setTotalPages(totalPages);
-//		dto.setTotalElements(totalElements);
-		
 		PagedDTO<OrderDTO> dto = PagedDTOFactory.getPagedDTO(orderDTOList, size, page, totalPages, totalElements);
+		
 		return dto;
 	}
 	

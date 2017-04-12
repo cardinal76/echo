@@ -30,14 +30,14 @@ import org.springframework.web.bind.annotation.RestController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.helper.SearchCriteria;
+import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
+import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.rd.model.dto.UserDTO;
 import it.clevercom.echo.rd.model.entity.User;
-import it.clevercom.echo.common.model.jpa.helper.SearchCriteria;
-import it.clevercom.echo.common.model.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.common.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 
 @Controller

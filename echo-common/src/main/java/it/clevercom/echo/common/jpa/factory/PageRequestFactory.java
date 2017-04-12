@@ -1,4 +1,4 @@
-package it.clevercom.echo.common.model.jpa.helper;
+package it.clevercom.echo.common.jpa.factory;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;

@@ -1,4 +1,4 @@
-package it.clevercom.echo.common.model.jpa.helper;
+package it.clevercom.echo.common.model.factory;
 
 import java.util.List;
 
