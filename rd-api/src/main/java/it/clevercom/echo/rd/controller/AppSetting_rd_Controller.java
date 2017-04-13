@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.factory.CriteriaSpecificationFactory;
 import it.clevercom.echo.common.jpa.factory.PageRequestFactory;
 import it.clevercom.echo.common.logging.annotation.Loggable;
@@ -54,7 +55,7 @@ import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
  * @author luca
  */
 
-public class AppSetting_rd_Controller {
+public class AppSetting_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Environment env;
@@ -85,7 +86,7 @@ public class AppSetting_rd_Controller {
 	 * Get application setting list by Username
 	 * @param username
 	 * @return
-	 * @throws Exception
+	 * @throws Exception.
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="/{username}", method = RequestMethod.GET)
@@ -121,6 +122,12 @@ public class AppSetting_rd_Controller {
 		// check enum string params
 		validator.validateSort(sort);
 		
+		CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> requestProcessor = new CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>();
+		
+//		CriteriaRequestProcessor<IAppSetting_rd_Repository, 
+//								 AppSetting, 
+//								 AppSettingDTO> test = new CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repository, entity, dto, request, specification); 
+		
 		// create paged request
 		PageRequest request = PageRequestFactory.getPageRequest(sort, field, page, size);
 		
@@ -135,7 +142,7 @@ public class AppSetting_rd_Controller {
 		
 		// throw exception if no content
 		if (entity.size() == 0) 
-			throw new PageNotFoundException(AppSetting_rd_Controller.entity_name, page);
+			throw new PageNotFoundException(entity_name, page);
 		
 		// create list
 		List<AppSettingDTO> appSettingDTOList = new ArrayList<AppSettingDTO>();

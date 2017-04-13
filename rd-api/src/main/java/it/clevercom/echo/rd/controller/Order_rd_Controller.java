@@ -182,8 +182,8 @@ public class Order_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody PagedDTO<OrderDTO> getByCriteria(
-			@RequestParam(defaultValue = "today_start", required = false) Long from,
-			@RequestParam(defaultValue = "today_end", required = false) Long to,
+			@RequestParam(defaultValue = "system_start", required = false) Long from,
+			@RequestParam(defaultValue = "system_end", required = false) Long to,
 			@RequestParam(defaultValue = "*", required = false) String status,
 			@RequestParam(defaultValue = "false", required = false) String h,
 			@RequestParam(defaultValue = "*", required = false) String priority,
@@ -644,7 +644,7 @@ public class Order_rd_Controller extends EchoController {
 			if (ou == null) {
 				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.targetorgunit"), 
 						env.getProperty("echo.api.crud.validation.invalidelement"));
-			} else if (OrganizationUnitTypeEnum.getInstanceFromCodeValue(ou.getType())!=OrganizationUnitTypeEnum.OPERATION_UNIT) {
+			} else if (!OrganizationUnitTypeEnum.getInstanceFromCodeValue(ou.getCode()).equals(OrganizationUnitTypeEnum.OPERATION_UNIT)) {
 				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.targetorgunit"), 
 						MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbeoftype"), 
 								entity_o_name,

@@ -35,6 +35,12 @@ public class EchoController {
 	    		} else if ("today_end".equals(text)) {
 	    			Date today = new Date();
 	    			setValue(DateUtil.getEndOfDay(today).getTime());
+	    		} else if ("system_start".equals(text)) {
+	    			Date sysStart = new Date(-3600000l);
+	    			setValue(DateUtil.getEndOfDay(sysStart).getTime());
+	    		} else if ("system_end".equals(text)) {
+	    			Date sysEnd = new Date(2524604400000l);
+	    			setValue(DateUtil.getEndOfDay(sysEnd).getTime());
 	    		} else {
 	    			super.setAsText(text);
 	    		}

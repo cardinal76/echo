@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.factory.CriteriaSpecificationFactory;
+import it.clevercom.echo.common.jpa.factory.PageRequestFactory;
 import it.clevercom.echo.common.jpa.helper.SearchCriteria;
 import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
@@ -40,8 +42,12 @@ import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
+import it.clevercom.echo.common.model.factory.PagedDTOFactory;
 import it.clevercom.echo.common.util.JwtTokenUtils;
+import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.model.dto.CitizenshipDTO;
 import it.clevercom.echo.rd.model.dto.CodingActorDTO;
+import it.clevercom.echo.rd.model.entity.Citizenship;
 import it.clevercom.echo.rd.model.entity.CodingActor;
 import it.clevercom.echo.rd.repository.ICodingActor_rd_Repository;
 
@@ -56,7 +62,7 @@ import it.clevercom.echo.rd.repository.ICodingActor_rd_Repository;
  * @author luca
  */
 
-public class CodingActor_rd_Controller {
+public class CodingActor_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Environment env;
@@ -72,6 +78,9 @@ public class CodingActor_rd_Controller {
 	
 	@Autowired
 	private JwtTokenUtils tokenUtils;
+	
+	@Autowired
+	private Validator validator;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -116,55 +125,33 @@ public class CodingActor_rd_Controller {
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="idcodingactor", required=false) String field) throws Exception {
 		
+		// check enum string params
+		validator.validateSort(sort);
+		
 		// create paged request
-		PageRequest request = null;
+		PageRequest request = PageRequestFactory.getPageRequest(sort, field, page, size);
 		
-		if (sort.equalsIgnoreCase("asc")) {
-			 request = new PageRequest(page-1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page-1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
+		// create and set specification with criteria param
+		Specification<CodingActor> spec = CriteriaSpecificationFactory.getCriteriaSpecification(criteria);
 		
-		// create predicate if criteria is not null
-		Page<CodingActor> rs = null;
+		// find with specification and pagination
+		Page<CodingActor> rs = repo.findAll(spec, request);
 		
-		if (!criteria.equals("null")) {
-	        SpecificationsBuilder<CodingActor, SpecificationQueryHelper<CodingActor>> builder = new SpecificationsBuilder<CodingActor, SpecificationQueryHelper<CodingActor>>();
-	        Pattern pattern = Pattern.compile(SearchCriteria.pattern);
-	        Matcher matcher = pattern.matcher(criteria + ",");
-	        while (matcher.find()) {
-	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-	        }
-	        Specification<CodingActor> spec = builder.build();
-	        
-	        // obtain records
-	        rs = repo.findAll(spec, request);
-		} else {
-			rs = repo.findAll(request);
-		}
-		
-		int totalPages = rs.getTotalPages();
-        long totalElements = rs.getTotalElements();
+		// get content
 		List<CodingActor> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(entity_name, page);
+		// throw exception if no content
+		if (entity.size() == 0) 
+			throw new PageNotFoundException(entity_name, page);
 		
-		// map list
+		// create list
 		List<CodingActorDTO> codingActorDTOList = new ArrayList<CodingActorDTO>();
 		for (CodingActor s: entity) {
 			codingActorDTOList.add(rdDozerMapper.map(s, CodingActorDTO.class));
 		}
 		
 		// assembly dto
-		PagedDTO<CodingActorDTO> dto = new PagedDTO<CodingActorDTO>();
-		dto.setElements(codingActorDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		dto.setTotalPages(totalPages);
-		dto.setTotalElements(totalElements);
-		return dto;
+		return PagedDTOFactory.getPagedDTO(codingActorDTOList, size, page, rs.getTotalPages(), rs.getTotalElements());
 	}
 	
 	/**

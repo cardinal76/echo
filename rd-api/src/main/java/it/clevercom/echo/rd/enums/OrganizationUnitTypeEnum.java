@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum OrganizationUnitTypeEnum {
-	HEADQUARTER("HQ"),
-	DEPARTMENT("DPT"),
-	OPERATION_UNIT("OPU"),
-	WARD("WAR"),
-	EXTERNAL("EXT");
+	HEADQUARTER("HEADQUARTER"),
+	DEPARTMENT("DEPARTMENT"),
+	OPERATION_UNIT("OPERATION_UNIT"),
+	WARD("WARD"),
+	EXTERNAL("EXTERNAL");
 	
 	private String code;
     private static Map<String, OrganizationUnitTypeEnum> codeValueMap = new HashMap<String, OrganizationUnitTypeEnum>(5);
