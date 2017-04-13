@@ -4,8 +4,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,7 +15,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -33,14 +30,15 @@ import org.springframework.web.bind.annotation.RestController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
-import it.clevercom.echo.common.jpa.helper.SearchCriteria;
-import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
+import it.clevercom.echo.common.jpa.factory.CriteriaSpecificationFactory;
+import it.clevercom.echo.common.jpa.factory.PageRequestFactory;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
+import it.clevercom.echo.common.model.factory.PagedDTOFactory;
 import it.clevercom.echo.common.util.JwtTokenUtils;
+import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.AppSettingDTO;
 import it.clevercom.echo.rd.model.entity.AppSetting;
 import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
@@ -72,6 +70,9 @@ public class AppSetting_rd_Controller {
 	
 	@Autowired
 	private JwtTokenUtils tokenUtils;
+	
+	@Autowired
+	private Validator validator;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -117,55 +118,33 @@ public class AppSetting_rd_Controller {
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="idappsetting", required=false) String field) throws Exception {
 		
+		// check enum string params
+		validator.validateSort(sort);
+		
 		// create paged request
-		PageRequest request = null;
+		PageRequest request = PageRequestFactory.getPageRequest(sort, field, page, size);
 		
-		if (sort.equalsIgnoreCase("asc")) {
-			 request = new PageRequest(page-1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page-1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
+		// create and set specification with criteria param
+		Specification<AppSetting> spec = CriteriaSpecificationFactory.getCriteriaSpecification(criteria);
 		
-		// create predicate if criteria is not null
-		Page<AppSetting> rs = null;
+		// find with specification and pagination
+		Page<AppSetting> rs = repo.findAll(spec, request);
 		
-		if (!criteria.equals("null")) {
-	        SpecificationsBuilder<AppSetting, SpecificationQueryHelper<AppSetting>> builder = new SpecificationsBuilder<AppSetting, SpecificationQueryHelper<AppSetting>>();
-	        Pattern pattern = Pattern.compile(SearchCriteria.pattern);
-	        Matcher matcher = pattern.matcher(criteria + ",");
-	        while (matcher.find()) {
-	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-	        }
-	        Specification<AppSetting> spec = builder.build();
-	        
-	        // obtain records
-	        rs = repo.findAll(spec, request);
-		} else {
-			rs = repo.findAll(request);
-		}
-		
-		int totalPages = rs.getTotalPages();
-        long totalElements = rs.getTotalElements();
+		// get content
 		List<AppSetting> entity = rs.getContent();
 		
-		if (entity.size() == 0) throw new PageNotFoundException(AppSetting_rd_Controller.entity_name, page);
+		// throw exception if no content
+		if (entity.size() == 0) 
+			throw new PageNotFoundException(AppSetting_rd_Controller.entity_name, page);
 		
-		// map list
+		// create list
 		List<AppSettingDTO> appSettingDTOList = new ArrayList<AppSettingDTO>();
 		for (AppSetting s: entity) {
 			appSettingDTOList.add(rdDozerMapper.map(s, AppSettingDTO.class));
 		}
 		
 		// assembly dto
-		PagedDTO<AppSettingDTO> dto = new PagedDTO<AppSettingDTO>();
-		dto.setElements(appSettingDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		dto.setTotalPages(totalPages);
-		dto.setTotalElements(totalElements);
-		return dto;
+		return PagedDTOFactory.getPagedDTO(appSettingDTOList, size, page, rs.getTotalPages(), rs.getTotalElements());
 	}
 	
 	/**

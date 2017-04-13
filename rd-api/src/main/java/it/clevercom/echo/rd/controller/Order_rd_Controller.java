@@ -207,9 +207,6 @@ public class Order_rd_Controller extends EchoController {
 		validator.validatePriority(priority);
 		validator.validateSort(sort);
 		
-		// list
-		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
-		
 		// create paged request
 		PageRequest request = PageRequestFactory.getPageRequest(sort, field, page, size);
 		
@@ -276,21 +273,21 @@ public class Order_rd_Controller extends EchoController {
 		// find with specification and pagination
 		Page<Order> rs = repo.findAll(spec, request);
 
-		int totalPages = rs.getTotalPages();
-		long totalElements = rs.getTotalElements();
+		// get content
 		List<Order> entities = rs.getContent();
 
+		// throw exception if no content
 		if (entities.size() == 0)
 			throw new PageNotFoundException(entity_name, page);
 
+		// create list
+		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
 		for (Order s : entities) {
 			orderDTOList.add(rdDozerMapper.map(s, OrderDTO.class));
 		}
 		
 		// assembly dto
-		PagedDTO<OrderDTO> dto = PagedDTOFactory.getPagedDTO(orderDTOList, size, page, totalPages, totalElements);
-		
-		return dto;
+		return PagedDTOFactory.getPagedDTO(orderDTOList, size, page, rs.getTotalPages(), rs.getTotalElements());
 	}
 	
 	/**
