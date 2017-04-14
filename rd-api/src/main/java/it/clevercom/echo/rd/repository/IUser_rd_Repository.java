@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import it.clevercom.echo.rd.model.entity.User;
 
-public interface IUser_rd_Repository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
+public interface IUser_rd_Repository extends JpaRepository<User, String>, JpaSpecificationExecutor<User> {
 
 }

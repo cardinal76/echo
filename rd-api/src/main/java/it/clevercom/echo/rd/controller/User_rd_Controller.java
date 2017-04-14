@@ -1,21 +1,13 @@
 package it.clevercom.echo.rd.controller;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,21 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
-import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
-import it.clevercom.echo.common.jpa.helper.SearchCriteria;
-import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.rd.component.Validator;
-import it.clevercom.echo.rd.model.dto.RegionDTO;
 import it.clevercom.echo.rd.model.dto.UserDTO;
-import it.clevercom.echo.rd.model.entity.Region;
 import it.clevercom.echo.rd.model.entity.User;
-import it.clevercom.echo.rd.repository.IRegion_rd_Repository;
 import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 
 @Controller
@@ -83,12 +68,12 @@ public class User_rd_Controller extends EchoController {
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
-	@RequestMapping(value="/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="/{username}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UserDTO get(@PathVariable Long id) throws Exception {
-		User entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+	public @ResponseBody UserDTO get(@PathVariable String username) throws Exception {
+		User entity = repo.findOne(username);
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, username);
 		return rdDozerMapper.map(entity, UserDTO.class);
 	}
 	
@@ -111,7 +96,7 @@ public class User_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="15", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="iduser", required=false) String field) throws Exception {
+			@RequestParam(defaultValue="username", required=false) String field) throws Exception {
 		
 		// check enum string params
 		validator.validateSort(sort);
