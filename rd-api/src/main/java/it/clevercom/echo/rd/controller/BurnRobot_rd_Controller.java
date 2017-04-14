@@ -13,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,16 +24,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
-import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
-import it.clevercom.echo.common.jpa.factory.CriteriaSpecificationFactory;
-import it.clevercom.echo.common.jpa.factory.PageRequestFactory;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
-import it.clevercom.echo.common.model.factory.PagedDTOFactory;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.BurnRobotDTO;
@@ -120,30 +115,18 @@ public class BurnRobot_rd_Controller extends EchoController {
 		// check enum string params
 		validator.validateSort(sort);
 		
-		// create paged request
-		PageRequest request = PageRequestFactory.getPageRequest(sort, field, page, size);
+		CriteriaRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> rp = 
+				new CriteriaRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO>(repo, 
+						rdDozerMapper, 
+						BurnRobotDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size);
 		
-		// create and set specification with criteria param
-		Specification<BurnRobot> spec = CriteriaSpecificationFactory.getCriteriaSpecification(criteria);
-		
-		// find with specification and pagination
-		Page<BurnRobot> rs = repo.findAll(spec, request);
-		
-		// get content
-		List<BurnRobot> entity = rs.getContent();
-		
-		// throw exception if no content
-		if (entity.size() == 0) 
-			throw new PageNotFoundException(entity_name, page);
-		
-		// create list
-		List<BurnRobotDTO> burnRobotDTOList = new ArrayList<BurnRobotDTO>();
-		for (BurnRobot s: entity) {
-			burnRobotDTOList.add(rdDozerMapper.map(s, BurnRobotDTO.class));
-		}
-		
-		// assembly dto
-		return PagedDTOFactory.getPagedDTO(burnRobotDTOList, size, page, rs.getTotalPages(), rs.getTotalElements());
+		return rp.process();
 	}
 	
 	/**

@@ -6,7 +6,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"created","updated","userupdate","active"})
-public class MaritalstatusDTO implements Serializable {
+public class MaritalStatusDTO implements Serializable {
 	private static final long serialVersionUID = 6465294662072987645L;
 
 	private Long idmaritalstatus;
@@ -19,10 +19,10 @@ public class MaritalstatusDTO implements Serializable {
 	private String userupdate;
 	private Boolean active;
 
-	public MaritalstatusDTO() {
+	public MaritalStatusDTO() {
 	}
 
-	public MaritalstatusDTO(String hl7code, String description, Date created, Date updated, String userupdate,	boolean active) {
+	public MaritalStatusDTO(String hl7code, String description, Date created, Date updated, String userupdate,	boolean active) {
 		this.hl7code = hl7code;
 		this.description = description;
 		this.created = created;

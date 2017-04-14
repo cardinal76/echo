@@ -27,9 +27,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.factory.CriteriaSpecificationFactory;
 import it.clevercom.echo.common.jpa.factory.PageRequestFactory;
 import it.clevercom.echo.common.logging.annotation.Loggable;
@@ -39,8 +41,11 @@ import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.model.factory.PagedDTOFactory;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.model.dto.BurnRobotDTO;
 import it.clevercom.echo.rd.model.dto.CitizenshipDTO;
+import it.clevercom.echo.rd.model.entity.BurnRobot;
 import it.clevercom.echo.rd.model.entity.Citizenship;
+import it.clevercom.echo.rd.repository.IBurnRobot_rd_Repository;
 import it.clevercom.echo.rd.repository.ICitizenship_rd_Repository;
 
 @Controller
@@ -120,30 +125,18 @@ public class Citizenship_rd_Controller extends EchoController {
 		// check enum string params
 		validator.validateSort(sort);
 		
-		// create paged request
-		PageRequest request = PageRequestFactory.getPageRequest(sort, field, page, size);
+		CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> rp = 
+				new CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, 
+						rdDozerMapper, 
+						CitizenshipDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size);
 		
-		// create and set specification with criteria param
-		Specification<Citizenship> spec = CriteriaSpecificationFactory.getCriteriaSpecification(criteria);
-		
-		// find with specification and pagination
-		Page<Citizenship> rs = repo.findAll(spec, request);
-		
-		// get content
-		List<Citizenship> entity = rs.getContent();
-		
-		// throw exception if no content
-		if (entity.size() == 0) 
-			throw new PageNotFoundException(entity_name, page);
-		
-		// create list
-		List<CitizenshipDTO> burnRobotDTOList = new ArrayList<CitizenshipDTO>();
-		for (Citizenship s: entity) {
-			burnRobotDTOList.add(rdDozerMapper.map(s, CitizenshipDTO.class));
-		}
-		
-		// assembly dto
-		return PagedDTOFactory.getPagedDTO(burnRobotDTOList, size, page, rs.getTotalPages(), rs.getTotalElements());
+		return rp.process();
 	}
 	
 	/**

@@ -24,17 +24,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.helper.SearchCriteria;
 import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
+import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.model.dto.PatientDTO;
 import it.clevercom.echo.rd.model.dto.ProvinceDTO;
+import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.Province;
 import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
+import it.clevercom.echo.rd.repository.IPatient_rd_Repository;
 import it.clevercom.echo.rd.repository.IProvince_rd_Repository;
 
 @Controller
@@ -48,7 +54,7 @@ import it.clevercom.echo.rd.repository.IProvince_rd_Repository;
  * @author luca
  *
  */
-public class Province_rd_Controller {
+public class Province_rd_Controller extends EchoController {
 
 	@Autowired
 	private Environment env;
@@ -61,6 +67,9 @@ public class Province_rd_Controller {
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
+	
+	@Autowired
+	private Validator validator;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -105,54 +114,20 @@ public class Province_rd_Controller {
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="idprovince", required=false) String field) throws Exception {
 		
-		// create paged request
-		PageRequest request = null;
+		// check enum string params
+		validator.validateSort(sort);
 		
-		if (sort.equalsIgnoreCase("asc")) {
-			 request = new PageRequest(page-1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page-1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
+		CriteriaRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> rp = 
+				new CriteriaRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO>(repo, 
+						rdDozerMapper, 
+						ProvinceDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size);
 		
-		// create predicate if criteria is not null
-		Page<Province> rs = null;
-		
-		if (!criteria.equals("null")) {
-	        SpecificationsBuilder<Province, SpecificationQueryHelper<Province>> builder = new SpecificationsBuilder<Province, SpecificationQueryHelper<Province>>();
-	        Pattern pattern = Pattern.compile(SearchCriteria.pattern);
-	        Matcher matcher = pattern.matcher(criteria + ",");
-	        while (matcher.find()) {
-	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-	        }
-	        Specification<Province> spec = builder.build();
-	        
-	        // obtain records
-	        rs = repo.findAll(spec, request);
-		} else {
-			rs = repo.findAll(request);
-		}
-		
-		int totalPages = rs.getTotalPages();
-        long totalElements = rs.getTotalElements();
-		List<Province> entity = rs.getContent();
-		
-		if (entity.size() == 0) throw new PageNotFoundException(Province_rd_Controller.entity_name, page);
-		
-		// map list
-		List<ProvinceDTO> provinceDTOList = new ArrayList<ProvinceDTO>();
-		for (Province s: entity) {
-			provinceDTOList.add(rdDozerMapper.map(s, ProvinceDTO.class));
-		}
-		
-		// assembly dto
-		PagedDTO<ProvinceDTO> dto = new PagedDTO<ProvinceDTO>();
-		dto.setElements(provinceDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		dto.setTotalPages(totalPages);
-		dto.setTotalElements(totalElements);
-		return dto;
+		return rp.process();
 	}
 }

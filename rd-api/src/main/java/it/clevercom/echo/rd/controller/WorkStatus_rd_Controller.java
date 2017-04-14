@@ -26,16 +26,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.helper.SearchCriteria;
 import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
+import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.model.dto.WorkPriorityDTO;
 import it.clevercom.echo.rd.model.dto.WorkStatusDTO;
+import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
+import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 
 @Controller
@@ -49,7 +55,7 @@ import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
  * @author luca
  */
 
-public class WorkStatus_rd_Controller {
+public class WorkStatus_rd_Controller extends EchoController {
 	@Autowired
 	private Environment env;
 	
@@ -58,6 +64,9 @@ public class WorkStatus_rd_Controller {
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
+	
+	@Autowired
+	private Validator validator;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -102,55 +111,21 @@ public class WorkStatus_rd_Controller {
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="idworkstatus", required=false) String field) throws Exception {
 		
-		// create paged request
-		PageRequest request = null;
+		// check enum string params
+		validator.validateSort(sort);
 		
-		if (sort.equalsIgnoreCase("asc")) {
-			 request = new PageRequest(page-1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page-1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
+		CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO> rp = 
+				new CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO>(repo, 
+						rdDozerMapper, 
+						WorkStatusDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size);
 		
-		// create predicate if criteria is not null
-		Page<WorkStatus> rs = null;
-		
-		if (!criteria.equals("null")) {
-	        SpecificationsBuilder<WorkStatus, SpecificationQueryHelper<WorkStatus>> builder = new SpecificationsBuilder<WorkStatus, SpecificationQueryHelper<WorkStatus>>();
-	        Pattern pattern = Pattern.compile(SearchCriteria.pattern);
-	        Matcher matcher = pattern.matcher(criteria + ",");
-	        while (matcher.find()) {
-	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-	        }
-	        Specification<WorkStatus> spec = builder.build();
-	        
-	        // obtain records
-	        rs = repo.findAll(spec, request);
-		} else {
-			rs = repo.findAll(request);
-		}
-		
-		int totalPages = rs.getTotalPages();
-        long totalElements = rs.getTotalElements();
-		List<WorkStatus> entity = rs.getContent();
-		
-		if (entity.size() == 0) throw new PageNotFoundException(entity_name, page);
-		
-		// map list
-		List<WorkStatusDTO> workStatusDTOList = new ArrayList<WorkStatusDTO>();
-		for (WorkStatus s: entity) {
-			workStatusDTOList.add(rdDozerMapper.map(s, WorkStatusDTO.class));
-		}
-		
-		// assembly dto
-		PagedDTO<WorkStatusDTO> dto = new PagedDTO<WorkStatusDTO>();
-		dto.setElements(workStatusDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		dto.setTotalPages(totalPages);
-		dto.setTotalElements(totalElements);
-		return dto;
+		return rp.process();
 	}
 	
 	/**

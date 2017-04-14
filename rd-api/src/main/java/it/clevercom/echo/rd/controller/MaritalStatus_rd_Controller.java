@@ -28,16 +28,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.helper.SearchCriteria;
 import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
-import it.clevercom.echo.rd.model.dto.MaritalstatusDTO;
+import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.model.dto.CountryDTO;
+import it.clevercom.echo.rd.model.dto.MaritalStatusDTO;
+import it.clevercom.echo.rd.model.entity.Country;
 import it.clevercom.echo.rd.model.entity.Maritalstatus;
+import it.clevercom.echo.rd.repository.ICountry_rd_Repository;
 import it.clevercom.echo.rd.repository.IMaritalStatus_rd_Repository;
 
 @Controller
@@ -51,7 +57,7 @@ import it.clevercom.echo.rd.repository.IMaritalStatus_rd_Repository;
  * @author luca
  */
 
-public class MaritalStatus_rd_Controller {
+public class MaritalStatus_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Environment env;
@@ -61,6 +67,9 @@ public class MaritalStatus_rd_Controller {
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
+	
+	@Autowired
+	private Validator validator;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -78,10 +87,10 @@ public class MaritalStatus_rd_Controller {
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody MaritalstatusDTO get(@PathVariable Long id) throws Exception {
+	public @ResponseBody MaritalStatusDTO get(@PathVariable Long id) throws Exception {
 		Maritalstatus entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
-		return rdDozerMapper.map(entity, MaritalstatusDTO.class);
+		return rdDozerMapper.map(entity, MaritalStatusDTO.class);
 	}
 	
 	/**
@@ -98,62 +107,28 @@ public class MaritalStatus_rd_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<MaritalstatusDTO> getByCriteria (
+	public @ResponseBody PagedDTO<MaritalStatusDTO> getByCriteria (
 			@RequestParam(defaultValue="null", required=false) String criteria, 
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="20", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="idmaritalstatus", required=false) String field) throws Exception {
 		
-		// create paged request
-		PageRequest request = null;
+		// check enum string params
+		validator.validateSort(sort);
 		
-		if (sort.equalsIgnoreCase("asc")) {
-			 request = new PageRequest(page-1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page-1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
+		CriteriaRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> rp = 
+				new CriteriaRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, 
+						rdDozerMapper, 
+						MaritalStatusDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size);
 		
-		// create predicate if criteria is not null
-		Page<Maritalstatus> rs = null;
-		
-		if (!criteria.equals("null")) {
-	        SpecificationsBuilder<Maritalstatus, SpecificationQueryHelper<Maritalstatus>> builder = new SpecificationsBuilder<Maritalstatus, SpecificationQueryHelper<Maritalstatus>>();
-	        Pattern pattern = Pattern.compile(SearchCriteria.pattern);
-	        Matcher matcher = pattern.matcher(criteria + ",");
-	        while (matcher.find()) {
-	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-	        }
-	        Specification<Maritalstatus> spec = builder.build();
-	        
-	        // obtain records
-	        rs = repo.findAll(spec, request);
-		} else {
-			rs = repo.findAll(request);
-		}
-		
-		int totalPages = rs.getTotalPages();
-        long totalElements = rs.getTotalElements();
-		List<Maritalstatus> entity = rs.getContent();
-		
-		if (entity.size() == 0) throw new PageNotFoundException(MaritalStatus_rd_Controller.entity_name, page);
-		
-		// map list
-		List<MaritalstatusDTO> maritalStatusDTOList = new ArrayList<MaritalstatusDTO>();
-		for (Maritalstatus s: entity) {
-			maritalStatusDTOList.add(rdDozerMapper.map(s, MaritalstatusDTO.class));
-		}
-		
-		// assembly dto
-		PagedDTO<MaritalstatusDTO> dto = new PagedDTO<MaritalstatusDTO>();
-		dto.setElements(maritalStatusDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		dto.setTotalPages(totalPages);
-		dto.setTotalElements(totalElements);
-		return dto;
+		return rp.process();
 	}
 	
 	/**
@@ -167,7 +142,7 @@ public class MaritalStatus_rd_Controller {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody String add(@RequestBody MaritalstatusDTO maritalStatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody String add(@RequestBody MaritalStatusDTO maritalStatus, HttpServletRequest request) throws Exception {
 		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.POST.toString(), MaritalStatus_rd_Controller.entity_name);
 	}
 	
@@ -182,7 +157,7 @@ public class MaritalStatus_rd_Controller {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody String update(@RequestBody MaritalstatusDTO maritalStatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody String update(@RequestBody MaritalStatusDTO maritalStatus, HttpServletRequest request) throws Exception {
 		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.PUT.toString(), MaritalStatus_rd_Controller.entity_name);
 	}
 	
@@ -196,7 +171,7 @@ public class MaritalStatus_rd_Controller {
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody String delete(@RequestBody MaritalstatusDTO maritalStatus, HttpServletRequest request) {
+	public @ResponseBody String delete(@RequestBody MaritalStatusDTO maritalStatus, HttpServletRequest request) {
 		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), MaritalStatus_rd_Controller.entity_name);
 	}
 }

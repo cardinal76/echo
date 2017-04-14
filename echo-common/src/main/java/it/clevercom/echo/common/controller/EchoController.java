@@ -1,4 +1,4 @@
-package it.clevercom.echo.rd.controller;
+package it.clevercom.echo.common.controller;
 
 import java.util.Date;
 
@@ -14,7 +14,6 @@ import it.clevercom.echo.common.util.DateUtil;
 @Controller
 @RestController
 @PropertySource("classpath:rest.platform.properties")
-@PropertySource("classpath:rest.rd.properties")
 
 /**
  * Echo Generic Controller

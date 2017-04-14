@@ -27,17 +27,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.helper.SearchCriteria;
 import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
+import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.model.dto.RegionDTO;
 import it.clevercom.echo.rd.model.dto.UserDTO;
+import it.clevercom.echo.rd.model.entity.Region;
 import it.clevercom.echo.rd.model.entity.User;
+import it.clevercom.echo.rd.repository.IRegion_rd_Repository;
 import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 
 @Controller
@@ -50,7 +56,7 @@ import it.clevercom.echo.rd.repository.IUser_rd_Repository;
  * User controller
  * @author luca
  */
-public class User_rd_Controller {
+public class User_rd_Controller extends EchoController {
 	@Autowired
 	private Environment env;
 	
@@ -59,6 +65,9 @@ public class User_rd_Controller {
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
+	
+	@Autowired
+	private Validator validator;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -104,55 +113,21 @@ public class User_rd_Controller {
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="iduser", required=false) String field) throws Exception {
 		
-		// create paged request
-		PageRequest request = null;
+		// check enum string params
+		validator.validateSort(sort);
 		
-		if (sort.equalsIgnoreCase("asc")) {
-			 request = new PageRequest(page-1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page-1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
+		CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO> rp = 
+				new CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, 
+						rdDozerMapper, 
+						UserDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size);
 		
-		// create predicate if criteria is not null
-		Page<User> rs = null;
-		
-		if (!criteria.equals("null")) {
-	        SpecificationsBuilder<User, SpecificationQueryHelper<User>> builder = new SpecificationsBuilder<User, SpecificationQueryHelper<User>>();
-	        Pattern pattern = Pattern.compile(SearchCriteria.pattern);
-	        Matcher matcher = pattern.matcher(criteria + ",");
-	        while (matcher.find()) {
-	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-	        }
-	        Specification<User> spec = builder.build();
-	        
-	        // obtain records
-	        rs = repo.findAll(spec, request);
-		} else {
-			rs = repo.findAll(request);
-		}
-		
-		int totalPages = rs.getTotalPages();
-        long totalElements = rs.getTotalElements();
-		List<User> entity = rs.getContent();
-		
-		if (entity.size() == 0) throw new PageNotFoundException(entity_name, page);
-		
-		// map list
-		List<UserDTO> userDTOList = new ArrayList<UserDTO>();
-		for (User s: entity) {
-			userDTOList.add(rdDozerMapper.map(s, UserDTO.class));
-		}
-		
-		// assembly dto
-		PagedDTO<UserDTO> dto = new PagedDTO<UserDTO>();
-		dto.setElements(userDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		dto.setTotalPages(totalPages);
-		dto.setTotalElements(totalElements);
-		return dto;
+		return rp.process();
 	}
 	
 	/**

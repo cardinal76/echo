@@ -7,17 +7,17 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import it.clevercom.echo.rd.model.entity.OrganizationUnit;
+import it.clevercom.echo.rd.model.entity.ModalityType;
 
-public class OrganizationUnitSpecification<T> implements Specification<T> {
-	private String fieldName = "organizationUnit";
+public class ModalityTypeSpecification<T> implements Specification<T> {
+	private String fieldName = "modalityType";
 	private Long fieldValue = 0l;
 	
 	/**
 	 * @param fieldName
 	 * @param fieldValue
 	 */
-	public OrganizationUnitSpecification(String fieldName, Long fieldValue) {
+	public ModalityTypeSpecification(String fieldName, Long fieldValue) {
 		super();
 		if (fieldName != null) {
 			this.fieldName = fieldName;
@@ -27,7 +27,7 @@ public class OrganizationUnitSpecification<T> implements Specification<T> {
 
 	@Override
 	public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-		return cb.equal(root.<OrganizationUnit>get(fieldName).<Long>get("idorganizationunit"), fieldValue);
+		return cb.equal(root.<ModalityType>get(fieldName).<Long>get("idmodalitytype"), fieldValue);
 	}
-	
+
 }

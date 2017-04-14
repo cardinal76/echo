@@ -26,23 +26,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.helper.SearchCriteria;
 import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.common.logging.annotation.Loggable;
+import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.model.dto.CodingActorDTO;
 import it.clevercom.echo.rd.model.dto.CountryDTO;
 import it.clevercom.echo.rd.model.dto.MunicipalityDTO;
 import it.clevercom.echo.rd.model.dto.ProvinceDTO;
 import it.clevercom.echo.rd.model.dto.RegionDTO;
+import it.clevercom.echo.rd.model.entity.CodingActor;
 import it.clevercom.echo.rd.model.entity.Country;
 import it.clevercom.echo.rd.model.entity.Municipality;
 import it.clevercom.echo.rd.model.entity.Province;
 import it.clevercom.echo.rd.model.entity.Region;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
+import it.clevercom.echo.rd.repository.ICodingActor_rd_Repository;
 import it.clevercom.echo.rd.repository.ICountry_rd_Repository;
 import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
 import it.clevercom.echo.rd.repository.IProvince_rd_Repository;
@@ -59,7 +65,7 @@ import it.clevercom.echo.rd.repository.IRegion_rd_Repository;
  * @author luca
  */
 
-public class Country_rd_Controller {
+public class Country_rd_Controller extends EchoController {
 	// hard coded data 
 	public static Long localCountryId = 1105l;
 	public static Long unknownRegionId = 0l;
@@ -81,6 +87,9 @@ public class Country_rd_Controller {
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
+	
+	@Autowired
+	private Validator validator;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -271,54 +280,20 @@ public class Country_rd_Controller {
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="idcountry", required=false) String field) throws Exception {
 		
-		// create paged request
-		PageRequest request = null;
+		// check enum string params
+		validator.validateSort(sort);
 		
-		if (sort.equalsIgnoreCase("asc")) {
-			 request = new PageRequest(page-1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page-1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
+		CriteriaRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> rp = 
+				new CriteriaRequestProcessor<ICountry_rd_Repository, Country, CountryDTO>(repo, 
+						rdDozerMapper, 
+						CountryDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size);
 		
-		// create predicate if criteria is not null
-		Page<Country> rs = null;
-		
-		if (!criteria.equals("null")) {
-	        SpecificationsBuilder<Country, SpecificationQueryHelper<Country>> builder = new SpecificationsBuilder<Country, SpecificationQueryHelper<Country>>();
-	        Pattern pattern = Pattern.compile(SearchCriteria.pattern);
-	        Matcher matcher = pattern.matcher(criteria + ",");
-	        while (matcher.find()) {
-	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-	        }
-	        Specification<Country> spec = builder.build();
-	        
-	        // obtain records
-	        rs = repo.findAll(spec, request);
-		} else {
-			rs = repo.findAll(request);
-		}
-		
-		int totalPages = rs.getTotalPages();
-        long totalElements = rs.getTotalElements();
-		List<Country> entity = rs.getContent();
-		
-		if (entity.size() == 0) throw new PageNotFoundException(entity_name, page);
-		
-		// map list
-		List<CountryDTO> countryDTOList = new ArrayList<CountryDTO>();
-		for (Country s: entity) {
-			countryDTOList.add(rdDozerMapper.map(s, CountryDTO.class));
-		}
-		
-		// assembly dto
-		PagedDTO<CountryDTO> dto = new PagedDTO<CountryDTO>();
-		dto.setElements(countryDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		dto.setTotalPages(totalPages);
-		dto.setTotalElements(totalElements);
-		return dto;
+		return rp.process();
 	}
 }

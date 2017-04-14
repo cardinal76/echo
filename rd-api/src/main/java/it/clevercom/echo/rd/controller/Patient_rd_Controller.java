@@ -30,9 +30,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.helper.SearchCriteria;
 import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
 import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
@@ -41,12 +43,16 @@ import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.util.JwtTokenUtils;
+import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
+import it.clevercom.echo.rd.model.dto.OrganizationUnitDTO;
 import it.clevercom.echo.rd.model.dto.PatientCodingActorDTO;
 import it.clevercom.echo.rd.model.dto.PatientDTO;
 import it.clevercom.echo.rd.model.entity.CodingActor;
+import it.clevercom.echo.rd.model.entity.OrganizationUnit;
 import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.PatientCodingActor;
+import it.clevercom.echo.rd.repository.IOrganizationUnit_rd_Repository;
 import it.clevercom.echo.rd.repository.IPatientCodingActor_rd_Repository;
 import it.clevercom.echo.rd.repository.IPatient_rd_Repository;
 
@@ -61,7 +67,7 @@ import it.clevercom.echo.rd.repository.IPatient_rd_Repository;
  * @author luca
  */
 
-public class Patient_rd_Controller {
+public class Patient_rd_Controller extends EchoController {
 
 	@Autowired
 	private Environment env;
@@ -80,6 +86,9 @@ public class Patient_rd_Controller {
 
 	@Autowired
 	private JwtTokenUtils tokenUtils;
+	
+	@Autowired
+	private Validator validator;
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -185,56 +194,21 @@ public class Patient_rd_Controller {
 			@RequestParam(defaultValue = "asc", required = false) String sort,
 			@RequestParam(defaultValue = "idpatient", required = false) String field) throws Exception {
 		
-		// create paged request
-		PageRequest request = null;
-
-		if (sort.equalsIgnoreCase("asc")) {
-			request = new PageRequest(page - 1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page - 1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
-
-		// create predicate if criteria is not null
-		Page<Patient> rs = null;
-
-		if (!criteria.equals("null")) {
-			SpecificationsBuilder<Patient, SpecificationQueryHelper<Patient>> builder = new SpecificationsBuilder<Patient, SpecificationQueryHelper<Patient>>();
-			Pattern pattern = Pattern.compile(SearchCriteria.pattern);
-			Matcher matcher = pattern.matcher(criteria + ",");
-			while (matcher.find()) {
-				builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-			}
-			Specification<Patient> spec = builder.build();
-
-			// obtain records
-			rs = repo.findAll(spec, request);
-		} else {
-			rs = repo.findAll(request);
-		}
-
-		int totalPages = rs.getTotalPages();
-		long totalElements = rs.getTotalElements();
-		List<Patient> entities = rs.getContent();
-
-		if (entities.size() == 0)
-			throw new PageNotFoundException(Patient_rd_Controller.entity_name, page);
-
-		// map list
-		List<PatientDTO> patientDTOList = new ArrayList<PatientDTO>();
-		for (Patient s : entities) {
-			patientDTOList.add(rdDozerMapper.map(s, PatientDTO.class));
-		}
-
-		// assembly dto
-		PagedDTO<PatientDTO> dto = new PagedDTO<PatientDTO>();
-		dto.setElements(patientDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		dto.setTotalPages(totalPages);
-		dto.setTotalElements(totalElements);
-		return dto;
+		// check enum string params
+		validator.validateSort(sort);
+		
+		CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> rp = 
+				new CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, 
+						rdDozerMapper, 
+						PatientDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size);
+		
+		return rp.process();
 	}
 
 	/**

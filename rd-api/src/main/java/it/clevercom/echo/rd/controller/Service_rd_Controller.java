@@ -1,25 +1,10 @@
 package it.clevercom.echo.rd.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,19 +15,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.clevercom.echo.common.exception.model.BadRequestException;
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.EchoException;
-import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
-import it.clevercom.echo.common.jpa.helper.SearchCriteria;
-import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
+import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.jpa.specification.ModalityTypeSpecification;
 import it.clevercom.echo.rd.model.dto.ServiceDTO;
-import it.clevercom.echo.rd.model.entity.ModalityType;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.repository.IService_rd_Repository;
 
@@ -57,7 +40,7 @@ import it.clevercom.echo.rd.repository.IService_rd_Repository;
  * @author luca
  */
 
-public class Service_rd_Controller {
+public class Service_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Environment env;
@@ -67,6 +50,9 @@ public class Service_rd_Controller {
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
+	
+	@Autowired
+	private Validator validator;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -106,82 +92,33 @@ public class Service_rd_Controller {
 	@Loggable
 	public @ResponseBody PagedDTO<ServiceDTO> getByCriteria (
 			@RequestParam(defaultValue="null", required=false) String criteria,
-			@RequestParam(defaultValue = "*", required = false) String modalitytype,
+			@RequestParam(defaultValue = "*", required = false) Long modalitytype,
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="1000", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="idservice", required=false) String field) throws Exception {
 
-		// flag which indicates where to use specification
-		boolean useSpecification = false;
+		// check enum string params
+		validator.validateSort(sort);
 		
-		// create paged request
-		PageRequest request = null;
-		
-		if (sort.equalsIgnoreCase("asc")) {
-			 request = new PageRequest(page-1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page-1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
-		
-		// create predicate if criteria is not null
-		Page<Service> rs = null;
-		Specification<Service> spec = null;
-		
-		if (!criteria.equals("null")) {
-	        SpecificationsBuilder<Service, SpecificationQueryHelper<Service>> builder = new SpecificationsBuilder<Service, SpecificationQueryHelper<Service>>();
-	        Pattern pattern = Pattern.compile(SearchCriteria.pattern);
-	        Matcher matcher = pattern.matcher(criteria + ",");
-	        while (matcher.find()) {
-	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-	        }
-	        spec = builder.build();
-	        useSpecification = true;
-		}
+		CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO> rp = 
+				new CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, 
+						rdDozerMapper, 
+						ServiceDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size);
 		
 		// check modalitytype and add it to specification
 		if (!modalitytype.equals("*")) {
-			Specification<Service> smt = new Specification<Service>() {
-				@Override
-				public Predicate toPredicate(Root<Service> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-					return cb.equal(root.<ModalityType>get("modalityType").<Long>get("idmodalitytype"), modalitytype);
-				}
-			};
-			
-			// add to specification list
-			spec =  Specifications.where(spec).and(smt);
-			useSpecification = true;
+			ModalityTypeSpecification<Service> md = new ModalityTypeSpecification<Service>(null, modalitytype);
+			rp.addAndSpecification(md);
 		}
 		
-		if (useSpecification) {
-			// obtain records
-        	rs = repo.findAll(spec, request);
-		} else {
-			rs = repo.findAll(request);
-		}
-		
-		int totalPages = rs.getTotalPages();
-        long totalElements = rs.getTotalElements();
-		List<Service> entity = rs.getContent();
-		
-		if (entity.size() == 0) throw new PageNotFoundException(Service_rd_Controller.entity_name, page);
-		
-		// map list
-		List<ServiceDTO> serviceDTOList = new ArrayList<ServiceDTO>();
-		for (Service s: entity) {
-			serviceDTOList.add(rdDozerMapper.map(s, ServiceDTO.class));
-		}
-		
-		// assembly dto
-		PagedDTO<ServiceDTO> dto = new PagedDTO<ServiceDTO>();
-		dto.setElements(serviceDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		dto.setTotalPages(totalPages);
-		dto.setTotalElements(totalElements);
-		return dto;
+		return rp.process();
 	}
 	
 	/**
