@@ -92,7 +92,7 @@ public class Service_rd_Controller extends EchoController {
 	@Loggable
 	public @ResponseBody PagedDTO<ServiceDTO> getByCriteria (
 			@RequestParam(defaultValue="null", required=false) String criteria,
-			@RequestParam(defaultValue = "*", required = false) Long modalitytype,
+			@RequestParam(defaultValue="*", required = false) String modalitytype,
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="1000", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
@@ -114,7 +114,7 @@ public class Service_rd_Controller extends EchoController {
 		
 		// check modalitytype and add it to specification
 		if (!modalitytype.equals("*")) {
-			ModalityTypeSpecification<Service> md = new ModalityTypeSpecification<Service>(null, modalitytype);
+			ModalityTypeSpecification<Service> md = new ModalityTypeSpecification<Service>(null, Long.valueOf(modalitytype));
 			rp.addAndSpecification(md);
 		}
 		

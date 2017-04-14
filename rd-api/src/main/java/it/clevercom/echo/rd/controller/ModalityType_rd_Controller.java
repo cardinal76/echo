@@ -83,10 +83,10 @@ public class ModalityType_rd_Controller extends EchoController {
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody ServiceDTO get(@PathVariable Long id) throws Exception {
+	public @ResponseBody ModalityTypeDTO get(@PathVariable Long id) throws Exception {
 		ModalityType entity = repo.findOne(id);
 		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
-		return rdDozerMapper.map(entity, ServiceDTO.class);
+		return rdDozerMapper.map(entity, ModalityTypeDTO.class);
 	}
 	
 	/**

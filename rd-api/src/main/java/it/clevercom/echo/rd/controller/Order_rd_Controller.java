@@ -907,7 +907,7 @@ public class Order_rd_Controller extends EchoController {
 	}
 
 	/**
-	 * 
+	 * @category business request validation
 	 * @param updatedOrder
 	 * @param orderToUpdate
 	 * @return
@@ -918,7 +918,7 @@ public class Order_rd_Controller extends EchoController {
 	}
 
 	/**
-	 * 
+	 * @category business request validation
 	 * @param updatedOrder
 	 * @param orderToUpdate
 	 * @return
