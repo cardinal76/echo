@@ -134,7 +134,7 @@
 
 	<mapping>
 		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Maritalstatus</class-a>
-		<class-b>it.clevercom.echo.rd.model.dto.MaritalstatusDTO</class-b>
+		<class-b>it.clevercom.echo.rd.model.dto.MaritalStatusDTO</class-b>
 	</mapping>
 
 
@@ -143,7 +143,7 @@
 		<class-b>it.clevercom.echo.rd.model.dto.AppSettingDTO</class-b>
 		<field>
 			<a>user.username</a>
-			<b>username</b>
+			<b>user</b>
 		</field>
 	</mapping>
 	

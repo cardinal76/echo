@@ -34,8 +34,13 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.jpa.specification.ModalityTypeSpecification;
+import it.clevercom.echo.rd.jpa.specification.UserSpecification;
 import it.clevercom.echo.rd.model.dto.AppSettingDTO;
+import it.clevercom.echo.rd.model.dto.BodyApparatusDTO;
 import it.clevercom.echo.rd.model.entity.AppSetting;
+import it.clevercom.echo.rd.model.entity.BodyApparatus;
+import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
 
 @Controller
@@ -83,13 +88,13 @@ public class AppSetting_rd_Controller extends EchoController {
 	 * @throws Exception.
 	 */
 	@Transactional("rdTm")
-	@RequestMapping(value="/{username}", method = RequestMethod.GET)
+	@RequestMapping(value="/{id}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<AppSettingDTO> get(@PathVariable String username) throws Exception {
-		PagedDTO<AppSettingDTO> dto = getByCriteria("username:" + username, 1, 1000, "asc", "idsetting");
-		if (entity_name == null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity_name, entity_id, entity_uqkey1);
-		return dto;
+	public @ResponseBody AppSettingDTO get(@PathVariable Long id) throws Exception {
+		AppSetting entity = repo.findOne(id);
+		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		return rdDozerMapper.map(entity, AppSettingDTO.class);
 	}
 	
 	/**
@@ -107,7 +112,8 @@ public class AppSetting_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody PagedDTO<AppSettingDTO> getByCriteria (
-			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="null", required=false) String criteria,
+			@RequestParam(defaultValue="*", required=false) String username,
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="1000", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
@@ -127,6 +133,12 @@ public class AppSetting_rd_Controller extends EchoController {
 						page, 
 						size);
 		
+		// check 
+		if (!username.equals("*")) {
+			UserSpecification<AppSetting> u = new UserSpecification<AppSetting>(null, username);
+			rp.addAndSpecification(u);
+		}
+		
 		return rp.process();		
 	}
 	
@@ -145,7 +157,7 @@ public class AppSetting_rd_Controller extends EchoController {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
-		appSetting.setUsername(username);
+		appSetting.setUser(username);
 		
 		// map
 		AppSetting entity = rdDozerMapper.map(appSetting, AppSetting.class);
@@ -184,7 +196,7 @@ public class AppSetting_rd_Controller extends EchoController {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
-		appSetting.setUsername(username);
+		appSetting.setUser(username);
 		
 		// if an id is not present throw bad request
 		if(appSetting.getIdappsetting()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), AppSetting_rd_Controller.entity_name));

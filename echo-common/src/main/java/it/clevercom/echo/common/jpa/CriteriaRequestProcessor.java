@@ -36,6 +36,8 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 		this.mapper = mapper;
 		// set repository
 		repository = repo;
+		// set entity name
+		this.entity_name = entity_name;
 		// create and set specification with criteria param
 		specification = CriteriaSpecificationFactory.getCriteriaSpecification(criteria);
 		this.size = size;
