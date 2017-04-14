@@ -25,7 +25,7 @@ public class EchoController {
 	@InitBinder
 	public void initBinder(WebDataBinder binder) throws Exception {
 		
-	    final CustomNumberEditor today_tomorrow = new CustomNumberEditor(Long.class, true) {
+	    final CustomNumberEditor all_date_options = new CustomNumberEditor(Long.class, true) {
 	    	@Override
 	        public void setAsText(String text) throws IllegalArgumentException {
 	    		if ("today_start".equals(text)) { 
@@ -46,6 +46,6 @@ public class EchoController {
 	    	}
 	    };
 	    
-	    binder.registerCustomEditor(Long.class, today_tomorrow);
+	    binder.registerCustomEditor(Long.class, all_date_options);
 	}
 }
