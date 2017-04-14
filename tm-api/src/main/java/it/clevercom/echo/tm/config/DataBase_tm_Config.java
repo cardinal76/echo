@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,15 +23,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 /**
  * 
  * @author alx
- * @since 16/01/2016
- * Tele-health DB configuration
+ * @since 16/01/2016 Tele-health DB configuration
  *
  */
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(entityManagerFactoryRef = "tmEntityManagerFactory",
-					transactionManagerRef = "tmTransactionManager",
-					basePackages = {"${tm.jpa.repository.package}"})
+@EnableJpaRepositories(entityManagerFactoryRef = "tmEntityManagerFactory", transactionManagerRef = "tmTransactionManager", basePackages = {
+		"${tm.jpa.repository.package}" })
 @PropertySource("classpath:tm-db.properties")
 public class DataBase_tm_Config {
 
@@ -58,8 +57,12 @@ public class DataBase_tm_Config {
 		properties.put("hibernate.dialect", environment.getRequiredProperty("tm.hibernate.dialect"));
 		properties.put("hibernate.show_sql", environment.getRequiredProperty("tm.hibernate.show_sql"));
 		properties.put("hibernate.format_sql", environment.getRequiredProperty("tm.hibernate.format_sql"));
-		properties.put("hibernate.temp.use_jdbc_metadata_defaults", environment.getRequiredProperty("rd.hibernate.use_jdbc_metadata_defaults"));
-		return properties;        
+		properties.put("hibernate.temp.use_jdbc_metadata_defaults",
+				environment.getRequiredProperty("rd.hibernate.use_jdbc_metadata_defaults"));
+		if (StringUtils.isNoneBlank(environment.getRequiredProperty("tm.hibernate.hbm2ddl.auto"))) {
+			properties.put("hibernate.hbm2ddl.auto", environment.getRequiredProperty("tm.hibernate.hbm2ddl.auto"));
+		}
+		return properties;
 	}
 
 	@Bean
