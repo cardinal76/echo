@@ -118,6 +118,7 @@ public class Service_rd_Controller extends EchoController {
 			rp.addAndSpecification(md);
 		}
 		
+		// process data request
 		return rp.process();
 	}
 	

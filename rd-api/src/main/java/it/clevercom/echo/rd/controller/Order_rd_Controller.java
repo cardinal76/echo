@@ -37,6 +37,7 @@ import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.exception.model.ValidationException;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.factory.CriteriaSpecificationFactory;
 import it.clevercom.echo.common.jpa.factory.PageRequestFactory;
 import it.clevercom.echo.common.jpa.specification.BooleanSpecification;
@@ -58,8 +59,10 @@ import it.clevercom.echo.rd.enums.WorkStatusEnum;
 import it.clevercom.echo.rd.jpa.specification.OrganizationUnitSpecification;
 import it.clevercom.echo.rd.jpa.specification.WorkPrioritySpecification;
 import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
+import it.clevercom.echo.rd.model.dto.AppSettingDTO;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
+import it.clevercom.echo.rd.model.entity.AppSetting;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
@@ -67,6 +70,7 @@ import it.clevercom.echo.rd.model.entity.OrganizationUnit;
 import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
+import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderLog_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderService_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrder_rd_Repository;
@@ -188,96 +192,83 @@ public class Order_rd_Controller extends EchoController {
 			@RequestParam(defaultValue = "asc", required = false) String sort,
 			@RequestParam(defaultValue = "idorder", required = false) String field) throws Exception {
 		
-		// parse long parameter to Date Object
-		final Date t1 = DateUtil.getStartOfDay(new Date(from));
-		final Date t2 = DateUtil.getEndOfDay(new Date(to));
-		
 		// check enum string params
 		validator.validateStatus(status);
 		validator.validatePriority(priority);
 		validator.validateSort(sort);
 		
-		// create paged request
-		PageRequest request = PageRequestFactory.getPageRequest(sort, field, page, size);
+		CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> rp = 
+				new CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, 
+						rdDozerMapper, 
+						OrderDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size);
 		
-		// create and set specification with criteria param
-		Specification<Order> spec = CriteriaSpecificationFactory.getCriteriaSpecification(criteria);
-		
-		// create and set status specification
+		// if there's a selected status, create and set status specification
 		if (!status.equals("*")) {
 			WorkStatusSpecification<Order> st = new WorkStatusSpecification<Order>(repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(status).code()).getIdworkstatus());
-			spec = Specifications.where(spec).and(st);
+			rp.addAndSpecification(st);
 		}
 		
-		// create and set priority specification
+		// if there's a selected priority, create and set priority specification
 		if (!priority.equals("*")) {
 			WorkPrioritySpecification<Order> pr = new WorkPrioritySpecification<Order>(repo_wp.findByCode(WorkPriorityEnum.getInstanceFromCodeValue(priority).code()).getIdworkpriority());
-			spec =  Specifications.where(spec).and(pr);
-		}
-		
-		// create and set patient name specification
-		if ((!name.equals("*"))) {
-			StringSpecification<Order, Patient> n = new StringSpecification<Order, Patient>("patient", "name", name.toLowerCase()); 
-			spec =  Specifications.where(spec).and(n);
-		}
-		
-		// create and set patient surname specification
-		if ((!surname.equals("*"))) {
-			StringSpecification<Order, Patient> sn = new StringSpecification<Order, Patient>("patient", "surname", surname.toLowerCase());
-			spec =  Specifications.where(spec).and(sn);
-		}
-		
-		// check patient taxcode
-		if (!taxCode.equals("*")) {
-			StringSpecification<Order, Patient> tc = new StringSpecification<Order, Patient>("patient", "taxcode", taxCode.toLowerCase());
-			spec =  Specifications.where(spec).and(tc);
-		}
-		
-		// check target organization unit
-		if (!targetorgid.equals(Long.valueOf(0))) {
-			OrganizationUnitSpecification<Order> tou = new OrganizationUnitSpecification<Order>("organizationUnitByTargetorganizationunitid", targetorgid);
-			spec =  Specifications.where(spec).and(tou);
+			rp.addAndSpecification(pr);
 		}
 
-		// check origin organization unit
+		// if there's a selected patient name, create and set patient name specification
+		if ((!name.equals("*"))) {
+			StringSpecification<Order, Patient> n = new StringSpecification<Order, Patient>("patient", "name", name.toLowerCase()); 
+			rp.addAndSpecification(n);
+		}
+
+		// if there's a selected patient surname, create and set patient surname specification
+		if ((!surname.equals("*"))) {
+			StringSpecification<Order, Patient> sn = new StringSpecification<Order, Patient>("patient", "surname", surname.toLowerCase());
+			rp.addAndSpecification(sn);
+		}
+		
+		// if there's a selected patient taxcode, create and set patient surname specification
+		if (!taxCode.equals("*")) {
+			StringSpecification<Order, Patient> tc = new StringSpecification<Order, Patient>("patient", "taxcode", taxCode.toLowerCase());
+			rp.addAndSpecification(tc);
+		}
+		
+		// if there's a selected target organization unit, create and set target organization unit specification
+		if (!targetorgid.equals(Long.valueOf(0))) {
+			OrganizationUnitSpecification<Order> tou = new OrganizationUnitSpecification<Order>("organizationUnitByTargetorganizationunitid", targetorgid);
+			rp.addAndSpecification(tou);
+		}
+
+		// if there's a selected origin organization unit, create and set origin organization unit specification
 		if (!originorgid.equals(Long.valueOf(0))) {
 			OrganizationUnitSpecification<Order> oou = new OrganizationUnitSpecification<Order>("organizationUnitByOriginorganizationunitid", originorgid);
-			spec =  Specifications.where(spec).and(oou);
+			rp.addAndSpecification(oou);
 		}
 		
 		// include only active if active!false is not specified in criteria
 		if ((criteria.equals("null")) || ((!criteria.equals("null")) && (!criteria.contains("active!false")) && (!criteria.contains("active!true")))) {
 			BooleanSpecification<Order, Order> act = new BooleanSpecification<Order, Order>(null, "active", true);
-			spec =  Specifications.where(spec).and(act);
+			rp.addAndSpecification(act);
 		}
 		
 		// create standard specification based on date interval and field name
+		// parse long parameter to Date Object
+		
+		final Date t1 = DateUtil.getStartOfDay(new Date(from));
+		final Date t2 = DateUtil.getEndOfDay(new Date(to));
 		DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, 
 				WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus((!status.equals("*")) ? 
 						WorkStatusEnum.getInstanceFromCodeValue(status) : 
 							null));
+		rp.addAndSpecification(interval);
 		
-		// add date interval to specification list
-		spec =  Specifications.where(spec).and(interval);
-		
-		// find with specification and pagination
-		Page<Order> rs = repo.findAll(spec, request);
-
-		// get content
-		List<Order> entities = rs.getContent();
-
-		// throw exception if no content
-		if (entities.size() == 0)
-			throw new PageNotFoundException(entity_name, page);
-
-		// create list
-		List<OrderDTO> orderDTOList = new ArrayList<OrderDTO>();
-		for (Order s : entities) {
-			orderDTOList.add(rdDozerMapper.map(s, OrderDTO.class));
-		}
-		
-		// assembly dto
-		return PagedDTOFactory.getPagedDTO(orderDTOList, size, page, rs.getTotalPages(), rs.getTotalElements());
+		// process data request
+		return rp.process();
 	}
 	
 	/**
