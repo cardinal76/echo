@@ -58,7 +58,7 @@ public class DataBase_tm_Config {
 		properties.put("hibernate.show_sql", environment.getRequiredProperty("tm.hibernate.show_sql"));
 		properties.put("hibernate.format_sql", environment.getRequiredProperty("tm.hibernate.format_sql"));
 		properties.put("hibernate.temp.use_jdbc_metadata_defaults",
-				environment.getRequiredProperty("rd.hibernate.use_jdbc_metadata_defaults"));
+				environment.getRequiredProperty("tm.hibernate.use_jdbc_metadata_defaults"));
 		if (StringUtils.isNoneBlank(environment.getRequiredProperty("tm.hibernate.hbm2ddl.auto"))) {
 			properties.put("hibernate.hbm2ddl.auto", environment.getRequiredProperty("tm.hibernate.hbm2ddl.auto"));
 		}
