@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,12 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
-import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.exception.model.ValidationException;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
-import it.clevercom.echo.common.jpa.factory.CriteriaSpecificationFactory;
-import it.clevercom.echo.common.jpa.factory.PageRequestFactory;
 import it.clevercom.echo.common.jpa.specification.BooleanSpecification;
 import it.clevercom.echo.common.jpa.specification.DateIntervalSpecification;
 import it.clevercom.echo.common.jpa.specification.StringSpecification;
@@ -48,7 +43,6 @@ import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.ValidationExceptionDTO;
-import it.clevercom.echo.common.model.factory.PagedDTOFactory;
 import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.common.util.StringUtils;
@@ -59,10 +53,8 @@ import it.clevercom.echo.rd.enums.WorkStatusEnum;
 import it.clevercom.echo.rd.jpa.specification.OrganizationUnitSpecification;
 import it.clevercom.echo.rd.jpa.specification.WorkPrioritySpecification;
 import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
-import it.clevercom.echo.rd.model.dto.AppSettingDTO;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
-import it.clevercom.echo.rd.model.entity.AppSetting;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
@@ -70,7 +62,6 @@ import it.clevercom.echo.rd.model.entity.OrganizationUnit;
 import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
-import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderLog_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderService_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrder_rd_Repository;
@@ -208,10 +199,34 @@ public class Order_rd_Controller extends EchoController {
 						page, 
 						size);
 		
+		final Date t1 = DateUtil.getStartOfDay(new Date(from));
+		final Date t2 = DateUtil.getEndOfDay(new Date(to));
+		
 		// if there's a selected status, create and set status specification
 		if (!status.equals("*")) {
-			WorkStatusSpecification<Order> st = new WorkStatusSpecification<Order>(repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(status).code()).getIdworkstatus());
-			rp.addAndSpecification(st);
+			// start decoding status
+			String[] statusItems = StringUtils.split(status, "\\|");
+			// create new array of specs
+			Specifications[] cumulativeStatus = new Specifications[statusItems.length];
+			
+			for (int i = 0; i < statusItems.length; i++) {
+				Specifications<Order> current = null;
+				// create status specification
+				WorkStatusSpecification<Order> st = new WorkStatusSpecification<Order>(repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i]).code()).getIdworkstatus());
+				// create interval specification based on right date field
+				DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i])));
+				current = Specifications.where(current).and(st).and(interval);
+				cumulativeStatus[i] = Specifications.where(current);
+			}
+			
+			for (int i = 0; i < cumulativeStatus.length; i++) {
+				rp.addOrSpecification(cumulativeStatus[i]);
+			}
+		} else {
+			// create standard specification based on date interval and standard field name
+			// parse long parameter to Date Object
+			DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(null));
+			rp.addAndSpecification(interval);
 		}
 		
 		// if there's a selected priority, create and set priority specification
@@ -255,17 +270,6 @@ public class Order_rd_Controller extends EchoController {
 			BooleanSpecification<Order, Order> act = new BooleanSpecification<Order, Order>(null, "active", true);
 			rp.addAndSpecification(act);
 		}
-		
-		// create standard specification based on date interval and field name
-		// parse long parameter to Date Object
-		
-		final Date t1 = DateUtil.getStartOfDay(new Date(from));
-		final Date t2 = DateUtil.getEndOfDay(new Date(to));
-		DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, 
-				WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus((!status.equals("*")) ? 
-						WorkStatusEnum.getInstanceFromCodeValue(status) : 
-							null));
-		rp.addAndSpecification(interval);
 		
 		// process data request
 		return rp.process();
