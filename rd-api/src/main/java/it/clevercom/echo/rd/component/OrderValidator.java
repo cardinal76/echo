@@ -344,6 +344,8 @@ public class OrderValidator {
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.emptylist"),
 							env.getProperty("echo.api.crud.fields.service")));
 		} else if (updatedOrder.getServices().size() > 0) {
+			// TODO add fix to RD_005 (L'elenco degli esami può essere modificato fintanto che l'ordine non transiterà nello stato di esecuzione)
+			
 			// get old service modality type (check only the first element)
 			Long oldModalityType = 0l;
 			String oldModalityName = null;

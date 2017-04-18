@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 18-apr-2017 12.02.48 by Hibernate Tools 5.2.2.Final
+// Generated 18-apr-2017 16.29.28 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -38,6 +38,8 @@ public class OrderService  implements java.io.Serializable {
      private Date updated;
      private String userupdate;
      private Boolean active;
+     private String addedreason;
+     private String canceledreason;
 
     public OrderService() {
     }
@@ -50,13 +52,15 @@ public class OrderService  implements java.io.Serializable {
         this.updated = updated;
         this.userupdate = userupdate;
     }
-    public OrderService(Order order, Service service, Date created, Date updated, String userupdate, Boolean active) {
+    public OrderService(Order order, Service service, Date created, Date updated, String userupdate, Boolean active, String addedreason, String canceledreason) {
        this.order = order;
        this.service = service;
        this.created = created;
        this.updated = updated;
        this.userupdate = userupdate;
        this.active = active;
+       this.addedreason = addedreason;
+       this.canceledreason = canceledreason;
     }
    
      @GenericGenerator(name="generator", strategy="org.hibernate.id.enhanced.SequenceStyleGenerator", parameters={@Parameter(name="optimizer", value="none"), @Parameter(name="sequence_name", value="orderservice_idorderservice_seq"), @Parameter(name="increment_size", value="1")})@Id @GeneratedValue(generator="generator")
@@ -129,6 +133,26 @@ public class OrderService  implements java.io.Serializable {
     
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    
+    @Column(name="addedreason", length=1000)
+    public String getAddedreason() {
+        return this.addedreason;
+    }
+    
+    public void setAddedreason(String addedreason) {
+        this.addedreason = addedreason;
+    }
+
+    
+    @Column(name="canceledreason", length=1000)
+    public String getCanceledreason() {
+        return this.canceledreason;
+    }
+    
+    public void setCanceledreason(String canceledreason) {
+        this.canceledreason = canceledreason;
     }
 
 
