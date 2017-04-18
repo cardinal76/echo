@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
+import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
 import it.clevercom.echo.rd.model.dto.PatientSmartDTO;
 import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
 import it.clevercom.echo.rd.model.entity.Order;
@@ -102,13 +103,13 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			// iterate
 			Set<OrderService> orderServices = source.getOrderServices();		
 			if (!(orderServices.isEmpty())) {
-				target.setServices(new HashSet<BaseObjectDTO>());
-				target.setCanceledServices(new HashSet<BaseObjectDTO>());
+				target.setServices(new HashSet<OrderedServiceDTO>());
+				target.setCanceledServices(new HashSet<OrderedServiceDTO>());
 				for (OrderService orderService : orderServices) {
 					if (orderService.getActive().equals(Boolean.TRUE)) {
-						target.getServices().add(rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class));
+						target.getServices().add(rdDozerMapper.map(orderService.getService(), OrderedServiceDTO.class));
 					} else {
-						target.getCanceledServices().add(rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class));
+						target.getCanceledServices().add(rdDozerMapper.map(orderService.getService(), OrderedServiceDTO.class));
 					}
 				}
 			}
@@ -188,14 +189,16 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			}
 			
 			// iterate
-			Set<BaseObjectDTO> services = source.getServices();			
+			Set<OrderedServiceDTO> services = source.getServices();			
 			if (!(services.isEmpty())) {
 				target.setOrderServices(new HashSet<OrderService>());
-				for (BaseObjectDTO srv : services) {
+				for (OrderedServiceDTO srv : services) {
 					Service service = rdDozerMapper.map(srv, Service.class);
 					OrderService orderService = new OrderService();
 					orderService.setService(service);
 					orderService.setOrder(target);
+					orderService.setAddedreason((srv.getAddedReason() != null) ? srv.getAddedReason() : null);
+					orderService.setCanceledreason((srv.getCancelReason() != null) ? srv.getCancelReason() : null);
 					target.getOrderServices().add(orderService);
 				}
 			}

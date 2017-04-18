@@ -33,8 +33,8 @@ public class OrderDTO implements Serializable {
 	private Date updated;
 	private String userUpdate;
 	private Boolean active;
-	private Set<BaseObjectDTO> services = new HashSet<BaseObjectDTO>(0);
-	private Set<BaseObjectDTO> canceledServices = new HashSet<BaseObjectDTO>();
+	private Set<OrderedServiceDTO> services = new HashSet<OrderedServiceDTO>(0);
+	private Set<OrderedServiceDTO> canceledServices = new HashSet<OrderedServiceDTO>();
     private String identificationdocument;
     private Long executingDate;
     private Long executedDate;
@@ -343,28 +343,28 @@ public class OrderDTO implements Serializable {
 	/**
 	 * @return the services
 	 */
-	public Set<BaseObjectDTO> getServices() {
+	public Set<OrderedServiceDTO> getServices() {
 		return services;
 	}
 	
 	/**
 	 * @param services the services to set
 	 */
-	public void setServices(Set<BaseObjectDTO> services) {
+	public void setServices(Set<OrderedServiceDTO> services) {
 		this.services = services;
 	}
 	
 	/**
 	 * @return the canceledServices
 	 */
-	public Set<BaseObjectDTO> getCanceledServices() {
+	public Set<OrderedServiceDTO> getCanceledServices() {
 		return canceledServices;
 	}
 
 	/**
 	 * @param canceledServices the canceledServices to set
 	 */
-	public void setCanceledServices(Set<BaseObjectDTO> canceledServices) {
+	public void setCanceledServices(Set<OrderedServiceDTO> canceledServices) {
 		this.canceledServices = canceledServices;
 	}
 	
