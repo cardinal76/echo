@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 12-apr-2017 9.59.56 by Hibernate Tools 5.2.2.Final
+// Generated 18-apr-2017 12.02.48 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -164,8 +164,8 @@ public class OrderLog  implements java.io.Serializable {
         this.acquisitionchannel = acquisitionchannel;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="creationdate", nullable=false, length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="creationdate", nullable=false, length=29)
     public Date getCreationdate() {
         return this.creationdate;
     }
@@ -174,8 +174,8 @@ public class OrderLog  implements java.io.Serializable {
         this.creationdate = creationdate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="scheduleddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="scheduleddate", length=29)
     public Date getScheduleddate() {
         return this.scheduleddate;
     }
@@ -184,8 +184,8 @@ public class OrderLog  implements java.io.Serializable {
         this.scheduleddate = scheduleddate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="acceptancedate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="acceptancedate", length=29)
     public Date getAcceptancedate() {
         return this.acceptancedate;
     }
@@ -314,8 +314,8 @@ public class OrderLog  implements java.io.Serializable {
         this.active = active;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="executingdate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="executingdate", length=29)
     public Date getExecutingdate() {
         return this.executingdate;
     }
@@ -324,8 +324,8 @@ public class OrderLog  implements java.io.Serializable {
         this.executingdate = executingdate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="executeddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="executeddate", length=29)
     public Date getExecuteddate() {
         return this.executeddate;
     }
@@ -334,8 +334,8 @@ public class OrderLog  implements java.io.Serializable {
         this.executeddate = executeddate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="reportingdate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="reportingdate", length=29)
     public Date getReportingdate() {
         return this.reportingdate;
     }
@@ -344,8 +344,8 @@ public class OrderLog  implements java.io.Serializable {
         this.reportingdate = reportingdate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="reporteddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="reporteddate", length=29)
     public Date getReporteddate() {
         return this.reporteddate;
     }
@@ -354,8 +354,8 @@ public class OrderLog  implements java.io.Serializable {
         this.reporteddate = reporteddate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="signeddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="signeddate", length=29)
     public Date getSigneddate() {
         return this.signeddate;
     }
@@ -364,8 +364,8 @@ public class OrderLog  implements java.io.Serializable {
         this.signeddate = signeddate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="delivereddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="delivereddate", length=29)
     public Date getDelivereddate() {
         return this.delivereddate;
     }
@@ -374,8 +374,8 @@ public class OrderLog  implements java.io.Serializable {
         this.delivereddate = delivereddate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="archiveddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="archiveddate", length=29)
     public Date getArchiveddate() {
         return this.archiveddate;
     }
@@ -384,8 +384,8 @@ public class OrderLog  implements java.io.Serializable {
         this.archiveddate = archiveddate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="canceleddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="canceleddate", length=29)
     public Date getCanceleddate() {
         return this.canceleddate;
     }
