@@ -34,13 +34,9 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.component.Validator;
-import it.clevercom.echo.rd.jpa.specification.ModalityTypeSpecification;
 import it.clevercom.echo.rd.jpa.specification.UserSpecification;
 import it.clevercom.echo.rd.model.dto.AppSettingDTO;
-import it.clevercom.echo.rd.model.dto.BodyApparatusDTO;
 import it.clevercom.echo.rd.model.entity.AppSetting;
-import it.clevercom.echo.rd.model.entity.BodyApparatus;
-import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
 
 @Controller

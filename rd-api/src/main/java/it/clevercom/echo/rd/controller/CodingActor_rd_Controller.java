@@ -4,8 +4,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,10 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,26 +26,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
-import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
-import it.clevercom.echo.common.jpa.factory.CriteriaSpecificationFactory;
-import it.clevercom.echo.common.jpa.factory.PageRequestFactory;
-import it.clevercom.echo.common.jpa.helper.SearchCriteria;
-import it.clevercom.echo.common.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.common.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
-import it.clevercom.echo.common.model.factory.PagedDTOFactory;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.component.Validator;
-import it.clevercom.echo.rd.model.dto.CitizenshipDTO;
 import it.clevercom.echo.rd.model.dto.CodingActorDTO;
-import it.clevercom.echo.rd.model.entity.Citizenship;
 import it.clevercom.echo.rd.model.entity.CodingActor;
-import it.clevercom.echo.rd.repository.ICitizenship_rd_Repository;
 import it.clevercom.echo.rd.repository.ICodingActor_rd_Repository;
 
 @Controller
