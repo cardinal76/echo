@@ -208,7 +208,7 @@ public class Order_rd_Controller extends EchoController {
 			String[] statusItems = StringUtils.split(status, "\\|");
 			// create new array of specs
 			Specifications[] cumulativeStatus = new Specifications[statusItems.length];
-			
+			// iterate status item and create the right specification
 			for (int i = 0; i < statusItems.length; i++) {
 				Specifications<Order> current = null;
 				// create status specification
@@ -217,11 +217,8 @@ public class Order_rd_Controller extends EchoController {
 				DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i])));
 				current = Specifications.where(current).and(st).and(interval);
 				cumulativeStatus[i] = Specifications.where(current);
-			}
-			
-			for (int i = 0; i < cumulativeStatus.length; i++) {
 				rp.addOrSpecification(cumulativeStatus[i]);
-			}
+			}			
 		} else {
 			// create standard specification based on date interval and standard field name
 			// parse long parameter to Date Object
