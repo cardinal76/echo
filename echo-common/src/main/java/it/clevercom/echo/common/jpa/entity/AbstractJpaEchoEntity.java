@@ -62,4 +62,32 @@ public abstract class AbstractJpaEchoEntity {
 	public void setActive(Boolean active) {
 		this.active = active;
 	}
+
+	/**
+	 * @return the created
+	 */
+	public Date getCreated() {
+		return created;
+	}
+
+	/**
+	 * @param created the created to set
+	 */
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	/**
+	 * @return the updated
+	 */
+	public Date getUpdated() {
+		return updated;
+	}
+
+	/**
+	 * @param updated the updated to set
+	 */
+	public void setUpdated(Date updated) {
+		this.updated = updated;
+	}
 }

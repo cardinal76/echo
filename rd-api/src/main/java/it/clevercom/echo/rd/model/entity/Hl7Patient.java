@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 19-apr-2017 12.25.52 by Hibernate Tools 5.2.2.Final
+// Generated 19-apr-2017 15.19.48 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -25,7 +26,7 @@ import javax.persistence.TemporalType;
 @DynamicInsert
 @Table(name="rd_hl7_patient"
 )
-public class Hl7Patient  implements java.io.Serializable {
+public class Hl7Patient  extends AbstractJpaEchoEntity implements java.io.Serializable {
 
 
      private Hl7PatientId id;
@@ -48,26 +49,18 @@ public class Hl7Patient  implements java.io.Serializable {
      private String citizenshipdesc;
      private Date deathdate;
      private String messagecontrolid;
-     private Date created;
-     private Date updated;
-     private String userupdate;
-     private Boolean active;
 
     public Hl7Patient() {
     }
 
 	
-    public Hl7Patient(Hl7PatientId id, String idauthority, String idtypecode, String messagecontrolid, Date created, Date updated, String userupdate, Boolean active) {
+    public Hl7Patient(Hl7PatientId id, String idauthority, String idtypecode, String messagecontrolid) {
         this.id = id;
         this.idauthority = idauthority;
         this.idtypecode = idtypecode;
         this.messagecontrolid = messagecontrolid;
-        this.created = created;
-        this.updated = updated;
-        this.userupdate = userupdate;
-        this.active = active;
     }
-    public Hl7Patient(Hl7PatientId id, Patient patient, String idauthority, String idtypecode, String name, String surname, Date dateofbirth, String gender, String residencestreetaddress, String residencecitycode, String residencecountry, String domicilestreetaddress, String domicilecitycode, String domicilecountry, String maritalstatus, String birthplace, String citizenshipid, String citizenshipdesc, Date deathdate, String messagecontrolid, Date created, Date updated, String userupdate, Boolean active) {
+    public Hl7Patient(Hl7PatientId id, Patient patient, String idauthority, String idtypecode, String name, String surname, Date dateofbirth, String gender, String residencestreetaddress, String residencecitycode, String residencecountry, String domicilestreetaddress, String domicilecitycode, String domicilecountry, String maritalstatus, String birthplace, String citizenshipid, String citizenshipdesc, Date deathdate, String messagecontrolid) {
        this.id = id;
        this.patient = patient;
        this.idauthority = idauthority;
@@ -88,10 +81,6 @@ public class Hl7Patient  implements java.io.Serializable {
        this.citizenshipdesc = citizenshipdesc;
        this.deathdate = deathdate;
        this.messagecontrolid = messagecontrolid;
-       this.created = created;
-       this.updated = updated;
-       this.userupdate = userupdate;
-       this.active = active;
     }
    
      @EmbeddedId
@@ -296,46 +285,6 @@ public class Hl7Patient  implements java.io.Serializable {
     
     public void setMessagecontrolid(String messagecontrolid) {
         this.messagecontrolid = messagecontrolid;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="created", nullable=false, length=29)
-    public Date getCreated() {
-        return this.created;
-    }
-    
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="updated", nullable=false, length=29)
-    public Date getUpdated() {
-        return this.updated;
-    }
-    
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    
-    @Column(name="userupdate", nullable=false, length=100)
-    public String getUserupdate() {
-        return this.userupdate;
-    }
-    
-    public void setUserupdate(String userupdate) {
-        this.userupdate = userupdate;
-    }
-
-    
-    @Column(name="active", nullable=false)
-    public Boolean getActive() {
-        return this.active;
-    }
-    
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
 
