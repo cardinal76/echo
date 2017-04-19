@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 19-apr-2017 15.19.48 by Hibernate Tools 5.2.2.Final
+// Generated 19-apr-2017 20.51.53 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
@@ -24,7 +23,7 @@ import org.hibernate.annotations.Parameter;
 @DynamicInsert
 @Table(name="rd_hl7_outbound_message"
 )
-public class Hl7OutboundMessage  extends AbstractJpaEchoEntity implements java.io.Serializable {
+public class Hl7OutboundMessage  implements java.io.Serializable {
 
 
      private Long idoutboundmessage;
@@ -33,16 +32,24 @@ public class Hl7OutboundMessage  extends AbstractJpaEchoEntity implements java.i
      private String status;
      private String messagetype;
      private Date sent;
+     private Date created;
+     private Date updated;
+     private String userupdate;
+     private Boolean active;
 
     public Hl7OutboundMessage() {
     }
 
-    public Hl7OutboundMessage(String messagecontrolid, String message, String status, String messagetype, Date sent) {
+    public Hl7OutboundMessage(String messagecontrolid, String message, String status, String messagetype, Date sent, Date created, Date updated, String userupdate, Boolean active) {
        this.messagecontrolid = messagecontrolid;
        this.message = message;
        this.status = status;
        this.messagetype = messagetype;
        this.sent = sent;
+       this.created = created;
+       this.updated = updated;
+       this.userupdate = userupdate;
+       this.active = active;
     }
    
      @GenericGenerator(name="generator", strategy="org.hibernate.id.enhanced.SequenceStyleGenerator", parameters={@Parameter(name="optimizer", value="none"), @Parameter(name="sequence_name", value="hl7outboundmessage_id_seq"), @Parameter(name="increment_size", value="1")})@Id @GeneratedValue(generator="generator")
@@ -105,6 +112,46 @@ public class Hl7OutboundMessage  extends AbstractJpaEchoEntity implements java.i
     
     public void setSent(Date sent) {
         this.sent = sent;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="created", nullable=false, length=29)
+    public Date getCreated() {
+        return this.created;
+    }
+    
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="updated", nullable=false, length=29)
+    public Date getUpdated() {
+        return this.updated;
+    }
+    
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    
+    @Column(name="userupdate", nullable=false, length=100)
+    public String getUserupdate() {
+        return this.userupdate;
+    }
+    
+    public void setUserupdate(String userupdate) {
+        this.userupdate = userupdate;
+    }
+
+    
+    @Column(name="active", nullable=false)
+    public Boolean getActive() {
+        return this.active;
+    }
+    
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
 

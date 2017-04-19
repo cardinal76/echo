@@ -1,7 +1,8 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 19-apr-2017 15.19.48 by Hibernate Tools 5.2.2.Final
+// Generated 19-apr-2017 20.51.53 by Hibernate Tools 5.2.2.Final
 
 
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -26,12 +28,16 @@ import org.hibernate.annotations.Parameter;
 @Table(name="rd_order_service"
     , uniqueConstraints = @UniqueConstraint(columnNames={"idorder", "idservice"}) 
 )
-public class OrderService  extends AbstractJpaEchoEntity implements java.io.Serializable {
+public class OrderService  implements java.io.Serializable {
 
 
      private Long idorderservice;
      private Order order;
      private Service service;
+     private Date created;
+     private Date updated;
+     private String userupdate;
+     private Boolean active;
      private String addedreason;
      private String canceledreason;
 
@@ -39,13 +45,20 @@ public class OrderService  extends AbstractJpaEchoEntity implements java.io.Seri
     }
 
 	
-    public OrderService(Order order, Service service) {
+    public OrderService(Order order, Service service, Date created, Date updated, String userupdate) {
         this.order = order;
         this.service = service;
+        this.created = created;
+        this.updated = updated;
+        this.userupdate = userupdate;
     }
-    public OrderService(Order order, Service service, String addedreason, String canceledreason) {
+    public OrderService(Order order, Service service, Date created, Date updated, String userupdate, Boolean active, String addedreason, String canceledreason) {
        this.order = order;
        this.service = service;
+       this.created = created;
+       this.updated = updated;
+       this.userupdate = userupdate;
+       this.active = active;
        this.addedreason = addedreason;
        this.canceledreason = canceledreason;
     }
@@ -80,6 +93,46 @@ public class OrderService  extends AbstractJpaEchoEntity implements java.io.Seri
     
     public void setService(Service service) {
         this.service = service;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="created", nullable=false, length=29)
+    public Date getCreated() {
+        return this.created;
+    }
+    
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="updated", nullable=false, length=29)
+    public Date getUpdated() {
+        return this.updated;
+    }
+    
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    
+    @Column(name="userupdate", nullable=false, length=100)
+    public String getUserupdate() {
+        return this.userupdate;
+    }
+    
+    public void setUserupdate(String userupdate) {
+        this.userupdate = userupdate;
+    }
+
+    
+    @Column(name="active")
+    public Boolean getActive() {
+        return this.active;
+    }
+    
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     

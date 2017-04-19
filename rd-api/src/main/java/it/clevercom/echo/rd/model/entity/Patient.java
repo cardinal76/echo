@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 19-apr-2017 15.19.48 by Hibernate Tools 5.2.2.Final
+// Generated 19-apr-2017 20.51.53 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -16,7 +16,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
@@ -30,7 +29,7 @@ import org.hibernate.annotations.Parameter;
 @DynamicInsert
 @Table(name="rd_patient"
 )
-public class Patient  extends AbstractJpaEchoEntity implements java.io.Serializable {
+public class Patient  implements java.io.Serializable {
 
 
      private Long idpatient;
@@ -53,6 +52,10 @@ public class Patient  extends AbstractJpaEchoEntity implements java.io.Serializa
      private Date deathdate;
      private String taxcode;
      private String phonenumber;
+     private Date created;
+     private Date updated;
+     private String userupdate;
+     private Boolean active;
      private String email;
      private String healthcode;
      private String fullname;
@@ -64,7 +67,14 @@ public class Patient  extends AbstractJpaEchoEntity implements java.io.Serializa
     public Patient() {
     }
 
-    public Patient(Citizenship citizenship, Country countryByDomicileidcountry, Country countryByResidenceidcountry, Country countryByBirthplaceidcountry, Maritalstatus maritalstatus, Municipality municipalityByDomicileidmunicipality, Municipality municipalityByResidenceidmunicipality, Municipality municipalityByBirthplaceidmunicipality, OrganizationUnit organizationUnitByIdintorganizationunit, OrganizationUnit organizationUnitByIdextorganizationunit, String name, String surname, Date dateofbirth, String gender, String residencestreetaddress, String domicilestreetaddress, Date deathdate, String taxcode, String phonenumber, String email, String healthcode, String fullname, Set<Hl7Patient> hl7Patients, Set<PatientCodingActor> patientCodingActors, Set<Order> orders, Set<WorkSession> workSessions) {
+	
+    public Patient(Date created, Date updated, String userupdate, Boolean active) {
+        this.created = created;
+        this.updated = updated;
+        this.userupdate = userupdate;
+        this.active = active;
+    }
+    public Patient(Citizenship citizenship, Country countryByDomicileidcountry, Country countryByResidenceidcountry, Country countryByBirthplaceidcountry, Maritalstatus maritalstatus, Municipality municipalityByDomicileidmunicipality, Municipality municipalityByResidenceidmunicipality, Municipality municipalityByBirthplaceidmunicipality, OrganizationUnit organizationUnitByIdintorganizationunit, OrganizationUnit organizationUnitByIdextorganizationunit, String name, String surname, Date dateofbirth, String gender, String residencestreetaddress, String domicilestreetaddress, Date deathdate, String taxcode, String phonenumber, Date created, Date updated, String userupdate, Boolean active, String email, String healthcode, String fullname, Set<Hl7Patient> hl7Patients, Set<PatientCodingActor> patientCodingActors, Set<Order> orders, Set<WorkSession> workSessions) {
        this.citizenship = citizenship;
        this.countryByDomicileidcountry = countryByDomicileidcountry;
        this.countryByResidenceidcountry = countryByResidenceidcountry;
@@ -84,6 +94,10 @@ public class Patient  extends AbstractJpaEchoEntity implements java.io.Serializa
        this.deathdate = deathdate;
        this.taxcode = taxcode;
        this.phonenumber = phonenumber;
+       this.created = created;
+       this.updated = updated;
+       this.userupdate = userupdate;
+       this.active = active;
        this.email = email;
        this.healthcode = healthcode;
        this.fullname = fullname;
@@ -293,6 +307,46 @@ public class Patient  extends AbstractJpaEchoEntity implements java.io.Serializa
     
     public void setPhonenumber(String phonenumber) {
         this.phonenumber = phonenumber;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="created", nullable=false, length=29)
+    public Date getCreated() {
+        return this.created;
+    }
+    
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="updated", nullable=false, length=29)
+    public Date getUpdated() {
+        return this.updated;
+    }
+    
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    
+    @Column(name="userupdate", nullable=false, length=100)
+    public String getUserupdate() {
+        return this.userupdate;
+    }
+    
+    public void setUserupdate(String userupdate) {
+        this.userupdate = userupdate;
+    }
+
+    
+    @Column(name="active", nullable=false)
+    public Boolean getActive() {
+        return this.active;
+    }
+    
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     

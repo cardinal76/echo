@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 19-apr-2017 15.19.48 by Hibernate Tools 5.2.2.Final
+// Generated 19-apr-2017 20.51.53 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -13,7 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
@@ -27,7 +26,7 @@ import org.hibernate.annotations.Parameter;
 @DynamicInsert
 @Table(name="rd_order_log"
 )
-public class OrderLog  extends AbstractJpaEchoEntity implements java.io.Serializable {
+public class OrderLog  implements java.io.Serializable {
 
 
      private Long idorderlog;
@@ -47,6 +46,10 @@ public class OrderLog  extends AbstractJpaEchoEntity implements java.io.Serializ
      private String rejectreason;
      private String clinicalhistory;
      private String notes;
+     private Date created;
+     private Date updated;
+     private String userupdate;
+     private Boolean active;
      private Date executingdate;
      private Date executeddate;
      private Date reportingdate;
@@ -60,11 +63,15 @@ public class OrderLog  extends AbstractJpaEchoEntity implements java.io.Serializ
     }
 
 	
-    public OrderLog(Order order, Date creationdate) {
+    public OrderLog(Order order, Date creationdate, Date created, Date updated, String userupdate, Boolean active) {
         this.order = order;
         this.creationdate = creationdate;
+        this.created = created;
+        this.updated = updated;
+        this.userupdate = userupdate;
+        this.active = active;
     }
-    public OrderLog(Order order, Long idworksession, Long idworkstatus, Long idworkpriority, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, Long originorganizationunitid, Long targetorganizationunitid, String requestingphysician, String orderreason, String rejectreason, String clinicalhistory, String notes, Date executingdate, Date executeddate, Date reportingdate, Date reporteddate, Date signeddate, Date delivereddate, Date archiveddate, Date canceleddate) {
+    public OrderLog(Order order, Long idworksession, Long idworkstatus, Long idworkpriority, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, Long originorganizationunitid, Long targetorganizationunitid, String requestingphysician, String orderreason, String rejectreason, String clinicalhistory, String notes, Date created, Date updated, String userupdate, Boolean active, Date executingdate, Date executeddate, Date reportingdate, Date reporteddate, Date signeddate, Date delivereddate, Date archiveddate, Date canceleddate) {
        this.order = order;
        this.idworksession = idworksession;
        this.idworkstatus = idworkstatus;
@@ -81,6 +88,10 @@ public class OrderLog  extends AbstractJpaEchoEntity implements java.io.Serializ
        this.rejectreason = rejectreason;
        this.clinicalhistory = clinicalhistory;
        this.notes = notes;
+       this.created = created;
+       this.updated = updated;
+       this.userupdate = userupdate;
+       this.active = active;
        this.executingdate = executingdate;
        this.executeddate = executeddate;
        this.reportingdate = reportingdate;
@@ -261,6 +272,46 @@ public class OrderLog  extends AbstractJpaEchoEntity implements java.io.Serializ
     
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="created", nullable=false, length=29)
+    public Date getCreated() {
+        return this.created;
+    }
+    
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="updated", nullable=false, length=29)
+    public Date getUpdated() {
+        return this.updated;
+    }
+    
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    
+    @Column(name="userupdate", nullable=false, length=100)
+    public String getUserupdate() {
+        return this.userupdate;
+    }
+    
+    public void setUserupdate(String userupdate) {
+        this.userupdate = userupdate;
+    }
+
+    
+    @Column(name="active", nullable=false)
+    public Boolean getActive() {
+        return this.active;
+    }
+    
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     @Temporal(TemporalType.TIMESTAMP)

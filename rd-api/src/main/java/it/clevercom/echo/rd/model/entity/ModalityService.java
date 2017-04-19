@@ -1,7 +1,8 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 19-apr-2017 15.19.48 by Hibernate Tools 5.2.2.Final
+// Generated 19-apr-2017 20.51.53 by Hibernate Tools 5.2.2.Final
 
 
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,7 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -26,19 +28,27 @@ import org.hibernate.annotations.Parameter;
 @Table(name="rd_modality_service"
     , uniqueConstraints = @UniqueConstraint(columnNames={"idmodality", "idservice"}) 
 )
-public class ModalityService  extends AbstractJpaEchoEntity implements java.io.Serializable {
+public class ModalityService  implements java.io.Serializable {
 
 
      private Long idmodalityservice;
      private Modality modality;
      private Service service;
+     private Date created;
+     private Date updated;
+     private String userupdate;
+     private Boolean active;
 
     public ModalityService() {
     }
 
-    public ModalityService(Modality modality, Service service) {
+    public ModalityService(Modality modality, Service service, Date created, Date updated, String userupdate, Boolean active) {
        this.modality = modality;
        this.service = service;
+       this.created = created;
+       this.updated = updated;
+       this.userupdate = userupdate;
+       this.active = active;
     }
    
      @GenericGenerator(name="generator", strategy="org.hibernate.id.enhanced.SequenceStyleGenerator", parameters={@Parameter(name="optimizer", value="none"), @Parameter(name="sequence_name", value="modalityservice_idmodalityservice_seq"), @Parameter(name="increment_size", value="1")})@Id @GeneratedValue(generator="generator")
@@ -71,6 +81,46 @@ public class ModalityService  extends AbstractJpaEchoEntity implements java.io.S
     
     public void setService(Service service) {
         this.service = service;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="created", nullable=false, length=29)
+    public Date getCreated() {
+        return this.created;
+    }
+    
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="updated", nullable=false, length=29)
+    public Date getUpdated() {
+        return this.updated;
+    }
+    
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    
+    @Column(name="userupdate", nullable=false, length=100)
+    public String getUserupdate() {
+        return this.userupdate;
+    }
+    
+    public void setUserupdate(String userupdate) {
+        this.userupdate = userupdate;
+    }
+
+    
+    @Column(name="active", nullable=false)
+    public Boolean getActive() {
+        return this.active;
+    }
+    
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
 
