@@ -456,6 +456,7 @@ public class Order_rd_Controller extends EchoController {
 			@RequestParam(defaultValue = "", required = false) String rejectReason, 
 			@RequestParam(defaultValue = "", required = false) String cancelReason, 
 			HttpServletRequest request) throws Exception {		
+		
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
@@ -471,7 +472,7 @@ public class Order_rd_Controller extends EchoController {
 		orderValidator.validateDeleteRequest(entity, rejectReason, cancelReason);
 				
 		OrderDTO oldValueDTO = rdDozerMapper.map(entity, OrderDTO.class);
-
+		
 		// get canceled workstatus
 		WorkStatus workStatus = repo_ws.findByCode(WorkStatusEnum.CANCELED.code());
 
@@ -479,6 +480,8 @@ public class Order_rd_Controller extends EchoController {
 		entity.setWorkStatus(workStatus);
 		entity.setActive(false);
 		entity.setUserupdate(username);
+		entity.setCancelreason(cancelReason);
+		entity.setRejectreason(rejectReason);
 
 		repo.saveAndFlush(entity);
 
