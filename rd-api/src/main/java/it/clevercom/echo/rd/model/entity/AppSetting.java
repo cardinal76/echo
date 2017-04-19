@@ -1,8 +1,7 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 19-apr-2017 20.51.53 by Hibernate Tools 5.2.2.Final
+// Generated 19-apr-2017 22.11.14 by Hibernate Tools 5.2.2.Final
 
 
-import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,8 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -28,39 +26,27 @@ import org.hibernate.annotations.Parameter;
 @Table(name="rd_app_setting"
     , uniqueConstraints = @UniqueConstraint(columnNames={"key", "feature", "username"}) 
 )
-public class AppSetting  implements java.io.Serializable {
+public class AppSetting  extends AbstractJpaEchoEntity implements java.io.Serializable {
 
 
      private Long idappsetting;
      private User user;
      private String key;
      private String value;
-     private Date created;
-     private Date updated;
-     private String userupdate;
-     private Boolean active;
      private String feature;
 
     public AppSetting() {
     }
 
 	
-    public AppSetting(String key, String value, Date created, Date updated, String userupdate, Boolean active) {
+    public AppSetting(String key, String value) {
         this.key = key;
         this.value = value;
-        this.created = created;
-        this.updated = updated;
-        this.userupdate = userupdate;
-        this.active = active;
     }
-    public AppSetting(User user, String key, String value, Date created, Date updated, String userupdate, Boolean active, String feature) {
+    public AppSetting(User user, String key, String value, String feature) {
        this.user = user;
        this.key = key;
        this.value = value;
-       this.created = created;
-       this.updated = updated;
-       this.userupdate = userupdate;
-       this.active = active;
        this.feature = feature;
     }
    
@@ -104,46 +90,6 @@ public class AppSetting  implements java.io.Serializable {
     
     public void setValue(String value) {
         this.value = value;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="created", nullable=false, length=29)
-    public Date getCreated() {
-        return this.created;
-    }
-    
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="updated", nullable=false, length=29)
-    public Date getUpdated() {
-        return this.updated;
-    }
-    
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    
-    @Column(name="userupdate", nullable=false, length=100)
-    public String getUserupdate() {
-        return this.userupdate;
-    }
-    
-    public void setUserupdate(String userupdate) {
-        this.userupdate = userupdate;
-    }
-
-    
-    @Column(name="active", nullable=false)
-    public Boolean getActive() {
-        return this.active;
-    }
-    
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     

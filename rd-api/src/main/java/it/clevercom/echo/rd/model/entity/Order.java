@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 19-apr-2017 20.51.53 by Hibernate Tools 5.2.2.Final
+// Generated 19-apr-2017 22.11.14 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
@@ -29,7 +30,7 @@ import org.hibernate.annotations.Parameter;
 @DynamicInsert
 @Table(name="rd_order"
 )
-public class Order  implements java.io.Serializable {
+public class Order  extends AbstractJpaEchoEntity implements java.io.Serializable {
 
 
      private Long idorder;
@@ -49,10 +50,6 @@ public class Order  implements java.io.Serializable {
      private String rejectreason;
      private String anamnesys;
      private String notes;
-     private Date created;
-     private Date updated;
-     private String userupdate;
-     private Boolean active;
      private String cancelreason;
      private String identificationdocument;
      private Date executingdate;
@@ -70,18 +67,14 @@ public class Order  implements java.io.Serializable {
     }
 
 	
-    public Order(Patient patient, WorkPriority workPriority, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date created, Date updated, String userupdate, Boolean active) {
+    public Order(Patient patient, WorkPriority workPriority, WorkStatus workStatus, String acquisitionchannel, Date creationdate) {
         this.patient = patient;
         this.workPriority = workPriority;
         this.workStatus = workStatus;
         this.acquisitionchannel = acquisitionchannel;
         this.creationdate = creationdate;
-        this.created = created;
-        this.updated = updated;
-        this.userupdate = userupdate;
-        this.active = active;
     }
-    public Order(OrganizationUnit organizationUnitByOriginorganizationunitid, OrganizationUnit organizationUnitByTargetorganizationunitid, Patient patient, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, String requestingphysician, String clinicalquestion, String rejectreason, String anamnesys, String notes, Date created, Date updated, String userupdate, Boolean active, String cancelreason, String identificationdocument, Date executingdate, Date executeddate, Date reportingdate, Date reporteddate, Date signeddate, Date delivereddate, Date archiveddate, Date canceleddate, Set<OrderLog> orderLogs, Set<OrderService> orderServices) {
+    public Order(OrganizationUnit organizationUnitByOriginorganizationunitid, OrganizationUnit organizationUnitByTargetorganizationunitid, Patient patient, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, String requestingphysician, String clinicalquestion, String rejectreason, String anamnesys, String notes, String cancelreason, String identificationdocument, Date executingdate, Date executeddate, Date reportingdate, Date reporteddate, Date signeddate, Date delivereddate, Date archiveddate, Date canceleddate, Set<OrderLog> orderLogs, Set<OrderService> orderServices) {
        this.organizationUnitByOriginorganizationunitid = organizationUnitByOriginorganizationunitid;
        this.organizationUnitByTargetorganizationunitid = organizationUnitByTargetorganizationunitid;
        this.patient = patient;
@@ -98,10 +91,6 @@ public class Order  implements java.io.Serializable {
        this.rejectreason = rejectreason;
        this.anamnesys = anamnesys;
        this.notes = notes;
-       this.created = created;
-       this.updated = updated;
-       this.userupdate = userupdate;
-       this.active = active;
        this.cancelreason = cancelreason;
        this.identificationdocument = identificationdocument;
        this.executingdate = executingdate;
@@ -286,46 +275,6 @@ public class Order  implements java.io.Serializable {
     
     public void setNotes(String notes) {
         this.notes = notes;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="created", nullable=false, length=29)
-    public Date getCreated() {
-        return this.created;
-    }
-    
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="updated", nullable=false, length=29)
-    public Date getUpdated() {
-        return this.updated;
-    }
-    
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    
-    @Column(name="userupdate", nullable=false, length=100)
-    public String getUserupdate() {
-        return this.userupdate;
-    }
-    
-    public void setUserupdate(String userupdate) {
-        this.userupdate = userupdate;
-    }
-
-    
-    @Column(name="active", nullable=false)
-    public Boolean getActive() {
-        return this.active;
-    }
-    
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     

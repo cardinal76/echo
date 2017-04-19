@@ -3,9 +3,10 @@ package it.clevercom.echo.common.jpa;
 import org.dozer.DozerBeanMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 
-public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E, D> {
+public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends AbstractJpaEchoEntity, D> {
 	
 	private I repository;
 	private E entity; // maybe not in use
@@ -51,8 +52,8 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E, D> {
 		// map
 		E entity = mapper.map(dto, entityClazz);
 		
-//		// add technical field
-//		entity.setUserupdate(createdUser);
+		// add technical field
+		entity.setUserupdate(createdUser);
 //		
 //		// save and map to out dto
 //		entity = repo.saveAndFlush(entity);
