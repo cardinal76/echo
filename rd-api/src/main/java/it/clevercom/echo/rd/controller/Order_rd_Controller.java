@@ -125,6 +125,7 @@ public class Order_rd_Controller extends EchoController {
 	public static String entity_id = "idorder";
 	public static String entity_cd1 = "code";
 	public static String entity_s_name = "Service";
+	public static String entity_os_name = "Ordered Service";
 	public static String entity_o_name = "Organization Unit";
 	
 	/**

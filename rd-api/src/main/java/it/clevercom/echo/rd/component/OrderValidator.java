@@ -20,6 +20,7 @@ import it.clevercom.echo.rd.enums.WorkPriorityEnum;
 import it.clevercom.echo.rd.enums.WorkStatusEnum;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
+import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderService;
 import it.clevercom.echo.rd.model.entity.OrganizationUnit;
@@ -66,6 +67,7 @@ public class OrderValidator {
 	private static String entity_id = Order_rd_Controller.entity_id;
 	private static String entity_cd1 = Order_rd_Controller.entity_cd1;
 	private static String entity_s_name = Order_rd_Controller.entity_s_name;
+	private static String entity_os_name = Order_rd_Controller.entity_os_name;
 	private static String entity_o_name = Order_rd_Controller.entity_o_name;
 	
 	/*-----------------------------*/
@@ -238,17 +240,29 @@ public class OrderValidator {
 			Long masterModalityType = 0l;
 			String masterModalityName = null;
 			int i = 0;
-			for (BaseObjectDTO element : order.getServices()) {
+			for (OrderedServiceDTO element : order.getServices()) {
 				Service current = repo_s.findOne(Long.valueOf(element.getId()));
 				if (i==0) {
 					masterModalityType = current.getModalityType().getIdmodalitytype();
 					masterModalityName = current.getModalityType().getType();
 				}
 				if ((i>0) && (!masterModalityType.equals(current.getModalityType().getIdmodalitytype()))) {
-					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), 
-							entity_s_name, 
+					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.orderedservice"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), 
+							entity_os_name, 
 							masterModalityName, 
 							masterModalityType));
+					break;
+				}
+				if (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(element.getCancelReason())) {
+					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason"), MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
+							entity_os_name, 
+							env.getProperty("echo.api.crud.fields.cancelreason")));
+					break;
+				}
+				if (StringUtils.isNullEmptyWhiteSpaceOnly(element.getAddedReason())) {
+					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason"), MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate.missingfield"), 
+							entity_os_name,
+							env.getProperty("echo.api.crud.fields.cancelreason")));
 					break;
 				}
 				i++;
