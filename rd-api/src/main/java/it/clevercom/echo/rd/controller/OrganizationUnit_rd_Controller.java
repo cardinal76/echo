@@ -35,6 +35,7 @@ import it.clevercom.echo.rd.repository.IOrganizationUnit_rd_Repository;
  * Organization Unit Controller
  * @author luca
  */
+
 public class OrganizationUnit_rd_Controller extends EchoController {
 
 	@Autowired

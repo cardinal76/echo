@@ -37,6 +37,7 @@ import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
  */
 
 public class Municipality_rd_Controller extends EchoController {
+	
 	@Autowired
 	private Environment env;
 	

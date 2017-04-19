@@ -50,6 +50,7 @@ import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
  */
 
 public class WorkPriority_rd_Controller extends EchoController {
+	
 	@Autowired
 	private Environment env;
 	

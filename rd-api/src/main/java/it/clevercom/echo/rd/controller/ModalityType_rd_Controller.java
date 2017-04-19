@@ -35,6 +35,7 @@ import it.clevercom.echo.rd.repository.IModalityType_rd_Repository;
  * Modality Type Controller
  * @author luca
  */
+
 public class ModalityType_rd_Controller extends EchoController {
 	
 	@Autowired

@@ -47,8 +47,8 @@ import it.clevercom.echo.rd.repository.ICitizenship_rd_Repository;
 /**
  * Citizenship Controller
  * @author luca
- *
  */
+
 public class Citizenship_rd_Controller extends EchoController {
 	
 	@Autowired

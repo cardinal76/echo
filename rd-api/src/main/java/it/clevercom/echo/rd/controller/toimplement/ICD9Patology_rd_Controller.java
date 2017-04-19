@@ -1,4 +1,4 @@
-package it.clevercom.echo.rd.controller;
+package it.clevercom.echo.rd.controller.toimplement;
 
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;

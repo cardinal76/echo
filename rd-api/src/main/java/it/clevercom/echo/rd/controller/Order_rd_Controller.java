@@ -316,6 +316,8 @@ public class Order_rd_Controller extends EchoController {
 		orderDTOs.add(order);
 		response.setNewValue(orderDTOs);
 
+		// TODO allocate order on rd_modality_daily_allocation (only on schedulation)
+		
 		// return standard response
 		return response;
 	}

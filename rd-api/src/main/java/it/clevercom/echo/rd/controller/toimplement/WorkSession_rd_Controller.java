@@ -1,4 +1,4 @@
-package it.clevercom.echo.rd.controller;
+package it.clevercom.echo.rd.controller.toimplement;
 
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
@@ -13,6 +13,6 @@ import it.clevercom.echo.common.controller.EchoController;
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
-public class ServiceCodingActor_rd_Controller extends EchoController {
+public class WorkSession_rd_Controller extends EchoController {
 
 }

@@ -35,8 +35,8 @@ import it.clevercom.echo.rd.repository.IProvince_rd_Repository;
 /**
  * Province Controller
  * @author luca
- *
  */
+
 public class Province_rd_Controller extends EchoController {
 
 	@Autowired

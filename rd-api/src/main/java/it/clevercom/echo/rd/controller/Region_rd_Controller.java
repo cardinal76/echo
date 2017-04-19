@@ -39,6 +39,7 @@ import it.clevercom.echo.rd.repository.IRegion_rd_Repository;
  */
 
 public class Region_rd_Controller extends EchoController {
+	
 	@Autowired
 	private Environment env;
 	

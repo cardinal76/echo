@@ -40,6 +40,7 @@ import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
  */
 
 public class WorkStatus_rd_Controller extends EchoController {
+	
 	@Autowired
 	private Environment env;
 	

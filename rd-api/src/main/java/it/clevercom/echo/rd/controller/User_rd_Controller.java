@@ -41,7 +41,9 @@ import it.clevercom.echo.rd.repository.IUser_rd_Repository;
  * User controller
  * @author luca
  */
+
 public class User_rd_Controller extends EchoController {
+	
 	@Autowired
 	private Environment env;
 	
