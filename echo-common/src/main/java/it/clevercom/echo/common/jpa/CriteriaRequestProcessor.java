@@ -21,15 +21,46 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 	private Specification<E> specification;
 	private Pageable pageable;
 	private I repository;
-	private E entity;
-	private D dto;
+	private E entity; // maybe not in use 
+	private D dto; // maybe not in use
 	private Class<D> clazz;
 	private String entity_name;
 	private int page;
 	private int size;
 	private DozerBeanMapper mapper;
 	
-	public CriteriaRequestProcessor(I repo, DozerBeanMapper mapper, Class<D> clazz, String entity_name, String criteria, String sort, String field, int page, int size) {
+	/**
+	 * @param repo
+	 * @param mapper
+	 * @param clazz
+	 * @param entity_name
+	 * @param criteria
+	 * @param sort
+	 * @param field
+	 * @param page
+	 * @param size
+	 */
+	public CriteriaRequestProcessor(
+			// repository that performs operation
+			I repo, 
+			// mapper that performs conversion
+			DozerBeanMapper mapper, 
+			// dto class
+			Class<D> clazz, 
+			// entity friendly name
+			String entity_name, 
+			// criteria used in params 
+			String criteria, 
+			// sort type 
+			String sort, 
+			// sort field param 
+			String field, 
+			// page param
+			int page, 
+			// size param
+			int size) {
+		
+		super();
 		// class
 		this.clazz = clazz;
 		// mapper
@@ -44,8 +75,13 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 		this.page = page;
 		// create paged request
 		pageable = PageRequestFactory.getPageRequest(sort, field, page, size);
+		
 	}
 	
+	/**
+	 * @return
+	 * @throws PageNotFoundException
+	 */
 	public PagedDTO<D> process() throws PageNotFoundException {
 		// find with specification and pagination
 		Page<E> rs = repository.findAll(specification, pageable);

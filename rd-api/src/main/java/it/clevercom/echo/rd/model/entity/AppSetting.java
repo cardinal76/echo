@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 18-apr-2017 16.29.28 by Hibernate Tools 5.2.2.Final
+// Generated 19-apr-2017 12.25.52 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -45,11 +45,12 @@ public class AppSetting  implements java.io.Serializable {
     }
 
 	
-    public AppSetting(String key, String value, Date created, Date updated, Boolean active) {
+    public AppSetting(String key, String value, Date created, Date updated, String userupdate, Boolean active) {
         this.key = key;
         this.value = value;
         this.created = created;
         this.updated = updated;
+        this.userupdate = userupdate;
         this.active = active;
     }
     public AppSetting(User user, String key, String value, Date created, Date updated, String userupdate, Boolean active, String feature) {
@@ -126,7 +127,7 @@ public class AppSetting  implements java.io.Serializable {
     }
 
     
-    @Column(name="userupdate", length=100)
+    @Column(name="userupdate", nullable=false, length=100)
     public String getUserupdate() {
         return this.userupdate;
     }

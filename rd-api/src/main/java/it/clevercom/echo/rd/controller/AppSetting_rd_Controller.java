@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
@@ -176,6 +177,20 @@ public class AppSetting_rd_Controller extends EchoController {
 		
 		// return standard response
 		return response;
+		
+//		String authToken = request.getHeader(this.tokenHeader);
+//		String username = this.tokenUtils.getUsernameFromToken(authToken);
+//		
+//		CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
+//				new CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
+//						rdDozerMapper, 
+//						AppSettingDTO.class, 
+//						AppSetting.class, 
+//						entity_name, 
+//						username, 
+//						appSetting);
+//		
+//		return rp.process();
 	}
 	
 	/**
