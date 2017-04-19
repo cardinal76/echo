@@ -203,6 +203,19 @@
 	<!-- base object mapping -->
 	
 	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.ModalityType</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
+		<field>
+			<a>idmodalitytype</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>type</a>
+			<b>name</b>
+		</field>
+	</mapping>
+	
+	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.Municipality</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
 		<field>

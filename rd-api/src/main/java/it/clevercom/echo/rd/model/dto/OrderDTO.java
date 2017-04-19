@@ -18,6 +18,7 @@ public class OrderDTO implements Serializable {
 	private BaseObjectDTO workPriority;
 	private WorkSessionDTO workSession;
 	private BaseObjectDTO workStatus;
+	private BaseObjectDTO masterModalityType;
 	private String acquisitionChannel;
 	private Long creationDate;
 	private Long scheduledDate;
@@ -506,6 +507,20 @@ public class OrderDTO implements Serializable {
 	 */
 	public void setCanceledDate(Long canceledDate) {
 		this.canceledDate = canceledDate;
+	}
+	
+	/**
+	 * @return the masterModalityType
+	 */
+	public BaseObjectDTO getMasterModalityType() {
+		return masterModalityType;
+	}
+
+	/**
+	 * @param masterModalityType the masterModalityType to set
+	 */
+	public void setMasterModalityType(BaseObjectDTO masterModalityType) {
+		this.masterModalityType = masterModalityType;
 	}
 
 	/**
