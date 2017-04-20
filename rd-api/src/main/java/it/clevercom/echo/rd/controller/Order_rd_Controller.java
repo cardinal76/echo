@@ -415,11 +415,12 @@ public class Order_rd_Controller extends EchoController {
 		Set<OrderedServiceDTO> inactive = order.getCanceledServices();
 		for (OrderedServiceDTO current : inactive) {
 			if (oldActiveServiceMap.containsValue(current)) {
-				// repo_os.findOne(id);
-				OrderService orderService = rdDozerMapper.map(current, OrderService.class);
+				Service serv = repo_s.findOne(Long.valueOf(current.getId()));
+				OrderService orderService = repo_os.findByOrderAndService(newValueEntity, serv);
 				// save new item
 				orderService.setUserupdate(getLoggedUser(request));
 				orderService.setActive(false);
+				orderService.setCanceledreason(current.getCancelReason());
 				
 				repo_os.saveAndFlush(orderService);
 			}
