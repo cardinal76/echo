@@ -1,6 +1,12 @@
 package it.clevercom.echo.common.jpa;
 
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dozer.DozerBeanMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
@@ -16,6 +22,9 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	private Class<E> entityClazz;
 	private String entity_name;
 	private String createdUser;
+	
+	@Autowired
+	private Environment env;
 	
 	public CreateRequestProcessor(
 			// repository that performs create operation
@@ -45,7 +54,8 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		this.entity_name = entity_name;
 		// created user
 		this.createdUser = createdUser;
-		
+		// set dto
+		this.dto = dto;
 	}
 	
 	public CreateResponseDTO<D> process () {
@@ -54,22 +64,21 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		
 		// add technical field
 		entity.setUserupdate(createdUser);
-//		
-//		// save and map to out dto
-//		entity = repo.saveAndFlush(entity);
-//		appSetting = rdDozerMapper.map(entity, AppSettingDTO.class);
-//		
-//		// create standard response
-//		CreateResponseDTO<AppSettingDTO> response = new CreateResponseDTO<AppSettingDTO>();
-//		response.setEntityName(AppSetting_rd_Controller.entity_name);
-//		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), AppSetting_rd_Controller.entity_name));
-//		List<AppSettingDTO> appSettingDTOs = new ArrayList<AppSettingDTO>();
-//		appSettingDTOs.add(appSetting);
-//		response.setNewValue(appSettingDTOs);
-//		
-//		// return standard response
-//		return response;
-		return null;
+
+		// save and map to out dto
+		entity = repository.saveAndFlush(entity);
+		dto = mapper.map(entity, dtoClazz);
+
+		// create standard response
+		CreateResponseDTO<D> response = new CreateResponseDTO<D>();
+		response.setEntityName(this.entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
+		List<D> dTOs = new ArrayList<D>();
+		dTOs.add(dto);
+		response.setNewValue(dTOs);
+		
+		// return standard response
+		return response;
 	}
 
 	/**
