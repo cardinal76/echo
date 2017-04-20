@@ -51,6 +51,7 @@ import it.clevercom.echo.rd.jpa.specification.WorkPrioritySpecification;
 import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
+import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
@@ -337,10 +338,6 @@ public class Order_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
-
 		// if an id is not present throw bad request
 		if (order.getIdOrder() == null)
 			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), entity_name));
@@ -352,30 +349,28 @@ public class Order_rd_Controller extends EchoController {
 		if (oldValueEntity == null)
 			throw new RecordNotFoundException(entity_name, entity_id, order.getIdOrder().toString());
 		
+		// get all ordered service
+		Set<OrderService> allOrderService = oldValueEntity.getOrderServices();
+		logger.info("allOrderService size :" + allOrderService.size());
+		
 		// validate create request
 		orderValidator.validateUpdateRequest(order, oldValueEntity);
 
 		// create log
 		OrderLog log = rdDozerMapper.map(oldValueEntity, OrderLog.class);
-		log.setUserupdate(username);
+		log.setUserupdate(getLoggedUser(request));
 		
 		// save created date
 		Date created = oldValueEntity.getCreated();
+		
 		// save old value to a dto
 		OrderDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, OrderDTO.class);
-		
-		// save old order services
-		Set<OrderService> oldOrderService = oldValueEntity.getOrderServices();
-		Map<Long, BaseObjectDTO> oldService = new HashMap<Long, BaseObjectDTO>();
-		for (OrderService orderService : oldOrderService) {
-			oldService.put(orderService.getIdorderservice(),rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class));
-		}
 		
 		// map new value to entity
 		rdDozerMapper.map(order, oldValueEntity);
 
 		// set technical field
-		oldValueEntity.setUserupdate(username);
+		oldValueEntity.setUserupdate(getLoggedUser(request));
 		oldValueEntity.setUpdated(new Date());
 		oldValueEntity.setCreated(created);
 		oldValueEntity.setActive(true);
@@ -387,32 +382,77 @@ public class Order_rd_Controller extends EchoController {
 		// save updated entity
 		Order newValueEntity = repo.saveAndFlush(oldValueEntity);
 		
-		// check new item
-		for (BaseObjectDTO service : order.getServices()) {
-			if (!oldService.containsValue(service)) {
+		// create two maps (active, inactive)
+		Map<Long, BaseObjectDTO> oldActiveServiceMap = new HashMap<Long, BaseObjectDTO>();
+		Map<Long, BaseObjectDTO> oldInactiveServiceMap = new HashMap<Long, BaseObjectDTO>();
+		
+		for (OrderService orderService : allOrderService) {
+			if (orderService.getActive().equals(Boolean.valueOf(true))) {
+				oldActiveServiceMap.put(orderService.getIdorderservice(),rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class));
+			} else if (orderService.getActive().equals(Boolean.valueOf(false))) {
+				oldInactiveServiceMap.put(orderService.getIdorderservice(),rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class));
+			}
+		}
+		
+		// 
+		Set<OrderedServiceDTO> active = order.getServices();
+		for (OrderedServiceDTO current : active) {
+			if (!oldActiveServiceMap.containsValue(current)) {
 				OrderService orderService = new OrderService();
 				orderService.setActive(true);
+				orderService.setAddedreason(current.getAddedReason());
 				orderService.setCreated(new Date());
 				orderService.setOrder(newValueEntity);
-				orderService.setService(rdDozerMapper.map(service, Service.class));
+				orderService.setService(rdDozerMapper.map(current, Service.class));
 				orderService.setUpdated(new Date());
-				orderService.setUserupdate(username);
+				orderService.setUserupdate(getLoggedUser(request));
 				
 				// save new item
 				repo_os.saveAndFlush(orderService);
 			}
 		}
-
-		// check disabled item
-		for (OrderService orderService : oldOrderService) {
-			BaseObjectDTO current = rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class);
-			if (!order.getServices().contains(current)) {
+		
+		Set<OrderedServiceDTO> inactive = order.getCanceledServices();
+		for (OrderedServiceDTO current : inactive) {
+			if (oldActiveServiceMap.containsValue(current)) {
+				// repo_os.findOne(id);
+				OrderService orderService = rdDozerMapper.map(current, OrderService.class);
 				// save new item
-				orderService.setUserupdate(username);
+				orderService.setUserupdate(getLoggedUser(request));
 				orderService.setActive(false);
+				
 				repo_os.saveAndFlush(orderService);
 			}
 		}
+		
+//		// check new item
+//		for (BaseObjectDTO service : order.getServices()) {
+//			if (!oldService.containsValue(service)) {
+//				OrderService orderService = new OrderService();
+//				orderService.setActive(true);
+//				orderService.setCreated(new Date());
+//				orderService.setOrder(newValueEntity);
+//				orderService.setService(rdDozerMapper.map(service, Service.class));
+//				orderService.setUpdated(new Date());
+//				orderService.setUserupdate(getLoggedUser(request));
+//				
+//				// save new item
+//				repo_os.saveAndFlush(orderService);
+//			}
+//		}
+//
+//		// check disabled item
+//		for (OrderService orderService : oldOrderService) {
+//			BaseObjectDTO current = rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class);
+//			if (!order.getServices().contains(current)) {
+//				// save new item
+//				orderService.setUserupdate(getLoggedUser(request));
+//				orderService.setActive(false);
+//				repo_os.saveAndFlush(orderService);
+//			}
+//		}
+		
+		
 		
 		// TODO save order logs
 		repo_ol.saveAndFlush(log);
