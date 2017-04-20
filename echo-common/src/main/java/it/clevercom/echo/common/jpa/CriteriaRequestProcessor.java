@@ -21,8 +21,6 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 	private Specification<E> specification;
 	private Pageable pageable;
 	private I repository;
-	private E entity; // maybe not in use 
-	private D dto; // maybe not in use
 	private Class<D> clazz;
 	private String entity_name;
 	private int page;
@@ -157,33 +155,5 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 	 */
 	public void setRepository(I repository) {
 		this.repository = repository;
-	}
-
-	/**
-	 * @return the entity
-	 */
-	public E getEntity() {
-		return entity;
-	}
-
-	/**
-	 * @param entity the entity to set
-	 */
-	public void setEntity(E entity) {
-		this.entity = entity;
-	}
-
-	/**
-	 * @return the dto
-	 */
-	public D getDto() {
-		return dto;
-	}
-
-	/**
-	 * @param dto the dto to set
-	 */
-	public void setDto(D dto) {
-		this.dto = dto;
 	}
 }
