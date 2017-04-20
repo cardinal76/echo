@@ -152,45 +152,25 @@ public class AppSetting_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody CreateResponseDTO<AppSettingDTO> add(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
-		appSetting.setUser(username);
+		// get username from token
+		String username = this.tokenUtils.getUsernameFromToken(request.getHeader(this.tokenHeader));
 		
-		// map
-		AppSetting entity = rdDozerMapper.map(appSetting, AppSetting.class);
+		// validate that username can perform the requested operation on appSetting
+		validator.validateUsername(username, appSetting);
 		
-		// add technical field
-		entity.setUserupdate(username);
+		// create the processor
+		CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
+				new CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
+						rdDozerMapper, 
+						AppSettingDTO.class, 
+						AppSetting.class, 
+						entity_name, 
+						username, 
+						appSetting,
+						env);
 		
-		// save and map to out dto
-		entity = repo.saveAndFlush(entity);
-		appSetting = rdDozerMapper.map(entity, AppSettingDTO.class);
-		
-		// create standard response
-		CreateResponseDTO<AppSettingDTO> response = new CreateResponseDTO<AppSettingDTO>();
-		response.setEntityName(AppSetting_rd_Controller.entity_name);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), AppSetting_rd_Controller.entity_name));
-		List<AppSettingDTO> appSettingDTOs = new ArrayList<AppSettingDTO>();
-		appSettingDTOs.add(appSetting);
-		response.setNewValue(appSettingDTOs);
-		
-		// return standard response
-		return response;
-		
-//		String authToken = request.getHeader(this.tokenHeader);
-//		String username = this.tokenUtils.getUsernameFromToken(authToken);
-//		
-//		CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
-//				new CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
-//						rdDozerMapper, 
-//						AppSettingDTO.class, 
-//						AppSetting.class, 
-//						entity_name, 
-//						username, 
-//						appSetting);
-//		
-//		return rp.process();
+		// process
+		return rp.process();
 	}
 	
 	/**

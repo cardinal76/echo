@@ -8,9 +8,11 @@ import org.springframework.stereotype.Component;
 
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
+import it.clevercom.echo.common.exception.model.NotAuthorizedException;
 import it.clevercom.echo.common.util.StringUtils;
 import it.clevercom.echo.rd.enums.WorkPriorityEnum;
 import it.clevercom.echo.rd.enums.WorkStatusEnum;
+import it.clevercom.echo.rd.model.dto.AppSettingDTO;
 
 @Component
 public class Validator {
@@ -68,5 +70,20 @@ public class Validator {
 		if (!(sort.equalsIgnoreCase("asc") || sort.equalsIgnoreCase("desc"))) { 
 			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
 		}		
+	}
+	
+	/**
+	 * Validate update auth 
+	 * @param user
+	 * @param dto
+	 * @throws NotAuthorizedException
+	 */
+	public void validateUsername (String user, Object dto) throws NotAuthorizedException {
+		if (dto instanceof AppSettingDTO) {
+			AppSettingDTO parsedDTO = (AppSettingDTO) dto;
+			if ((StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(parsedDTO.getUser())) && (!user.equals(parsedDTO.getUser()))) {
+				throw new NotAuthorizedException(env.getProperty("echo.api.crud.validation.cannotupdate.duetoinvalidauth"));
+			}
+		}
 	}
 }

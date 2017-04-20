@@ -21,16 +21,16 @@ public abstract class AbstractJpaEchoEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated", nullable = false)
-    private Date updated;    
+    private Date updated;
     
     @PrePersist
     protected void onCreate() {
-    updated = created = new Date();
+    	updated = created = new Date();
     }
 
     @PreUpdate
     protected void onUpdate() {
-    updated = new Date();
+    	updated = new Date();
     }
 
 	/**

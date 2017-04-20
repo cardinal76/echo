@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.dozer.DozerBeanMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -22,8 +21,6 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	private Class<E> entityClazz;
 	private String entity_name;
 	private String createdUser;
-	
-	@Autowired
 	private Environment env;
 	
 	public CreateRequestProcessor(
@@ -40,7 +37,8 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 			 // user that create record
 			String createdUser,
 			// dto to persist
-			D dto) {  
+			D dto,
+			Environment env) {  
 		
 		super();
 		// repository
@@ -56,6 +54,8 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		this.createdUser = createdUser;
 		// set dto
 		this.dto = dto;
+		// set env
+		this.env = env;
 	}
 	
 	public CreateResponseDTO<D> process () {
@@ -63,7 +63,9 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		E entity = mapper.map(dto, entityClazz);
 		
 		// add technical field
+		// update and created time are managed automatically by abstract jpa echo entity
 		entity.setUserupdate(createdUser);
+		entity.setActive(true);
 
 		// save and map to out dto
 		entity = repository.saveAndFlush(entity);
