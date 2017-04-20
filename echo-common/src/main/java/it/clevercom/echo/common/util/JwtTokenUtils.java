@@ -227,12 +227,6 @@ public class JwtTokenUtils {
 	/**
 	 * Checks the validity of a given token
 	 * @param token to check
-	 * @param username of the owner of the token
-	 * @return is or isn't valid
-	 */
-	/**
-	 * Checks the validity of a given token
-	 * @param token to check
 	 * @param username must match with the one contained in the token
 	 * @param applicationCode must match with the one contained in the token
 	 * @param lastPasswordReset must be before token creation date
@@ -248,6 +242,15 @@ public class JwtTokenUtils {
 				&& applicationCodeToValidate.equals(applicationCode)
 				&& !(this.isTokenExpired(token)) 
 				&& !(this.isCreatedBeforeLastPasswordReset(created, lastPasswordReset)));
+	}
+	
+	/**
+	 * Validate api key
+	 * @return
+	 */
+	public boolean validateApiKey(String apiKey) {
+		
+		return true;
 	}
 
 }

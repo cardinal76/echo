@@ -48,6 +48,9 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 	
 	@Value("${echo.config.development.application}")
 	private String developmentApp;
+	
+	@Value("${echo.config.development.apikey}")
+	private String apiKey;
 
 	@Autowired
 	private JwtTokenUtils tokenUtils;
@@ -60,7 +63,7 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String authToken = httpRequest.getHeader(this.tokenHeader);
 		
-		if (developmentMode.equals("true")) {
+		if (developmentMode.equals("true") && tokenUtils.validateApiKey(apiKey)) {
 			if (developmentUser != null && developmentApp != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 				LoginApplication appLogin = loginApplicationRepository.findByAppcodeAndUsername(developmentApp, developmentUser);
 				

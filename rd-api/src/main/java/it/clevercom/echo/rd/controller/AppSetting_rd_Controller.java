@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,7 +32,6 @@ import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
-import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.jpa.specification.UserSpecification;
 import it.clevercom.echo.rd.model.dto.AppSettingDTO;
@@ -61,12 +59,6 @@ public class AppSetting_rd_Controller extends EchoController {
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
-	
-	@Value("${jwt.token.header}")
-	private String tokenHeader;
-	
-	@Autowired
-	private JwtTokenUtils tokenUtils;
 	
 	@Autowired
 	private Validator validator;
@@ -152,11 +144,8 @@ public class AppSetting_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody CreateResponseDTO<AppSettingDTO> add(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) throws Exception {
-		// get username from token
-		String username = this.tokenUtils.getUsernameFromToken(request.getHeader(this.tokenHeader));
-		
 		// validate that username can perform the requested operation on appSetting
-		validator.validateUsername(username, appSetting);
+		validator.validateUsername(getLoggedUser(request), appSetting);
 		
 		// create the processor
 		CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
@@ -165,7 +154,7 @@ public class AppSetting_rd_Controller extends EchoController {
 						AppSettingDTO.class, 
 						AppSetting.class, 
 						entity_name, 
-						username, 
+						getLoggedUser(request), 
 						appSetting,
 						env);
 		
@@ -185,11 +174,6 @@ public class AppSetting_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody UpdateResponseDTO<AppSettingDTO> update(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
-		appSetting.setUser(username);
-		
 		// if an id is not present throw bad request
 		if(appSetting.getIdappsetting()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), AppSetting_rd_Controller.entity_name));
 		
@@ -206,7 +190,7 @@ public class AppSetting_rd_Controller extends EchoController {
 		rdDozerMapper.map(appSetting, oldValueEntity);
 		
 		// add technical field
-		oldValueEntity.setUserupdate(username);
+		oldValueEntity.setUserupdate(getLoggedUser(request));
 		oldValueEntity.setUpdated(new Date());
 		oldValueEntity.setCreated(created);
 		
