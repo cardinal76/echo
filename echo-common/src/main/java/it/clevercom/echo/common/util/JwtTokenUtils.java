@@ -249,7 +249,6 @@ public class JwtTokenUtils {
 	 * @return
 	 */
 	public boolean validateApiKey(String apiKey) {
-		
 		return true;
 	}
 
