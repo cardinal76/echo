@@ -214,7 +214,11 @@ public class Order_rd_Controller extends EchoController {
 				// create interval specification based on right date field
 				DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i])));
 				current = Specifications.where(current).and(st).and(interval);
-				rp.addOrSpecification(Specifications.where(current));
+				if (i==0) {
+					rp.addAndSpecification(Specifications.where(current));
+				} else {
+					rp.addOrSpecification(Specifications.where(current));
+				}
 			}			
 		} else {
 			// create standard specification based on date interval and standard field name

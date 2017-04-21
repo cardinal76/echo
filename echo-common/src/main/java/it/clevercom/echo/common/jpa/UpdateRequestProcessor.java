@@ -65,37 +65,38 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	
 	public UpdateResponseDTO<D> process () {
 		// find entity to update (oldValue)
-		E oldValueEntity = repository.findOne(2);
+		//E oldValueEntity = repository.findOne(2);
 		
 		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity==null) throw new RecordNotFoundException(entity_name, entity_id, citizenship.getIdcitizenship().toString());
+		//if (oldValueEntity==null) throw new RecordNotFoundException(entity_name, entity_id, citizenship.getIdcitizenship().toString());
 		
 		// map old value to a dto
-		D oldValueDTO = mapper.map(oldValueEntity, dtoClazz);
-
-		// begin update of oldValue
-		mapper.map(dto, oldValueEntity);
-		
-		// add technical field
-		oldValueEntity.setUserupdate(updatedUser);
-		
-		// save and map to out dto
-		E newValueEntity = repository.saveAndFlush(oldValueEntity);
-		D newValueDTO = mapper.map(newValueEntity, dtoClazz);
-				
-		// create standard response
-		UpdateResponseDTO<D> response = new UpdateResponseDTO<D>();
-		response.setEntityName(entity_name);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
-		
-		// add new dtos values
-		List<D> newDTOs = new ArrayList<D>();
-		newDTOs.add(newValueDTO);
-		response.setNewValue(newDTOs);
-		
-		// add old dtos values
-		List<D> oldDTOs = new ArrayList<D>();
-		oldDTOs.add(oldValueDTO);
-		response.setOldValue(oldDTOs);
+//		D oldValueDTO = mapper.map(oldValueEntity, dtoClazz);
+//
+//		// begin update of oldValue
+//		mapper.map(dto, oldValueEntity);
+//		
+//		// add technical field
+//		oldValueEntity.setUserupdate(updatedUser);
+//		
+//		// save and map to out dto
+//		E newValueEntity = repository.saveAndFlush(oldValueEntity);
+//		D newValueDTO = mapper.map(newValueEntity, dtoClazz);
+//				
+//		// create standard response
+//		UpdateResponseDTO<D> response = new UpdateResponseDTO<D>();
+//		response.setEntityName(entity_name);
+//		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
+//		
+//		// add new dtos values
+//		List<D> newDTOs = new ArrayList<D>();
+//		newDTOs.add(newValueDTO);
+//		response.setNewValue(newDTOs);
+//		
+//		// add old dtos values
+//		List<D> oldDTOs = new ArrayList<D>();
+//		oldDTOs.add(oldValueDTO);
+//		response.setOldValue(oldDTOs);
+		return null;
 	}
 }
