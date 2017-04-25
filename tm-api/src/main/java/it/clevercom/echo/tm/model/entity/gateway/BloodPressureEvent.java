@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.PostLoad;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * @author gfares
@@ -17,7 +18,7 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Table(name = "tm_event_blood_pressure")
+@Table(name = "tm_gateway_event_blood_pressure")
 @DiscriminatorValue(value = "bp")
 public class BloodPressureEvent extends BaseGatewayEntity {
 
@@ -48,6 +49,10 @@ public class BloodPressureEvent extends BaseGatewayEntity {
 	@Column(name = "measurestatus", nullable = false)
 	private Long measureStatus;
 
+	@Column(name="uom", nullable=false, length=10)
+	private String uom;
+	
+	@Transient
 	private BitSet statusFlags;
 
 	public BloodPressureEvent() {
@@ -142,6 +147,20 @@ public class BloodPressureEvent extends BaseGatewayEntity {
 		this.measureStatus = measureStatus;
 	}
 
+	/**
+	 * @return the uom
+	 */
+	public String getUom() {
+		return uom;
+	}
+
+	/**
+	 * @param uom the uom to set
+	 */
+	public void setUom(String uom) {
+		this.uom = uom;
+	}
+	
 	public boolean isBodyMovement() {
 		return statusFlags.get(BIT_BODY_MOVEMENT);
 	}
@@ -169,4 +188,5 @@ public class BloodPressureEvent extends BaseGatewayEntity {
 	public boolean isImproperMeasurePosition() {
 		return statusFlags.get(BIT_IMPROPER_MEASURE_POSITION);
 	}
+	
 }

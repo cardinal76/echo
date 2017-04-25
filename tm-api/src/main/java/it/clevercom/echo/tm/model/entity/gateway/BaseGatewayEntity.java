@@ -1,8 +1,11 @@
 package it.clevercom.echo.tm.model.entity.gateway;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.BitSet;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -15,19 +18,21 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
- * @author gfares
+ * @author gfares	
  * @since 0.1
  *
  *        This class rapresents the shared information of any data sent from the
  *        gateway.
  */
 
+/**
+ * @author gfares
+ *
+ */
 @Entity
-@Table(name = "tm_gateway_events")
+@Table(name = "tm_gateway_event")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "devicetype", discriminatorType = DiscriminatorType.STRING, length = 2)
 public class BaseGatewayEntity implements Serializable {
@@ -37,8 +42,12 @@ public class BaseGatewayEntity implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private static final DateTimeFormatter ISO_UTC_DATE_TIME = new DateTimeFormatterBuilder().parseCaseInsensitive()
+			.append(DateTimeFormatter.ISO_LOCAL_DATE).appendLiteral('T').append(DateTimeFormatter.ISO_LOCAL_TIME)
+			.appendLiteral('Z').toFormatter();
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "idEvent")
 	private Long id;
 
@@ -48,20 +57,19 @@ public class BaseGatewayEntity implements Serializable {
 	@Column(name = "gatewayserialnumber", nullable = false)
 	private String gatewaySerialNumber;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "receiveddate", nullable = false)
-	private Date receivedDate;
+	private LocalDateTime receivedDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "timestamp", nullable = false)
-	private Date timeStamp;
+	private LocalDateTime timeStamp;
 
 	public BaseGatewayEntity() {
 	}
 
 	@PrePersist
 	public void onPrePersist() {
-		receivedDate = new Date(System.currentTimeMillis());
+		receivedDate = LocalDateTime.now();// new
+											// Date(System.currentTimeMillis());
 	}
 
 	/**
@@ -72,7 +80,8 @@ public class BaseGatewayEntity implements Serializable {
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public void setId(Long id) {
 		this.id = id;
@@ -86,7 +95,8 @@ public class BaseGatewayEntity implements Serializable {
 	}
 
 	/**
-	 * @param pheripheral the pheripheral to set
+	 * @param pheripheral
+	 *            the pheripheral to set
 	 */
 	public void setPheripheral(String pheripheral) {
 		this.pheripheral = pheripheral;
@@ -100,7 +110,8 @@ public class BaseGatewayEntity implements Serializable {
 	}
 
 	/**
-	 * @param gatewaySerialNumber the gatewaySerialNumber to set
+	 * @param gatewaySerialNumber
+	 *            the gatewaySerialNumber to set
 	 */
 	public void setGatewaySerialNumber(String gatewaySerialNumber) {
 		this.gatewaySerialNumber = gatewaySerialNumber;
@@ -109,37 +120,55 @@ public class BaseGatewayEntity implements Serializable {
 	/**
 	 * @return the riceivedDate
 	 */
-	public Date getRiceivedDate() {
+	public LocalDateTime getRiceivedDate() {
 		return receivedDate;
 	}
 
 	/**
-	 * @param riceivedDate the riceivedDate to set
+	 * @param riceivedDate
+	 *            the riceivedDate to set
 	 */
-	public void setRiceivedDate(Date riceivedDate) {
+	public void setRiceivedDate(LocalDateTime riceivedDate) {
 		this.receivedDate = riceivedDate;
 	}
 
 	/**
 	 * @return the timeStamp
 	 */
-	public Date getTimeStamp() {
+	public LocalDateTime getTimeStamp() {
 		return timeStamp;
 	}
 
 	/**
-	 * @param timeStamp the timeStamp to set
+	 * @param timeStamp
+	 *            the timeStamp to set
 	 */
-	public void setTimeStamp(Date timeStamp) {
+	public void setTimeStamp(LocalDateTime timeStamp) {
 		this.timeStamp = timeStamp;
 	}
-	
+
+	/**
+	 * @param timeStamp
+	 *            The string must be ISO_8601
+	 * 
+	 *            The gateway send an UTC timestamp as 2017-04-22T11:32:01.355932Z
+	 *            so provide a string setter
+	 */
+	public void setTimeStamp(String timeStamp) {
+		this.timeStamp = LocalDateTime.parse(timeStamp, ISO_UTC_DATE_TIME);
+	}
+
+	/**
+	 * @param l
+	 *            The long to convert to a {@link BitSet}
+	 * @return The bitset
+	 */
 	protected static BitSet convertToBitSet(Long l) {
 		BitSet bs = new BitSet(16);
 		long v = l != null ? l.longValue() : 0;
 		int idx = 0;
-		while(v != 0) {
-			if(v % 2L != 0) {
+		while (v != 0) {
+			if (v % 2L != 0) {
 				bs.set(idx);
 			}
 			++idx;
