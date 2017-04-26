@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,7 +22,18 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	private String entity_name;
 	private String createdUser;
 	private Environment env;
+	private final Logger logger = Logger.getLogger(this.getClass());
 	
+	/**
+	 * 
+	 * @param repository
+	 * @param mapper
+	 * @param entityClazz
+	 * @param entity_name
+	 * @param createdUser
+	 * @param dto
+	 * @param env
+	 */
 	public CreateRequestProcessor(
 			// repository that performs create operation
 			I repository, 
@@ -56,12 +68,15 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		this.entityClazz = entityClazz;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public CreateResponseDTO<D> process () {
 		// map
 		E entity = mapper.map(dto, entityClazz);
 		
 		// add technical field
-		// update and created time are managed automatically by abstract jpa echo entity
 		entity.setUserupdate(createdUser);
 		entity.setActive(true);
 

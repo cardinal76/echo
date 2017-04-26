@@ -7,6 +7,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,21 +23,29 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	private D dto; // maybe not in use
 	private DozerBeanMapper mapper;
 	private Class<D> dtoClazz;
-	private Class<E> entityClazz;
 	private Class<I> repoClazz;
 	private String entity_name;
 	private String entity_id;
 	private String updatedUser;
 	private Environment env;
 	private Class<?> idClazz;
-	
+	private final Logger logger = Logger.getLogger(this.getClass());
+
+	/**
+	 * 
+	 * @param repository
+	 * @param mapper
+	 * @param entity_name
+	 * @param entity_id
+	 * @param updatedUser
+	 * @param dto
+	 * @param env
+	 */
 	public UpdateRequestProcessor(
 			// repository that performs create operation
 			I repository, 
 			// mapper that performs conversion
 			DozerBeanMapper mapper, 
-			// entity class
-			Class<E> entityClazz,
 			// entity friendly name
 			String entity_name,
 			 // entity id name
@@ -65,11 +74,20 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		
 		// clazzez
 		this.dtoClazz = (Class<D>) dto.getClass();
-		this.entityClazz = entityClazz;
 		this.repoClazz = (Class<I>) repository.getClass();
 		this.idClazz = dto.getIdd().getClass();
 	}
 	
+	/**
+	 * 
+	 * @return
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws RecordNotFoundException
+	 */
 	public UpdateResponseDTO<D> process () throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, RecordNotFoundException {
 		// get method with reflection
 	    Method method = repoClazz.getMethod("findOne", Serializable.class);
@@ -81,7 +99,10 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	    E oldValueEntity = (E) method.invoke(repository, id);
 	    
 	    // if an entity with given id is not found in DB throw record not found
-	    if (oldValueEntity==null) throw new RecordNotFoundException(entity_name, entity_id, dto.getIdd().toString());
+	    if (oldValueEntity==null) {
+	    	logger.error(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, id.toString()));
+	    	throw new RecordNotFoundException(entity_name, entity_id, dto.getIdd().toString());
+	    }
 		
 		// map old value to a dto
 		D oldValueDTO = mapper.map(oldValueEntity, dtoClazz);

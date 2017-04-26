@@ -205,7 +205,6 @@ public class AppSetting_rd_Controller extends EchoController {
 		UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
 				new UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
 						rdDozerMapper,
-						AppSetting.class,
 						entity_name,
 						entity_id,
 						getLoggedUser(request), 
