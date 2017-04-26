@@ -1,9 +1,12 @@
 package it.clevercom.echo.common.jpa;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,6 +29,8 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 	private int page;
 	private int size;
 	private DozerBeanMapper mapper;
+	private Environment env;
+	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	/**
 	 * @param repo
@@ -56,8 +61,8 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 			// page param
 			int page, 
 			// size param
-			int size) {
-		
+			int size,
+			Environment env) {
 		super();
 		// class
 		this.clazz = clazz;
@@ -71,6 +76,8 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 		specification = CriteriaSpecificationFactory.getCriteriaSpecification(criteria);
 		this.size = size;
 		this.page = page;
+		// set env
+		this.env = env;
 		// create paged request
 		pageable = PageRequestFactory.getPageRequest(sort, field, page, size);
 		
@@ -88,8 +95,10 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 		List<E> entity = rs.getContent();
 		
 		// throw exception if no content
-		if (entity.size() == 0) 
+		if (entity.size() == 0) {
+			logger.warn(MessageFormat.format(env.getProperty("echo.api.crud.search.nopage"), entity_name, page));
 			throw new PageNotFoundException(entity_name, page);
+		}
 		
 		// create list
 		List<D> dtoList = new ArrayList<D>();

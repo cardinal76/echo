@@ -14,8 +14,7 @@ import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends AbstractJpaEchoEntity, D> {
 	
 	private I repository;
-	private E entity; // maybe not in use
-	private D dto; // maybe not in use
+	private D dto;
 	private DozerBeanMapper mapper;
 	private Class<D> dtoClazz;
 	private Class<E> entityClazz;
@@ -28,8 +27,6 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 			I repository, 
 			// mapper that performs conversion
 			DozerBeanMapper mapper,
-			// dto class
-			Class<D> dtoClazz, 
 			// entity class
 			Class<E> entityClazz,
 			// entity friendly name
@@ -38,6 +35,7 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 			String createdUser,
 			// dto to persist
 			D dto,
+			// environment
 			Environment env) {  
 		
 		super();
@@ -45,9 +43,6 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		this.repository = repository;
 		// mapper
 		this.mapper = mapper;
-		// clazzez
-		this.dtoClazz = dtoClazz;
-		this.entityClazz = entityClazz;
 		// entity name
 		this.entity_name = entity_name;
 		// created user
@@ -56,6 +51,9 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		this.dto = dto;
 		// set env
 		this.env = env;
+		// clazzez
+		this.dtoClazz = (Class<D>) dto.getClass();
+		this.entityClazz = entityClazz;
 	}
 	
 	public CreateResponseDTO<D> process () {
@@ -95,20 +93,6 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	 */
 	public void setRepository(I repository) {
 		this.repository = repository;
-	}
-
-	/**
-	 * @return the entity
-	 */
-	public E getEntity() {
-		return entity;
-	}
-
-	/**
-	 * @param entity the entity to set
-	 */
-	public void setEntity(E entity) {
-		this.entity = entity;
 	}
 
 	/**

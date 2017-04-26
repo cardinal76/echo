@@ -110,7 +110,8 @@ public class MaritalStatus_rd_Controller extends EchoController {
 						sort, 
 						field, 
 						page, 
-						size);
+						size,
+						env);
 		
 		// process data request
 		return rp.process();

@@ -110,7 +110,8 @@ public class Service_rd_Controller extends EchoController {
 						sort, 
 						field, 
 						page, 
-						size);
+						size,
+						env);
 		
 		// check modalitytype and add it to specification
 		if (!modalitytype.equals("*")) {

@@ -19,7 +19,6 @@ import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends AbstractJpaEchoEntity, D extends AbstractEchoDTO> {
 	
 	private I repository;
-	private E entity; // maybe not in use
 	private D dto; // maybe not in use
 	private DozerBeanMapper mapper;
 	private Class<D> dtoClazz;
@@ -35,11 +34,7 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 			// repository that performs create operation
 			I repository, 
 			// mapper that performs conversion
-			DozerBeanMapper mapper,
-			// repo class 
-			Class<I> repoClazz,
-			// dto class
-			Class<D> dtoClazz, 
+			DozerBeanMapper mapper, 
 			// entity class
 			Class<E> entityClazz,
 			// entity friendly name
@@ -51,17 +46,12 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 			// dto to persist
 			D dto,
 			// environment
-			Environment env,
-			// id
-			Class<?> idClazz) {
+			Environment env) {
 		super();
 		// repository
 		this.repository = repository;
 		// mapper
 		this.mapper = mapper;
-		// clazzez
-		this.dtoClazz = dtoClazz;
-		this.entityClazz = entityClazz;
 		// entity name
 		this.entity_name = entity_name;
 		// entity name
@@ -72,10 +62,12 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		this.dto = dto;
 		// set env
 		this.env = env;
-		// id
-		this.idClazz = idClazz;
-		// 
-		this.repoClazz = repoClazz;
+		
+		// clazzez
+		this.dtoClazz = (Class<D>) dto.getClass();
+		this.entityClazz = entityClazz;
+		this.repoClazz = (Class<I>) repository.getClass();
+		this.idClazz = dto.getIdd().getClass();
 	}
 	
 	public UpdateResponseDTO<D> process () throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, RecordNotFoundException {
