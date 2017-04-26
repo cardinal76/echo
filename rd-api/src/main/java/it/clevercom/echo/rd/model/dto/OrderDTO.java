@@ -7,8 +7,10 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userUpdate","active"})
-public class OrderDTO implements Serializable {
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+
+@JsonIgnoreProperties({"created","updated","userUpdate","active","idd"})
+public class OrderDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = 3464811952700440696L;
 
 	private Long idOrder;
@@ -18,6 +20,7 @@ public class OrderDTO implements Serializable {
 	private BaseObjectDTO workPriority;
 	private WorkSessionDTO workSession;
 	private BaseObjectDTO workStatus;
+	private BaseObjectDTO masterModalityType;
 	private String acquisitionChannel;
 	private Long creationDate;
 	private Long scheduledDate;
@@ -33,9 +36,9 @@ public class OrderDTO implements Serializable {
 	private Date updated;
 	private String userUpdate;
 	private Boolean active;
-	private Set<BaseObjectDTO> services = new HashSet<BaseObjectDTO>(0);
-	private Set<BaseObjectDTO> canceledServices = new HashSet<BaseObjectDTO>();
-    private String identificationdocument;
+	private Set<OrderedServiceDTO> services = new HashSet<OrderedServiceDTO>(0);
+	private Set<OrderedServiceDTO> canceledServices = new HashSet<OrderedServiceDTO>();
+    private String identificationDocument;
     private Long executingDate;
     private Long executedDate;
     private Long reportingDate;
@@ -343,28 +346,28 @@ public class OrderDTO implements Serializable {
 	/**
 	 * @return the services
 	 */
-	public Set<BaseObjectDTO> getServices() {
+	public Set<OrderedServiceDTO> getServices() {
 		return services;
 	}
 	
 	/**
 	 * @param services the services to set
 	 */
-	public void setServices(Set<BaseObjectDTO> services) {
+	public void setServices(Set<OrderedServiceDTO> services) {
 		this.services = services;
 	}
 	
 	/**
 	 * @return the canceledServices
 	 */
-	public Set<BaseObjectDTO> getCanceledServices() {
+	public Set<OrderedServiceDTO> getCanceledServices() {
 		return canceledServices;
 	}
 
 	/**
 	 * @param canceledServices the canceledServices to set
 	 */
-	public void setCanceledServices(Set<BaseObjectDTO> canceledServices) {
+	public void setCanceledServices(Set<OrderedServiceDTO> canceledServices) {
 		this.canceledServices = canceledServices;
 	}
 	
@@ -381,21 +384,21 @@ public class OrderDTO implements Serializable {
 	public void setCancelReason(String cancelReason) {
 		this.cancelReason = cancelReason;
 	}
-
-	/**
-	 * @return the identificationdocument
-	 */
-	public String getIdentificationdocument() {
-		return identificationdocument;
-	}
-
-	/**
-	 * @param identificationdocument the identificationdocument to set
-	 */
-	public void setIdentificationdocument(String identificationdocument) {
-		this.identificationdocument = identificationdocument;
-	}
 	
+	/**
+	 * @return the identificationDocument
+	 */
+	public String getIdentificationDocument() {
+		return identificationDocument;
+	}
+
+	/**
+	 * @param identificationDocument the identificationDocument to set
+	 */
+	public void setIdentificationDocument(String identificationDocument) {
+		this.identificationDocument = identificationDocument;
+	}
+
 	/**
 	 * @return the executingDate
 	 */
@@ -507,11 +510,30 @@ public class OrderDTO implements Serializable {
 	public void setCanceledDate(Long canceledDate) {
 		this.canceledDate = canceledDate;
 	}
+	
+	/**
+	 * @return the masterModalityType
+	 */
+	public BaseObjectDTO getMasterModalityType() {
+		return masterModalityType;
+	}
+
+	/**
+	 * @param masterModalityType the masterModalityType to set
+	 */
+	public void setMasterModalityType(BaseObjectDTO masterModalityType) {
+		this.masterModalityType = masterModalityType;
+	}
 
 	/**
 	 * @return the serialversionuid
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	@Override
+	public Object getIdd() {
+		return idOrder;
 	}
 }

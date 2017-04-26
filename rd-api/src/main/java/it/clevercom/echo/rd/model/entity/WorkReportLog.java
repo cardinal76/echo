@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 12-apr-2017 9.59.56 by Hibernate Tools 5.2.2.Final
+// Generated 26-apr-2017 17.35.35 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
@@ -26,7 +27,7 @@ import org.hibernate.annotations.Parameter;
 @DynamicInsert
 @Table(name="rd_work_report_log"
 )
-public class WorkReportLog  implements java.io.Serializable {
+public class WorkReportLog  extends AbstractJpaEchoEntity implements java.io.Serializable {
 
 
      private Long idworkreportlog;
@@ -38,28 +39,20 @@ public class WorkReportLog  implements java.io.Serializable {
      private Date completiondate;
      private String body;
      private Long idworktask;
-     private Date created;
-     private Date updated;
-     private String userupdate;
-     private Boolean active;
 
     public WorkReportLog() {
     }
 
 	
-    public WorkReportLog(WorkReport workReport, Long idworksession, String statuscode, Date creationdate, String body, Long idworktask, Date created, Date updated, String userupdate, Boolean active) {
+    public WorkReportLog(WorkReport workReport, Long idworksession, String statuscode, Date creationdate, String body, Long idworktask) {
         this.workReport = workReport;
         this.idworksession = idworksession;
         this.statuscode = statuscode;
         this.creationdate = creationdate;
         this.body = body;
         this.idworktask = idworktask;
-        this.created = created;
-        this.updated = updated;
-        this.userupdate = userupdate;
-        this.active = active;
     }
-    public WorkReportLog(WorkReport workReport, Long idworksession, Long accessionnumber, String statuscode, Date creationdate, Date completiondate, String body, Long idworktask, Date created, Date updated, String userupdate, Boolean active) {
+    public WorkReportLog(WorkReport workReport, Long idworksession, Long accessionnumber, String statuscode, Date creationdate, Date completiondate, String body, Long idworktask) {
        this.workReport = workReport;
        this.idworksession = idworksession;
        this.accessionnumber = accessionnumber;
@@ -68,10 +61,6 @@ public class WorkReportLog  implements java.io.Serializable {
        this.completiondate = completiondate;
        this.body = body;
        this.idworktask = idworktask;
-       this.created = created;
-       this.updated = updated;
-       this.userupdate = userupdate;
-       this.active = active;
     }
    
      @GenericGenerator(name="generator", strategy="org.hibernate.id.enhanced.SequenceStyleGenerator", parameters={@Parameter(name="optimizer", value="none"), @Parameter(name="sequence_name", value="workreportlog_idworkreportlog_seq"), @Parameter(name="increment_size", value="1")})@Id @GeneratedValue(generator="generator")
@@ -164,46 +153,6 @@ public class WorkReportLog  implements java.io.Serializable {
     
     public void setIdworktask(Long idworktask) {
         this.idworktask = idworktask;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="created", nullable=false, length=29)
-    public Date getCreated() {
-        return this.created;
-    }
-    
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="updated", nullable=false, length=29)
-    public Date getUpdated() {
-        return this.updated;
-    }
-    
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    
-    @Column(name="userupdate", nullable=false, length=100)
-    public String getUserupdate() {
-        return this.userupdate;
-    }
-    
-    public void setUserupdate(String userupdate) {
-        this.userupdate = userupdate;
-    }
-
-    
-    @Column(name="active", nullable=false)
-    public Boolean getActive() {
-        return this.active;
-    }
-    
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
 

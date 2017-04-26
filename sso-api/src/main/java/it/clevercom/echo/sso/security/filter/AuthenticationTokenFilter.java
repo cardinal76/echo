@@ -7,7 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +39,18 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 	 */
 	@Value("${jwt.token.header}")
 	private String tokenHeader;
+	
+	@Value("${echo.config.development.mode}")
+	private String developmentMode;
+	
+	@Value("${echo.config.development.user}")
+	private String developmentUser;
+	
+	@Value("${echo.config.development.application}")
+	private String developmentApp;
+	
+	@Value("${echo.config.development.apikey}")
+	private String apiKey;
 
 	@Autowired
 	private JwtTokenUtils tokenUtils;
@@ -49,26 +60,47 @@ public class AuthenticationTokenFilter extends UsernamePasswordAuthenticationFil
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String authToken = httpRequest.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
-		String applicationCode = this.tokenUtils.getIssuerFromToken(authToken);
-
-		if (username != null && applicationCode != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			LoginApplication appLogin = loginApplicationRepository.findByAppcodeAndUsername(applicationCode, username);
-			if (this.tokenUtils.validateToken(authToken, appLogin.getLogin().getUsername(), appLogin.getApplication().getCode(), appLogin.getLogin().getLastpasswordreset())) {
+		
+		if (developmentMode.equals("true") && tokenUtils.validateApiKey(apiKey)) {
+			if (developmentUser != null && developmentApp != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+				LoginApplication appLogin = loginApplicationRepository.findByAppcodeAndUsername(developmentApp, developmentUser);
+				
 				CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken(
-						appLogin.getLogin().getUsername(),
-						appLogin.getLogin().getPassword(),
-						ApplicationEnum.getByCode(appLogin.getApplication().getCode()),
-						appLogin.getLogin().getEmail(),
-						appLogin.getLogin().getLastpasswordreset(),
-						appLogin.getLogin().isActive(),
-						AuthorityUtils.commaSeparatedStringToAuthorityList(appLogin.getAuthorities()));
+							appLogin.getLogin().getUsername(),
+							appLogin.getLogin().getPassword(),
+							ApplicationEnum.getByCode(appLogin.getApplication().getCode()),
+							appLogin.getLogin().getEmail(),
+							appLogin.getLogin().getLastpasswordreset(),
+							appLogin.getLogin().isActive(),
+							AuthorityUtils.commaSeparatedStringToAuthorityList(appLogin.getAuthorities()));
 
 				authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
-				SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+			}
+		} else {
+			String username = this.tokenUtils.getUsernameFromToken(authToken);
+			String applicationCode = this.tokenUtils.getIssuerFromToken(authToken);
+			
+			if (username != null && applicationCode != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+				
+				LoginApplication appLogin = loginApplicationRepository.findByAppcodeAndUsername(applicationCode, username);
+				
+				if (this.tokenUtils.validateToken(authToken, appLogin.getLogin().getUsername(), appLogin.getApplication().getCode(), appLogin.getLogin().getLastpasswordreset())) {
+					
+					CustomAuthenticationToken authenticationToken = new CustomAuthenticationToken(
+							appLogin.getLogin().getUsername(),
+							appLogin.getLogin().getPassword(),
+							ApplicationEnum.getByCode(appLogin.getApplication().getCode()),
+							appLogin.getLogin().getEmail(),
+							appLogin.getLogin().getLastpasswordreset(),
+							appLogin.getLogin().isActive(),
+							AuthorityUtils.commaSeparatedStringToAuthorityList(appLogin.getAuthorities()));
+
+					authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
+					SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+				}
 			}
 		}
 

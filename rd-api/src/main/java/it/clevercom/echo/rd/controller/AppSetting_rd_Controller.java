@@ -1,24 +1,14 @@
 package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,18 +20,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.clevercom.echo.common.exception.model.BadRequestException;
-import it.clevercom.echo.common.exception.model.PageNotFoundException;
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CreateRequestProcessor;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
+import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
-import it.clevercom.echo.common.model.jpa.helper.SearchCriteria;
-import it.clevercom.echo.common.model.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.common.model.jpa.helper.SpecificationsBuilder;
-import it.clevercom.echo.common.util.JwtTokenUtils;
+import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.jpa.specification.UserSpecification;
 import it.clevercom.echo.rd.model.dto.AppSettingDTO;
-import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.entity.AppSetting;
 import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
 
@@ -56,7 +46,7 @@ import it.clevercom.echo.rd.repository.IAppSetting_rd_Repository;
  * @author luca
  */
 
-public class AppSetting_rd_Controller {
+public class AppSetting_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Environment env;
@@ -67,33 +57,41 @@ public class AppSetting_rd_Controller {
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
 	
-	@Value("${jwt.token.header}")
-	private String tokenHeader;
-	
 	@Autowired
-	private JwtTokenUtils tokenUtils;
+	private Validator validator;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
-	// used to bind it in exception message
+	// used to bind entity name and id in exception message
 	private static String entity_name = "AppSetting";
 	private static String entity_id = "idappsetting";
-	private static String entity_uqkey1 = "username";
 	
 	/**
 	 * Get application setting list by Username
 	 * @param username
 	 * @return
-	 * @throws Exception
+	 * @throws Exception.
 	 */
 	@Transactional("rdTm")
-	@RequestMapping(value="/{username}", method = RequestMethod.GET)
+	@RequestMapping(value="/{id}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<AppSettingDTO> get(@PathVariable String username) throws Exception {
-		PagedDTO<AppSettingDTO> dto = getByCriteria("username:" + username, 1, 1000, "asc", "idsetting");
-		if (entity_name == null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity_name, entity_id, entity_uqkey1);
-		return dto;
+	public @ResponseBody AppSettingDTO get(@PathVariable Long id) throws Exception {
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting"), entity_name, entity_id, id.toString()));
+		
+		// find entity
+		AppSetting entity = repo.findOne(id);
+		
+		// check if entity has been found
+		if (entity == null) {
+			logger.warn(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, id.toString()));
+			throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		}
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.returning.response"), entity_name, entity_id, id.toString()));
+		return rdDozerMapper.map(entity, AppSettingDTO.class);
 	}
 	
 	/**
@@ -111,61 +109,43 @@ public class AppSetting_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody PagedDTO<AppSettingDTO> getByCriteria (
-			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="null", required=false) String criteria,
+			@RequestParam(defaultValue="*", required=false) String username,
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="1000", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="idappsetting", required=false) String field) throws Exception {
 		
-		// create paged request
-		PageRequest request = null;
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		if (sort.equalsIgnoreCase("asc")) {
-			 request = new PageRequest(page-1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page-1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
+		// check enum string params
+		validator.validateSort(sort);
+		
+		// create processor
+		CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
+				new CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
+						rdDozerMapper, 
+						AppSettingDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size,
+						env);
+		
+		// add username specification
+		if (!username.equals("*")) {
+			UserSpecification<AppSetting> u = new UserSpecification<AppSetting>(null, username);
+			rp.addAndSpecification(u);
 		}
 		
-		// create predicate if criteria is not null
-		Page<AppSetting> rs = null;
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
-		if (!criteria.equals("null")) {
-	        SpecificationsBuilder<AppSetting, SpecificationQueryHelper<AppSetting>> builder = new SpecificationsBuilder<AppSetting, SpecificationQueryHelper<AppSetting>>();
-	        Pattern pattern = Pattern.compile(SearchCriteria.pattern);
-	        Matcher matcher = pattern.matcher(criteria + ",");
-	        while (matcher.find()) {
-	            builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-	        }
-	        Specification<AppSetting> spec = builder.build();
-	        
-	        // obtain records
-	        rs = repo.findAll(spec, request);
-		} else {
-			rs = repo.findAll(request);
-		}
-		
-		int totalPages = rs.getTotalPages();
-        long totalElements = rs.getTotalElements();
-		List<AppSetting> entity = rs.getContent();
-		
-		if (entity.size() == 0) throw new PageNotFoundException(AppSetting_rd_Controller.entity_name, page);
-		
-		// map list
-		List<AppSettingDTO> appSettingDTOList = new ArrayList<AppSettingDTO>();
-		for (AppSetting s: entity) {
-			appSettingDTOList.add(rdDozerMapper.map(s, AppSettingDTO.class));
-		}
-		
-		// assembly dto
-		PagedDTO<AppSettingDTO> dto = new PagedDTO<AppSettingDTO>();
-		dto.setElements(appSettingDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		dto.setTotalPages(totalPages);
-		dto.setTotalElements(totalElements);
-		return dto;
+		// process data request
+		return rp.process();		
 	}
 	
 	/**
@@ -180,31 +160,27 @@ public class AppSetting_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody CreateResponseDTO<AppSettingDTO> add(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
-		appSetting.setUsername(username);
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// map
-		AppSetting entity = rdDozerMapper.map(appSetting, AppSetting.class);
+		// validate that username can perform the requested operation on appSetting
+		validator.validateUsername(getLoggedUser(request), appSetting);
 		
-		// add technical field
-		entity.setUserupdate(username);
+		// create the processor
+		CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
+				new CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
+						rdDozerMapper, 
+						AppSetting.class, 
+						entity_name, 
+						getLoggedUser(request), 
+						appSetting,
+						env);
 		
-		// save and map to out dto
-		entity = repo.saveAndFlush(entity);
-		appSetting = rdDozerMapper.map(entity, AppSettingDTO.class);
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name, entity_id, appSetting.getIdappsetting()));
 		
-		// create standard response
-		CreateResponseDTO<AppSettingDTO> response = new CreateResponseDTO<AppSettingDTO>();
-		response.setEntityName(AppSetting_rd_Controller.entity_name);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), AppSetting_rd_Controller.entity_name));
-		List<AppSettingDTO> appSettingDTOs = new ArrayList<AppSettingDTO>();
-		appSettingDTOs.add(appSetting);
-		response.setNewValue(appSettingDTOs);
-		
-		// return standard response
-		return response;
+		// process
+		return rp.process();
 	}
 	
 	/**
@@ -219,50 +195,27 @@ public class AppSetting_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody UpdateResponseDTO<AppSettingDTO> update(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
-		appSetting.setUsername(username);
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// if an id is not present throw bad request
-		if(appSetting.getIdappsetting()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), AppSetting_rd_Controller.entity_name));
+		// validate that username can perform the requested operation on appSetting
+		validator.validateUsername(getLoggedUser(request), appSetting);
 		
-		// find entity to update (oldValue)
-		AppSetting oldValueEntity = repo.findOne(appSetting.getIdappsetting()); 
-		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity==null) throw new RecordNotFoundException(AppSetting_rd_Controller.entity_name, entity_id, appSetting.getIdappsetting().toString());
-		// get created date
-		Date created = oldValueEntity.getCreated();
-		// map old value to a dto
-		AppSettingDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, AppSettingDTO.class);
+		// create processor
+		UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
+				new UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
+						rdDozerMapper,
+						entity_name,
+						entity_id,
+						getLoggedUser(request), 
+						appSetting, 
+						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, appSetting.getIdappsetting()));
 
-		// begin update of oldValue
-		rdDozerMapper.map(appSetting, oldValueEntity);
-		
-		// add technical field
-		oldValueEntity.setUserupdate(username);
-		oldValueEntity.setUpdated(new Date());
-		oldValueEntity.setCreated(created);
-		
-		// save and map to out dto
-		AppSetting newValueEntity = repo.saveAndFlush(oldValueEntity);
-		AppSettingDTO newValueDTO = rdDozerMapper.map(newValueEntity, AppSettingDTO.class);
-				
-		// create standard response
-		UpdateResponseDTO<AppSettingDTO> response = new UpdateResponseDTO<AppSettingDTO>();
-		response.setEntityName(AppSetting_rd_Controller.entity_name);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), AppSetting_rd_Controller.entity_name));
-		// add new dtos values
-		List<AppSettingDTO> newAppSettingDTOs = new ArrayList<AppSettingDTO>();
-		newAppSettingDTOs.add(newValueDTO);
-		response.setNewValue(newAppSettingDTOs);
-		// add old dtos values
-		List<AppSettingDTO> oldAppSettingDTOs = new ArrayList<AppSettingDTO>();
-		oldAppSettingDTOs.add(oldValueDTO);
-		response.setOldValue(oldAppSettingDTOs);
-		
 		// return response
-		return response;
+		return rp.process();
 	}
 	
 	/**
@@ -276,6 +229,6 @@ public class AppSetting_rd_Controller {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody String delete(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) {
-		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), AppSetting_rd_Controller.entity_name);
+		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), entity_name);
 	}
 }

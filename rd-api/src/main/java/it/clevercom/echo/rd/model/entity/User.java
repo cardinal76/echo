@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 12-apr-2017 9.59.56 by Hibernate Tools 5.2.2.Final
+// Generated 26-apr-2017 17.35.35 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -24,7 +25,7 @@ import javax.persistence.TemporalType;
 @DynamicInsert
 @Table(name="rd_user"
 )
-public class User  implements java.io.Serializable {
+public class User  extends AbstractJpaEchoEntity implements java.io.Serializable {
 
 
      private String username;

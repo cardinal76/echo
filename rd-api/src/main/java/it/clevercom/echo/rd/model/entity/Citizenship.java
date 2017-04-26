@@ -1,8 +1,7 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 12-apr-2017 9.59.56 by Hibernate Tools 5.2.2.Final
+// Generated 26-apr-2017 17.35.35 by Hibernate Tools 5.2.2.Final
 
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
@@ -14,8 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -27,34 +25,22 @@ import org.hibernate.annotations.Parameter;
 @DynamicInsert
 @Table(name="rd_citizenship"
 )
-public class Citizenship  implements java.io.Serializable {
+public class Citizenship  extends AbstractJpaEchoEntity implements java.io.Serializable {
 
 
      private Long idcitizenship;
      private String description;
-     private Date created;
-     private Date updated;
-     private String userupdate;
-     private Boolean active;
      private Set<Patient> patients = new HashSet<Patient>(0);
 
     public Citizenship() {
     }
 
 	
-    public Citizenship(String description, Date created, Date updated, String userupdate, Boolean active) {
+    public Citizenship(String description) {
         this.description = description;
-        this.created = created;
-        this.updated = updated;
-        this.userupdate = userupdate;
-        this.active = active;
     }
-    public Citizenship(String description, Date created, Date updated, String userupdate, Boolean active, Set<Patient> patients) {
+    public Citizenship(String description, Set<Patient> patients) {
        this.description = description;
-       this.created = created;
-       this.updated = updated;
-       this.userupdate = userupdate;
-       this.active = active;
        this.patients = patients;
     }
    
@@ -78,46 +64,6 @@ public class Citizenship  implements java.io.Serializable {
     
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="created", nullable=false, length=29)
-    public Date getCreated() {
-        return this.created;
-    }
-    
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="updated", nullable=false, length=29)
-    public Date getUpdated() {
-        return this.updated;
-    }
-    
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    
-    @Column(name="userupdate", nullable=false, length=100)
-    public String getUserupdate() {
-        return this.userupdate;
-    }
-    
-    public void setUserupdate(String userupdate) {
-        this.userupdate = userupdate;
-    }
-
-    
-    @Column(name="active", nullable=false)
-    public Boolean getActive() {
-        return this.active;
-    }
-    
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="citizenship")

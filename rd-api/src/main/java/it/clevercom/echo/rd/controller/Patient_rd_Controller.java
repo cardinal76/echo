@@ -4,8 +4,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,18 +26,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
-import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
+import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
-import it.clevercom.echo.common.model.jpa.helper.SearchCriteria;
-import it.clevercom.echo.common.model.jpa.helper.SpecificationQueryHelper;
-import it.clevercom.echo.common.model.jpa.helper.SpecificationsBuilder;
 import it.clevercom.echo.common.util.JwtTokenUtils;
+import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
-import it.clevercom.echo.rd.model.dto.PagedDTO;
 import it.clevercom.echo.rd.model.dto.PatientCodingActorDTO;
 import it.clevercom.echo.rd.model.dto.PatientDTO;
 import it.clevercom.echo.rd.model.entity.CodingActor;
@@ -61,7 +56,7 @@ import it.clevercom.echo.rd.repository.IPatient_rd_Repository;
  * @author luca
  */
 
-public class Patient_rd_Controller {
+public class Patient_rd_Controller extends EchoController {
 
 	@Autowired
 	private Environment env;
@@ -80,6 +75,9 @@ public class Patient_rd_Controller {
 
 	@Autowired
 	private JwtTokenUtils tokenUtils;
+	
+	@Autowired
+	private Validator validator;
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -185,56 +183,23 @@ public class Patient_rd_Controller {
 			@RequestParam(defaultValue = "asc", required = false) String sort,
 			@RequestParam(defaultValue = "idpatient", required = false) String field) throws Exception {
 		
-		// create paged request
-		PageRequest request = null;
-
-		if (sort.equalsIgnoreCase("asc")) {
-			request = new PageRequest(page - 1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page - 1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
-
-		// create predicate if criteria is not null
-		Page<Patient> rs = null;
-
-		if (!criteria.equals("null")) {
-			SpecificationsBuilder<Patient, SpecificationQueryHelper<Patient>> builder = new SpecificationsBuilder<Patient, SpecificationQueryHelper<Patient>>();
-			Pattern pattern = Pattern.compile(SearchCriteria.pattern);
-			Matcher matcher = pattern.matcher(criteria + ",");
-			while (matcher.find()) {
-				builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-			}
-			Specification<Patient> spec = builder.build();
-
-			// obtain records
-			rs = repo.findAll(spec, request);
-		} else {
-			rs = repo.findAll(request);
-		}
-
-		int totalPages = rs.getTotalPages();
-		long totalElements = rs.getTotalElements();
-		List<Patient> entities = rs.getContent();
-
-		if (entities.size() == 0)
-			throw new PageNotFoundException(Patient_rd_Controller.entity_name, page);
-
-		// map list
-		List<PatientDTO> patientDTOList = new ArrayList<PatientDTO>();
-		for (Patient s : entities) {
-			patientDTOList.add(rdDozerMapper.map(s, PatientDTO.class));
-		}
-
-		// assembly dto
-		PagedDTO<PatientDTO> dto = new PagedDTO<PatientDTO>();
-		dto.setElements(patientDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		dto.setTotalPages(totalPages);
-		dto.setTotalElements(totalElements);
-		return dto;
+		// check enum string params
+		validator.validateSort(sort);
+		
+		CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> rp = 
+				new CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, 
+						rdDozerMapper, 
+						PatientDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size,
+						env);
+		
+		// process data request
+		return rp.process();
 	}
 
 	/**
@@ -248,8 +213,7 @@ public class Patient_rd_Controller {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<PatientDTO> add(@RequestBody PatientDTO patient, HttpServletRequest request)
-			throws Exception {
+	public @ResponseBody CreateResponseDTO<PatientDTO> add(@RequestBody PatientDTO patient, HttpServletRequest request)	throws Exception {
 		// get user info
 		String authToken = request.getHeader(this.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);

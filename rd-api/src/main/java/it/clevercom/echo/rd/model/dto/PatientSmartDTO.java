@@ -5,7 +5,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class PatientSmartDTO implements Serializable {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+@JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
+public class PatientSmartDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = -8879525081996795944L;
 	
 	private Long idPatient;	
@@ -143,5 +147,10 @@ public class PatientSmartDTO implements Serializable {
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		this.setPrettyPrint(this.getName() + " " + this.getSurname() + " (" + ((this.getDateOfBirth()!=null) ? df.format(new Date(this.getDateOfBirth()))  : "--/--/----") + ")");
 		return this;
+	}
+
+	@Override
+	public Object getIdd() {
+		return idPatient;
 	}
 }

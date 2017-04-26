@@ -5,8 +5,10 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userupdate","active"})
-public class AppSettingDTO implements Serializable {
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+
+@JsonIgnoreProperties({"created","updated","userupdate","active", "idd"})
+public class AppSettingDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = -300944911879884382L;
 	
 	private Long idappsetting;
@@ -17,7 +19,7 @@ public class AppSettingDTO implements Serializable {
 	private String userupdate;
 	private Boolean active;
 	private String feature;
-	private String username;
+	private String user;
 	
 	public AppSettingDTO() {
 	}
@@ -165,16 +167,22 @@ public class AppSettingDTO implements Serializable {
 	}
 
 	/**
-	 * @return the username
+	 * @return the user
 	 */
-	public String getUsername() {
-		return username;
+	public String getUser() {
+		return user;
 	}
 
 	/**
-	 * @param username the username to set
+	 * @param user the user to set
 	 */
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUser(String user) {
+		this.user = user;
 	}
+
+	@Override
+	public Object getIdd() {
+		return idappsetting;
+	}
+
 }

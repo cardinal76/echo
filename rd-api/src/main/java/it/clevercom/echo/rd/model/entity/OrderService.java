@@ -1,8 +1,7 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 12-apr-2017 9.59.56 by Hibernate Tools 5.2.2.Final
+// Generated 26-apr-2017 17.35.35 by Hibernate Tools 5.2.2.Final
 
 
-import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,8 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -28,35 +26,28 @@ import org.hibernate.annotations.Parameter;
 @Table(name="rd_order_service"
     , uniqueConstraints = @UniqueConstraint(columnNames={"idorder", "idservice"}) 
 )
-public class OrderService  implements java.io.Serializable {
+public class OrderService  extends AbstractJpaEchoEntity implements java.io.Serializable {
 
 
      private Long idorderservice;
      private Order order;
      private Service service;
-     private Date created;
-     private Date updated;
-     private String userupdate;
-     private Boolean active;
+     private String addedreason;
+     private String canceledreason;
 
     public OrderService() {
     }
 
 	
-    public OrderService(Order order, Service service, Date created, Date updated, String userupdate) {
+    public OrderService(Order order, Service service) {
         this.order = order;
         this.service = service;
-        this.created = created;
-        this.updated = updated;
-        this.userupdate = userupdate;
     }
-    public OrderService(Order order, Service service, Date created, Date updated, String userupdate, Boolean active) {
+    public OrderService(Order order, Service service, String addedreason, String canceledreason) {
        this.order = order;
        this.service = service;
-       this.created = created;
-       this.updated = updated;
-       this.userupdate = userupdate;
-       this.active = active;
+       this.addedreason = addedreason;
+       this.canceledreason = canceledreason;
     }
    
      @GenericGenerator(name="generator", strategy="org.hibernate.id.enhanced.SequenceStyleGenerator", parameters={@Parameter(name="optimizer", value="none"), @Parameter(name="sequence_name", value="orderservice_idorderservice_seq"), @Parameter(name="increment_size", value="1")})@Id @GeneratedValue(generator="generator")
@@ -91,44 +82,24 @@ public class OrderService  implements java.io.Serializable {
         this.service = service;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="created", nullable=false, length=29)
-    public Date getCreated() {
-        return this.created;
+    
+    @Column(name="addedreason", length=1000)
+    public String getAddedreason() {
+        return this.addedreason;
     }
     
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="updated", nullable=false, length=29)
-    public Date getUpdated() {
-        return this.updated;
-    }
-    
-    public void setUpdated(Date updated) {
-        this.updated = updated;
+    public void setAddedreason(String addedreason) {
+        this.addedreason = addedreason;
     }
 
     
-    @Column(name="userupdate", nullable=false, length=100)
-    public String getUserupdate() {
-        return this.userupdate;
+    @Column(name="canceledreason", length=1000)
+    public String getCanceledreason() {
+        return this.canceledreason;
     }
     
-    public void setUserupdate(String userupdate) {
-        this.userupdate = userupdate;
-    }
-
-    
-    @Column(name="active")
-    public Boolean getActive() {
-        return this.active;
-    }
-    
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setCanceledreason(String canceledreason) {
+        this.canceledreason = canceledreason;
     }
 
 

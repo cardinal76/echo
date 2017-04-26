@@ -3,7 +3,12 @@ package it.clevercom.echo.rd.model.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-public class WorkPriorityDTO implements Serializable {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+
+@JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
+public class WorkPriorityDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = 1525861965899783971L;
 
 	private Long idworkpriority;
@@ -128,5 +133,10 @@ public class WorkPriorityDTO implements Serializable {
 	 */
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	@Override
+	public Object getIdd() {
+		return idworkpriority;
 	}
 }

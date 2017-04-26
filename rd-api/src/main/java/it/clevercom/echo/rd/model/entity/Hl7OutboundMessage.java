@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 12-apr-2017 9.59.56 by Hibernate Tools 5.2.2.Final
+// Generated 26-apr-2017 17.35.35 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
@@ -23,7 +24,7 @@ import org.hibernate.annotations.Parameter;
 @DynamicInsert
 @Table(name="rd_hl7_outbound_message"
 )
-public class Hl7OutboundMessage  implements java.io.Serializable {
+public class Hl7OutboundMessage  extends AbstractJpaEchoEntity implements java.io.Serializable {
 
 
      private Long idoutboundmessage;

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
+import it.clevercom.echo.common.exception.model.NotAuthorizedException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.exception.model.ValidationException;
@@ -134,6 +135,20 @@ public class ControllerExceptionHandler {
 	public @ResponseBody ValidationExceptionDTO handleValidationException(ValidationException e) {
 		logger.error(e.getMessage(), e);
 		return e.getExceptions();
+	}
+	
+	/**
+	 * Maps {@link ValidationException} to a BAD_REQUEST http status
+	 * @param e exception to handle 
+	 * @return exception dto message
+	 */
+	@ExceptionHandler(NotAuthorizedException.class)
+	@ResponseStatus(value=HttpStatus.FORBIDDEN)
+	public @ResponseBody ExceptionDTO handleNotAuthorizedException(NotAuthorizedException e) {
+		logger.error("NotAuthorizedException occurred : ", e);
+		ExceptionDTO dto = new ExceptionDTO();
+		dto.setMessage(e.getMessage());
+		return dto;
 	}
 	
 //	/**

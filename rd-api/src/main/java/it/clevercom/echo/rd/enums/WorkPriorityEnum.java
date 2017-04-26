@@ -61,14 +61,13 @@ public enum WorkPriorityEnum {
      * @return
      */
     public static String enumValuesToString() {
-    	String output = "[";
+    	String output = "";
     	WorkPriorityEnum[] array = WorkPriorityEnum.class.getEnumConstants();
     	int i = 0;
     	for (WorkPriorityEnum workPriorityEnum : array) {
 			output += workPriorityEnum.code + "[" + workPriorityEnum.toString() + "]" + ((i<=(array.length-2)) ? ", " : "");
 			i++;
 		}
-    	output += "]";
     	return output;
     }
 }

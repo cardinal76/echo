@@ -1,8 +1,7 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 12-apr-2017 9.59.56 by Hibernate Tools 5.2.2.Final
+// Generated 26-apr-2017 17.35.35 by Hibernate Tools 5.2.2.Final
 
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
@@ -16,8 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -29,18 +27,15 @@ import org.hibernate.annotations.Parameter;
 @DynamicInsert
 @Table(name="rd_modality"
 )
-public class Modality  implements java.io.Serializable {
+public class Modality  extends AbstractJpaEchoEntity implements java.io.Serializable {
 
 
      private Long idmodality;
      private OrganizationUnit organizationUnit;
      private String name;
      private String description;
-     private Date created;
-     private Date updated;
-     private String userupdate;
-     private Boolean active;
-     private Integer dailyexamcapacity;
+     private Integer dailyservicecapacity;
+     private Integer dailypatientcapacity;
      private Set<ModalityService> modalityServices = new HashSet<ModalityService>(0);
      private Set<ModalityDailyAllocation> modalityDailyAllocations = new HashSet<ModalityDailyAllocation>(0);
      private Set<WorkTask> workTasks = new HashSet<WorkTask>(0);
@@ -49,23 +44,16 @@ public class Modality  implements java.io.Serializable {
     }
 
 	
-    public Modality(OrganizationUnit organizationUnit, String name, Date created, Date updated, String userupdate, Boolean active) {
+    public Modality(OrganizationUnit organizationUnit, String name) {
         this.organizationUnit = organizationUnit;
         this.name = name;
-        this.created = created;
-        this.updated = updated;
-        this.userupdate = userupdate;
-        this.active = active;
     }
-    public Modality(OrganizationUnit organizationUnit, String name, String description, Date created, Date updated, String userupdate, Boolean active, Integer dailyexamcapacity, Set<ModalityService> modalityServices, Set<ModalityDailyAllocation> modalityDailyAllocations, Set<WorkTask> workTasks) {
+    public Modality(OrganizationUnit organizationUnit, String name, String description, Integer dailyservicecapacity, Integer dailypatientcapacity, Set<ModalityService> modalityServices, Set<ModalityDailyAllocation> modalityDailyAllocations, Set<WorkTask> workTasks) {
        this.organizationUnit = organizationUnit;
        this.name = name;
        this.description = description;
-       this.created = created;
-       this.updated = updated;
-       this.userupdate = userupdate;
-       this.active = active;
-       this.dailyexamcapacity = dailyexamcapacity;
+       this.dailyservicecapacity = dailyservicecapacity;
+       this.dailypatientcapacity = dailypatientcapacity;
        this.modalityServices = modalityServices;
        this.modalityDailyAllocations = modalityDailyAllocations;
        this.workTasks = workTasks;
@@ -113,54 +101,24 @@ public class Modality  implements java.io.Serializable {
         this.description = description;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="created", nullable=false, length=29)
-    public Date getCreated() {
-        return this.created;
+    
+    @Column(name="dailyservicecapacity")
+    public Integer getDailyservicecapacity() {
+        return this.dailyservicecapacity;
     }
     
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="updated", nullable=false, length=29)
-    public Date getUpdated() {
-        return this.updated;
-    }
-    
-    public void setUpdated(Date updated) {
-        this.updated = updated;
+    public void setDailyservicecapacity(Integer dailyservicecapacity) {
+        this.dailyservicecapacity = dailyservicecapacity;
     }
 
     
-    @Column(name="userupdate", nullable=false, length=100)
-    public String getUserupdate() {
-        return this.userupdate;
+    @Column(name="dailypatientcapacity")
+    public Integer getDailypatientcapacity() {
+        return this.dailypatientcapacity;
     }
     
-    public void setUserupdate(String userupdate) {
-        this.userupdate = userupdate;
-    }
-
-    
-    @Column(name="active", nullable=false)
-    public Boolean getActive() {
-        return this.active;
-    }
-    
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    
-    @Column(name="dailyexamcapacity")
-    public Integer getDailyexamcapacity() {
-        return this.dailyexamcapacity;
-    }
-    
-    public void setDailyexamcapacity(Integer dailyexamcapacity) {
-        this.dailyexamcapacity = dailyexamcapacity;
+    public void setDailypatientcapacity(Integer dailypatientcapacity) {
+        this.dailypatientcapacity = dailypatientcapacity;
     }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="modality")

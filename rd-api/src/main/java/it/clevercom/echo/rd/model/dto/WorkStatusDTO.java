@@ -5,8 +5,10 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userupdate","active"})
-public class WorkStatusDTO implements Serializable {
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+
+@JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
+public class WorkStatusDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = 3039041755446635927L;
 	
 	private Long idworkstatus;
@@ -131,5 +133,10 @@ public class WorkStatusDTO implements Serializable {
 	 */
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+
+	@Override
+	public Object getIdd() {
+		return idworkstatus;
 	}
 }

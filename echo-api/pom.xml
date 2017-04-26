@@ -15,35 +15,35 @@
 
 	<!-- Dependency information -->
 	<dependencies>
-	
+
 		<!-- spring mvc -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 		</dependency>
-	
+
 		<!-- spring security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
 		</dependency>
-	
+
 		<!-- jpa -->
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 		</dependency>
-	
+
 		<!-- postgre jdbc driver -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -55,58 +55,59 @@
 			<groupId>org.springframework.mobile</groupId>
 			<artifactId>spring-mobile-device</artifactId>
 		</dependency>
-	
+
 		<!-- javax -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>javax.persistence</groupId>
 			<artifactId>persistence-api</artifactId>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 		</dependency>
-	
+
 		<!-- jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-		
+
 		<!-- apache commons -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-		
+
 		<!-- log4j -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>
-		
+
 		<!-- dozer mapping fw -->
 		<dependency>
 			<groupId>net.sf.dozer</groupId>
 			<artifactId>dozer</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.sf.dozer</groupId>
 			<artifactId>dozer-spring</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javassist</groupId>
 			<artifactId>javassist</artifactId>
 		</dependency>
 
-		<!-- core module: use can you it on its own if you are not using Spring 3 -->
+		<!-- core module: use can you it on its own if you are not using Spring 
+			3 -->
 		<dependency>
 			<groupId>com.inspire-software.lib.dto.geda</groupId>
 			<artifactId>geda.core</artifactId>
@@ -117,28 +118,28 @@
 			<groupId>com.inspire-software.lib.dto.geda</groupId>
 			<artifactId>geda.spring-integration</artifactId>
 		</dependency>
-		
+
 		<!-- jar modules -->
 		<dependency>
 			<groupId>it.clevercom</groupId>
 			<artifactId>echo-common</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>it.clevercom</groupId>
 			<artifactId>sso-api</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>it.clevercom</groupId>
 			<artifactId>tm-api</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>it.clevercom</groupId>
 			<artifactId>rd-api</artifactId>
 		</dependency>
-		
+
 	</dependencies>
 
 	<!-- Build information -->
@@ -148,11 +149,50 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<filters>
+			<filter>env/${build.profile.id}/application.properties</filter>
+		</filters>
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 	</build>
+	
+	<!-- Profile configuration -->
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>dev</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
+			<id>internal</id>
+			<properties>
+				<build.profile.id>internal</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<build.profile.id>prod</build.profile.id>
+			</properties>
+		</profile>
+		<profile>
+			<id>test</id>
+			<properties>
+				<build.profile.id>test</build.profile.id>
+			</properties>
+		</profile>
+	</profiles>
 </project>

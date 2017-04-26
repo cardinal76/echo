@@ -1,8 +1,7 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 12-apr-2017 9.59.56 by Hibernate Tools 5.2.2.Final
+// Generated 26-apr-2017 17.35.35 by Hibernate Tools 5.2.2.Final
 
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
@@ -16,8 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -29,7 +27,7 @@ import org.hibernate.annotations.Parameter;
 @DynamicInsert
 @Table(name="rd_organization_unit"
 )
-public class OrganizationUnit  implements java.io.Serializable {
+public class OrganizationUnit  extends AbstractJpaEchoEntity implements java.io.Serializable {
 
 
      private Long idorganizationunit;
@@ -43,10 +41,6 @@ public class OrganizationUnit  implements java.io.Serializable {
      private String fax;
      private String website;
      private String type;
-     private Date created;
-     private Date updated;
-     private String userupdate;
-     private Boolean active;
      private String code;
      private Set<Order> ordersForOriginorganizationunitid = new HashSet<Order>(0);
      private Set<Patient> patientsForIdintorganizationunit = new HashSet<Patient>(0);
@@ -59,14 +53,7 @@ public class OrganizationUnit  implements java.io.Serializable {
     public OrganizationUnit() {
     }
 
-	
-    public OrganizationUnit(Date created, Date updated, String userupdate, Boolean active) {
-        this.created = created;
-        this.updated = updated;
-        this.userupdate = userupdate;
-        this.active = active;
-    }
-    public OrganizationUnit(Municipality municipality, OrganizationUnit organizationUnit, String name, String description, String address, String telephone, String email, String fax, String website, String type, Date created, Date updated, String userupdate, Boolean active, String code, Set<Order> ordersForOriginorganizationunitid, Set<Patient> patientsForIdintorganizationunit, Set<BurnRobot> burnRobots, Set<Order> ordersForTargetorganizationunitid, Set<Patient> patientsForIdextorganizationunit, Set<Modality> modalities, Set<OrganizationUnit> organizationUnits) {
+    public OrganizationUnit(Municipality municipality, OrganizationUnit organizationUnit, String name, String description, String address, String telephone, String email, String fax, String website, String type, String code, Set<Order> ordersForOriginorganizationunitid, Set<Patient> patientsForIdintorganizationunit, Set<BurnRobot> burnRobots, Set<Order> ordersForTargetorganizationunitid, Set<Patient> patientsForIdextorganizationunit, Set<Modality> modalities, Set<OrganizationUnit> organizationUnits) {
        this.municipality = municipality;
        this.organizationUnit = organizationUnit;
        this.name = name;
@@ -77,10 +64,6 @@ public class OrganizationUnit  implements java.io.Serializable {
        this.fax = fax;
        this.website = website;
        this.type = type;
-       this.created = created;
-       this.updated = updated;
-       this.userupdate = userupdate;
-       this.active = active;
        this.code = code;
        this.ordersForOriginorganizationunitid = ordersForOriginorganizationunitid;
        this.patientsForIdintorganizationunit = patientsForIdintorganizationunit;
@@ -201,46 +184,6 @@ public class OrganizationUnit  implements java.io.Serializable {
     
     public void setType(String type) {
         this.type = type;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="created", nullable=false, length=29)
-    public Date getCreated() {
-        return this.created;
-    }
-    
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="updated", nullable=false, length=29)
-    public Date getUpdated() {
-        return this.updated;
-    }
-    
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    
-    @Column(name="userupdate", nullable=false, length=100)
-    public String getUserupdate() {
-        return this.userupdate;
-    }
-    
-    public void setUserupdate(String userupdate) {
-        this.userupdate = userupdate;
-    }
-
-    
-    @Column(name="active", nullable=false)
-    public Boolean getActive() {
-        return this.active;
-    }
-    
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     

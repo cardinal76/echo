@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 12-apr-2017 9.59.56 by Hibernate Tools 5.2.2.Final
+// Generated 26-apr-2017 17.35.35 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -16,8 +16,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -28,8 +30,9 @@ import org.hibernate.annotations.Parameter;
 @DynamicUpdate
 @DynamicInsert
 @Table(name="rd_order"
+    , uniqueConstraints = @UniqueConstraint(columnNames="idworksession") 
 )
-public class Order  implements java.io.Serializable {
+public class Order  extends AbstractJpaEchoEntity implements java.io.Serializable {
 
 
      private Long idorder;
@@ -49,10 +52,6 @@ public class Order  implements java.io.Serializable {
      private String rejectreason;
      private String anamnesys;
      private String notes;
-     private Date created;
-     private Date updated;
-     private String userupdate;
-     private Boolean active;
      private String cancelreason;
      private String identificationdocument;
      private Date executingdate;
@@ -70,18 +69,14 @@ public class Order  implements java.io.Serializable {
     }
 
 	
-    public Order(Patient patient, WorkPriority workPriority, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date created, Date updated, String userupdate, Boolean active) {
+    public Order(Patient patient, WorkPriority workPriority, WorkStatus workStatus, String acquisitionchannel, Date creationdate) {
         this.patient = patient;
         this.workPriority = workPriority;
         this.workStatus = workStatus;
         this.acquisitionchannel = acquisitionchannel;
         this.creationdate = creationdate;
-        this.created = created;
-        this.updated = updated;
-        this.userupdate = userupdate;
-        this.active = active;
     }
-    public Order(OrganizationUnit organizationUnitByOriginorganizationunitid, OrganizationUnit organizationUnitByTargetorganizationunitid, Patient patient, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, String requestingphysician, String clinicalquestion, String rejectreason, String anamnesys, String notes, Date created, Date updated, String userupdate, Boolean active, String cancelreason, String identificationdocument, Date executingdate, Date executeddate, Date reportingdate, Date reporteddate, Date signeddate, Date delivereddate, Date archiveddate, Date canceleddate, Set<OrderLog> orderLogs, Set<OrderService> orderServices) {
+    public Order(OrganizationUnit organizationUnitByOriginorganizationunitid, OrganizationUnit organizationUnitByTargetorganizationunitid, Patient patient, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, String acquisitionchannel, Date creationdate, Date scheduleddate, Date acceptancedate, Long duration, String requestingphysician, String clinicalquestion, String rejectreason, String anamnesys, String notes, String cancelreason, String identificationdocument, Date executingdate, Date executeddate, Date reportingdate, Date reporteddate, Date signeddate, Date delivereddate, Date archiveddate, Date canceleddate, Set<OrderLog> orderLogs, Set<OrderService> orderServices) {
        this.organizationUnitByOriginorganizationunitid = organizationUnitByOriginorganizationunitid;
        this.organizationUnitByTargetorganizationunitid = organizationUnitByTargetorganizationunitid;
        this.patient = patient;
@@ -98,10 +93,6 @@ public class Order  implements java.io.Serializable {
        this.rejectreason = rejectreason;
        this.anamnesys = anamnesys;
        this.notes = notes;
-       this.created = created;
-       this.updated = updated;
-       this.userupdate = userupdate;
-       this.active = active;
        this.cancelreason = cancelreason;
        this.identificationdocument = identificationdocument;
        this.executingdate = executingdate;
@@ -169,7 +160,7 @@ public class Order  implements java.io.Serializable {
     }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="idworksession")
+    @JoinColumn(name="idworksession", unique=true)
     public WorkSession getWorkSession() {
         return this.workSession;
     }
@@ -198,8 +189,8 @@ public class Order  implements java.io.Serializable {
         this.acquisitionchannel = acquisitionchannel;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="creationdate", nullable=false, length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="creationdate", nullable=false, length=29)
     public Date getCreationdate() {
         return this.creationdate;
     }
@@ -208,8 +199,8 @@ public class Order  implements java.io.Serializable {
         this.creationdate = creationdate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="scheduleddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="scheduleddate", length=29)
     public Date getScheduleddate() {
         return this.scheduleddate;
     }
@@ -218,8 +209,8 @@ public class Order  implements java.io.Serializable {
         this.scheduleddate = scheduleddate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="acceptancedate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="acceptancedate", length=29)
     public Date getAcceptancedate() {
         return this.acceptancedate;
     }
@@ -288,46 +279,6 @@ public class Order  implements java.io.Serializable {
         this.notes = notes;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="created", nullable=false, length=29)
-    public Date getCreated() {
-        return this.created;
-    }
-    
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="updated", nullable=false, length=29)
-    public Date getUpdated() {
-        return this.updated;
-    }
-    
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    
-    @Column(name="userupdate", nullable=false, length=100)
-    public String getUserupdate() {
-        return this.userupdate;
-    }
-    
-    public void setUserupdate(String userupdate) {
-        this.userupdate = userupdate;
-    }
-
-    
-    @Column(name="active", nullable=false)
-    public Boolean getActive() {
-        return this.active;
-    }
-    
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
     
     @Column(name="cancelreason", length=500)
     public String getCancelreason() {
@@ -348,8 +299,8 @@ public class Order  implements java.io.Serializable {
         this.identificationdocument = identificationdocument;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="executingdate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="executingdate", length=29)
     public Date getExecutingdate() {
         return this.executingdate;
     }
@@ -358,8 +309,8 @@ public class Order  implements java.io.Serializable {
         this.executingdate = executingdate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="executeddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="executeddate", length=29)
     public Date getExecuteddate() {
         return this.executeddate;
     }
@@ -368,8 +319,8 @@ public class Order  implements java.io.Serializable {
         this.executeddate = executeddate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="reportingdate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="reportingdate", length=29)
     public Date getReportingdate() {
         return this.reportingdate;
     }
@@ -378,8 +329,8 @@ public class Order  implements java.io.Serializable {
         this.reportingdate = reportingdate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="reporteddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="reporteddate", length=29)
     public Date getReporteddate() {
         return this.reporteddate;
     }
@@ -388,8 +339,8 @@ public class Order  implements java.io.Serializable {
         this.reporteddate = reporteddate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="signeddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="signeddate", length=29)
     public Date getSigneddate() {
         return this.signeddate;
     }
@@ -398,8 +349,8 @@ public class Order  implements java.io.Serializable {
         this.signeddate = signeddate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="delivereddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="delivereddate", length=29)
     public Date getDelivereddate() {
         return this.delivereddate;
     }
@@ -408,8 +359,8 @@ public class Order  implements java.io.Serializable {
         this.delivereddate = delivereddate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="archiveddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="archiveddate", length=29)
     public Date getArchiveddate() {
         return this.archiveddate;
     }
@@ -418,8 +369,8 @@ public class Order  implements java.io.Serializable {
         this.archiveddate = archiveddate;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name="canceleddate", length=13)
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="canceleddate", length=29)
     public Date getCanceleddate() {
         return this.canceleddate;
     }

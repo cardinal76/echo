@@ -12,11 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
-import it.clevercom.echo.rd.model.dto.OrderLogDTO;
+import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
 import it.clevercom.echo.rd.model.dto.PatientSmartDTO;
 import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
 import it.clevercom.echo.rd.model.entity.Order;
-import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
 import it.clevercom.echo.rd.model.entity.OrganizationUnit;
 import it.clevercom.echo.rd.model.entity.Patient;
@@ -58,7 +57,7 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			target.setRequestingPhysician(source.getRequestingphysician() != null ? source.getRequestingphysician() : null);
 			target.setScheduledDate((source.getScheduleddate() != null) ? source.getScheduleddate().getTime() : null);
 			target.setCancelReason((source.getCancelreason() != null) ? source.getCancelreason() : null);
-			target.setIdentificationdocument((source.getIdentificationdocument() != null) ? source.getIdentificationdocument() : null);
+			target.setIdentificationDocument((source.getIdentificationdocument() != null) ? source.getIdentificationdocument() : null);
 			
 			target.setExecutingDate((source.getExecutingdate() != null) ? source.getExecutingdate().getTime() : null);
 			target.setExecutedDate((source.getExecuteddate() != null) ? source.getExecuteddate().getTime() : null);
@@ -104,13 +103,25 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			// iterate
 			Set<OrderService> orderServices = source.getOrderServices();		
 			if (!(orderServices.isEmpty())) {
-				target.setServices(new HashSet<BaseObjectDTO>());
-				target.setCanceledServices(new HashSet<BaseObjectDTO>());
+				target.setServices(new HashSet<OrderedServiceDTO>());
+				target.setCanceledServices(new HashSet<OrderedServiceDTO>());
 				for (OrderService orderService : orderServices) {
+					target.setMasterModalityType(rdDozerMapper.map(orderService.getService().getModalityType(), BaseObjectDTO.class));
+					
 					if (orderService.getActive().equals(Boolean.TRUE)) {
-						target.getServices().add(rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class));
+						BaseObjectDTO dto_s = rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class);
+						OrderedServiceDTO dto = rdDozerMapper.map(dto_s, OrderedServiceDTO.class);
+						dto.setAddedReason(orderService.getAddedreason() != null ? orderService.getAddedreason() : null);
+						dto.setCancelReason(orderService.getCanceledreason() != null ? orderService.getCanceledreason() : null);
+						
+						target.getServices().add(dto);
 					} else {
-						target.getCanceledServices().add(rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class));
+						BaseObjectDTO dto_s = rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class);
+						OrderedServiceDTO dto = rdDozerMapper.map(dto_s, OrderedServiceDTO.class);
+						dto.setAddedReason(orderService.getAddedreason() != null ? orderService.getAddedreason() : null);
+						dto.setCancelReason(orderService.getCanceledreason() != null ? orderService.getCanceledreason() : null);
+						
+						target.getCanceledServices().add(dto);
 					}
 				}
 			}
@@ -146,7 +157,7 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			target.setRequestingphysician(source.getRequestingPhysician() != null ? source.getRequestingPhysician() : null);
 			target.setScheduleddate((source.getScheduledDate() != null) ? new Date(source.getScheduledDate()) : null);
 			target.setCancelreason((source.getCancelReason() != null) ? source.getCancelReason() : null);
-			target.setIdentificationdocument((source.getIdentificationdocument() != null) ? source.getIdentificationdocument() : null);
+			target.setIdentificationdocument((source.getIdentificationDocument() != null) ? source.getIdentificationDocument() : null);
 			
 			target.setExecutingdate((source.getExecutingDate() != null) ? new Date(source.getExecutingDate()) : null);
 			target.setExecuteddate((source.getExecutedDate() != null) ? new Date(source.getExecutedDate()) : null);
@@ -190,14 +201,16 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			}
 			
 			// iterate
-			Set<BaseObjectDTO> services = source.getServices();			
+			Set<OrderedServiceDTO> services = source.getServices();			
 			if (!(services.isEmpty())) {
 				target.setOrderServices(new HashSet<OrderService>());
-				for (BaseObjectDTO srv : services) {
+				for (OrderedServiceDTO srv : services) {
 					Service service = rdDozerMapper.map(srv, Service.class);
 					OrderService orderService = new OrderService();
 					orderService.setService(service);
 					orderService.setOrder(target);
+					orderService.setAddedreason((srv.getAddedReason() != null) ? srv.getAddedReason() : null);
+					orderService.setCanceledreason((srv.getCancelReason() != null) ? srv.getCancelReason() : null);
 					target.getOrderServices().add(orderService);
 				}
 			}

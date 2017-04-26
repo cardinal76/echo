@@ -41,6 +41,13 @@
 			<artifactId>dozer-spring</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- javax -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>javassist</groupId>
