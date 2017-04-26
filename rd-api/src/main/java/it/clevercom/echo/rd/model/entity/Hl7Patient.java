@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 19-apr-2017 22.11.14 by Hibernate Tools 5.2.2.Final
+// Generated 26-apr-2017 17.35.35 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -16,7 +16,6 @@ import org.hibernate.annotations.DynamicUpdate;
 import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -27,7 +26,6 @@ import org.hibernate.annotations.Parameter;
 @DynamicUpdate
 @DynamicInsert
 @Table(name="rd_hl7_patient"
-    , uniqueConstraints = @UniqueConstraint(columnNames={"idhl7authoritypatient", "idauthoritynamespaceid"}) 
 )
 public class Hl7Patient  extends AbstractJpaEchoEntity implements java.io.Serializable {
 

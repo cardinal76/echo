@@ -513,7 +513,7 @@ public class Order_rd_Controller extends EchoController {
 		
 		// if an entity with given id is not found in DB throw record not found
 		if (entity == null)
-			throw new RecordNotFoundException(entity_name, entity_id, entity.getIdorder().toString());
+			throw new RecordNotFoundException(entity_name, entity_id, id.toString());
 		
 		// validate create request
 		orderValidator.validateDeleteRequest(entity, rejectReason, cancelReason);
