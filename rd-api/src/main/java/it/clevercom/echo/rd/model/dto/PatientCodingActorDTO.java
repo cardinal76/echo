@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.model.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"created","updated","userupdate","active"})
 public class PatientCodingActorDTO implements Serializable {
 	private static final long serialVersionUID = 8406499008795319267L;
 

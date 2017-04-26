@@ -225,7 +225,7 @@ public class OrderValidator {
 		}
 		
 		// identification document must not be present here
-		if (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(order.getIdentificationdocument())) {
+		if (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(order.getIdentificationDocument())) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.identificationdocument"), 
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}

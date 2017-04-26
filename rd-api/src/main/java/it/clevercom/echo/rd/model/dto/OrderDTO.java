@@ -7,8 +7,10 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userUpdate","active"})
-public class OrderDTO implements Serializable {
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+
+@JsonIgnoreProperties({"created","updated","userUpdate","active","idd"})
+public class OrderDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = 3464811952700440696L;
 
 	private Long idOrder;
@@ -36,7 +38,7 @@ public class OrderDTO implements Serializable {
 	private Boolean active;
 	private Set<OrderedServiceDTO> services = new HashSet<OrderedServiceDTO>(0);
 	private Set<OrderedServiceDTO> canceledServices = new HashSet<OrderedServiceDTO>();
-    private String identificationdocument;
+    private String identificationDocument;
     private Long executingDate;
     private Long executedDate;
     private Long reportingDate;
@@ -382,21 +384,21 @@ public class OrderDTO implements Serializable {
 	public void setCancelReason(String cancelReason) {
 		this.cancelReason = cancelReason;
 	}
-
-	/**
-	 * @return the identificationdocument
-	 */
-	public String getIdentificationdocument() {
-		return identificationdocument;
-	}
-
-	/**
-	 * @param identificationdocument the identificationdocument to set
-	 */
-	public void setIdentificationdocument(String identificationdocument) {
-		this.identificationdocument = identificationdocument;
-	}
 	
+	/**
+	 * @return the identificationDocument
+	 */
+	public String getIdentificationDocument() {
+		return identificationDocument;
+	}
+
+	/**
+	 * @param identificationDocument the identificationDocument to set
+	 */
+	public void setIdentificationDocument(String identificationDocument) {
+		this.identificationDocument = identificationDocument;
+	}
+
 	/**
 	 * @return the executingDate
 	 */
@@ -528,5 +530,10 @@ public class OrderDTO implements Serializable {
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	@Override
+	public Object getIdd() {
+		return idOrder;
 	}
 }

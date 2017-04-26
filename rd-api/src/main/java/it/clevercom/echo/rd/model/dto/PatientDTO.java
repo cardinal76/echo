@@ -7,8 +7,10 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userUpdate","active"})
-public class PatientDTO implements Serializable {
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+
+@JsonIgnoreProperties({"created","updated","userUpdate","active","idd"})
+public class PatientDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = 8178223709710995097L;
 	
 	private Long idPatient;	
@@ -380,6 +382,11 @@ public class PatientDTO implements Serializable {
 	 */
 	public void setFullname(String fullname) {
 		this.fullname = fullname;
+	}
+
+	@Override
+	public Object getIdd() {
+		return idPatient;
 	}
 	
 }

@@ -5,8 +5,10 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userUpdate","active"})
-public class ServiceDTO implements Serializable {
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+
+@JsonIgnoreProperties({"created","updated","userUpdate","active","idd"})
+public class ServiceDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = -1545199145120818140L;
 	
 	private Long idService;
@@ -196,5 +198,10 @@ public class ServiceDTO implements Serializable {
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	@Override
+	public Object getIdd() {
+		return idService;
 	}
 }

@@ -28,6 +28,7 @@ import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
@@ -213,6 +214,36 @@ public class AppSetting_rd_Controller extends EchoController {
 		
 		// return response
 		return response;
+	}
+	
+	/**
+	 * Update an application setting
+	 * @param appSetting
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(value="update", method = RequestMethod.PUT)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	@Deprecated
+	public @ResponseBody UpdateResponseDTO<AppSettingDTO> update2(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) throws Exception {
+		UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
+				new UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
+						rdDozerMapper,
+						IAppSetting_rd_Repository.class,
+						AppSettingDTO.class, 
+						AppSetting.class,
+						entity_name,
+						entity_id,
+						getLoggedUser(request), 
+						appSetting, 
+						env, 
+						Long.class);
+		
+		// return response
+		return rp.process();
 	}
 	
 	/**
