@@ -105,8 +105,11 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			if (!(orderServices.isEmpty())) {
 				target.setServices(new HashSet<OrderedServiceDTO>());
 				target.setCanceledServices(new HashSet<OrderedServiceDTO>());
+				
+				int i = 0;
 				for (OrderService orderService : orderServices) {
-					target.setMasterModalityType(rdDozerMapper.map(orderService.getService().getModalityType(), BaseObjectDTO.class));
+					if (i==0)
+						target.setMasterModalityType(rdDozerMapper.map(orderService.getService().getModalityType(), BaseObjectDTO.class));
 					
 					if (orderService.getActive().equals(Boolean.TRUE)) {
 						BaseObjectDTO dto_s = rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class);
@@ -123,6 +126,7 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 						
 						target.getCanceledServices().add(dto);
 					}
+					i++;
 				}
 			}
 			

@@ -5,19 +5,20 @@ import java.util.Map;
 
 public enum WorkStatusEnum {
 	
-    REQUESTED("REQ"),
-    SCHEDULED("SCH"),
-    ACCEPTED("ACC"),
-    EXECUTING("EXE1"),
-    EXECUTED("EXE2"),
-    REPORTING("REP1"),
-    REPORTED("REP2"),
-    SIGNED("SIG"),
-    DELIVERED("DEL"),
-    ARCHIVED("ARC"),
-    CANCELED("CAN");
+    REQUESTED("REQ",1),
+    SCHEDULED("SCH",2),
+    ACCEPTED("ACC",3),
+    EXECUTING("EXE1",4),
+    EXECUTED("EXE2",5),
+    REPORTING("REP1",6),
+    REPORTED("REP2",7),
+    SIGNED("SIG",8),
+    DELIVERED("DEL",9),
+    ARCHIVED("ARC",10),
+    CANCELED("CAN",11);
 	
 	private String code;
+	private int order;
     private static Map<String, WorkStatusEnum> codeValueMap = new HashMap<String, WorkStatusEnum>(11);
 
     static
@@ -31,8 +32,9 @@ public enum WorkStatusEnum {
     /**
      * @param code
      */
-    WorkStatusEnum(String code) {
+    WorkStatusEnum(String code,int order) {
         this.code = code;
+        this.order = order;
     }
 
     /**
@@ -41,6 +43,14 @@ public enum WorkStatusEnum {
     public String code() {
         return code;
     }
+    
+    /**
+     * @return
+     */
+    public int order() {
+        return order;
+    }
+    
 
     /**
      * @param test

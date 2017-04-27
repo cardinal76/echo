@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -405,18 +406,27 @@ public class OrderValidator {
 				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), entity_s_name, oldModalityName, oldModalityType));
 			}
 			
-//			// TODO add fix to RD_005 (L'elenco degli esami può essere modificato fintanto che l'ordine non transiterà nello stato di esecuzione)
-//			Set<OrderService> service = orderToUpdate.getOrderServices();
-//			for (OrderService orderService : service) {
-//				//order
-//				rdDozerMapper.map(orderService, OrderedServiceDTO.class);
-//			}
-//			
-//			if (!updatedOrder.getServices().equals(null)) {
-//				if (WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).equals(WorkStatusEnum.EXECUTING)) {
-//					
-//				}
-//			}
+			// TODO added fix to RD_005
+			Set<OrderService> orderServices = orderToUpdate.getOrderServices();
+			Set<OrderedServiceDTO> services = new HashSet<OrderedServiceDTO>();
+			for (OrderService orderService : orderServices) {				
+				if (orderService.getActive().equals(Boolean.TRUE)) {
+					BaseObjectDTO dto_s = rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class);
+					OrderedServiceDTO dto = rdDozerMapper.map(dto_s, OrderedServiceDTO.class);
+					dto.setAddedReason(orderService.getAddedreason() != null ? orderService.getAddedreason() : null);
+					dto.setCancelReason(orderService.getCanceledreason() != null ? orderService.getCanceledreason() : null);
+					
+					services.add(dto);
+				}
+			}
+			
+			if ((updatedOrder.getServices().hashCode() != services.hashCode()) && 
+					WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() > WorkStatusEnum.ACCEPTED.order()) {
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
+								entity_name, 
+								env.getProperty("echo.api.crud.fields.service")));
+			}
 		}
 		
 		// ------------------------
