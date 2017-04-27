@@ -29,7 +29,7 @@ public class WorkReportDTO extends AbstractEchoDTO implements Serializable {
 	
 	@Override
 	public Object getIdd() {
-		return idWorkReport;
+		return getIdWorkReport();
 	}
 
 	/**
@@ -200,4 +200,5 @@ public class WorkReportDTO extends AbstractEchoDTO implements Serializable {
 		this.active = active;
 	}
 
+	
 }

@@ -41,21 +41,7 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	 * @param dto
 	 * @param env
 	 */
-	public UpdateRequestProcessor(
-			// repository that performs create operation
-			I repository, 
-			// mapper that performs conversion
-			DozerBeanMapper mapper, 
-			// entity friendly name
-			String entity_name,
-			 // entity id name
-			String entity_id,
-			 // user that create record
-			String updatedUser,
-			// dto to persist
-			D dto,
-			// environment
-			Environment env) {
+	public UpdateRequestProcessor(I repository, DozerBeanMapper mapper, String entity_name, String entity_id, String updatedUser, D dto, Environment env) {
 		super();
 		// repository
 		this.repository = repository;
@@ -88,7 +74,7 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	 * @throws InvocationTargetException
 	 * @throws RecordNotFoundException
 	 */
-	public UpdateResponseDTO<D> process () throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, RecordNotFoundException {
+	public UpdateResponseDTO<D> process() throws Exception {
 		// get method with reflection
 	    Method method = repoClazz.getMethod("findOne", Serializable.class);
 	    
@@ -112,6 +98,56 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 
 		// add technical field
 		oldValueEntity.setUserupdate(updatedUser);
+		
+		// save and map to out dto
+		E newValueEntity = repository.saveAndFlush(oldValueEntity);
+		D newValueDTO = mapper.map(newValueEntity, dtoClazz);
+				
+		// create standard response
+		UpdateResponseDTO<D> response = new UpdateResponseDTO<D>();
+		response.setEntityName(entity_name);
+		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
+		
+		// add new dtos values
+		List<D> newDTOs = new ArrayList<D>();
+		newDTOs.add(newValueDTO);
+		response.setNewValue(newDTOs);
+		
+		// add old dtos values
+		List<D> oldDTOs = new ArrayList<D>();
+		oldDTOs.add(oldValueDTO);
+		response.setOldValue(oldDTOs);
+
+		return response;
+	}
+	
+	/**
+	 * @param enabled
+	 * @return
+	 * @throws Exception
+	 */
+	public UpdateResponseDTO<D> enable(boolean enabled) throws Exception {
+		// get method with reflection
+	    Method method = repoClazz.getMethod("findOne", Serializable.class);
+	    
+	    // cast id to serializable
+	    Serializable id = (Serializable) idClazz.cast(dto.getIdd());
+	    
+	    // invoke method with reflection and cast result to E
+	    E oldValueEntity = (E) method.invoke(repository, id);
+	    
+	    // if an entity with given id is not found in DB throw record not found
+	    if (oldValueEntity==null) {
+	    	logger.error(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, id.toString()));
+	    	throw new RecordNotFoundException(entity_name, entity_id, dto.getIdd().toString());
+	    }
+		
+		// map old value to a dto
+		D oldValueDTO = mapper.map(oldValueEntity, dtoClazz);
+		
+		// add technical field
+		oldValueEntity.setUserupdate(updatedUser);
+		oldValueEntity.setActive(enabled);
 		
 		// save and map to out dto
 		E newValueEntity = repository.saveAndFlush(oldValueEntity);

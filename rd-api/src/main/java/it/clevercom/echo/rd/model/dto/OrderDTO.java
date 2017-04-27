@@ -534,6 +534,6 @@ public class OrderDTO extends AbstractEchoDTO implements Serializable {
 
 	@Override
 	public Object getIdd() {
-		return idOrder;
+		return getIdOrder();
 	}
 }

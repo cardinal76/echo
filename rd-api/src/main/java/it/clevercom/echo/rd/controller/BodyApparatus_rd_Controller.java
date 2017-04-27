@@ -1,16 +1,12 @@
 package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,14 +21,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.controller.EchoController;
-import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
-import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.BodyApparatusDTO;
 import it.clevercom.echo.rd.model.entity.BodyApparatus;
@@ -60,18 +56,12 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
 	
-	@Value("${jwt.token.header}")
-	private String tokenHeader;
-	
-	@Autowired
-	private JwtTokenUtils tokenUtils;
-	
 	@Autowired
 	private Validator validator;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
-	// used to bind it in exception message
+	// used to bind entity name and id in exception message
 	private static String entity_name = "BodyApparatus";
 	private static String entity_id = "idbodyapparatus";
 
@@ -86,8 +76,20 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody BodyApparatusDTO get(@PathVariable Long id) throws Exception {
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting"), entity_name, entity_id, id.toString()));
+		
+		// find entity
 		BodyApparatus entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		
+		// check if entity has been found
+		if (entity == null) {
+			logger.warn(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, id.toString()));
+			throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		}
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.returning.response"), entity_name, entity_id, id.toString()));
 		return rdDozerMapper.map(entity, BodyApparatusDTO.class);
 	}
 	
@@ -112,6 +114,9 @@ public class BodyApparatus_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="code", required=false) String field) throws Exception {
 		
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+				
 		// check enum string params
 		validator.validateSort(sort);
 		
@@ -126,6 +131,9 @@ public class BodyApparatus_rd_Controller extends EchoController {
 						page, 
 						size,
 						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
 		return rp.process();	
@@ -143,30 +151,26 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody CreateResponseDTO<BodyApparatusDTO> add(@RequestBody BodyApparatusDTO bodyapparatus, HttpServletRequest request) throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// map
-		BodyApparatus entity = rdDozerMapper.map(bodyapparatus, BodyApparatus.class);
+		// validate
+				
+		// create the processor
+		CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
+				new CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
+						rdDozerMapper, 
+						BodyApparatus.class, 
+						entity_name, 
+						getLoggedUser(request), 
+						bodyapparatus,
+						env);
 		
-		// add technical field
-		entity.setUserupdate(username);
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name, entity_id, bodyapparatus.getIdd().toString()));
 		
-		// save and map to out dto
-		entity = repo.saveAndFlush(entity);
-		bodyapparatus = rdDozerMapper.map(entity, BodyApparatusDTO.class);
-		
-		// create standard response
-		CreateResponseDTO<BodyApparatusDTO> response = new CreateResponseDTO<BodyApparatusDTO>();
-		response.setEntityName(entity_name);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
-		List<BodyApparatusDTO> bodyApparatusDTOs = new ArrayList<BodyApparatusDTO>();
-		bodyApparatusDTOs.add(bodyapparatus);
-		response.setNewValue(bodyApparatusDTOs);
-		
-		// return standard response
-		return response;
+		// process
+		return rp.process();
 	}
 	
 	/**
@@ -181,49 +185,27 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody UpdateResponseDTO<BodyApparatusDTO> update(@RequestBody BodyApparatusDTO bodyApparatus, HttpServletRequest request) throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// if an id is not present throw bad request
-		if(bodyApparatus.getIdbodyapparatus()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), entity_name));
-		
-		// find entity to update (oldValue)
-		BodyApparatus oldValueEntity = repo.findOne(bodyApparatus.getIdbodyapparatus()); 
-		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity==null) throw new RecordNotFoundException(entity_name, entity_id, bodyApparatus.getIdbodyapparatus().toString());
-		// get created date
-		Date created = oldValueEntity.getCreated();
-		// map old value to a dto
-		BodyApparatusDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, BodyApparatusDTO.class);
+		// validate that username can perform the requested operation on appSetting
+		validator.validateIdd(bodyApparatus, entity_name);
 
-		// begin update of oldValue
-		rdDozerMapper.map(bodyApparatus, oldValueEntity);
+		// create processor
+		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
+				new UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
+						rdDozerMapper,
+						entity_name,
+						entity_id,
+						getLoggedUser(request), 
+						bodyApparatus, 
+						env);
 		
-		// add technical field
-		oldValueEntity.setUserupdate(username);
-		oldValueEntity.setUpdated(new Date());
-		oldValueEntity.setCreated(created);
-		
-		// save and map to out dto
-		BodyApparatus newValueEntity = repo.saveAndFlush(oldValueEntity);
-		BodyApparatusDTO newValueDTO = rdDozerMapper.map(newValueEntity, BodyApparatusDTO.class);
-				
-		// create standard response
-		UpdateResponseDTO<BodyApparatusDTO> response = new UpdateResponseDTO<BodyApparatusDTO>();
-		response.setEntityName(entity_name);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
-		// add new dtos values
-		List<BodyApparatusDTO> newBodyApparatusDTOs = new ArrayList<BodyApparatusDTO>();
-		newBodyApparatusDTOs.add(newValueDTO);
-		response.setNewValue(newBodyApparatusDTOs);
-		// add old dtos values
-		List<BodyApparatusDTO> oldBodyApparatusDTOs = new ArrayList<BodyApparatusDTO>();
-		oldBodyApparatusDTOs.add(oldValueDTO);
-		response.setOldValue(oldBodyApparatusDTOs);
-		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, bodyApparatus.getIdd().toString()));
+
 		// return response
-		return response;
+		return rp.process();
 	}
 	
 	/**
@@ -236,7 +218,27 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody String delete(@RequestBody BodyApparatusDTO bodyApparatus, HttpServletRequest request) {
-		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), entity_name);
+	public @ResponseBody UpdateResponseDTO<BodyApparatusDTO> delete(@RequestBody BodyApparatusDTO bodyApparatus, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+				
+		// validate that username can perform the requested operation on appSetting
+		validator.validateIdd(bodyApparatus, entity_name);
+
+		// create processor
+		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
+				new UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
+						rdDozerMapper,
+						entity_name,
+						entity_id,
+						getLoggedUser(request), 
+						bodyApparatus, 
+						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, bodyApparatus.getIdd().toString()));
+
+		// return response
+		return rp.enable(false);
 	}
 }

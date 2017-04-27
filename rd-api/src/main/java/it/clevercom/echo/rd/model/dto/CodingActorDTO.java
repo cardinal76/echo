@@ -5,8 +5,10 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userupdate","active"})
-public class CodingActorDTO implements Serializable {
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+
+@JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
+public class CodingActorDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = 2747455271900243910L;
 
 	private Long idcodingactor;
@@ -105,5 +107,10 @@ public class CodingActorDTO implements Serializable {
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	@Override
+	public Object getIdd() {
+		return getIdcodingactor();
 	}
 }

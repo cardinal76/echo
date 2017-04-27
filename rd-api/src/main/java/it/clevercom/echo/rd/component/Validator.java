@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.NotAuthorizedException;
 import it.clevercom.echo.common.util.StringUtils;
@@ -85,5 +85,16 @@ public class Validator {
 				throw new NotAuthorizedException(env.getProperty("echo.api.crud.validation.cannotupdate.duetoinvalidauth"));
 			}
 		}
+	}
+	
+	/**
+	 * 
+	 * @param dto
+	 * @throws BadRequestException 
+	 */
+	public void validateIdd (AbstractEchoDTO dto, String entity_name) throws BadRequestException {
+		// if an id is not present throw bad request
+		if(dto.getIdd()==null) 
+			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), entity_name));
 	}
 }

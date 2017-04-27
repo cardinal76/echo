@@ -5,8 +5,10 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userupdate","active"})
-public class ModalityTypeDTO implements Serializable {
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+
+@JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
+public class ModalityTypeDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = 3406464325790754778L;
 
 	private Long idmodalitytype;
@@ -119,5 +121,10 @@ public class ModalityTypeDTO implements Serializable {
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	@Override
+	public Object getIdd() {
+		return getIdmodalitytype();
 	}
 }

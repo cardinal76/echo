@@ -137,6 +137,6 @@ public class WorkPriorityDTO extends AbstractEchoDTO implements Serializable {
 
 	@Override
 	public Object getIdd() {
-		return idworkpriority;
+		return getIdworkpriority();
 	}
 }

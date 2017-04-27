@@ -35,8 +35,7 @@ public class WorkTaskDTO extends AbstractEchoDTO implements Serializable {
 	
 	@Override
 	public Object getIdd() {
-		// TODO Auto-generated method stub
-		return idWorkTask;
+		return getIdWorkTask();
 	}
 
 	/**

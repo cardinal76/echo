@@ -290,6 +290,6 @@ public class OrganizationUnitDTO extends AbstractEchoDTO implements Serializable
 
 	@Override
 	public Object getIdd() {
-		return idorganizationunit;
+		return getIdorganizationunit();
 	}
 }

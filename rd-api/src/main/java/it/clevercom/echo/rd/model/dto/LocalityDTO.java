@@ -1,6 +1,10 @@
 package it.clevercom.echo.rd.model.dto;
 
-public class LocalityDTO {
+import java.io.Serializable;
+
+public class LocalityDTO implements Serializable {
+	private static final long serialVersionUID = -5982900553259729774L;
+	
 	private BaseObjectDTO country;
 	private BaseObjectDTO region;
 	private BaseObjectDTO province;

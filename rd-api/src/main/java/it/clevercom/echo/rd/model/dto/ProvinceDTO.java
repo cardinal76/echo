@@ -155,7 +155,7 @@ public class ProvinceDTO extends AbstractEchoDTO implements Serializable {
 
 	@Override
 	public Object getIdd() {
-		return idprovince;
+		return getIdprovince();
 	}
 	
 }

@@ -151,6 +151,6 @@ public class PatientSmartDTO extends AbstractEchoDTO implements Serializable {
 
 	@Override
 	public Object getIdd() {
-		return idPatient;
+		return getIdPatient();
 	}
 }

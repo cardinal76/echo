@@ -202,6 +202,6 @@ public class ServiceDTO extends AbstractEchoDTO implements Serializable {
 
 	@Override
 	public Object getIdd() {
-		return idService;
+		return getIdService();
 	}
 }

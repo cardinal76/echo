@@ -6,9 +6,11 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-@JsonIgnoreProperties({"created","updated","userupdate","active"})
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+
+@JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CountryDTO implements Serializable {
+public class CountryDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = 41850689146052393L;
 	
 	private Long idcountry;
@@ -180,5 +182,10 @@ public class CountryDTO implements Serializable {
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	@Override
+	public Object getIdd() {
+		return getIdcountry();
 	}
 }

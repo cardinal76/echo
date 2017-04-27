@@ -5,8 +5,10 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties({"created","updated","userupdate","active"})
-public class BodyApparatusDTO implements Serializable {
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+
+@JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
+public class BodyApparatusDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = -9001955080302115293L;
 	
 	private Long idbodyapparatus;
@@ -134,5 +136,10 @@ public class BodyApparatusDTO implements Serializable {
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	@Override
+	public Object getIdd() {
+		return getIdbodyapparatus();
 	}
 }

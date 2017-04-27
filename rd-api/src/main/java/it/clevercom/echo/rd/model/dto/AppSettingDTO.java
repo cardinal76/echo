@@ -182,7 +182,7 @@ public class AppSettingDTO extends AbstractEchoDTO implements Serializable {
 
 	@Override
 	public Object getIdd() {
-		return idappsetting;
+		return getIdappsetting();
 	}
 
 }

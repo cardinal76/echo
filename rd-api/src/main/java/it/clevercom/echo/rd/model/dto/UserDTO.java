@@ -231,6 +231,6 @@ public class UserDTO extends AbstractEchoDTO implements Serializable {
 
 	@Override
 	public Object getIdd() {
-		return username;
+		return getUsername();
 	}
 }

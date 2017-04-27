@@ -148,6 +148,6 @@ public class RegionDTO extends AbstractEchoDTO implements Serializable {
 
 	@Override
 	public Object getIdd() {
-		return idregion;
+		return getIdregion();
 	}
 }

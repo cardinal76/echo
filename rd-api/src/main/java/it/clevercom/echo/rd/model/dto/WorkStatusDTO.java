@@ -38,8 +38,7 @@ public class WorkStatusDTO extends AbstractEchoDTO implements Serializable {
 	}
 
 	/**
-	 * @param idworkstatus
-	 *            the idworkstatus to set
+	 * @param idworkstatus the idworkstatus to set
 	 */
 	public void setIdworkstatus(Long idworkstatus) {
 		this.idworkstatus = idworkstatus;
@@ -68,8 +67,7 @@ public class WorkStatusDTO extends AbstractEchoDTO implements Serializable {
 	}
 
 	/**
-	 * @param description
-	 *            the description to set
+	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -83,8 +81,7 @@ public class WorkStatusDTO extends AbstractEchoDTO implements Serializable {
 	}
 
 	/**
-	 * @param created
-	 *            the created to set
+	 * @param created the created to set
 	 */
 	public void setCreated(Date created) {
 		this.created = created;
@@ -98,8 +95,7 @@ public class WorkStatusDTO extends AbstractEchoDTO implements Serializable {
 	}
 
 	/**
-	 * @param updated
-	 *            the updated to set
+	 * @param updated the updated to set
 	 */
 	public void setUpdated(Date updated) {
 		this.updated = updated;
@@ -113,8 +109,7 @@ public class WorkStatusDTO extends AbstractEchoDTO implements Serializable {
 	}
 
 	/**
-	 * @param userupdate
-	 *            the userupdate to set
+	 * @param userupdate the userupdate to set
 	 */
 	public void setUserupdate(String userupdate) {
 		this.userupdate = userupdate;
@@ -128,8 +123,7 @@ public class WorkStatusDTO extends AbstractEchoDTO implements Serializable {
 	}
 
 	/**
-	 * @param active
-	 *            the active to set
+	 * @param active the active to set
 	 */
 	public void setActive(Boolean active) {
 		this.active = active;
@@ -137,6 +131,6 @@ public class WorkStatusDTO extends AbstractEchoDTO implements Serializable {
 
 	@Override
 	public Object getIdd() {
-		return idworkstatus;
+		return getIdworkstatus();
 	}
 }

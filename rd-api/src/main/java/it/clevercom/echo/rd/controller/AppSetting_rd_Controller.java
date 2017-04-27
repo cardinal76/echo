@@ -177,7 +177,7 @@ public class AppSetting_rd_Controller extends EchoController {
 						env);
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name, entity_id, appSetting.getIdappsetting()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name, entity_id, appSetting.getIdd().toString()));
 		
 		// process
 		return rp.process();
@@ -200,7 +200,8 @@ public class AppSetting_rd_Controller extends EchoController {
 		
 		// validate that username can perform the requested operation on appSetting
 		validator.validateUsername(getLoggedUser(request), appSetting);
-		
+		validator.validateIdd(appSetting, entity_name);
+
 		// create processor
 		UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
 				new UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
@@ -212,7 +213,7 @@ public class AppSetting_rd_Controller extends EchoController {
 						env);
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, appSetting.getIdappsetting()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, appSetting.getIdd().toString()));
 
 		// return response
 		return rp.process();

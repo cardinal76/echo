@@ -26,7 +26,7 @@ public class WorkSessionDTO extends AbstractEchoDTO implements Serializable {
 	
 	@Override
 	public Object getIdd() {
-		return idWorkSession;
+		return getIdWorkSession();
 	}
 
 	/**

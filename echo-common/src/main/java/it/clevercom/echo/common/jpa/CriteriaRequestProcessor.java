@@ -137,32 +137,4 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 	public void setSpecification(Specification<E> specification) {
 		this.specification = specification;
 	}
-
-	/**
-	 * @return the pageable
-	 */
-	public Pageable getPageable() {
-		return pageable;
-	}
-
-	/**
-	 * @param pageable the pageable to set
-	 */
-	public void setPageable(Pageable pageable) {
-		this.pageable = pageable;
-	}
-
-	/**
-	 * @return the repository
-	 */
-	public I getRepository() {
-		return repository;
-	}
-
-	/**
-	 * @param repository the repository to set
-	 */
-	public void setRepository(I repository) {
-		this.repository = repository;
-	}
 }

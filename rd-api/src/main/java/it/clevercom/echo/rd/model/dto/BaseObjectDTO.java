@@ -2,10 +2,14 @@ package it.clevercom.echo.rd.model.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import it.clevercom.echo.common.dto.AbstractEchoDTO;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BaseObjectDTO implements Serializable {
+@JsonIgnoreProperties({"idd"})
+public class BaseObjectDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = -6326932178674963831L;
 	
 	private String id;
@@ -125,5 +129,10 @@ public class BaseObjectDTO implements Serializable {
 	@Override
 	public String toString() {
 		return "[id=" + id + ", name=" + name + ", code=" + "code" + "]";
+	}
+
+	@Override
+	public Object getIdd() {
+		return getId();
 	}	
 }
