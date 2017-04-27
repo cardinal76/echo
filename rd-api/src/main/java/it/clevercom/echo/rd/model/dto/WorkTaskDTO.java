@@ -20,10 +20,6 @@ public class WorkTaskDTO extends AbstractEchoDTO implements Serializable {
 	private String studyId;
 	private String studyUuid;
 	private UserDTO user;
-	private Date created;
-	private Date updated;
-	private String userupdate;
-	private Boolean active;
 	private Long executingDate;
 	private Long reportingDate;
 	private Long reportedDate;
@@ -32,6 +28,11 @@ public class WorkTaskDTO extends AbstractEchoDTO implements Serializable {
 	private String reportingNote;
 	private String reportedNote;
 
+	private Date created;
+	private Date updated;
+	private String userupdate;
+	private Boolean active;
+	
 	@Override
 	public Object getIdd() {
 		// TODO Auto-generated method stub
