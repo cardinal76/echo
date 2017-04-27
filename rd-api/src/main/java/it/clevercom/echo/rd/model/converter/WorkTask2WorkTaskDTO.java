@@ -46,7 +46,7 @@ public class WorkTask2WorkTaskDTO implements CustomConverter, MapperAware {
 			target.setExecutingDate(source.getExecutingdate()!=null ? source.getExecutingdate().getTime() : null);
 			target.setExecutingNote(source.getExecutingnote()!=null ? source.getExecutingnote() : null);
 			target.setIdWorkTask(source.getIdworktask());
-			target.setModality(rdDozerMapper.map(source, ModalityDTO.class));
+			//target.setModality(rdDozerMapper.map(source, ModalityDTO.class));
 			target.setReportedDate(source.getReporteddate() != null ? source.getReporteddate().getTime() : null);
 			target.setReportedNote(source.getReportednote() != null ? source.getReportednote() : null);
 			target.setReportingDate(source.getReportingdate() != null ? source.getReportingdate().getTime() : null);
@@ -83,7 +83,7 @@ public class WorkTask2WorkTaskDTO implements CustomConverter, MapperAware {
 			target.setExecutingnote(source.getExecutingNote() != null ? source.getExecutingNote() : null);
 			target.setIdworktask(source.getIdWorkTask());
 			
-			target.setModality(rdDozerMapper.map(source.getModality(),Modality.class));
+			//target.setModality(rdDozerMapper.map(source.getModality(),Modality.class));
 			target.setReporteddate(source.getReportedDate() != null ? new Date(source.getReportedDate()) : null);
 			target.setReportednote(source.getReportedNote() != null ? source.getReportedNote() : null);
 			target.setReportingdate(source.getReportingDate() != null ? new Date(source.getReportingDate()) : null);

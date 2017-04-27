@@ -14,6 +14,18 @@
 				<class-a>it.clevercom.echo.rd.model.entity.Order</class-a>
 				<class-b>it.clevercom.echo.rd.model.entity.OrderLog</class-b>
 			</converter>
+			<converter type="it.clevercom.echo.rd.model.converter.WorkSession2WorkSessionDTO">
+				<class-a>it.clevercom.echo.rd.model.entity.WorkSession</class-a>
+				<class-b>it.clevercom.echo.rd.model.dto.WorkSessionDTO</class-b>
+			</converter>
+			<converter type="it.clevercom.echo.rd.model.converter.WorkTask2WorkTaskDTO">
+				<class-a>it.clevercom.echo.rd.model.entity.WorkTask</class-a>
+				<class-b>it.clevercom.echo.rd.model.dto.WorkTaskDTO</class-b>
+			</converter>
+			<converter type="it.clevercom.echo.rd.model.converter.WorkReport2WorkReportDTO">
+				<class-a>it.clevercom.echo.rd.model.entity.WorkReport</class-a>
+				<class-b>it.clevercom.echo.rd.model.dto.WorkReportDTO</class-b>
+			</converter>
 		</custom-converters>
 	</configuration>
 
