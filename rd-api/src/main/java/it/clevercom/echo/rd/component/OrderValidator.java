@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -404,10 +405,17 @@ public class OrderValidator {
 				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), entity_s_name, oldModalityName, oldModalityType));
 			}
 			
-			// TODO add fix to RD_005 (L'elenco degli esami può essere modificato fintanto che l'ordine non transiterà nello stato di esecuzione)
-			
-//			if (!updatedOrder.getServices().equals(o)) && ()) {
-//				
+//			// TODO add fix to RD_005 (L'elenco degli esami può essere modificato fintanto che l'ordine non transiterà nello stato di esecuzione)
+//			Set<OrderService> service = orderToUpdate.getOrderServices();
+//			for (OrderService orderService : service) {
+//				//order
+//				rdDozerMapper.map(orderService, OrderedServiceDTO.class);
+//			}
+//			
+//			if (!updatedOrder.getServices().equals(null)) {
+//				if (WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).equals(WorkStatusEnum.EXECUTING)) {
+//					
+//				}
 //			}
 		}
 		

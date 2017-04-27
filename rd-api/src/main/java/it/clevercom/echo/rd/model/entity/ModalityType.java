@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 27-apr-2017 10.34.01 by Hibernate Tools 5.2.2.Final
+// Generated 27-apr-2017 11.40.51 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.HashSet;
@@ -30,6 +30,7 @@ public class ModalityType  extends AbstractJpaEchoEntity implements java.io.Seri
 
      private Long idmodalitytype;
      private String type;
+     private Set<Modality> modalities = new HashSet<Modality>(0);
      private Set<Service> services = new HashSet<Service>(0);
 
     public ModalityType() {
@@ -39,8 +40,9 @@ public class ModalityType  extends AbstractJpaEchoEntity implements java.io.Seri
     public ModalityType(String type) {
         this.type = type;
     }
-    public ModalityType(String type, Set<Service> services) {
+    public ModalityType(String type, Set<Modality> modalities, Set<Service> services) {
        this.type = type;
+       this.modalities = modalities;
        this.services = services;
     }
    
@@ -64,6 +66,15 @@ public class ModalityType  extends AbstractJpaEchoEntity implements java.io.Seri
     
     public void setType(String type) {
         this.type = type;
+    }
+
+@OneToMany(fetch=FetchType.LAZY, mappedBy="modalityType")
+    public Set<Modality> getModalities() {
+        return this.modalities;
+    }
+    
+    public void setModalities(Set<Modality> modalities) {
+        this.modalities = modalities;
     }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="modalityType")
