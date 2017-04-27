@@ -14,6 +14,7 @@ import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.UserDTO;
 import it.clevercom.echo.rd.model.dto.WorkReportDTO;
 import it.clevercom.echo.rd.model.dto.WorkTaskDTO;
+import it.clevercom.echo.rd.model.entity.User;
 import it.clevercom.echo.rd.model.entity.WorkReport;
 import it.clevercom.echo.rd.model.entity.WorkReportUser;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
@@ -80,13 +81,12 @@ public class WorkReport2WorkReportDTO implements CustomConverter, MapperAware {
 			target.setCreationdate((source.getCreationDate()!=0) ? new Date(source.getCreationDate()) : null);
 			target.setCompletiondate((source.getCompletionDate()!=0) ? new Date(source.getCompletionDate()) : null);
 			target.setBody(source.getBody());
-			// FIXME
 			if ((source.getWorkReportUsers() != null) && (source.getWorkReportUsers().size() > 0)) {
-				Set<WorkReportUser> users = new HashSet<WorkReportUser>();
+				Set<WorkReportUser> workReportUsers = new HashSet<WorkReportUser>();
 				for (UserDTO element : source.getWorkReportUsers()) {
-					users.add(rdDozerMapper.map(element, WorkReportUser.class));
+					workReportUsers.add(new WorkReportUser(rdDozerMapper.map(element, User.class), null));
 				}
-				target.setWorkReportUsers(users);
+				target.setWorkReportUsers(workReportUsers);
 			}
 			
 			target.setActive(source.getActive());
