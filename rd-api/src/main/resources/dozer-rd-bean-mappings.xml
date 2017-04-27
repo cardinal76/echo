@@ -200,7 +200,9 @@
 		</field-exclude>
 	</mapping>
 	
+	<!-- ******************* -->
 	<!-- base object mapping -->
+	<!-- ******************* -->
 	
 	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.ModalityType</class-a>
@@ -389,4 +391,8 @@
 			<b>name</b>
 		</field>
 	</mapping>
+	
+	<!-- *********************** -->
+	<!-- end base object mapping -->
+	<!-- *********************** -->
 </mappings>
