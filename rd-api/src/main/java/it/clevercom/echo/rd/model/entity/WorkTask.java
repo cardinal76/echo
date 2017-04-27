@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 26-apr-2017 17.35.35 by Hibernate Tools 5.2.2.Final
+// Generated 27-apr-2017 10.34.01 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -42,9 +42,16 @@ public class WorkTask  extends AbstractJpaEchoEntity implements java.io.Serializ
      private WorkStatus workStatus;
      private Long accessionnumber;
      private Date scheduleddate;
-     private Date executiondate;
+     private Date executeddate;
      private String studyuuid;
      private String studyid;
+     private Date executingdate;
+     private Date reportingdate;
+     private Date reporteddate;
+     private String executingnote;
+     private String executednote;
+     private String reportednote;
+     private String reportingnote;
      private Set<WorkReport> workReports = new HashSet<WorkReport>(0);
      private Set<WorkTaskLog> workTaskLogs = new HashSet<WorkTaskLog>(0);
 
@@ -63,7 +70,7 @@ public class WorkTask  extends AbstractJpaEchoEntity implements java.io.Serializ
         this.scheduleddate = scheduleddate;
         this.studyuuid = studyuuid;
     }
-    public WorkTask(Modality modality, Service service, User user, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, Long accessionnumber, Date scheduleddate, Date executiondate, String studyuuid, String studyid, Set<WorkReport> workReports, Set<WorkTaskLog> workTaskLogs) {
+    public WorkTask(Modality modality, Service service, User user, WorkPriority workPriority, WorkSession workSession, WorkStatus workStatus, Long accessionnumber, Date scheduleddate, Date executeddate, String studyuuid, String studyid, Date executingdate, Date reportingdate, Date reporteddate, String executingnote, String executednote, String reportednote, String reportingnote, Set<WorkReport> workReports, Set<WorkTaskLog> workTaskLogs) {
        this.modality = modality;
        this.service = service;
        this.user = user;
@@ -72,9 +79,16 @@ public class WorkTask  extends AbstractJpaEchoEntity implements java.io.Serializ
        this.workStatus = workStatus;
        this.accessionnumber = accessionnumber;
        this.scheduleddate = scheduleddate;
-       this.executiondate = executiondate;
+       this.executeddate = executeddate;
        this.studyuuid = studyuuid;
        this.studyid = studyid;
+       this.executingdate = executingdate;
+       this.reportingdate = reportingdate;
+       this.reporteddate = reporteddate;
+       this.executingnote = executingnote;
+       this.executednote = executednote;
+       this.reportednote = reportednote;
+       this.reportingnote = reportingnote;
        this.workReports = workReports;
        this.workTaskLogs = workTaskLogs;
     }
@@ -172,13 +186,13 @@ public class WorkTask  extends AbstractJpaEchoEntity implements java.io.Serializ
     }
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="executiondate", length=29)
-    public Date getExecutiondate() {
-        return this.executiondate;
+    @Column(name="executeddate", length=29)
+    public Date getExecuteddate() {
+        return this.executeddate;
     }
     
-    public void setExecutiondate(Date executiondate) {
-        this.executiondate = executiondate;
+    public void setExecuteddate(Date executeddate) {
+        this.executeddate = executeddate;
     }
 
     
@@ -199,6 +213,76 @@ public class WorkTask  extends AbstractJpaEchoEntity implements java.io.Serializ
     
     public void setStudyid(String studyid) {
         this.studyid = studyid;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="executingdate", length=29)
+    public Date getExecutingdate() {
+        return this.executingdate;
+    }
+    
+    public void setExecutingdate(Date executingdate) {
+        this.executingdate = executingdate;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="reportingdate", length=29)
+    public Date getReportingdate() {
+        return this.reportingdate;
+    }
+    
+    public void setReportingdate(Date reportingdate) {
+        this.reportingdate = reportingdate;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="reporteddate", length=29)
+    public Date getReporteddate() {
+        return this.reporteddate;
+    }
+    
+    public void setReporteddate(Date reporteddate) {
+        this.reporteddate = reporteddate;
+    }
+
+    
+    @Column(name="executingnote")
+    public String getExecutingnote() {
+        return this.executingnote;
+    }
+    
+    public void setExecutingnote(String executingnote) {
+        this.executingnote = executingnote;
+    }
+
+    
+    @Column(name="executednote")
+    public String getExecutednote() {
+        return this.executednote;
+    }
+    
+    public void setExecutednote(String executednote) {
+        this.executednote = executednote;
+    }
+
+    
+    @Column(name="reportednote")
+    public String getReportednote() {
+        return this.reportednote;
+    }
+    
+    public void setReportednote(String reportednote) {
+        this.reportednote = reportednote;
+    }
+
+    
+    @Column(name="reportingnote")
+    public String getReportingnote() {
+        return this.reportingnote;
+    }
+    
+    public void setReportingnote(String reportingnote) {
+        this.reportingnote = reportingnote;
     }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="workTask")

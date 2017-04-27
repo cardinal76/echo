@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -61,6 +62,9 @@ public class OrderValidator {
 	
 	@Autowired
 	private IService_rd_Repository repo_s;
+	
+	@Autowired
+	private DozerBeanMapper rdDozerMapper;
 
 	// used to bind it in exception message
 	private static String entity_name = Order_rd_Controller.entity_name;
@@ -74,42 +78,6 @@ public class OrderValidator {
 	/* business validation methods */
 	/*-----------------------------*/
 
-	/**
-	 * Validate a delete order request
-	 * @author luca
-	 * @category business request validation
-	 * @param entity
-	 * @param rejectReason
-	 * @param cancelReason
-	 * @since 1.2.0
-	 */
-	public void validateDeleteRequest(Order entity, String rejectReason, String cancelReason) throws ValidationException {
-		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
-		
-		// check that only a reason has been provided by the client		
-		if (!((StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(rejectReason)) ^ (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(cancelReason)))) {
-			if ((StringUtils.isNullEmptyWhiteSpaceOnly(rejectReason)) && (StringUtils.isNullEmptyWhiteSpaceOnly(cancelReason))) {
-				// 0:0
-				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason") + "or" + env.getProperty("echo.api.crud.fields.rejectreason"), 
-						MessageFormat.format(env.getProperty("echo.api.crud.validation.mustprovideatleastonefield"), 
-								env.getProperty("echo.api.crud.fields.cancelreason"), 
-								env.getProperty("echo.api.crud.fields.rejectreason")));
-			} else if ((StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(rejectReason)) && (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(cancelReason))) {
-				// 1:1
-				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason") + "or" + env.getProperty("echo.api.crud.fields.rejectreason"), 
-						MessageFormat.format(env.getProperty("echo.api.crud.validation.mustprovideatmaximumonefield"), 
-								env.getProperty("echo.api.crud.fields.cancelreason"), 
-								env.getProperty("echo.api.crud.fields.rejectreason")));
-			}
-		}
-		
-		if (exceptions.getFieldErrors().size() > 0) {
-			throw new ValidationException(env.getProperty("echo.api.crud.validation.genericmessage"), exceptions);
-		} else {
-			exceptions = null;
-		}
-	}
-	
 	/**
 	 * Validate a create order request
 	 * @author luca
@@ -229,6 +197,54 @@ public class OrderValidator {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.identificationdocument"), 
 					env.getProperty("echo.api.crud.validation.mustbeempty"));
 		}
+
+		// executing date should not be present here
+		if (order.getExecutingDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.executingdate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// executed date should not be present here
+		if (order.getExecutedDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.executeddate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// reporting date should not be present here
+		if (order.getReportingDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.reportingdate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// reported date should not be present here
+		if (order.getReportedDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.reporteddate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// signed date should not be present here
+		if (order.getSignedDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.signeddate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// delivered date should not be present here
+		if (order.getDeliveredDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.delivereddate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// archived date should not be present here
+		if (order.getArchivedDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.archiveddate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// archived date should not be present here
+		if (order.getCanceledDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.canceleddate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
 		
 		// check if some services has been selected
 		if (order.getServices().size() == 0) {
@@ -281,7 +297,7 @@ public class OrderValidator {
 			exceptions = null;
 		}
 	}
-
+	
 	/**
 	 * Validate an update order request
 	 * @author luca
@@ -358,8 +374,6 @@ public class OrderValidator {
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.emptylist"),
 							env.getProperty("echo.api.crud.fields.service")));
 		} else if (updatedOrder.getServices().size() > 0) {
-			// TODO add fix to RD_005 (L'elenco degli esami può essere modificato fintanto che l'ordine non transiterà nello stato di esecuzione)
-			
 			// get old service modality type (check only the first element)
 			Long oldModalityType = 0l;
 			String oldModalityName = null;
@@ -389,6 +403,12 @@ public class OrderValidator {
 			if (!oldModalityType.equals(masterModalityType)) {
 				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), entity_s_name, oldModalityName, oldModalityType));
 			}
+			
+			// TODO add fix to RD_005 (L'elenco degli esami può essere modificato fintanto che l'ordine non transiterà nello stato di esecuzione)
+			
+//			if (!updatedOrder.getServices().equals(o)) && ()) {
+//				
+//			}
 		}
 		
 		// ------------------------
@@ -458,6 +478,42 @@ public class OrderValidator {
 		}
 		
 		// throws an exception if field error are > 0
+		if (exceptions.getFieldErrors().size() > 0) {
+			throw new ValidationException(env.getProperty("echo.api.crud.validation.genericmessage"), exceptions);
+		} else {
+			exceptions = null;
+		}
+	}
+	
+	/**
+	 * Validate a delete order request
+	 * @author luca
+	 * @category business request validation
+	 * @param entity
+	 * @param rejectReason
+	 * @param cancelReason
+	 * @since 1.2.0
+	 */
+	public void validateDeleteRequest(Order entity, String rejectReason, String cancelReason) throws ValidationException {
+		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
+		
+		// check that only a reason has been provided by the client		
+		if (!((StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(rejectReason)) ^ (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(cancelReason)))) {
+			if ((StringUtils.isNullEmptyWhiteSpaceOnly(rejectReason)) && (StringUtils.isNullEmptyWhiteSpaceOnly(cancelReason))) {
+				// 0:0
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason") + "or" + env.getProperty("echo.api.crud.fields.rejectreason"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.mustprovideatleastonefield"), 
+								env.getProperty("echo.api.crud.fields.cancelreason"), 
+								env.getProperty("echo.api.crud.fields.rejectreason")));
+			} else if ((StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(rejectReason)) && (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(cancelReason))) {
+				// 1:1
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason") + "or" + env.getProperty("echo.api.crud.fields.rejectreason"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.mustprovideatmaximumonefield"), 
+								env.getProperty("echo.api.crud.fields.cancelreason"), 
+								env.getProperty("echo.api.crud.fields.rejectreason")));
+			}
+		}
+		
 		if (exceptions.getFieldErrors().size() > 0) {
 			throw new ValidationException(env.getProperty("echo.api.crud.validation.genericmessage"), exceptions);
 		} else {
