@@ -9,10 +9,8 @@ import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
-import it.clevercom.echo.rd.model.dto.ModalityDTO;
 import it.clevercom.echo.rd.model.dto.UserDTO;
 import it.clevercom.echo.rd.model.dto.WorkTaskDTO;
-import it.clevercom.echo.rd.model.entity.Modality;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.User;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
@@ -57,7 +55,7 @@ public class WorkTask2WorkTaskDTO implements CustomConverter, MapperAware {
 			target.setStudyUuid(source.getStudyuuid() != null ? source.getStudyuuid() : null);
 			target.setUser(rdDozerMapper.map(source.getUser(),UserDTO.class));
 			target.setWorkPriority(rdDozerMapper.map(source.getWorkPriority(), BaseObjectDTO.class));
-			target.setWorkStatus(rdDozerMapper.map(source, BaseObjectDTO.class));
+			target.setWorkStatus(rdDozerMapper.map(source.getWorkStatus(), BaseObjectDTO.class));
 			
 			target.setActive(source.getActive());
 			target.setCreated(source.getCreated());
@@ -95,7 +93,7 @@ public class WorkTask2WorkTaskDTO implements CustomConverter, MapperAware {
 			target.setStudyuuid(source.getStudyUuid() != null ? source.getStudyUuid() : null);
 			target.setUser(rdDozerMapper.map(source.getUser(), User.class));
 			target.setWorkPriority(rdDozerMapper.map(source.getWorkPriority(), WorkPriority.class));
-			target.setWorkStatus(rdDozerMapper.map(source, WorkStatus.class));
+			target.setWorkStatus(rdDozerMapper.map(source.getWorkStatus(), WorkStatus.class));
 				
 			target.setActive(source.getActive());
 			target.setCreated(source.getCreated());
