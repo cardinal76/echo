@@ -1,7 +1,8 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 27-apr-2017 14.03.39 by Hibernate Tools 5.2.2.Final
+// Generated 28-apr-2017 10.51.09 by Hibernate Tools 5.2.2.Final
 
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
@@ -16,6 +17,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -32,7 +35,10 @@ public class WorkSession  extends AbstractJpaEchoEntity implements java.io.Seria
 
      private Long idworksession;
      private Patient patient;
+     private WorkPriority workPriority;
      private WorkStatus workStatus;
+     private Date scheduleddate;
+     private Date reporteddate;
      private Set<WorkReport> workReports = new HashSet<WorkReport>(0);
      private Set<WorkTask> workTasks = new HashSet<WorkTask>(0);
      private Set<Order> orders = new HashSet<Order>(0);
@@ -41,13 +47,18 @@ public class WorkSession  extends AbstractJpaEchoEntity implements java.io.Seria
     }
 
 	
-    public WorkSession(Patient patient, WorkStatus workStatus) {
+    public WorkSession(Patient patient, WorkPriority workPriority, WorkStatus workStatus, Date scheduleddate) {
         this.patient = patient;
+        this.workPriority = workPriority;
         this.workStatus = workStatus;
+        this.scheduleddate = scheduleddate;
     }
-    public WorkSession(Patient patient, WorkStatus workStatus, Set<WorkReport> workReports, Set<WorkTask> workTasks, Set<Order> orders) {
+    public WorkSession(Patient patient, WorkPriority workPriority, WorkStatus workStatus, Date scheduleddate, Date reporteddate, Set<WorkReport> workReports, Set<WorkTask> workTasks, Set<Order> orders) {
        this.patient = patient;
+       this.workPriority = workPriority;
        this.workStatus = workStatus;
+       this.scheduleddate = scheduleddate;
+       this.reporteddate = reporteddate;
        this.workReports = workReports;
        this.workTasks = workTasks;
        this.orders = orders;
@@ -76,6 +87,16 @@ public class WorkSession  extends AbstractJpaEchoEntity implements java.io.Seria
     }
 
 @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="idworkpriority", nullable=false)
+    public WorkPriority getWorkPriority() {
+        return this.workPriority;
+    }
+    
+    public void setWorkPriority(WorkPriority workPriority) {
+        this.workPriority = workPriority;
+    }
+
+@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="idworkstatus", nullable=false)
     public WorkStatus getWorkStatus() {
         return this.workStatus;
@@ -83,6 +104,26 @@ public class WorkSession  extends AbstractJpaEchoEntity implements java.io.Seria
     
     public void setWorkStatus(WorkStatus workStatus) {
         this.workStatus = workStatus;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="scheduleddate", nullable=false, length=29)
+    public Date getScheduleddate() {
+        return this.scheduleddate;
+    }
+    
+    public void setScheduleddate(Date scheduleddate) {
+        this.scheduleddate = scheduleddate;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="reporteddate", length=29)
+    public Date getReporteddate() {
+        return this.reporteddate;
+    }
+    
+    public void setReporteddate(Date reporteddate) {
+        this.reporteddate = reporteddate;
     }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="workSession")

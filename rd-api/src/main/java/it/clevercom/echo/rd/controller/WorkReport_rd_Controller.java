@@ -1,4 +1,4 @@
-package it.clevercom.echo.rd.controller.toimplement;
+package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
@@ -30,22 +30,22 @@ import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
-import it.clevercom.echo.rd.model.dto.BodyApparatusDTO;
-import it.clevercom.echo.rd.model.entity.BodyApparatus;
-import it.clevercom.echo.rd.repository.IBodyApparatus_rd_Repository;
+import it.clevercom.echo.rd.model.dto.WorkReportDTO;
+import it.clevercom.echo.rd.model.entity.WorkReport;
+import it.clevercom.echo.rd.repository.IWorkReport_rd_Repository;
 
 @Controller
 @RestController
-@RequestMapping("rd/types/icd9patologygroup")
+@RequestMapping("rd/assets/workreport")
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
-public class ICD9PatologyGroup_rd_Controller extends EchoController {
+public class WorkReport_rd_Controller extends EchoController {
 	@Autowired
 	private Environment env;
 	
 	@Autowired
-	private IBodyApparatus_rd_Repository repo;
+	private IWorkReport_rd_Repository repo;
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
@@ -56,11 +56,11 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
-	private static String entity_name = "BodyApparatus";
-	private static String entity_id = "idbodyapparatus";
-
+	private static String entity_name = "WorkReport";
+	private static String entity_id = "idworkreport";
+	
 	/**
-	 * Get a body apparatus by id
+	 * Get a work report by id
 	 * @param id
 	 * @return
 	 * @throws Exception
@@ -69,12 +69,12 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody BodyApparatusDTO get(@PathVariable Long id) throws Exception {
+	public @ResponseBody WorkReportDTO get(@PathVariable Long id) throws Exception {
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting"), entity_name, entity_id, id.toString()));
 		
 		// find entity
-		BodyApparatus entity = repo.findOne(id);
+		WorkReport entity = repo.findOne(id);
 		
 		// check if entity has been found
 		if (entity == null) {
@@ -84,11 +84,11 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.returning.response"), entity_name, entity_id, id.toString()));
-		return rdDozerMapper.map(entity, BodyApparatusDTO.class);
+		return rdDozerMapper.map(entity, WorkReportDTO.class);
 	}
 	
 	/**
-	 * Get a body apparatus list by criteria with pagination
+	 * Get a work report list by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
@@ -101,10 +101,10 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<BodyApparatusDTO> getByCriteria (
+	public @ResponseBody PagedDTO<WorkReportDTO> getByCriteria (
 			@RequestParam(defaultValue="null", required=false) String criteria, 
 			@RequestParam(defaultValue="1", required=false) int page, 
-			@RequestParam(defaultValue="1000", required=false) int size, 
+			@RequestParam(defaultValue="15", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="code", required=false) String field) throws Exception {
 		
@@ -114,10 +114,10 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 		// check enum string params
 		validator.validateSort(sort);
 		
-		CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
-				new CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
+		CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> rp = 
+				new CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, 
 						rdDozerMapper, 
-						BodyApparatusDTO.class, 
+						WorkReportDTO.class, 
 						entity_name, 
 						criteria, 
 						sort, 
@@ -134,8 +134,8 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 	}
 	
 	/**
-	 * Add a body apparatus
-	 * @param bodyapparatus
+	 * Add a work report
+	 * @param workReport
 	 * @param request
 	 * @return
 	 * @throws Exception
@@ -144,32 +144,32 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<BodyApparatusDTO> add(@RequestBody BodyApparatusDTO bodyapparatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody CreateResponseDTO<WorkReportDTO> add(@RequestBody WorkReportDTO workReport, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
 				
 		// create the processor
-		CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
-				new CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
+		CreateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> rp = 
+				new CreateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, 
 						rdDozerMapper, 
-						BodyApparatus.class, 
+						WorkReport.class, 
 						entity_name, 
 						getLoggedUser(request), 
-						bodyapparatus,
+						workReport,
 						env);
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name, entity_id, bodyapparatus.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name, entity_id, workReport.getIdd().toString()));
 		
 		// process
 		return rp.process();
 	}
 	
 	/**
-	 * Update a body apparatus
-	 * @param bodyApparatus
+	 * Update a work report
+	 * @param workReport
 	 * @param request
 	 * @return
 	 * @throws Exception
@@ -178,33 +178,33 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<BodyApparatusDTO> update(@RequestBody BodyApparatusDTO bodyApparatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<WorkReportDTO> update(@RequestBody WorkReportDTO workReport, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate that username can perform the requested operation on appSetting
-		validator.validateIdd(bodyApparatus, entity_name);
+		validator.validateIdd(workReport, entity_name);
 
 		// create processor
-		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
-				new UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
+		UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> rp = 
+				new UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, 
 						rdDozerMapper,
 						entity_name,
 						entity_id,
 						getLoggedUser(request), 
-						bodyApparatus, 
+						workReport, 
 						env);
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, bodyApparatus.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, workReport.getIdd().toString()));
 
 		// return response
 		return rp.process();
 	}
 	
 	/**
-	 * Delete a body apparatus 
-	 * @param bodyApparatus
+	 * Delete a work report 
+	 * @param workReport
 	 * @param request
 	 * @return
 	 */
@@ -212,25 +212,25 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<BodyApparatusDTO> delete(@RequestBody BodyApparatusDTO bodyApparatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<WorkReportDTO> delete(@RequestBody WorkReportDTO workReport, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
 		// validate that username can perform the requested operation on appSetting
-		validator.validateIdd(bodyApparatus, entity_name);
+		validator.validateIdd(workReport, entity_name);
 
 		// create processor
-		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
-				new UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
+		UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> rp = 
+				new UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, 
 						rdDozerMapper,
 						entity_name,
 						entity_id,
 						getLoggedUser(request), 
-						bodyApparatus, 
+						workReport, 
 						env);
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, bodyApparatus.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, workReport.getIdd().toString()));
 
 		// return response
 		return rp.enable(false);

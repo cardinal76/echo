@@ -13,11 +13,14 @@ public class WorkSessionDTO extends AbstractEchoDTO implements Serializable {
 	
 	private static final long serialVersionUID = 6709543309831003561L;
 
-	public Long idWorkSession;
-	public PatientSmartDTO patient;
-	public BaseObjectDTO workStatus;
-	public Set<WorkTaskDTO> workTasks;
-	public Set<WorkReportDTO> workReports;
+	private Long idWorkSession;
+	private PatientSmartDTO patient;
+	private BaseObjectDTO workStatus;
+	private Set<WorkTaskDTO> workTasks;
+	private Set<WorkReportDTO> workReports;
+	private BaseObjectDTO workPriority;
+	private Long scheduledDate;
+	private Long reportedDate;
 	
 	private Date created;
 	private Date updated;
@@ -153,6 +156,48 @@ public class WorkSessionDTO extends AbstractEchoDTO implements Serializable {
 	 */
 	public void setActive(Boolean active) {
 		this.active = active;
+	}
+	
+	/**
+	 * @return the workPriority
+	 */
+	public BaseObjectDTO getWorkPriority() {
+		return workPriority;
+	}
+
+	/**
+	 * @param workPriority the workPriority to set
+	 */
+	public void setWorkPriority(BaseObjectDTO workPriority) {
+		this.workPriority = workPriority;
+	}
+
+	/**
+	 * @return the scheduledDate
+	 */
+	public Long getScheduledDate() {
+		return scheduledDate;
+	}
+
+	/**
+	 * @param scheduledDate the scheduledDate to set
+	 */
+	public void setScheduledDate(Long scheduledDate) {
+		this.scheduledDate = scheduledDate;
+	}
+
+	/**
+	 * @return the reportedDate
+	 */
+	public Long getReportedDate() {
+		return reportedDate;
+	}
+
+	/**
+	 * @param reportedDate the reportedDate to set
+	 */
+	public void setReportedDate(Long reportedDate) {
+		this.reportedDate = reportedDate;
 	}
 
 	/**

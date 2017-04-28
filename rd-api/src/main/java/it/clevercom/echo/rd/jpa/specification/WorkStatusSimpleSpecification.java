@@ -9,13 +9,13 @@ import org.springframework.data.jpa.domain.Specification;
 
 import it.clevercom.echo.rd.model.entity.WorkStatus;
 
-public class WorkStatusSpecification<T> implements Specification<T> {
+public class WorkStatusSimpleSpecification<T> implements Specification<T> {
 	private long statusId;
 	
 	/**
 	 * @param statusId
 	 */
-	public WorkStatusSpecification(long statusId) {
+	public WorkStatusSimpleSpecification(long statusId) {
 		super();
 		this.statusId = statusId;
 	}

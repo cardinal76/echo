@@ -1,5 +1,6 @@
 package it.clevercom.echo.rd.model.converter;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import it.clevercom.echo.rd.model.dto.WorkReportDTO;
 import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
 import it.clevercom.echo.rd.model.dto.WorkTaskDTO;
 import it.clevercom.echo.rd.model.entity.Patient;
+import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkReport;
 import it.clevercom.echo.rd.model.entity.WorkSession;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
@@ -61,6 +63,10 @@ public class WorkSession2WorkSessionDTO implements CustomConverter, MapperAware 
 				target.setWorkTasks(tasks);
 			}
 			
+			target.setWorkPriority(rdDozerMapper.map(source.getWorkPriority(), BaseObjectDTO.class));
+			target.setScheduledDate(source.getScheduleddate()!=null ? source.getScheduleddate().getTime() : null);
+			target.setReportedDate(source.getReporteddate()!=null ? source.getReporteddate().getTime() : null);
+			
 			target.setActive(source.getActive());
 			target.setCreated(source.getCreated());
 			target.setUpdated(source.getUpdated());
@@ -97,6 +103,10 @@ public class WorkSession2WorkSessionDTO implements CustomConverter, MapperAware 
 				}
 				target.setWorkTasks(tasks);
 			}
+			
+			target.setWorkPriority(rdDozerMapper.map(source.getWorkPriority(), WorkPriority.class));
+			target.setScheduleddate(source.getScheduledDate()!=null ? new Date(source.getScheduledDate()) : null);
+			target.setReporteddate(source.getReportedDate()!=null ? new Date(source.getReportedDate()) : null);
 			
 			target.setActive(source.getActive());
 			target.setCreated(source.getCreated());

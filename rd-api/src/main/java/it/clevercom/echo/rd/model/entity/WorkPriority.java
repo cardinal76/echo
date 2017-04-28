@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 27-apr-2017 14.03.39 by Hibernate Tools 5.2.2.Final
+// Generated 28-apr-2017 10.51.09 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.HashSet;
@@ -33,6 +33,7 @@ public class WorkPriority  extends AbstractJpaEchoEntity implements java.io.Seri
      private String description;
      private Set<Order> orders = new HashSet<Order>(0);
      private Set<WorkTask> workTasks = new HashSet<WorkTask>(0);
+     private Set<WorkSession> workSessions = new HashSet<WorkSession>(0);
 
     public WorkPriority() {
     }
@@ -41,11 +42,12 @@ public class WorkPriority  extends AbstractJpaEchoEntity implements java.io.Seri
     public WorkPriority(String code) {
         this.code = code;
     }
-    public WorkPriority(String code, String description, Set<Order> orders, Set<WorkTask> workTasks) {
+    public WorkPriority(String code, String description, Set<Order> orders, Set<WorkTask> workTasks, Set<WorkSession> workSessions) {
        this.code = code;
        this.description = description;
        this.orders = orders;
        this.workTasks = workTasks;
+       this.workSessions = workSessions;
     }
    
      @GenericGenerator(name="generator", strategy="org.hibernate.id.enhanced.SequenceStyleGenerator", parameters={@Parameter(name="optimizer", value="none"), @Parameter(name="sequence_name", value="workpriority_idworkpriority_seq"), @Parameter(name="increment_size", value="1")})@Id @GeneratedValue(generator="generator")
@@ -96,6 +98,15 @@ public class WorkPriority  extends AbstractJpaEchoEntity implements java.io.Seri
     
     public void setWorkTasks(Set<WorkTask> workTasks) {
         this.workTasks = workTasks;
+    }
+
+@OneToMany(fetch=FetchType.LAZY, mappedBy="workPriority")
+    public Set<WorkSession> getWorkSessions() {
+        return this.workSessions;
+    }
+    
+    public void setWorkSessions(Set<WorkSession> workSessions) {
+        this.workSessions = workSessions;
     }
 
 

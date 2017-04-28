@@ -48,7 +48,7 @@ import it.clevercom.echo.rd.enums.WorkPriorityEnum;
 import it.clevercom.echo.rd.enums.WorkStatusEnum;
 import it.clevercom.echo.rd.jpa.specification.OrganizationUnitSpecification;
 import it.clevercom.echo.rd.jpa.specification.WorkPrioritySpecification;
-import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
+import it.clevercom.echo.rd.jpa.specification.WorkStatusSimpleSpecification;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
@@ -211,7 +211,7 @@ public class Order_rd_Controller extends EchoController {
 			for (int i = 0; i < statusItems.length; i++) {
 				Specifications<Order> current = null;
 				// create status specification
-				WorkStatusSpecification<Order> st = new WorkStatusSpecification<Order>(repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i]).code()).getIdworkstatus());
+				WorkStatusSimpleSpecification<Order> st = new WorkStatusSimpleSpecification<Order>(repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i]).code()).getIdworkstatus());
 				// create interval specification based on right date field
 				DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i])));
 				current = Specifications.where(current).and(st).and(interval);
@@ -220,7 +220,7 @@ public class Order_rd_Controller extends EchoController {
 				} else {
 					rp.addOrSpecification(Specifications.where(current));
 				}
-			}			
+			}
 		} else {
 			// create standard specification based on date interval and standard field name
 			// parse long parameter to Date Object
