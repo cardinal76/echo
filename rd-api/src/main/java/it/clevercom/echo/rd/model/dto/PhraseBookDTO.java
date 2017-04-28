@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import it.clevercom.echo.common.dto.AbstractEchoDTO;
 
-public class ModalityDTO extends AbstractEchoDTO implements Serializable {
+public class PhraseBookDTO extends AbstractEchoDTO implements Serializable {
 
 	@Override
 	public Object getIdd() {
