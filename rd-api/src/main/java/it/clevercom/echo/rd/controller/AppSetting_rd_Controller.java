@@ -63,13 +63,16 @@ public class AppSetting_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
-	private static String entity_name = "AppSetting";
-	private static String entity_id = "idappsetting";
+	public static final String entity_name = "AppSetting";
+	public static final String entity_id = "idappsetting";
 	
 	/**
-	 * Get application setting list by Username
+	 * Get application setting by id
+	 * @author luca
+	 * @category standard get by id REST method 
 	 * @param username
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception.
 	 */
 	@Transactional("rdTm")
@@ -79,6 +82,9 @@ public class AppSetting_rd_Controller extends EchoController {
 	public @ResponseBody AppSettingDTO get(@PathVariable Long id) throws Exception {
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting"), entity_name, entity_id, id.toString()));
+		
+		// validate
+		validator.validateId(id, entity_name);
 		
 		// find entity
 		AppSetting entity = repo.findOne(id);
@@ -96,12 +102,15 @@ public class AppSetting_rd_Controller extends EchoController {
 	
 	/**
 	 * Get application setting list by criteria with pagination
+	 * @author luca
+	 * @category standard get by criteria REST method
 	 * @param criteria
 	 * @param page
 	 * @param size
 	 * @param sort
 	 * @param field
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -114,13 +123,14 @@ public class AppSetting_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="1000", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="idappsetting", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// check enum string params
 		validator.validateSort(sort);
+		validator.validateSortField(field, AppSetting.class, entity_name);
 		
 		// create processor
 		CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
@@ -150,9 +160,12 @@ public class AppSetting_rd_Controller extends EchoController {
 	
 	/**
 	 * Add application setting
+	 * @author luca
+	 * @category standard create REST method
 	 * @param appSetting
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -185,9 +198,12 @@ public class AppSetting_rd_Controller extends EchoController {
 	
 	/**
 	 * Update an application setting
+	 * @author luca
+	 * @category standard update REST method
 	 * @param appSetting
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -200,7 +216,7 @@ public class AppSetting_rd_Controller extends EchoController {
 		
 		// validate that username can perform the requested operation on appSetting
 		validator.validateUsername(getLoggedUser(request), appSetting);
-		validator.validateIdd(appSetting, entity_name);
+		validator.validateDTOIdd(appSetting, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
@@ -221,9 +237,12 @@ public class AppSetting_rd_Controller extends EchoController {
 	
 	/**
 	 * Delete an application setting
+	 * @author luca
+	 * @category standard delete REST method
 	 * @param appSetting
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.DELETE)

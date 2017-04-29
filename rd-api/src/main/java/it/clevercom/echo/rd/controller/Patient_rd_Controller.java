@@ -82,8 +82,8 @@ public class Patient_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 
 	// used to bind it in exception message
-	private static String entity_name = "Patient";
-	private static String entity_id = "idpatient";
+	public static final String entity_name = "Patient";
+	public static final String entity_id = "idpatient";
 
 
 	/**

@@ -56,8 +56,8 @@ public class WorkSession_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
-	private static String entity_name = "WorkSession";
-	private static String entity_id = "idworksession";
+	public static final String entity_name = "WorkSession";
+	public static final String entity_id = "idworksession";
 	
 	/**
 	 * Get a work session by id
@@ -184,7 +184,7 @@ public class WorkSession_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate that username can perform the requested operation on appSetting
-		validator.validateIdd(workSession, entity_name);
+		validator.validateDTOIdd(workSession, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> rp = 
@@ -218,7 +218,7 @@ public class WorkSession_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
 		// validate that username can perform the requested operation on appSetting
-		validator.validateIdd(workSession, entity_name);
+		validator.validateDTOIdd(workSession, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> rp = 

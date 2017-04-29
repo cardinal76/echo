@@ -56,8 +56,8 @@ public class WorkStatus_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity_name = "WorkStatus";
-	private static String entity_id = "idworkstatus";
+	public static final String entity_name = "WorkStatus";
+	public static final String entity_id = "idworkstatus";
 
 	/**
 	 * Get work status by id

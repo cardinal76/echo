@@ -72,8 +72,8 @@ public class WorkPriority_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity_name = "WorkPriority";
-	private static String entity_id = "idworkpriority";
+	public static final String entity_name = "WorkPriority";
+	public static final String entity_id = "idworkpriority";
 	
 	/**
 	 * Get work priority by id

@@ -62,13 +62,16 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
-	private static String entity_name = "BodyApparatus";
-	private static String entity_id = "idbodyapparatus";
+	public static final String entity_name = "BodyApparatus";
+	public static final String entity_id = "idbodyapparatus";
 
 	/**
 	 * Get a body apparatus by id
+	 * @author luca
+	 * @category standard get by id REST method
 	 * @param id
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -78,6 +81,9 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	public @ResponseBody BodyApparatusDTO get(@PathVariable Long id) throws Exception {
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting"), entity_name, entity_id, id.toString()));
+		
+		// validate
+		validator.validateId(id, entity_name);
 		
 		// find entity
 		BodyApparatus entity = repo.findOne(id);
@@ -95,12 +101,15 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	
 	/**
 	 * Get a body apparatus list by criteria with pagination
+	 * @author luca
+	 * @category standard get by criteria REST method
 	 * @param criteria
 	 * @param page
 	 * @param size
 	 * @param sort
 	 * @param field
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -110,16 +119,18 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	public @ResponseBody PagedDTO<BodyApparatusDTO> getByCriteria (
 			@RequestParam(defaultValue="null", required=false) String criteria, 
 			@RequestParam(defaultValue="1", required=false) int page, 
-			@RequestParam(defaultValue="1000", required=false) int size, 
+			@RequestParam(defaultValue="15", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="code", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
-		// check enum string params
+		// validate
 		validator.validateSort(sort);
+		validator.validateSortField(field, BodyApparatus.class, entity_name);
 		
+		// create processor
 		CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
 				new CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
 						rdDozerMapper, 
@@ -141,9 +152,12 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	
 	/**
 	 * Add a body apparatus
+	 * @author luca
+	 * @category standard create REST method
 	 * @param bodyapparatus
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -155,8 +169,9 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
-				
-		// create the processor
+		validator.validateDTONullIdd(bodyapparatus, entity_id);
+		
+		// create processor
 		CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
 				new CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
 						rdDozerMapper, 
@@ -175,9 +190,12 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	
 	/**
 	 * Update a body apparatus
+	 * @author luca
+	 * @category standard update REST method
 	 * @param bodyApparatus
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -188,8 +206,8 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// validate that username can perform the requested operation on appSetting
-		validator.validateIdd(bodyApparatus, entity_name);
+		// validate
+		validator.validateDTOIdd(bodyApparatus, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
@@ -210,9 +228,13 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	
 	/**
 	 * Delete a body apparatus 
+	 * @author luca
+	 * @category standard delete REST method
 	 * @param bodyApparatus
 	 * @param request
 	 * @return
+	 * @since 1.2.0
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.DELETE)
@@ -222,8 +244,8 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
-		// validate that username can perform the requested operation on appSetting
-		validator.validateIdd(bodyApparatus, entity_name);
+		// validate
+		validator.validateDTOIdd(bodyApparatus, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 

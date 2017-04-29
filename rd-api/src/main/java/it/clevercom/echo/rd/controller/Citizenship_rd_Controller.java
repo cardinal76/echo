@@ -1,16 +1,12 @@
 package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,16 +21,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.controller.EchoController;
-import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
-import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.CitizenshipDTO;
+import it.clevercom.echo.rd.model.entity.BodyApparatus;
 import it.clevercom.echo.rd.model.entity.Citizenship;
 import it.clevercom.echo.rd.repository.ICitizenship_rd_Repository;
 
@@ -60,25 +57,22 @@ public class Citizenship_rd_Controller extends EchoController {
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
 	
-	@Value("${jwt.token.header}")
-	private String tokenHeader;
-	
-	@Autowired
-	private JwtTokenUtils tokenUtils;
-	
 	@Autowired
 	private Validator validator;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity_name = "Citizenship";
-	private static String entity_id = "idcitizenship";
+	public static final String entity_name = "Citizenship";
+	public static final String entity_id = "idcitizenship";
 	
 	/**
 	 * Get Citizenship by id
+	 * @author luca
+	 * @category standard get by id REST method
 	 * @param id
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -86,19 +80,37 @@ public class Citizenship_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody CitizenshipDTO get(@PathVariable Long id) throws Exception {
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting"), entity_name, entity_id, id.toString()));
+		
+		// validate
+		validator.validateId(id, entity_name);
+		
+		// find entity
 		Citizenship entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		
+		// check if entity has been found
+		if (entity == null) {
+			logger.warn(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, id.toString()));
+			throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		}
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.returning.response"), entity_name, entity_id, id.toString()));
 		return rdDozerMapper.map(entity, CitizenshipDTO.class);
 	}
 	
 	/**
 	 * Get Citizenship by criteria with pagination
+	 * @author luca
+	 * @category standard get by criteria REST method
 	 * @param criteria
 	 * @param page
 	 * @param size
 	 * @param sort
 	 * @param field
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -110,11 +122,16 @@ public class Citizenship_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="20", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="idcitizenship", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
-		// check enum string params
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
+		// validate
 		validator.validateSort(sort);
+		validator.validateSortField(field, BodyApparatus.class, entity_name);
 		
+		// create processor
 		CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> rp = 
 				new CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, 
 						rdDozerMapper, 
@@ -127,15 +144,21 @@ public class Citizenship_rd_Controller extends EchoController {
 						size,
 						env);
 		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
+		
 		// process data request
 		return rp.process();
 	}
 	
 	/**
 	 * Add citizenship
+	 * @author luca
+	 * @category standard create REST method
 	 * @param citizenship
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -143,37 +166,37 @@ public class Citizenship_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody CreateResponseDTO<CitizenshipDTO> add(@RequestBody CitizenshipDTO citizenship, HttpServletRequest request) throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// map
-		Citizenship entity = rdDozerMapper.map(citizenship, Citizenship.class);
+		// validate
+		validator.validateDTONullIdd(citizenship, entity_id);
 		
-		// add technical field
-		entity.setUserupdate(username);
+		// create processor
+		CreateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> rp = 
+				new CreateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, 
+						rdDozerMapper, 
+						Citizenship.class, 
+						entity_name, 
+						getLoggedUser(request), 
+						citizenship,
+						env);
 		
-		// save and map to out dto
-		entity = repo.saveAndFlush(entity);
-		citizenship = rdDozerMapper.map(entity, CitizenshipDTO.class);
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name, entity_id, citizenship.getIdd().toString()));
 		
-		// create standard response
-		CreateResponseDTO<CitizenshipDTO> response = new CreateResponseDTO<CitizenshipDTO>();
-		response.setEntityName(entity_name);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
-		List<CitizenshipDTO> citizenshipDTOs = new ArrayList<CitizenshipDTO>();
-		citizenshipDTOs.add(citizenship);
-		response.setNewValue(citizenshipDTOs);
-		
-		// return standard response
-		return response;
+		// process
+		return rp.process();
 	}
 	
 	/**
 	 * Update citizenship
+	 * @author luca
+	 * @category standard update REST method
 	 * @param citizenship
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -181,62 +204,64 @@ public class Citizenship_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody UpdateResponseDTO<CitizenshipDTO> update(@RequestBody CitizenshipDTO citizenship, HttpServletRequest request) throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// if an id is not present throw bad request
-		if(citizenship.getIdcitizenship()==null) throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), entity_name));
-		
-		// find entity to update (oldValue)
-		Citizenship oldValueEntity = repo.findOne(citizenship.getIdcitizenship()); 
-		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity==null) throw new RecordNotFoundException(entity_name, entity_id, citizenship.getIdcitizenship().toString());
-		// get created date
-		Date created = oldValueEntity.getCreated();
-		// map old value to a dto
-		CitizenshipDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, CitizenshipDTO.class);
+		// validate
+		validator.validateDTOIdd(citizenship, entity_name);
 
-		// begin update of oldValue
-		rdDozerMapper.map(citizenship, oldValueEntity);
+		// create processor
+		UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> rp = 
+				new UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, 
+						rdDozerMapper,
+						entity_name,
+						entity_id,
+						getLoggedUser(request), 
+						citizenship, 
+						env);
 		
-		// add technical field
-		oldValueEntity.setUserupdate(username);
-		oldValueEntity.setUpdated(new Date());
-		oldValueEntity.setCreated(created);
-		
-		// save and map to out dto
-		Citizenship newValueEntity = repo.saveAndFlush(oldValueEntity);
-		CitizenshipDTO newValueDTO = rdDozerMapper.map(newValueEntity, CitizenshipDTO.class);
-				
-		// create standard response
-		UpdateResponseDTO<CitizenshipDTO> response = new UpdateResponseDTO<CitizenshipDTO>();
-		response.setEntityName(entity_name);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
-		// add new dtos values
-		List<CitizenshipDTO> newCitizenshipDTOs = new ArrayList<CitizenshipDTO>();
-		newCitizenshipDTOs.add(newValueDTO);
-		response.setNewValue(newCitizenshipDTOs);
-		// add old dtos values
-		List<CitizenshipDTO> oldCitizenshipDTOs = new ArrayList<CitizenshipDTO>();
-		oldCitizenshipDTOs.add(oldValueDTO);
-		response.setOldValue(oldCitizenshipDTOs);
-		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, citizenship.getIdd().toString()));
+
 		// return response
-		return response;
+		return rp.process();
 	}
 	
 	/**
 	 * Delete citizenship
+	 * @author luca
+	 * @category standard delete REST method
 	 * @param citizenship
 	 * @param request
 	 * @return
+	 * @since 1.2.0
+	 * @throws Exception 
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody String delete(@RequestBody CitizenshipDTO citizenship, HttpServletRequest request) {
-		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), entity_name);
+	public @ResponseBody UpdateResponseDTO<CitizenshipDTO> delete(@RequestBody CitizenshipDTO citizenship, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+				
+		// validate
+		validator.validateDTOIdd(citizenship, entity_name);
+
+		// create processor
+		UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> rp = 
+				new UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, 
+						rdDozerMapper,
+						entity_name,
+						entity_id,
+						getLoggedUser(request), 
+						citizenship, 
+						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, citizenship.getIdd().toString()));
+
+		// return response
+		return rp.enable(false);
 	}
 }

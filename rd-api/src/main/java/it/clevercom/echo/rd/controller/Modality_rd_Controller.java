@@ -56,13 +56,16 @@ public class Modality_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
-	private static String entity_name = "Modality";
-	private static String entity_id = "idmodality";
+	public static final String entity_name = "Modality";
+	public static final String entity_id = "idmodality";
 
 	/**
 	 * Get a modality by id
+	 * @author luca
+	 * @category standard get by id REST method
 	 * @param id
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -89,6 +92,8 @@ public class Modality_rd_Controller extends EchoController {
 	
 	/**
 	 * Get a modality list by criteria with pagination
+	 * @author luca
+	 * @category standard get by criteria REST method
 	 * @param criteria
 	 * @param page
 	 * @param size
@@ -106,14 +111,16 @@ public class Modality_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="1000", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="code", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
-		// check enum string params
+		// validate
 		validator.validateSort(sort);
-		
+		validator.validateSortField(field, Modality.class, entity_name);
+
+		// create the processor
 		CriteriaRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> rp = 
 				new CriteriaRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO>(repo, 
 						rdDozerMapper, 
@@ -135,9 +142,12 @@ public class Modality_rd_Controller extends EchoController {
 	
 	/**
 	 * Add a modality
+	 * @author luca
+	 * @category standard create REST method
 	 * @param modality
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -149,6 +159,7 @@ public class Modality_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
+		validator.validateDTONullIdd(modality, entity_id);
 				
 		// create the processor
 		CreateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> rp = 
@@ -169,9 +180,12 @@ public class Modality_rd_Controller extends EchoController {
 	
 	/**
 	 * Update a modality
+	 * @author luca
+	 * @category standard update REST method
 	 * @param modality
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
@@ -182,8 +196,8 @@ public class Modality_rd_Controller extends EchoController {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// validate that username can perform the requested operation on appSetting
-		validator.validateIdd(modality, entity_name);
+		// validate
+		validator.validateDTOIdd(modality, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> rp = 
@@ -204,8 +218,11 @@ public class Modality_rd_Controller extends EchoController {
 	
 	/**
 	 * Delete a modality 
+	 * @author luca
+	 * @category standard delete REST method
 	 * @param modality
 	 * @param request
+	 * @since 1.2.0
 	 * @return
 	 */
 	@Transactional("rdTm")
@@ -216,8 +233,8 @@ public class Modality_rd_Controller extends EchoController {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
-		// validate that username can perform the requested operation on appSetting
-		validator.validateIdd(modality, entity_name);
+		// validate
+		validator.validateDTOIdd(modality, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> rp = 

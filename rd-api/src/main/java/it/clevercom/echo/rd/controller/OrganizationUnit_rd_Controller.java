@@ -53,8 +53,8 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity_name = "OrganizationUnit";
-	private static String entity_id = "idorganizationunit";
+	public static final String entity_name = "OrganizationUnit";
+	public static final String entity_id = "idorganizationunit";
 	
 	/**
 	 * Get organization unit by id

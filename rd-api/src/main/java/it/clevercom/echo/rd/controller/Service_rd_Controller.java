@@ -57,8 +57,8 @@ public class Service_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity_name = "Service";
-	private static String entity_id = "idservice";
+	public static final String entity_name = "Service";
+	public static final String entity_id = "idservice";
 	
 	/**
 	 * Get service by id

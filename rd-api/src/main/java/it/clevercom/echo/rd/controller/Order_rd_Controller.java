@@ -122,12 +122,12 @@ public class Order_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 
 	// used to bind it in exception message
-	public static String entity_name = "Order";
-	public static String entity_id = "idorder";
-	public static String entity_cd1 = "code";
-	public static String entity_s_name = "Service";
-	public static String entity_os_name = "Ordered Service";
-	public static String entity_o_name = "Organization Unit";
+	public static final String entity_name = "Order";
+	public static final String entity_id = "idorder";
+	public static final String entity_cd1 = "code";
+	public static final String entity_s_name = "Service";
+	public static final String entity_os_name = "Ordered Service";
+	public static final String entity_o_name = "Organization Unit";
 	
 	/**
 	 * Get order by id

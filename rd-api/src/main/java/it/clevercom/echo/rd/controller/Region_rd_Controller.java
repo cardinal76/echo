@@ -61,8 +61,8 @@ public class Region_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity_name = "Region";
-	private static String entity_id = "idregion";
+	public static final String entity_name = "Region";
+	public static final String entity_id = "idregion";
 
 	
 	/**

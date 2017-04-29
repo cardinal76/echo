@@ -53,8 +53,8 @@ public class Municipality_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
-	private static String entity_name = "Municipality";
-	private static String entity_id = "idmunicipality";
+	public static final String entity_name = "Municipality";
+	public static final String entity_id = "idmunicipality";
 	
 	/**
 	 * Get municipality by id

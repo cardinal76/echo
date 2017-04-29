@@ -183,7 +183,7 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate that username can perform the requested operation on appSetting
-		validator.validateIdd(bodyApparatus, entity_name);
+		validator.validateDTOIdd(bodyApparatus, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
@@ -217,7 +217,7 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
 		// validate that username can perform the requested operation on appSetting
-		validator.validateIdd(bodyApparatus, entity_name);
+		validator.validateDTOIdd(bodyApparatus, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 

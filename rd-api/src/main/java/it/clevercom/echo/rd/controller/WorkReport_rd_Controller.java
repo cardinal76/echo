@@ -56,8 +56,8 @@ public class WorkReport_rd_Controller extends EchoController {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
-	private static String entity_name = "WorkReport";
-	private static String entity_id = "idworkreport";
+	public static final String entity_name = "WorkReport";
+	public static final String entity_id = "idworkreport";
 	
 	/**
 	 * Get a work report by id
@@ -183,7 +183,7 @@ public class WorkReport_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate that username can perform the requested operation on appSetting
-		validator.validateIdd(workReport, entity_name);
+		validator.validateDTOIdd(workReport, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> rp = 
@@ -217,7 +217,7 @@ public class WorkReport_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
 		// validate that username can perform the requested operation on appSetting
-		validator.validateIdd(workReport, entity_name);
+		validator.validateDTOIdd(workReport, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> rp = 
