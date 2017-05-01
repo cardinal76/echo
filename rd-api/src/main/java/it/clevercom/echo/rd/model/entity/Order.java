@@ -5,6 +5,8 @@ package it.clevercom.echo.rd.model.entity;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -387,6 +389,7 @@ public class Order  extends AbstractJpaEchoEntity implements java.io.Serializabl
     public void setOrderLogs(Set<OrderLog> orderLogs) {
         this.orderLogs = orderLogs;
     }
+
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="order")
     public Set<OrderService> getOrderServices() {

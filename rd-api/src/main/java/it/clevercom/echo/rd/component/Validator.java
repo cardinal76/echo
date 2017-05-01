@@ -133,7 +133,7 @@ public class Validator {
 	public void validateSortField(String field, Class<?> clazz, String entity_name) throws BadRequestException {
 		// TODO Auto-generated method stub
 		try {
-			Field someField = clazz.getField(field);
+			Field someField = clazz.getDeclaredField(field);
 		} catch (NoSuchFieldException | SecurityException e) {
 			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.crud.validation.invalidsortelement"), field, entity_name));
 		}

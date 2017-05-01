@@ -95,4 +95,22 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		// return standard response
 		return response;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public E create() {
+		// map
+		E entity = mapper.map(dto, entityClazz);
+		
+		// add technical field
+		entity.setUserupdate(createdUser);
+		entity.setActive(true);
+
+		// save and map to out dto
+		entity = repository.saveAndFlush(entity);
+		
+		return entity;
+	}
 }

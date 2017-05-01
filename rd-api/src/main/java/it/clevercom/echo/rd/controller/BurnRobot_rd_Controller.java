@@ -183,7 +183,7 @@ public class BurnRobot_rd_Controller extends EchoController {
 						env);
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name, entity_id, burnrobot.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
 		return rp.process();

@@ -39,11 +39,7 @@ public class OrderedServiceDTO extends BaseObjectDTO {
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((addedReason == null) ? 0 : addedReason.hashCode());
-		result = prime * result + ((cancelReason == null) ? 0 : cancelReason.hashCode());
-		return result;
+		return super.hashCode();
 	}
 
 	/* (non-Javadoc)
@@ -51,23 +47,6 @@ public class OrderedServiceDTO extends BaseObjectDTO {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OrderedServiceDTO other = (OrderedServiceDTO) obj;
-		if (addedReason == null) {
-			if (other.addedReason != null)
-				return false;
-		} else if (!addedReason.equals(other.addedReason))
-			return false;
-		if (cancelReason == null) {
-			if (other.cancelReason != null)
-				return false;
-		} else if (!cancelReason.equals(other.cancelReason))
-			return false;
-		return true;
+		return super.equals(obj);
 	}
 }

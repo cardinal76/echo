@@ -34,7 +34,7 @@ import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
-import it.clevercom.echo.common.model.factory.PagedDTOFactory;
+import it.clevercom.echo.common.model.factory.ResponseFactory;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.CountryDTO;
 import it.clevercom.echo.rd.model.dto.MunicipalityDTO;
@@ -233,7 +233,7 @@ public class Country_rd_Controller extends EchoController {
 		}
 		
 		// return data
-		return PagedDTOFactory.getPagedDTO(regionDTOList, 500, 1, 1, regionDTOList.size());
+		return ResponseFactory.getPagedDTO(regionDTOList, 500, 1, 1, regionDTOList.size());
 	}
 	
 	/**
@@ -290,7 +290,7 @@ public class Country_rd_Controller extends EchoController {
 		}
 		
 		// return data
-		return PagedDTOFactory.getPagedDTO(provinceDTOList, 500, 1, 1, provinceDTOList.size());
+		return ResponseFactory.getPagedDTO(provinceDTOList, 500, 1, 1, provinceDTOList.size());
 	}
 	
 	/**
@@ -361,7 +361,7 @@ public class Country_rd_Controller extends EchoController {
 		}
 		
 		// return data
-		return PagedDTOFactory.getPagedDTO(municipalityDTOList, 1000, 1, 1, municipalityDTOList.size());
+		return ResponseFactory.getPagedDTO(municipalityDTOList, 1000, 1, 1, municipalityDTOList.size());
 	}
 	
 	/**
@@ -396,7 +396,7 @@ public class Country_rd_Controller extends EchoController {
 						env);
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name, entity_id, country.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
 		return rp.process();

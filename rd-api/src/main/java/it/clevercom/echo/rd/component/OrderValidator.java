@@ -14,6 +14,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import it.clevercom.echo.common.exception.model.DeactivateException;
+import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.exception.model.ValidationException;
 import it.clevercom.echo.common.model.dto.response.ValidationExceptionDTO;
 import it.clevercom.echo.common.util.StringUtils;
@@ -308,10 +310,18 @@ public class OrderValidator {
 	 * @param orderToUpdate
 	 * @since 1.2.0
 	 * @throws ValidationException
+	 * @throws RecordNotFoundException 
 	 */
-	public void validateUpdateRequest(OrderDTO updatedOrder, Order orderToUpdate) throws ValidationException {
+	public void validateUpdateRequest(OrderDTO updatedOrder) throws ValidationException, RecordNotFoundException {
 		// create exception dto
 		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
+		
+		// find entity to update (oldValue)
+		Order orderToUpdate = repo.findOne(updatedOrder.getIdOrder());
+				
+		// if an entity with given id is not found in DB throw record not found
+		if (orderToUpdate == null)
+			throw new RecordNotFoundException(entity_name, entity_id, updatedOrder.getIdOrder().toString());
 		
 		// --------------------------------------------------------
 		// generic constraints valid for all update operation
@@ -510,22 +520,35 @@ public class OrderValidator {
 	 * @param entity
 	 * @param rejectReason
 	 * @param cancelReason
+	 * @throws RecordNotFoundException 
 	 * @since 1.2.0
 	 */
-	public void validateDeleteRequest(Order entity, String rejectReason, String cancelReason) throws ValidationException {
+	public void validateDeleteRequest(Long id, String rejectReason, String cancelReason) throws Exception {
 		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
+
+		// find entity
+		Order entity = repo.findOne(id);
+		
+		// if an entity with given id is not found in DB throw record not found
+		if (entity == null)
+			throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		
+		// check if order is already not active
+		if (entity.getActive().booleanValue() == false) {
+			throw new DeactivateException(entity_name, entity_id, id.toString());
+		}
 		
 		// check that only a reason has been provided by the client		
 		if (!((StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(rejectReason)) ^ (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(cancelReason)))) {
 			if ((StringUtils.isNullEmptyWhiteSpaceOnly(rejectReason)) && (StringUtils.isNullEmptyWhiteSpaceOnly(cancelReason))) {
 				// 0:0
-				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason") + "or" + env.getProperty("echo.api.crud.fields.rejectreason"), 
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason") + " or " + env.getProperty("echo.api.crud.fields.rejectreason"), 
 						MessageFormat.format(env.getProperty("echo.api.crud.validation.mustprovideatleastonefield"), 
 								env.getProperty("echo.api.crud.fields.cancelreason"), 
 								env.getProperty("echo.api.crud.fields.rejectreason")));
 			} else if ((StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(rejectReason)) && (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(cancelReason))) {
 				// 1:1
-				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason") + "or" + env.getProperty("echo.api.crud.fields.rejectreason"), 
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason") + " or " + env.getProperty("echo.api.crud.fields.rejectreason"), 
 						MessageFormat.format(env.getProperty("echo.api.crud.validation.mustprovideatmaximumonefield"), 
 								env.getProperty("echo.api.crud.fields.cancelreason"), 
 								env.getProperty("echo.api.crud.fields.rejectreason")));

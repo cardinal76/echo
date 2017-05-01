@@ -149,28 +149,28 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 				target = (Order) destinationFieldValue;
 			}
 			
-			target.setAcceptancedate((source.getAcceptanceDate() != null) ? new Date(source.getAcceptanceDate()) : null);
-			target.setAcquisitionchannel((source.getAcquisitionChannel() != null) ? source.getAcquisitionChannel() : null);
-			target.setAnamnesys((source.getAnamnesys() != null) ? source.getAnamnesys() : null);
-			target.setCreationdate((source.getCreationDate() != null) ? new Date(source.getCreationDate()) : null);
-			target.setDuration((source.getDuration() != null) ? source.getDuration() : null);
-			target.setIdorder((source.getIdOrder() != null) ? source.getIdOrder() : null);
-			target.setNotes((source.getNotes() != null) ? source.getNotes() : null);			
-			target.setClinicalquestion((source.getClinicalQuestion() != null) ? source.getClinicalQuestion() : null);
-			target.setRejectreason((source.getRejectReason() != null) ? source.getRejectReason() : null);
-			target.setRequestingphysician(source.getRequestingPhysician() != null ? source.getRequestingPhysician() : null);
-			target.setScheduleddate((source.getScheduledDate() != null) ? new Date(source.getScheduledDate()) : null);
-			target.setCancelreason((source.getCancelReason() != null) ? source.getCancelReason() : null);
-			target.setIdentificationdocument((source.getIdentificationDocument() != null) ? source.getIdentificationDocument() : null);
+			target.setAcceptancedate((source.getAcceptanceDate() != null) ? new Date(source.getAcceptanceDate()) : target.getAcceptancedate());
+			target.setAcquisitionchannel((source.getAcquisitionChannel() != null) ? source.getAcquisitionChannel() : target.getAcquisitionchannel());
+			target.setAnamnesys((source.getAnamnesys() != null) ? source.getAnamnesys() : target.getAnamnesys());
+			target.setCreationdate((source.getCreationDate() != null) ? new Date(source.getCreationDate()) : target.getCreationdate());
+			target.setDuration((source.getDuration() != null) ? source.getDuration() : target.getDuration());
+			target.setIdorder((source.getIdOrder() != null) ? source.getIdOrder() : target.getIdorder());
+			target.setNotes((source.getNotes() != null) ? source.getNotes() : target.getNotes());			
+			target.setClinicalquestion((source.getClinicalQuestion() != null) ? source.getClinicalQuestion() : target.getClinicalquestion());
+			target.setRejectreason((source.getRejectReason() != null) ? source.getRejectReason() : target.getRejectreason());
+			target.setRequestingphysician(source.getRequestingPhysician() != null ? source.getRequestingPhysician() : target.getRequestingphysician());
+			target.setScheduleddate((source.getScheduledDate() != null) ? new Date(source.getScheduledDate()) : target.getScheduleddate());
+			target.setCancelreason((source.getCancelReason() != null) ? source.getCancelReason() : target.getCancelreason());
+			target.setIdentificationdocument((source.getIdentificationDocument() != null) ? source.getIdentificationDocument() : target.getIdentificationdocument());
 			
-			target.setExecutingdate((source.getExecutingDate() != null) ? new Date(source.getExecutingDate()) : null);
-			target.setExecuteddate((source.getExecutedDate() != null) ? new Date(source.getExecutedDate()) : null);
-			target.setReportingdate((source.getReportingDate() != null) ? new Date(source.getReportingDate()) : null);
-			target.setReporteddate((source.getReportedDate() != null) ? new Date(source.getReportedDate()) : null);
-			target.setSigneddate((source.getSignedDate() != null) ? new Date(source.getSignedDate()) : null);
-			target.setDelivereddate((source.getDeliveredDate() != null) ? new Date(source.getDeliveredDate()) : null);
-			target.setArchiveddate((source.getArchivedDate() != null) ? new Date(source.getArchivedDate()) : null);
-			target.setCanceleddate((source.getCanceledDate() != null) ? new Date(source.getCanceledDate()) : null);
+			target.setExecutingdate((source.getExecutingDate() != null) ? new Date(source.getExecutingDate()) : target.getExecutingdate());
+			target.setExecuteddate((source.getExecutedDate() != null) ? new Date(source.getExecutedDate()) : target.getExecuteddate());
+			target.setReportingdate((source.getReportingDate() != null) ? new Date(source.getReportingDate()) : target.getReportingdate());
+			target.setReporteddate((source.getReportedDate() != null) ? new Date(source.getReportedDate()) : target.getReporteddate());
+			target.setSigneddate((source.getSignedDate() != null) ? new Date(source.getSignedDate()) : target.getSigneddate());
+			target.setDelivereddate((source.getDeliveredDate() != null) ? new Date(source.getDeliveredDate()) : target.getDelivereddate());
+			target.setArchiveddate((source.getArchivedDate() != null) ? new Date(source.getArchivedDate()) : target.getArchiveddate());
+			target.setCanceleddate((source.getCanceledDate() != null) ? new Date(source.getCanceledDate()) : target.getCanceleddate());
 		    
 			// map related complex object
 			
@@ -220,10 +220,10 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			}
 			
 			// inject tech fields
-			target.setActive(source.getActive());
-			target.setCreated(source.getCreated());
-			target.setUpdated(source.getUpdated());
-			target.setUserupdate(source.getUserUpdate());
+			target.setActive((source.getActive()!=null) ? source.getActive() : target.getActive());
+			target.setCreated((source.getCreated()!=null) ? source.getCreated() : target.getCreated());
+			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : target.getUpdated());
+			target.setUserupdate((source.getUserUpdate()!=null) ? source.getUserUpdate() : target.getUserupdate());
 			
 			return target;
 		} else {

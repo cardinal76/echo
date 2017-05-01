@@ -17,7 +17,7 @@ import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.jpa.factory.CriteriaSpecificationFactory;
 import it.clevercom.echo.common.jpa.factory.PageRequestFactory;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
-import it.clevercom.echo.common.model.factory.PagedDTOFactory;
+import it.clevercom.echo.common.model.factory.ResponseFactory;
 
 public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, D> {
 	
@@ -107,7 +107,7 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 		}
 		
 		// assembly dto
-		return PagedDTOFactory.getPagedDTO(dtoList, size, page, rs.getTotalPages(), rs.getTotalElements());
+		return ResponseFactory.getPagedDTO(dtoList, size, page, rs.getTotalPages(), rs.getTotalElements());
 	}
 
 	/**

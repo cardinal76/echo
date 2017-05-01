@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import it.clevercom.echo.common.exception.model.BadRequestException;
+import it.clevercom.echo.common.exception.model.DeactivateException;
 import it.clevercom.echo.common.exception.model.NotAuthorizedException;
 import it.clevercom.echo.common.exception.model.PageNotFoundException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
@@ -66,6 +67,20 @@ public class ControllerExceptionHandler {
 		logger.warn(e.getMessage(), e);
 		ExceptionDTO dto = new ExceptionDTO();
 		dto.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), e.getEntityName(), e.getParam(), e.getValue()));
+		return dto;
+	}
+	
+	/**
+	 * Maps {@link DeactivateException} to a FORBIDDEN http status
+	 * @param e exception to handle 
+	 * @return exception dto message
+	 */
+	@ExceptionHandler(DeactivateException.class)
+	@ResponseStatus(value=HttpStatus.FORBIDDEN)
+	public @ResponseBody ExceptionDTO handleDeactivateException(DeactivateException e) {
+		logger.warn(e.getMessage(), e);
+		ExceptionDTO dto = new ExceptionDTO();
+		dto.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.cannotdeactivate"), e.getEntityName(), e.getParam(), e.getValue()));
 		return dto;
 	}
 	
@@ -138,7 +153,7 @@ public class ControllerExceptionHandler {
 	}
 	
 	/**
-	 * Maps {@link ValidationException} to a BAD_REQUEST http status
+	 * Maps {@link NotAuthorizedException} to a BAD_REQUEST http status
 	 * @param e exception to handle 
 	 * @return exception dto message
 	 */
