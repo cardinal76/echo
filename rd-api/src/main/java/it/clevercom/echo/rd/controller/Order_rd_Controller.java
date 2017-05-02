@@ -342,6 +342,9 @@ public class Order_rd_Controller extends EchoController {
 	 * @since 1.2.0
 	 * @throws Exception
 	 */
+
+	// FIXME once a service is canceled it cannot be activate anymore (costraint violation)
+	
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")

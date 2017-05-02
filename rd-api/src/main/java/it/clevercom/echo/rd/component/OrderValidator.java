@@ -280,9 +280,9 @@ public class OrderValidator {
 					break;
 				}
 				if (StringUtils.isNullEmptyWhiteSpaceOnly(element.getAddedReason())) {
-					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason"), MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate.missingfield"), 
+					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.addedreason"), MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate.missingfield"), 
 							entity_os_name,
-							env.getProperty("echo.api.crud.fields.cancelreason")));
+							env.getProperty("echo.api.crud.fields.addedreason")));
 					break;
 				}
 				i++;
@@ -424,39 +424,74 @@ public class OrderValidator {
 			
 			// -------------------------------------------------------------
 			// FIX FOR RD_005
-			// Exams could be modified until the order is in status ACCEPTED
+			// Exams can be modified until the order is in status ACCEPTED
 			// -------------------------------------------------------------
 			
 			Set<OrderedServiceDTO> services = new HashSet<OrderedServiceDTO>();
+			Set<OrderedServiceDTO> canceledServices = new HashSet<OrderedServiceDTO>();
+			
 			for (OrderService orderService : orderToUpdate.getOrderServices()) {				
-				if (orderService.getActive().equals(Boolean.TRUE)) {
-					BaseObjectDTO dto_s = rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class);
-					OrderedServiceDTO dto = rdDozerMapper.map(dto_s, OrderedServiceDTO.class);
-					dto.setAddedReason(orderService.getAddedreason() != null ? orderService.getAddedreason() : null);
-					dto.setCancelReason(orderService.getCanceledreason() != null ? orderService.getCanceledreason() : null);
-					
+				
+				BaseObjectDTO dto_s = rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class);
+				OrderedServiceDTO dto = rdDozerMapper.map(dto_s, OrderedServiceDTO.class);
+				dto.setAddedReason(orderService.getAddedreason() != null ? orderService.getAddedreason() : null);
+				dto.setCancelReason(orderService.getCanceledreason() != null ? orderService.getCanceledreason() : null);
+				
+				if (orderService.getActive().equals(Boolean.TRUE)) {	
 					services.add(dto);
+				} else {
+					canceledServices.add(dto);
 				}
 			}
+			
 			if ((updatedOrder.getServices().hashCode() != services.hashCode()) && 
 					WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() > WorkStatusEnum.ACCEPTED.order()) {
 				// consider to launch an exception instead of adding exception fields
 				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), 
 						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
-								entity_name, 
+								entity_os_name, 
 								env.getProperty("echo.api.crud.fields.service")));
 			}
 			
-			// -----------------------------------------------
-			// check that added services have the added reason
-			// -----------------------------------------------
+			// -------------------------------------------------------
+			// check that added services have a value for added reason
+			// -------------------------------------------------------
+		
+			if ((updatedOrder.getServices().size()>0) && 
+				(updatedOrder.getServices().hashCode() != services.hashCode())) {
+					Set<OrderedServiceDTO> toEvaluate = new HashSet<OrderedServiceDTO>();
+					toEvaluate.addAll(updatedOrder.getServices());
+					// remove already present order services
+					toEvaluate.removeAll(services);
+					for (OrderedServiceDTO orderedServiceDTO : toEvaluate) {
+						if (StringUtils.isNullEmptyWhiteSpaceOnly(orderedServiceDTO.getAddedReason())) {
+							exceptions.addFieldError(env.getProperty("echo.api.crud.fields.addedreason"), 
+									MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate.missingfield"), 
+											entity_os_name, 
+											env.getProperty("echo.api.crud.fields.addedreason")));
+						} 
+					}
+			}
 			
+			// -----------------------------------------------------------
+			// check that canceled services have a value for cancel reason
+			// -----------------------------------------------------------
 			
-			
-			// ---------------------------------------------------
-			// check that canceled services have the cancel reason
-			// ---------------------------------------------------
-			
+			if ((updatedOrder.getCanceledServices().size()>0) && 
+				(updatedOrder.getCanceledServices().hashCode() != canceledServices.hashCode())) {
+					Set<OrderedServiceDTO> toEvaluate = new HashSet<OrderedServiceDTO>();  
+					toEvaluate.addAll(updatedOrder.getCanceledServices());
+					// remove already present order services
+					toEvaluate.removeAll(canceledServices);
+					for (OrderedServiceDTO orderedServiceDTO : toEvaluate) {
+						if (StringUtils.isNullEmptyWhiteSpaceOnly(orderedServiceDTO.getCancelReason())) {
+							exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason"), 
+									MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate.missingfield"), 
+											entity_os_name, 
+											env.getProperty("echo.api.crud.fields.cancelreason")));
+						} 
+					}
+			}	
 		}
 		
 		// ------------------------
