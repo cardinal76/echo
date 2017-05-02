@@ -341,15 +341,14 @@ public class Order_rd_Controller extends EchoController {
 	 * @return
 	 * @since 1.2.0
 	 * @throws Exception
-	 */
-
-	// FIXME once a service is canceled it cannot be activate anymore (costraint violation)
-	
+	 */	
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {
+
+		// FIXME once a service is canceled it cannot be activate anymore (costraint violation)
 		// TODO allocate order on rd_modality_daily_allocation (only on schedulation)
 		
 		// log info
@@ -359,7 +358,7 @@ public class Order_rd_Controller extends EchoController {
 		validator.validateDTOIdd(order, entity_name);		
 		orderValidator.validateUpdateRequest(order);
 	
-		// update changed services only if order status is lower than accepted
+		// update changed services only if order status is lower in order value than accepted
 		Order orderToUpdate = repo.findOne(order.getIdOrder());
 		if (WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() <= WorkStatusEnum.ACCEPTED.order()) {
 			// create two maps (active, inactive)
@@ -374,22 +373,31 @@ public class Order_rd_Controller extends EchoController {
 				}
 			}
 	
-			// active services
+			// save active services
 			for (OrderedServiceDTO current : order.getServices()) {
 				if (!oldActiveServiceMap.containsValue(current)) {
-					OrderService orderService = new OrderService();
-					orderService.setActive(true);
-					orderService.setAddedreason(current.getAddedReason());
-					orderService.setCreated(new Date());
-					orderService.setOrder(orderToUpdate);
-					orderService.setService(rdDozerMapper.map(current, Service.class));
-					orderService.setUpdated(new Date());
-					orderService.setUserupdate(getLoggedUser(request));
-					repo_os.saveAndFlush(orderService);
+					if (!oldInactiveServiceMap.containsValue(current)) {
+						OrderService orderService = new OrderService();
+						orderService.setActive(true);
+						orderService.setAddedreason(current.getAddedReason());
+						orderService.setOrder(orderToUpdate);
+						orderService.setService(rdDozerMapper.map(current, Service.class));
+						orderService.setUserupdate(getLoggedUser(request));
+						repo_os.saveAndFlush(orderService);
+					} else {
+						// reactivate service
+						Service serv = repo_s.findOne(Long.valueOf(current.getId()));
+						OrderService orderService = repo_os.findByOrderAndService(orderToUpdate, serv);
+						orderService.setUserupdate(getLoggedUser(request));
+						orderService.setActive(false);
+						orderService.setCanceledreason(null);
+						orderService.setAddedreason(current.getAddedReason());
+						repo_os.saveAndFlush(orderService);
+					}
 				}
 			}
 			
-			// inactive services
+			// save inactive services
 			for (OrderedServiceDTO current : order.getCanceledServices()) {
 				if (oldActiveServiceMap.containsValue(current)) {
 					Service serv = repo_s.findOne(Long.valueOf(current.getId()));

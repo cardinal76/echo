@@ -2,12 +2,14 @@ package it.clevercom.echo.rd.component;
 
 import java.text.MessageFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -491,7 +493,17 @@ public class OrderValidator {
 											env.getProperty("echo.api.crud.fields.cancelreason")));
 						} 
 					}
-			}	
+			}
+			
+			// ------------------------------------------------------------------------------
+			// check that the same service is not contained in canceled services and services
+			// ------------------------------------------------------------------------------
+			
+			Collection intersection = CollectionUtils.intersection(updatedOrder.getServices(), updatedOrder.getCanceledServices());
+			if (intersection.size() > 0) {
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.canceledservice") + " or " + env.getProperty("echo.api.crud.fields.orderedservice"), 
+						env.getProperty("echo.api.crud.validation.ambiguousrequestofservice"));
+			}
 		}
 		
 		// ------------------------
