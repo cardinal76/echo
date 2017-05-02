@@ -52,7 +52,7 @@ public class DataBase_rd_Config {
 
 		return em;
 	}
-
+	
 	private Properties rdHibernateProperties() {
 		Properties properties = new Properties();
 		properties.put("hibernate.dialect", environment.getRequiredProperty("rd.hibernate.dialect"));

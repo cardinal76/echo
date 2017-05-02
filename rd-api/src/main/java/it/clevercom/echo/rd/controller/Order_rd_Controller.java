@@ -319,8 +319,8 @@ public class Order_rd_Controller extends EchoController {
 		// process order insert
 		Order newOrder = rp.create();		
 		
-		Set<OrderService> associations = newOrder.getOrderServices();
-		for (OrderService orderService : associations) {
+		Set<OrderService> orderServices = newOrder.getOrderServices();
+		for (OrderService orderService : orderServices) {
 			orderService.setUserupdate(getLoggedUser(request));
 			repo_os.saveAndFlush(orderService);
 		}

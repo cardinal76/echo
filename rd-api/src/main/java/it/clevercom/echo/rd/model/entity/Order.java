@@ -1,12 +1,10 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 28-apr-2017 10.51.09 by Hibernate Tools 5.2.2.Final
+// Generated 2-mag-2017 14.43.59 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -389,7 +387,6 @@ public class Order  extends AbstractJpaEchoEntity implements java.io.Serializabl
     public void setOrderLogs(Set<OrderLog> orderLogs) {
         this.orderLogs = orderLogs;
     }
-
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="order")
     public Set<OrderService> getOrderServices() {

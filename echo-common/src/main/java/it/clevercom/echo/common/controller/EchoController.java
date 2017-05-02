@@ -70,6 +70,7 @@ public class EchoController {
 	    
 	    binder.registerCustomEditor(Long.class, all_date_options);
 	}
+	
 	/**
 	 * Get logged user using header contained into HttpServletRequest
 	 * @param request

@@ -386,7 +386,13 @@ public class OrderValidator {
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.emptylist"),
 							env.getProperty("echo.api.crud.fields.service")));
 		} else if (updatedOrder.getServices().size() > 0) {
-			// get old service modality type (check only the first element)
+			
+			// ----------------------------------------------------
+			// FIX FOR RD_003
+			// validate that services belongs to same modality type
+			// ----------------------------------------------------
+			
+			// get old service modality type and name (check only the first element)
 			Long oldModalityType = 0l;
 			String oldModalityName = null;
 			for (OrderService current : orderToUpdate.getOrderServices()) {
@@ -416,10 +422,13 @@ public class OrderValidator {
 				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), entity_s_name, oldModalityName, oldModalityType));
 			}
 			
-			// TODO added fix to RD_005
-			Set<OrderService> orderServices = orderToUpdate.getOrderServices();
+			// -------------------------------------------------------------
+			// FIX FOR RD_005
+			// Exams could be modified until the order is in status ACCEPTED
+			// -------------------------------------------------------------
+			
 			Set<OrderedServiceDTO> services = new HashSet<OrderedServiceDTO>();
-			for (OrderService orderService : orderServices) {				
+			for (OrderService orderService : orderToUpdate.getOrderServices()) {				
 				if (orderService.getActive().equals(Boolean.TRUE)) {
 					BaseObjectDTO dto_s = rdDozerMapper.map(orderService.getService(), BaseObjectDTO.class);
 					OrderedServiceDTO dto = rdDozerMapper.map(dto_s, OrderedServiceDTO.class);
@@ -429,14 +438,25 @@ public class OrderValidator {
 					services.add(dto);
 				}
 			}
-			
 			if ((updatedOrder.getServices().hashCode() != services.hashCode()) && 
 					WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() > WorkStatusEnum.ACCEPTED.order()) {
+				// consider to launch an exception instead of adding exception fields
 				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"), 
 						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
 								entity_name, 
 								env.getProperty("echo.api.crud.fields.service")));
 			}
+			
+			// -----------------------------------------------
+			// check that added services have the added reason
+			// -----------------------------------------------
+			
+			
+			
+			// ---------------------------------------------------
+			// check that canceled services have the cancel reason
+			// ---------------------------------------------------
+			
 		}
 		
 		// ------------------------

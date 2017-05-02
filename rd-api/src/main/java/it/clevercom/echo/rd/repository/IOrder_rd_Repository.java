@@ -3,9 +3,12 @@ package it.clevercom.echo.rd.repository;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.PersistenceContext;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -13,6 +16,7 @@ import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
 
 public interface IOrder_rd_Repository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
+	
 	/**
 	 * @param status
 	 * @param request

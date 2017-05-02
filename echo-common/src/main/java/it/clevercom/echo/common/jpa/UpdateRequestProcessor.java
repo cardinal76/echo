@@ -95,9 +95,10 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		oldValueEntity.setUserupdate(updatedUser);
 
 		// save and map to out dto
-		E newValueEntity = repository.saveAndFlush(oldValueEntity);		
-		D newValueDTO = mapper.map(newValueEntity, dtoClazz);
-				
+		E newValueEntity = repository.saveAndFlush(oldValueEntity);
+		// D newValueDTO = mapper.map(newValueEntity, dtoClazz);
+		D newValueDTO = dto;
+		
 		// create standard response
 		UpdateResponseDTO<D> response = new UpdateResponseDTO<D>();
 		response.setEntityName(entity_name);
