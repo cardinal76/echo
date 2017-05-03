@@ -55,6 +55,7 @@ import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
 import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.Service;
+import it.clevercom.echo.rd.model.entity.WorkSession;
 import it.clevercom.echo.rd.repository.IOrderLog_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderService_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrder_rd_Repository;
@@ -319,6 +320,7 @@ public class Order_rd_Controller extends EchoController {
 		// process order insert
 		Order newOrder = rp.create();		
 		
+		// save services
 		Set<OrderService> orderServices = newOrder.getOrderServices();
 		for (OrderService orderService : orderServices) {
 			orderService.setUserupdate(getLoggedUser(request));
@@ -327,6 +329,9 @@ public class Order_rd_Controller extends EchoController {
 		
 		order.setIdOrder(newOrder.getIdorder()); 
 
+		// create a session
+		// WorkSession session = new WorkSession();
+		
 		// create standard response
 		String message = MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name);
 		return ResponseFactory.getCreateResponseDTO(order, entity_name, message);		
@@ -347,9 +352,6 @@ public class Order_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {
-
-		// FIXME once a service is canceled it cannot be activate anymore (costraint violation)
-		// TODO allocate order on rd_modality_daily_allocation (only on schedulation)
 		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
@@ -358,7 +360,7 @@ public class Order_rd_Controller extends EchoController {
 		validator.validateDTOIdd(order, entity_name);		
 		orderValidator.validateUpdateRequest(order);
 	
-		// update changed services only if order status is lower in order value than accepted
+		// update changed services only if order status is lower or equal in order value than accepted
 		Order orderToUpdate = repo.findOne(order.getIdOrder());
 		if (WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() <= WorkStatusEnum.ACCEPTED.order()) {
 			// create two maps (active, inactive)
@@ -408,6 +410,15 @@ public class Order_rd_Controller extends EchoController {
 					repo_os.saveAndFlush(orderService);
 				}
 			}
+		}
+		
+		// TODO allocate order on rd_modality_daily_allocation (only on schedulation)
+		WorkStatusEnum currentStatus = WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode());
+		WorkStatusEnum requestedStatus = WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode());
+		if (((requestedStatus).equals(WorkStatusEnum.SCHEDULED)) && (currentStatus.order()<requestedStatus.order())) {
+			// update schedulation basing on worksession
+			order.getScheduledDate();
+			
 		}
 		
 		// create and save log

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -134,7 +135,8 @@ public class OrderValidator {
 		Calendar cal2 = Calendar.getInstance();
 		cal1.setTime(new Date(order.getCreationDate()));
 		cal2.setTime(new Date());
-		boolean sameDay = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+		boolean sameDay = DateUtils.isSameDay(cal1, cal2); 
+
 		if(!sameDay) {
 			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.creationdate"), 
 					MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbetoday"), 
@@ -908,20 +910,29 @@ public class OrderValidator {
 	 * @return
 	 */
 	private Map<String, String> validateFromRequestedStatus(OrderDTO updatedOrder, Order orderToUpdate) {
-		Map<String, String> out = new HashMap<String, String>();
-		// work session must be null
-		if (updatedOrder.getWorkSession() != null) {
-			out.put(env.getProperty("echo.api.crud.fields.worksession"),
-					MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
-							entity_name,
-							env.getProperty("echo.api.crud.fields.worksession")));
+		Map<String, String> problems = new HashMap<String, String>();
+		
+		WorkStatusEnum currentStatus = WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode());
+		WorkStatusEnum requestedStatus = WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode());
+		if (((requestedStatus).equals(WorkStatusEnum.SCHEDULED)) && (currentStatus.order()<requestedStatus.order())) {
+			// check that scheduled date is present
+			if (orderToUpdate.getScheduleddate()==null) {
+				problems.put(env.getProperty("echo.api.crud.fields.scheduledate"), env.getProperty("echo.api.crud.validation.mustnotbeempty"));
+			}
+			
+			// check that scheduled date is in the future
+			if ((orderToUpdate.getScheduleddate()!=null) && (!(new Date(orderToUpdate.getScheduleddate().getTime())).after(new Date()))) {
+				problems.put(env.getProperty("echo.api.crud.fields.scheduledate"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.datemustbefuture"), 
+								env.getProperty("echo.api.crud.fields.scheduledate")));
+			}			
 		}
 		
 		// validate status switch
 		if ((WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.REQUESTED) &&  
 		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.SCHEDULED) &&
 		    (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) != WorkStatusEnum.CANCELED)) {
-				out.put(env.getProperty("echo.api.crud.fields.workstatus"), 
+				problems.put(env.getProperty("echo.api.crud.fields.workstatus"), 
 						MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdatestatus"), 
 								entity_name,
 								WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).name(),
@@ -934,6 +945,6 @@ public class OrderValidator {
 		} else if (WorkStatusEnum.getInstanceFromCodeValue(updatedOrder.getWorkStatus().getCode()) == WorkStatusEnum.CANCELED) {
 
 		}
-		return out;
+		return problems;
 	}
 }
