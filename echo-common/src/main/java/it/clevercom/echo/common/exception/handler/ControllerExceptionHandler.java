@@ -10,7 +10,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -168,7 +168,6 @@ public class ControllerExceptionHandler {
 		return dto;
 	}
 	
-	// org.springframework.security.core.
 	@ExceptionHandler(AuthenticationException.class)
 	@ResponseStatus(value=HttpStatus.FORBIDDEN)
 	public @ResponseBody ExceptionDTO handleAuthenticationException(AuthenticationException e) {
@@ -178,19 +177,15 @@ public class ControllerExceptionHandler {
 		return dto;
 	}
 	
-//	/**
-//	 * Maps {@link NotAuthorizedException} to a BAD_REQUEST http status
-//	 * @param e exception to handle 
-//	 * @return exception dto message
-//	 */
-//	@ExceptionHandler(BadCredentialsException.class)
-//	@ResponseStatus(value=HttpStatus.FORBIDDEN)
-//	public @ResponseBody ExceptionDTO handleBadCredentialsException(NotAuthorizedException e) {
-//		logger.error("BadCredentialException occurred : ", e);
-//		ExceptionDTO dto = new ExceptionDTO();
-//		dto.setMessage(e.getMessage());
-//		return dto;
-//	}
+	@ExceptionHandler(InsufficientAuthenticationException.class)
+	// org.springframework.security.authentication.InsufficientAuthenticationException
+	@ResponseStatus(value=HttpStatus.UNAUTHORIZED)
+	public @ResponseBody ExceptionDTO handleInsufficientAuthenticationException(InsufficientAuthenticationException e) {
+		logger.error("InsufficientAuthenticationException occurred : ", e);
+		ExceptionDTO dto = new ExceptionDTO();
+		dto.setMessage(e.getMessage());
+		return dto;
+	}
 	
 //	/**
 //	 * Maps {@link Exception} to a INTERNAL_SERVER_ERROR http status
