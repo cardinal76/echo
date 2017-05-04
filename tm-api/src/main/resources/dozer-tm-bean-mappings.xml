@@ -59,4 +59,10 @@
 			<b>uom</b>
 		</field>
 	</mapping>
+	<mapping>
+		<class-a>it.clevercom.echo.tm.model.dto.gateway.BloodPressureEventDTO</class-a>
+		<class-b>it.clevercom.echo.tm.model.entity.gateway.BloodPressureEvent</class-b>
+	</mapping>
+	
+	
 </mappings>

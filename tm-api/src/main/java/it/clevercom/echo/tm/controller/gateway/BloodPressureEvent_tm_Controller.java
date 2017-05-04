@@ -53,7 +53,7 @@ public class BloodPressureEvent_tm_Controller {
 	@Autowired
 	private BloodPressure_tm_Repository repository;
 
-	public static final String entity_name = "Weight Event";
+	public static final String entity_name = "Blood Event";
 	public static final String entity_id = "pulserate";
 
 	
