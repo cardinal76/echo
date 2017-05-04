@@ -58,7 +58,7 @@ public class BloodPressureEvent_tm_Controller extends EchoController{
 	private BloodPressure_tm_Repository repository;
 
 	public static final String entity_name = "Blood Event";
-	public static final String entity_id = "pulserate";
+	public static final String entity_id = "pulseRate";
 
 	
 	@RequestMapping(method = RequestMethod.PUT)
