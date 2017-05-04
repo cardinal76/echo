@@ -91,11 +91,12 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="1000", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="idorganizationunit", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
 		// check enum string params
 		validator.validateSort(sort);
-		
+		validator.validateSortField(field, OrganizationUnit.class, entity_name);
+
 		CriteriaRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> rp = 
 				new CriteriaRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, 
 						rdDozerMapper, 

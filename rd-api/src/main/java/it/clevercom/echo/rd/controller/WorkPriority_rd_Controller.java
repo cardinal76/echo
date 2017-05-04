@@ -35,6 +35,7 @@ import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.WorkPriorityDTO;
+import it.clevercom.echo.rd.model.entity.User;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
 
@@ -108,12 +109,13 @@ public class WorkPriority_rd_Controller extends EchoController {
 	public @ResponseBody PagedDTO<WorkPriorityDTO> getByCriteria (
 			@RequestParam(defaultValue="null", required=false) String criteria, 
 			@RequestParam(defaultValue="1", required=false) int page, 
-			@RequestParam(defaultValue="4", required=false) int size, 
+			@RequestParam(defaultValue="15", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="code", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
 		// check enum string params
 		validator.validateSort(sort);
+		validator.validateSortField(field, WorkPriority.class, entity_name);
 		
 		CriteriaRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO> rp = 
 				new CriteriaRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO>(repo, 

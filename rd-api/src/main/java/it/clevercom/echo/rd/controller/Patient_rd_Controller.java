@@ -40,6 +40,7 @@ import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.PatientCodingActorDTO;
 import it.clevercom.echo.rd.model.dto.PatientDTO;
 import it.clevercom.echo.rd.model.entity.CodingActor;
+import it.clevercom.echo.rd.model.entity.OrganizationUnit;
 import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.PatientCodingActor;
 import it.clevercom.echo.rd.repository.IPatientCodingActor_rd_Repository;
@@ -181,10 +182,12 @@ public class Patient_rd_Controller extends EchoController {
 			@RequestParam(defaultValue = "1", required = false) int page,
 			@RequestParam(defaultValue = "15", required = false) int size,
 			@RequestParam(defaultValue = "asc", required = false) String sort,
-			@RequestParam(defaultValue = "idpatient", required = false) String field) throws Exception {
+			@RequestParam(defaultValue = entity_id, required = false) String field) throws Exception {
 		
 		// check enum string params
 		validator.validateSort(sort);
+		validator.validateSortField(field, Patient.class, entity_name);
+
 		
 		CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> rp = 
 				new CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, 

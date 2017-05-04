@@ -31,6 +31,7 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.WorkReportDTO;
+import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkReport;
 import it.clevercom.echo.rd.repository.IWorkReport_rd_Repository;
 
@@ -106,13 +107,14 @@ public class WorkReport_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="15", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="code", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
 		// check enum string params
 		validator.validateSort(sort);
+		validator.validateSortField(field, WorkReport.class, entity_name);
 		
 		CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> rp = 
 				new CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, 

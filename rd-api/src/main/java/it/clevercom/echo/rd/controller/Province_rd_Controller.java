@@ -22,6 +22,7 @@ import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.ProvinceDTO;
+import it.clevercom.echo.rd.model.entity.PhraseBook;
 import it.clevercom.echo.rd.model.entity.Province;
 import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
 import it.clevercom.echo.rd.repository.IProvince_rd_Repository;
@@ -95,10 +96,11 @@ public class Province_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="500", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="idprovince", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
 		// check enum string params
 		validator.validateSort(sort);
+		validator.validateSortField(field, Province.class, entity_name);
 		
 		CriteriaRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> rp = 
 				new CriteriaRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO>(repo, 

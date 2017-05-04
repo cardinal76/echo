@@ -31,7 +31,6 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.CitizenshipDTO;
-import it.clevercom.echo.rd.model.entity.BodyApparatus;
 import it.clevercom.echo.rd.model.entity.Citizenship;
 import it.clevercom.echo.rd.repository.ICitizenship_rd_Repository;
 
@@ -129,7 +128,7 @@ public class Citizenship_rd_Controller extends EchoController {
 		
 		// validate
 		validator.validateSort(sort);
-		validator.validateSortField(field, BodyApparatus.class, entity_name);
+		validator.validateSortField(field, Citizenship.class, entity_name);
 		
 		// create processor
 		CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> rp = 

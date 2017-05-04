@@ -25,6 +25,7 @@ import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.WorkStatusDTO;
+import it.clevercom.echo.rd.model.entity.WorkSession;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 
@@ -94,10 +95,11 @@ public class WorkStatus_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="10", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="idworkstatus", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
 		// check enum string params
 		validator.validateSort(sort);
+		validator.validateSortField(field, WorkStatus.class, entity_name);
 		
 		CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO> rp = 
 				new CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO>(repo, 

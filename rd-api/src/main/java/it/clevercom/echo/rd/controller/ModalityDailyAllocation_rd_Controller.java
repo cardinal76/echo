@@ -113,6 +113,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 				
 		// check enum string params
 		validator.validateSort(sort);
+		validator.validateSortField(field, ModalityDailyAllocation.class, entity_name);
 		
 		CriteriaRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> rp = 
 				new CriteriaRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO>(repo, 

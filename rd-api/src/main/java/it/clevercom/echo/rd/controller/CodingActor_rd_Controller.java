@@ -31,7 +31,6 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.CodingActorDTO;
-import it.clevercom.echo.rd.model.entity.BodyApparatus;
 import it.clevercom.echo.rd.model.entity.CodingActor;
 import it.clevercom.echo.rd.repository.ICodingActor_rd_Repository;
 
@@ -129,7 +128,7 @@ public class CodingActor_rd_Controller extends EchoController {
 				
 		// validate
 		validator.validateSort(sort);
-		validator.validateSortField(field, BodyApparatus.class, entity_name);
+		validator.validateSortField(field, CodingActor.class, entity_name);
 		
 		// create processor
 		CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> rp = 

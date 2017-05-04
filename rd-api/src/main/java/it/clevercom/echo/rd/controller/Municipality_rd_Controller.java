@@ -31,7 +31,6 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.MunicipalityDTO;
-import it.clevercom.echo.rd.model.entity.ModalityType;
 import it.clevercom.echo.rd.model.entity.Municipality;
 import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
 
@@ -126,7 +125,7 @@ public class Municipality_rd_Controller extends EchoController {
 				
 		// validate
 		validator.validateSort(sort);
-		validator.validateSortField(field, ModalityType.class, entity_name);
+		validator.validateSortField(field, Municipality.class, entity_name);
 
 		// create processor
 		CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> rp = 

@@ -31,7 +31,6 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.BurnRobotDTO;
-import it.clevercom.echo.rd.model.entity.BodyApparatus;
 import it.clevercom.echo.rd.model.entity.BurnRobot;
 import it.clevercom.echo.rd.repository.IBurnRobot_rd_Repository;
 
@@ -129,7 +128,7 @@ public class BurnRobot_rd_Controller extends EchoController {
 		
 		// validate
 		validator.validateSort(sort);
-		validator.validateSortField(field, BodyApparatus.class, entity_name);
+		validator.validateSortField(field, BurnRobot.class, entity_name);
 		
 		// create processor
 		CriteriaRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> rp = 

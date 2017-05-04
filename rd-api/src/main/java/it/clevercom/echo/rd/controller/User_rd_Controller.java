@@ -28,6 +28,7 @@ import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.UserDTO;
+import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.User;
 import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 
@@ -60,7 +61,7 @@ public class User_rd_Controller extends EchoController {
 	
 	// used to bind it in exception message
 	public static final String entity_name = "User";
-	public static final String entity_id = "iduser";
+	public static final String entity_id = "username";
 
 	
 	/**
@@ -102,6 +103,7 @@ public class User_rd_Controller extends EchoController {
 		
 		// check enum string params
 		validator.validateSort(sort);
+		validator.validateSortField(field, User.class, entity_name);
 		
 		CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO> rp = 
 				new CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, 

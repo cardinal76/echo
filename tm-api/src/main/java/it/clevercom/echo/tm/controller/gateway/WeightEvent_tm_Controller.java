@@ -1,7 +1,6 @@
 package it.clevercom.echo.tm.controller.gateway;
 
 import java.text.MessageFormat;
-import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
@@ -21,11 +20,9 @@ import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
-import it.clevercom.echo.common.jpa.specification.DateIntervalSpecification;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
-import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.EchoValidator;
 import it.clevercom.echo.tm.model.dto.gateway.WeightEventDTO;
 import it.clevercom.echo.tm.model.entity.gateway.WeightEvent;
@@ -172,10 +169,10 @@ public class WeightEvent_tm_Controller extends EchoController{
 						size,
 						env);
 		
-		final Date t1 = DateUtil.getStartOfDay(new Date(from));
-		final Date t2 = DateUtil.getEndOfDay(new Date(to));
-		DateIntervalSpecification<WeightEvent> interval = new DateIntervalSpecification<WeightEvent>(t1, t2, "timestamp");
-		rp.addAndSpecification(interval);
+//		final Date t1 = DateUtil.getStartOfDay(new Date(from));
+//		final Date t2 = DateUtil.getEndOfDay(new Date(to));
+//		DateIntervalSpecification<WeightEvent> interval = new DateIntervalSpecification<WeightEvent>(t1, t2, "timestamp");
+//		rp.addAndSpecification(interval);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));

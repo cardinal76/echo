@@ -31,6 +31,7 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
+import it.clevercom.echo.rd.model.entity.WorkReport;
 import it.clevercom.echo.rd.model.entity.WorkSession;
 import it.clevercom.echo.rd.repository.IWorkSession_rd_Repository;
 
@@ -114,6 +115,7 @@ public class WorkSession_rd_Controller extends EchoController {
 				
 		// check enum string params
 		validator.validateSort(sort);
+		validator.validateSortField(field, WorkSession.class, entity_name);
 		
 		CriteriaRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> rp = 
 				new CriteriaRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, 

@@ -165,10 +165,10 @@ public class BloodPressureEvent_tm_Controller extends EchoController{
 						size,
 						env);
 		
-		final Date t1 = DateUtil.getStartOfDay(new Date(from));
-		final Date t2 = DateUtil.getEndOfDay(new Date(to));
-		DateIntervalSpecification<BloodPressureEvent> interval = new DateIntervalSpecification<BloodPressureEvent>(t1, t2, "timestamp");
-		rp.addAndSpecification(interval);
+//		final Date t1 = DateUtil.getStartOfDay(new Date(from));
+//		final Date t2 = DateUtil.getEndOfDay(new Date(to));
+//		DateIntervalSpecification<BloodPressureEvent> interval = new DateIntervalSpecification<BloodPressureEvent>(t1, t2, "timeStamp");
+//		rp.addAndSpecification(interval);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));

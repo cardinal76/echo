@@ -188,7 +188,7 @@ public class Order_rd_Controller extends EchoController {
 		validator.validateStatus(status);
 		validator.validatePriority(priority);
 		validator.validateSort(sort);
-		validator.validateSortField(field, Order.class, name);
+		validator.validateSortField(field, Order.class, entity_name);
 		
 		// create processor
 		CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> rp = 

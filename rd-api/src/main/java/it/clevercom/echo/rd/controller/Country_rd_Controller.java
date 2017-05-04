@@ -40,7 +40,6 @@ import it.clevercom.echo.rd.model.dto.CountryDTO;
 import it.clevercom.echo.rd.model.dto.MunicipalityDTO;
 import it.clevercom.echo.rd.model.dto.ProvinceDTO;
 import it.clevercom.echo.rd.model.dto.RegionDTO;
-import it.clevercom.echo.rd.model.entity.BodyApparatus;
 import it.clevercom.echo.rd.model.entity.Country;
 import it.clevercom.echo.rd.model.entity.Municipality;
 import it.clevercom.echo.rd.model.entity.Province;
@@ -165,7 +164,7 @@ public class Country_rd_Controller extends EchoController {
 				
 		// validate
 		validator.validateSort(sort);
-		validator.validateSortField(field, BodyApparatus.class, entity_name);
+		validator.validateSortField(field, Country.class, entity_name);
 		
 		// create processor
 		CriteriaRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> rp = 

@@ -26,6 +26,7 @@ import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.jpa.specification.ModalityTypeSpecification;
 import it.clevercom.echo.rd.model.dto.ServiceDTO;
+import it.clevercom.echo.rd.model.entity.Province;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.repository.IService_rd_Repository;
 
@@ -96,11 +97,12 @@ public class Service_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="1000", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="idservice", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 
 		// check enum string params
 		validator.validateSort(sort);
-		
+		validator.validateSortField(field, Service.class, entity_name);
+
 		CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO> rp = 
 				new CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, 
 						rdDozerMapper, 
