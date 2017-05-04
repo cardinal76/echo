@@ -177,28 +177,18 @@ public class ControllerExceptionHandler {
 		return dto;
 	}
 	
-	@ExceptionHandler(InsufficientAuthenticationException.class)
-	// org.springframework.security.authentication.InsufficientAuthenticationException
-	@ResponseStatus(value=HttpStatus.UNAUTHORIZED)
-	public @ResponseBody ExceptionDTO handleInsufficientAuthenticationException(InsufficientAuthenticationException e) {
-		logger.error("InsufficientAuthenticationException occurred : ", e);
+	/**
+	 * Maps {@link Exception} to a INTERNAL_SERVER_ERROR http status
+	 * @param e exception to handle 
+	 * @return exception dto message
+	 */
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody ExceptionDTO handleException(Exception e) {
+		logger.fatal(e.getMessage(), e);
 		ExceptionDTO dto = new ExceptionDTO();
-		dto.setMessage(e.getMessage());
+		dto.setMessage(env.getProperty("echo.api.exception.message"));
 		return dto;
 	}
-	
-//	/**
-//	 * Maps {@link Exception} to a INTERNAL_SERVER_ERROR http status
-//	 * @param e exception to handle 
-//	 * @return exception dto message
-//	 */
-//	@ExceptionHandler(Exception.class)
-//	@ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)
-//	public @ResponseBody ExceptionDTO handleException(Exception e) {
-//		logger.fatal(e.getMessage(), e);
-//		ExceptionDTO dto = new ExceptionDTO();
-//		dto.setMessage(env.getProperty("echo.api.exception.message"));
-//		return dto;
-//	}
 	
 }

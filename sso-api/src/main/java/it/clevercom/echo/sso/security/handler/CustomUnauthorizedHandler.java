@@ -11,6 +11,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.clevercom.echo.common.model.dto.response.ExceptionDTO;
+
 /**
  * 
  * @author alx
@@ -26,8 +30,12 @@ public class CustomUnauthorizedHandler implements AuthenticationEntryPoint {
 	@Override
 	public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
 		logger.warn("AuthenticationException occurred :", e);
+		ExceptionDTO dto = new ExceptionDTO();
+		dto.setMessage(e.getMessage());
+		ObjectMapper mapper = new ObjectMapper();
 		httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		httpServletResponse.getWriter().write(e.getMessage());
+		httpServletResponse.setContentType("application/json");
+		httpServletResponse.getWriter().write(mapper.writeValueAsString(dto));
 	}
 
 }
