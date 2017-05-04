@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.tm.model.dto.gateway.EventRestResponseDTO;
 import it.clevercom.echo.tm.model.entity.gateway.BatteryLevelEvent;
 import it.clevercom.echo.tm.repository.gateway.BatteryLevel_tm_Repository;
@@ -22,7 +23,7 @@ import it.clevercom.echo.tm.repository.gateway.BatteryLevel_tm_Repository;
 @Controller
 @RestController
 @RequestMapping("gateway/v1/battery")
-public class BatteryLevelEvent_tm_Controller {
+public class BatteryLevelEvent_tm_Controller extends EchoController{
 
 	@Autowired
 	private BatteryLevel_tm_Repository repository;
