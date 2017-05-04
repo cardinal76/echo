@@ -1,6 +1,7 @@
 package it.clevercom.echo.tm.controller.gateway;
 
 import java.text.MessageFormat;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
@@ -16,12 +17,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.specification.DateIntervalSpecification;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
+import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.EchoValidator;
 import it.clevercom.echo.tm.model.dto.gateway.BloodPressureEventDTO;
 import it.clevercom.echo.tm.model.entity.gateway.BloodPressureEvent;
@@ -37,7 +41,7 @@ import it.clevercom.echo.tm.repository.gateway.BloodPressure_tm_Repository;
 @Controller
 @RestController
 @RequestMapping("gateway/v1/blood")
-public class BloodPressureEvent_tm_Controller {
+public class BloodPressureEvent_tm_Controller extends EchoController{
 	
 	@Autowired
 	private Environment env;
@@ -133,6 +137,8 @@ public class BloodPressureEvent_tm_Controller {
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@Loggable
 	public @ResponseBody PagedDTO<BloodPressureEventDTO> getByCriteria (
+			@RequestParam(defaultValue = "system_start", required = false) Long from,
+			@RequestParam(defaultValue = "system_end", required = false) Long to,
 			@RequestParam(defaultValue="null", required=false) String criteria, 
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="15", required=false) int size, 
@@ -158,6 +164,11 @@ public class BloodPressureEvent_tm_Controller {
 						page, 
 						size,
 						env);
+		
+		final Date t1 = DateUtil.getStartOfDay(new Date(from));
+		final Date t2 = DateUtil.getEndOfDay(new Date(to));
+		DateIntervalSpecification<BloodPressureEvent> interval = new DateIntervalSpecification<BloodPressureEvent>(t1, t2, "timestamp");
+		rp.addAndSpecification(interval);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
