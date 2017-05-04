@@ -54,9 +54,17 @@ public class WeightEvent_tm_Controller {
 	private EchoValidator validator;
 	
 	public static final String entity_name = "Weight Event";
-	public static final String entity_id = "id";
+	public static final String entity_id = "weight";
 
+	/**
+	 * 
+	 * @param event
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional("tmTm")
 	@RequestMapping(method = RequestMethod.PUT)
+	@Loggable
 	public @ResponseBody CreateResponseDTO<WeightEventDTO> add(@RequestBody WeightEventDTO event) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
@@ -79,13 +87,6 @@ public class WeightEvent_tm_Controller {
 		
 		// process
 		return rp.process();
-		
-//		try {
-//			repository.saveAndFlush(event);
-//			return EventRestResponseDTO.createSuccess();
-//		} catch (Exception ex) {
-//			return EventRestResponseDTO.createFailed(ex);
-//		}
 	}
 	
 	
@@ -98,7 +99,7 @@ public class WeightEvent_tm_Controller {
 	 * @since 1.2.0
 	 * @throws Exception
 	 */
-	@Transactional("rdTm")
+	@Transactional("tmTm")
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
 	@Loggable
 	public @ResponseBody WeightEventDTO get(@PathVariable Long id) throws Exception {
@@ -135,7 +136,7 @@ public class WeightEvent_tm_Controller {
 	 * @since 1.2.0
 	 * @throws Exception
 	 */
-	@Transactional("rdTm")
+	@Transactional("tmTm")
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@Loggable
 	public @ResponseBody PagedDTO<WeightEventDTO> getByCriteria (
