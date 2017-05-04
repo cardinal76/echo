@@ -26,6 +26,10 @@
 				<class-a>it.clevercom.echo.rd.model.entity.WorkReport</class-a>
 				<class-b>it.clevercom.echo.rd.model.dto.WorkReportDTO</class-b>
 			</converter>
+			<converter type="it.clevercom.echo.common.model.converter.Date2Long">
+				<class-a>java.lang.Long</class-a>
+				<class-b>java.util.Date</class-b>
+			</converter>
 		</custom-converters>
 	</configuration>
 
@@ -96,6 +100,72 @@
 	<mapping>
 		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Municipality</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.MunicipalityDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.ModalityDailyAllocation</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ModalityDailyAllocationDTO</class-b>
+		<field>
+			<a>idmodalitydailyallocation</a>
+			<b>idModalityDailyAllocation</b>
+		</field>
+		<field>
+			<a>modality</a>
+			<b>modality</b>
+		</field>
+		<field custom-converter="it.clevercom.echo.common.model.converter.Date2Long">
+			<a>day</a>
+			<b>day</b>
+		</field>
+		<field>
+			<a>serviceallocation</a>
+			<b>serviceAllocation</b>
+		</field>
+		<field>
+			<a>serviceexcess</a>
+			<b>serviceExcess</b>
+		</field>
+		<field>
+			<a>patientallocation</a>
+			<b>patientAllocation</b>
+		</field>
+		<field>
+			<a>patientexcess</a>
+			<b>patientExcess</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Modality</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ModalityDTO</class-b>
+		<field>
+			<a>idmodality</a>
+			<b>idModality</b>
+		</field>
+		<field>
+			<a>modalityType</a>
+			<b>modalityType</b>
+		</field>
+		<field>
+			<a>organizationUnit</a>
+			<b>organizationUnit</b>
+		</field>
+		<field>
+			<a>name</a>
+			<b>name</b>
+		</field>
+		<field>
+			<a>description</a>
+			<b>description</b>
+		</field>
+		<field>
+			<a>dailyservicecapacity</a>
+			<b>dailyServiceCapacity</b>
+		</field>
+		<field>
+			<a>dailypatientcapacity</a>
+			<b>dailyPatientCapacity</b>
+		</field>
 	</mapping>
 	
 	<mapping>

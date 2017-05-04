@@ -47,4 +47,23 @@ public class DateUtil {
 	public static LocalDateTime dateToLocalDateTime(Date date) {
 	  return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
 	}
+	
+	/**
+	 * 
+	 * @param startOfDay
+	 * @return
+	 */
+	public static Long localDateTimeToLong(LocalDateTime locaDateTime) {
+		Date date = Date.from(locaDateTime.atZone(ZoneId.systemDefault()).toInstant()); 
+		return date.getTime();
+	}
+
+	/**
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static LocalDateTime longToLocalDateTime(Long longDate) {
+		return LocalDateTime.ofInstant(Instant.ofEpochMilli(longDate), ZoneId.systemDefault());
+	}
 }

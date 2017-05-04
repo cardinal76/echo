@@ -19,6 +19,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
+
 /**
  * @author gfares	
  * @since 0.1
@@ -35,7 +37,7 @@ import javax.persistence.Table;
 @Table(name = "tm_gateway_event")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "devicetype", discriminatorType = DiscriminatorType.STRING, length = 2)
-public class BaseGatewayEntity implements Serializable {
+public class BaseGatewayEntity extends AbstractJpaEchoEntity implements Serializable {
 
 	/**
 	 * 
@@ -120,7 +122,7 @@ public class BaseGatewayEntity implements Serializable {
 	/**
 	 * @return the riceivedDate
 	 */
-	public LocalDateTime getRiceivedDate() {
+	public LocalDateTime getReceivedDate() {
 		return receivedDate;
 	}
 
@@ -128,7 +130,7 @@ public class BaseGatewayEntity implements Serializable {
 	 * @param riceivedDate
 	 *            the riceivedDate to set
 	 */
-	public void setRiceivedDate(LocalDateTime riceivedDate) {
+	public void setReceivedDate(LocalDateTime riceivedDate) {
 		this.receivedDate = riceivedDate;
 	}
 
