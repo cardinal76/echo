@@ -1,7 +1,11 @@
 package it.clevercom.echo.tm.model.dto.gateway;
 
 import java.io.Serializable;
+import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"created","updated","userupdate","active", "idd"})
 public class WeightEventDTO extends BaseGatewayEntityDTO implements Serializable {
 	private static final long serialVersionUID = 2991166584587824554L;
 	
@@ -11,6 +15,10 @@ public class WeightEventDTO extends BaseGatewayEntityDTO implements Serializable
 	private Double height;
 	private String uom;
 	private String deviceType= "we";
+	private Date created;
+	private Date updated;
+	private String userupdate;
+	private Boolean active;
 	
 	/**
 	 * @return the idweight
@@ -101,5 +109,61 @@ public class WeightEventDTO extends BaseGatewayEntityDTO implements Serializable
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	/**
+	 * @return the created
+	 */
+	public Date getCreated() {
+		return created;
+	}
+
+	/**
+	 * @param created the created to set
+	 */
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	/**
+	 * @return the updated
+	 */
+	public Date getUpdated() {
+		return updated;
+	}
+
+	/**
+	 * @param updated the updated to set
+	 */
+	public void setUpdated(Date updated) {
+		this.updated = updated;
+	}
+
+	/**
+	 * @return the userupdate
+	 */
+	public String getUserupdate() {
+		return userupdate;
+	}
+
+	/**
+	 * @param userupdate the userupdate to set
+	 */
+	public void setUserupdate(String userupdate) {
+		this.userupdate = userupdate;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public Boolean getActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 }

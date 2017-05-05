@@ -1,6 +1,7 @@
 package it.clevercom.echo.tm.controller.gateway;
 
 import java.text.MessageFormat;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
@@ -20,13 +21,22 @@ import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.specification.DateIntervalSpecification;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
+import it.clevercom.echo.common.model.factory.ResponseFactory;
+import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.EchoValidator;
+import it.clevercom.echo.tm.model.dto.gateway.BaseGatewayEntityDTO;
+import it.clevercom.echo.tm.model.dto.gateway.BloodPressureEventDTO;
 import it.clevercom.echo.tm.model.dto.gateway.WeightEventDTO;
+import it.clevercom.echo.tm.model.entity.gateway.GatewayEvent;
+import it.clevercom.echo.tm.model.entity.gateway.GatewayEventBloodPressure;
 import it.clevercom.echo.tm.model.entity.gateway.GatewayEventWeight;
 import it.clevercom.echo.tm.model.entity.gateway.WeightEvent;
+import it.clevercom.echo.tm.repository.gateway.BaseGatewayEntity_tm_Repository;
+import it.clevercom.echo.tm.repository.gateway.BloodPressure_tm_Repository;
 import it.clevercom.echo.tm.repository.gateway.Weight_tm_Repository;
 
 /**
@@ -45,18 +55,21 @@ public class WeightEvent_tm_Controller extends EchoController{
 	private Environment env;
 	
 	@Autowired
-	private Weight_tm_Repository repository;
-
-	@Autowired
-    private DozerBeanMapper tmDozerMapper;
+	private DozerBeanMapper tmDozerMapper;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	@Autowired
 	private EchoValidator validator;
 	
+	@Autowired
+	private Weight_tm_Repository repository;
+	
+	@Autowired
+	private BaseGatewayEntity_tm_Repository baseRepository;
+	
 	public static final String entity_name = "Weight Event";
-	public static final String entity_id = "weight";
+	public static final String entity_id = "idweight";
 
 	/**
 	 * 
@@ -65,7 +78,7 @@ public class WeightEvent_tm_Controller extends EchoController{
 	 * @throws Exception
 	 */
 	@Transactional("tmTm")
-	@RequestMapping(method = RequestMethod.PUT)
+	@RequestMapping(method = RequestMethod.POST)
 	@Loggable
 	public @ResponseBody CreateResponseDTO<WeightEventDTO> add(@RequestBody WeightEventDTO event) throws Exception {
 		// log info
@@ -75,7 +88,21 @@ public class WeightEvent_tm_Controller extends EchoController{
 		validator.validateDTONullIdd(event, entity_id);
 		
 		// create processor
-		CreateRequestProcessor<Weight_tm_Repository, GatewayEventWeight, WeightEventDTO> rp = 
+		BaseGatewayEntityDTO baseDto = tmDozerMapper.map(event, BaseGatewayEntityDTO.class);
+		CreateRequestProcessor<BaseGatewayEntity_tm_Repository, GatewayEvent, BaseGatewayEntityDTO> rp = 
+				new CreateRequestProcessor<BaseGatewayEntity_tm_Repository, GatewayEvent, BaseGatewayEntityDTO>(baseRepository, 
+						tmDozerMapper, 
+						GatewayEvent.class, 
+						entity_name, 
+						"SYSTEM", 
+						baseDto,
+						env);
+		
+		// create base event
+		GatewayEvent gatewayEvent = rp.create();
+		
+		// create processor
+		CreateRequestProcessor<Weight_tm_Repository, GatewayEventWeight, WeightEventDTO> rp1 = 
 				new CreateRequestProcessor<Weight_tm_Repository, GatewayEventWeight, WeightEventDTO>(repository, 
 						tmDozerMapper, 
 						GatewayEventWeight.class, 
@@ -83,12 +110,19 @@ public class WeightEvent_tm_Controller extends EchoController{
 						"SYSTEM", 
 						event,
 						env);
+
+		// create blood event
+		GatewayEventWeight weightEvent = rp1.create();
+	
+		// update reference
+		weightEvent.setGatewayEvent(gatewayEvent);
+		weightEvent = repository.saveAndFlush(weightEvent);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return ResponseFactory.getCreateResponseDTO(tmDozerMapper.map(weightEvent, WeightEventDTO.class), entity_name, MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 	}
 	
 	
@@ -112,7 +146,8 @@ public class WeightEvent_tm_Controller extends EchoController{
 		validator.validateId(id, entity_name);
 		
 		// find entity
-		GatewayEventWeight entity = repository.findOne(id);
+		GatewayEvent event = baseRepository.findOne(id);
+		GatewayEventWeight entity = repository.findByGatewayEvent(event);
 		
 		// check if entity has been found
 		if (entity == null) {
@@ -155,25 +190,25 @@ public class WeightEvent_tm_Controller extends EchoController{
 				
 		// validate
 		validator.validateSort(sort);
-		validator.validateSortField(field, WeightEvent.class, entity_name);
+		validator.validateSortField(field, GatewayEventWeight.class, entity_name);
 		
 		// create processor
 		CriteriaRequestProcessor<Weight_tm_Repository, GatewayEventWeight, WeightEventDTO> rp = 
 				new CriteriaRequestProcessor<Weight_tm_Repository, GatewayEventWeight, WeightEventDTO>(repository, 
 						tmDozerMapper, 
 						WeightEventDTO.class, 
-						entity_name, 
+						field, 
 						criteria, 
 						sort, 
 						field, 
 						page, 
-						size,
+						size, 
 						env);
 		
-//		final Date t1 = DateUtil.getStartOfDay(new Date(from));
-//		final Date t2 = DateUtil.getEndOfDay(new Date(to));
-//		DateIntervalSpecification<WeightEvent> interval = new DateIntervalSpecification<WeightEvent>(t1, t2, "timestamp");
-//		rp.addAndSpecification(interval);
+		final Date t1 = DateUtil.getStartOfDay(new Date(from));
+		final Date t2 = DateUtil.getEndOfDay(new Date(to));
+		DateIntervalSpecification<GatewayEventWeight, GatewayEventWeight> interval = new DateIntervalSpecification<GatewayEventWeight, GatewayEventWeight>("gatewayEvent", t1, t2, "timestamp");
+		rp.addAndSpecification(interval);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));

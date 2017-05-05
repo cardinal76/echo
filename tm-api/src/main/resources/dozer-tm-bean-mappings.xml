@@ -15,8 +15,13 @@
 				<class-a>it.clevercom.echo.tm.model.dto.gateway.BloodPressureEventDTO</class-a>
 				<class-b>it.clevercom.echo.tm.model.entity.gateway.GatewayEventBloodPressure</class-b>
 			</converter>
+			<converter type="it.clevercom.echo.tm.model.converter.GatewayEventWeight2WeightEventDTO">
+				<class-a>it.clevercom.echo.tm.model.dto.gateway.WeightEventDTO</class-a>
+				<class-b>it.clevercom.echo.tm.model.entity.gateway.GatewayEventWeight</class-b>
+			</converter>
 		</custom-converters>
 	</configuration>
+	
 	<mapping>
 		<class-a>it.clevercom.echo.tm.model.entity.gateway.GatewayEvent</class-a>
 		<class-b>it.clevercom.echo.tm.model.dto.gateway.BaseGatewayEntityDTO</class-b>
@@ -45,4 +50,5 @@
 			<b>receivedDate</b>
 		</field>
 	</mapping>
+	
 </mappings>
