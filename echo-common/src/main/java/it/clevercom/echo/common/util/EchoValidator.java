@@ -81,7 +81,11 @@ public class EchoValidator {
 		try {
 			Field someField = clazz.getDeclaredField(field);
 		} catch (NoSuchFieldException | SecurityException e) {
-			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.crud.validation.invalidsortelement"), field, entity_name));
+			try {
+				Field someSuperField = clazz.getSuperclass().getDeclaredField(field);
+			} catch (NoSuchFieldException | SecurityException e1) {
+				throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.crud.validation.invalidsortelement"), field, entity_name));
+			}
 		}
 	}
 }
