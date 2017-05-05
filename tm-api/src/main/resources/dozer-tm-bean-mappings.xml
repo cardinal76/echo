@@ -11,58 +11,38 @@
 				<class-a>java.lang.Long</class-a>
 				<class-b>java.time.LocalDateTime</class-b>
 			</converter>
+			<converter type="it.clevercom.echo.tm.model.converter.GatewayEventBloodPressure2BloodPressureEventDTO">
+				<class-a>it.clevercom.echo.tm.model.dto.gateway.BloodPressureEventDTO</class-a>
+				<class-b>it.clevercom.echo.tm.model.entity.gateway.GatewayEventBloodPressure</class-b>
+			</converter>
 		</custom-converters>
 	</configuration>
-	
 	<mapping>
-		<class-a>it.clevercom.echo.tm.model.dto.gateway.BaseGatewayEntityDTO</class-a>
-		<class-b>it.clevercom.echo.tm.model.entity.gateway.BaseGatewayEntity</class-b>
+		<class-a>it.clevercom.echo.tm.model.entity.gateway.GatewayEvent</class-a>
+		<class-b>it.clevercom.echo.tm.model.dto.gateway.BaseGatewayEntityDTO</class-b>
 		<field>
-			<a>id</a>
+			<a>idevent</a>
 			<b>id</b>
 		</field>
-		<field>
-			<a>pheripheral</a>
-			<b>pheripheral</b>
+		<field custom-converter="it.clevercom.echo.common.model.converter.Date2Long">
+			<a>timestamp</a>
+			<b>timeStamp</b>
 		</field>
 		<field>
-			<a>gatewaySerialNumber</a>
+			<a>devicetype</a>
+			<b>deviceType</b>
+		</field>
+		<field>
+			<a>gatewayserialnumber</a>
 			<b>gatewaySerialNumber</b>
 		</field>
-		<field custom-converter="it.clevercom.echo.common.model.converter.LocalDateTime2Long">
-			<a>receivedDate</a>
+		<field>
+			<a>pheripheralmac</a>
+			<b>pheripheral</b>
+		</field>
+		<field custom-converter="it.clevercom.echo.common.model.converter.Date2Long">
+			<a>receiveddate</a>
 			<b>receivedDate</b>
 		</field>
-		<field custom-converter="it.clevercom.echo.common.model.converter.LocalDateTime2Long">
-			<a>timeStamp</a>
-			<b>timeStamp</b>
-		</field>		
 	</mapping>
-	
-	<mapping>
-		<class-a>it.clevercom.echo.tm.model.dto.gateway.WeightEventDTO</class-a>
-		<class-b>it.clevercom.echo.tm.model.entity.gateway.WeightEvent</class-b>
-		<field>
-			<a>bmi</a>
-			<b>bmi</b>
-		</field>
-		<field>
-			<a>weight</a>
-			<b>weight</b>
-		</field>
-		<field>
-			<a>height</a>
-			<b>height</b>
-		</field>
-		<field>
-			<a>uom</a>
-			<b>uom</b>
-		</field>
-	</mapping>
-	<mapping>
-		<class-a>it.clevercom.echo.tm.model.dto.gateway.BloodPressureEventDTO</class-a>
-		<class-b>it.clevercom.echo.tm.model.entity.gateway.BloodPressureEvent</class-b>
-	</mapping>
-	
-	
 </mappings>

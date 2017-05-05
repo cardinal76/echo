@@ -31,7 +31,7 @@ public class BatteryLevelEvent_tm_Controller extends EchoController{
 	@RequestMapping(method = RequestMethod.PUT)
 	public @ResponseBody EventRestResponseDTO add(@RequestBody BatteryLevelEvent event) {
 		try {
-			repository.saveAndFlush(event);
+			//repository.saveAndFlush(event);
 			return EventRestResponseDTO.createSuccess();
 		} catch (Exception ex) {
 			return EventRestResponseDTO.createFailed(ex);

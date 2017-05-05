@@ -217,7 +217,7 @@ public class Order_rd_Controller extends EchoController {
 				// create status specification
 				WorkStatusSpecification<Order> st = new WorkStatusSpecification<Order>(repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i]).code()).getIdworkstatus());
 				// create interval specification based on right date field
-				DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i])));
+				DateIntervalSpecification<Order, Order> interval = new DateIntervalSpecification<Order, Order>(null, t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i])));
 				current = Specifications.where(current).and(st).and(interval);
 				if (i==0) {
 					rp.addAndSpecification(Specifications.where(current));
@@ -228,7 +228,7 @@ public class Order_rd_Controller extends EchoController {
 		} else {
 			// create standard specification based on date interval and standard field name
 			// parse long parameter to Date Object
-			DateIntervalSpecification<Order> interval = new DateIntervalSpecification<Order>(t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(null));
+			DateIntervalSpecification<Order, Order> interval = new DateIntervalSpecification<Order, Order>(null, t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(null));
 			rp.addAndSpecification(interval);
 		}
 		

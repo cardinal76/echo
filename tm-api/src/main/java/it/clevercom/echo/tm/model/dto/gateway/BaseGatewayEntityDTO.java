@@ -12,6 +12,7 @@ public class BaseGatewayEntityDTO extends AbstractEchoDTO implements Serializabl
 	private String gatewaySerialNumber;
 	private Long receivedDate;
 	private Long timeStamp;
+	private String deviceType;
 	
 	/**
 	 * @return the id
@@ -81,6 +82,27 @@ public class BaseGatewayEntityDTO extends AbstractEchoDTO implements Serializabl
 	 */
 	public void setTimeStamp(Long timeStamp) {
 		this.timeStamp = timeStamp;
+	}
+	
+	/**
+	 * @return the deviceType
+	 */
+	public String getDeviceType() {
+		return deviceType;
+	}
+
+	/**
+	 * @param deviceType the deviceType to set
+	 */
+	public void setDeviceType(String deviceType) {
+		this.deviceType = deviceType;
+	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	@Override

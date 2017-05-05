@@ -6,7 +6,8 @@ public class BatteryLevelEventDTO extends BaseGatewayEntityDTO implements Serial
 	private static final long serialVersionUID = 4877366740829193820L;
 	
 	private Integer batteryLevel;
-
+	private String deviceType= "bs";
+	
 	/**
 	 * @return the batteryLevel
 	 */
@@ -19,6 +20,27 @@ public class BatteryLevelEventDTO extends BaseGatewayEntityDTO implements Serial
 	 */
 	public void setBatteryLevel(Integer batteryLevel) {
 		this.batteryLevel = batteryLevel;
+	}
+	
+	/**
+	 * @return the deviceType
+	 */
+	public String getDeviceType() {
+		return deviceType;
+	}
+
+	/**
+	 * @param deviceType the deviceType to set
+	 */
+	public void setDeviceType(String deviceType) {
+		this.deviceType = deviceType;
+	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.util.EchoValidator;
 import it.clevercom.echo.tm.model.dto.gateway.WeightEventDTO;
+import it.clevercom.echo.tm.model.entity.gateway.GatewayEventWeight;
 import it.clevercom.echo.tm.model.entity.gateway.WeightEvent;
 import it.clevercom.echo.tm.repository.gateway.Weight_tm_Repository;
 
@@ -74,10 +75,10 @@ public class WeightEvent_tm_Controller extends EchoController{
 		validator.validateDTONullIdd(event, entity_id);
 		
 		// create processor
-		CreateRequestProcessor<Weight_tm_Repository, WeightEvent, WeightEventDTO> rp = 
-				new CreateRequestProcessor<Weight_tm_Repository, WeightEvent, WeightEventDTO>(repository, 
+		CreateRequestProcessor<Weight_tm_Repository, GatewayEventWeight, WeightEventDTO> rp = 
+				new CreateRequestProcessor<Weight_tm_Repository, GatewayEventWeight, WeightEventDTO>(repository, 
 						tmDozerMapper, 
-						WeightEvent.class, 
+						GatewayEventWeight.class, 
 						entity_name, 
 						"SYSTEM", 
 						event,
@@ -111,7 +112,7 @@ public class WeightEvent_tm_Controller extends EchoController{
 		validator.validateId(id, entity_name);
 		
 		// find entity
-		WeightEvent entity = repository.findOne(id);
+		GatewayEventWeight entity = repository.findOne(id);
 		
 		// check if entity has been found
 		if (entity == null) {
@@ -157,8 +158,8 @@ public class WeightEvent_tm_Controller extends EchoController{
 		validator.validateSortField(field, WeightEvent.class, entity_name);
 		
 		// create processor
-		CriteriaRequestProcessor<Weight_tm_Repository, WeightEvent, WeightEventDTO> rp = 
-				new CriteriaRequestProcessor<Weight_tm_Repository, WeightEvent, WeightEventDTO>(repository, 
+		CriteriaRequestProcessor<Weight_tm_Repository, GatewayEventWeight, WeightEventDTO> rp = 
+				new CriteriaRequestProcessor<Weight_tm_Repository, GatewayEventWeight, WeightEventDTO>(repository, 
 						tmDozerMapper, 
 						WeightEventDTO.class, 
 						entity_name, 
