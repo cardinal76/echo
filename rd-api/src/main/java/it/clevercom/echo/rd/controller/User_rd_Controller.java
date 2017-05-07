@@ -1,7 +1,10 @@
 package it.clevercom.echo.rd.controller;
 
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.HashMap;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
@@ -22,14 +25,22 @@ import org.springframework.web.bind.annotation.RestController;
 import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
+import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.UserDTO;
-import it.clevercom.echo.rd.model.entity.Service;
+import it.clevercom.echo.rd.model.dto.UserDTO;
+import it.clevercom.echo.rd.model.dto.UserDTO;
 import it.clevercom.echo.rd.model.entity.User;
+import it.clevercom.echo.rd.model.entity.User;
+import it.clevercom.echo.rd.model.entity.User;
+import it.clevercom.echo.rd.repository.IUser_rd_Repository;
+import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 
 @Controller
@@ -75,8 +86,20 @@ public class User_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody UserDTO get(@PathVariable String username) throws Exception {
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting"), entity_name, entity_id, username));
+				
+		// find entity
 		User entity = repo.findOne(username);
-		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, username);
+		
+		// check if entity has been found
+		if (entity == null) {
+			logger.warn(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, username));
+			throw new RecordNotFoundException(entity_name, entity_id, username);
+		}
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.returning.response"), entity_name, entity_id, username));
 		return rdDozerMapper.map(entity, UserDTO.class);
 	}
 	
@@ -101,10 +124,14 @@ public class User_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="username", required=false) String field) throws Exception {
 		
-		// check enum string params
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
+		// validate
 		validator.validateSort(sort);
 		validator.validateSortField(field, User.class, entity_name);
 		
+		// create processor
 		CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO> rp = 
 				new CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, 
 						rdDozerMapper, 
@@ -116,6 +143,9 @@ public class User_rd_Controller extends EchoController {
 						page, 
 						size,
 						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
 		return rp.process();
@@ -131,24 +161,96 @@ public class User_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<UserDTO> add(@RequestBody UserDTO user) throws Exception {
-		if (user == null) throw new BadRequestException("Impossible to store a null");
-		User entity = rdDozerMapper.map(user, User.class);
-		entity.setActive(true);
-		entity.setUserupdate("pippobaudo");
-		entity.setUpdated(new Timestamp(System.currentTimeMillis()));
-		entity.setCreated(new Timestamp(System.currentTimeMillis()));
-		User saved = repo.saveAndFlush(entity);
+	public @ResponseBody CreateResponseDTO<UserDTO> add(@RequestBody UserDTO user, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// create standard response
-		CreateResponseDTO<UserDTO> response = new CreateResponseDTO<UserDTO>();
-		HashMap<String,String> ids = new HashMap<String,String>();
-		ids.put("iduser", String.valueOf(saved.getUsername()));
-		response.setEntityName(entity_name);
-		response.setMessage(null);
-		response.setNewValue(null);
+		// validate
+		validator.validateDTONullIdd(user, entity_id);
+				
+		// create the processor
+		CreateRequestProcessor<IUser_rd_Repository, User, UserDTO> rp = 
+				new CreateRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, 
+						rdDozerMapper, 
+						User.class, 
+						entity_name, 
+						getLoggedUser(request), 
+						user,
+						env);
 		
-		// return standard response
-		return response;
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
+		
+		// process
+		return rp.process();
+	}
+	
+	/**
+	 * Update a user
+	 * @param phraseBook
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(method = RequestMethod.PUT)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody UpdateResponseDTO<UserDTO> update(@RequestBody UserDTO user, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
+		// validate that username can perform the requested operation on appSetting
+		validator.validateDTOIdd(user, entity_name);
+
+		// create processor
+		UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO> rp = 
+				new UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, 
+						rdDozerMapper,
+						entity_name,
+						entity_id,
+						getLoggedUser(request), 
+						user, 
+						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, user.getIdd().toString()));
+
+		// return response
+		return rp.process();
+	}
+	
+	/**
+	 * Delete a user
+	 * @param phraseBook
+	 * @param request
+	 * @return
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(method = RequestMethod.DELETE)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody UpdateResponseDTO<UserDTO> delete(@RequestBody UserDTO user, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+				
+		// validate that username can perform the requested operation on appSetting
+		validator.validateDTOIdd(user, entity_name);
+
+		// create processor
+		UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO> rp = 
+				new UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, 
+						rdDozerMapper,
+						entity_name,
+						entity_id,
+						getLoggedUser(request), 
+						user, 
+						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, user.getIdd().toString()));
+
+		// return response
+		return rp.enable(false);
 	}
 }

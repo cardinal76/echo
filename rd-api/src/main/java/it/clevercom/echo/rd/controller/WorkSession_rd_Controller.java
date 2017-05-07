@@ -113,10 +113,11 @@ public class WorkSession_rd_Controller extends EchoController {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
-		// check enum string params
+		// validate
 		validator.validateSort(sort);
 		validator.validateSortField(field, WorkSession.class, entity_name);
 		
+		// create processor
 		CriteriaRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> rp = 
 				new CriteriaRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, 
 						rdDozerMapper, 
@@ -152,7 +153,8 @@ public class WorkSession_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
-				
+		validator.validateDTONullIdd(workSession, entity_id);
+		
 		// create the processor
 		CreateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> rp = 
 				new CreateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, 

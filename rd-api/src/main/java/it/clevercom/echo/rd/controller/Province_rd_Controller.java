@@ -1,5 +1,9 @@
 package it.clevercom.echo.rd.controller;
 
+import java.text.MessageFormat;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,12 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
 import it.clevercom.echo.common.logging.annotation.Loggable;
+import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
+import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.ProvinceDTO;
-import it.clevercom.echo.rd.model.entity.PhraseBook;
 import it.clevercom.echo.rd.model.entity.Province;
 import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
 import it.clevercom.echo.rd.repository.IProvince_rd_Repository;
@@ -72,8 +80,20 @@ public class Province_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody ProvinceDTO get(@PathVariable Long id) throws Exception {
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting"), entity_name, entity_id, id.toString()));
+		
+		// find entity
 		Province entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		
+		// check if entity has been found
+		if (entity == null) {
+			logger.warn(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, id.toString()));
+			throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		}
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.returning.response"), entity_name, entity_id, id.toString()));
 		return rdDozerMapper.map(entity, ProvinceDTO.class);
 	}
 	
@@ -98,10 +118,14 @@ public class Province_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
-		// check enum string params
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
+		// validate
 		validator.validateSort(sort);
 		validator.validateSortField(field, Province.class, entity_name);
 		
+		// create processor
 		CriteriaRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> rp = 
 				new CriteriaRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO>(repo, 
 						rdDozerMapper, 
@@ -114,7 +138,115 @@ public class Province_rd_Controller extends EchoController {
 						size,
 						env);
 		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
+		
 		// process data request
 		return rp.process();
+	}
+	
+
+	/**
+	 * Add a province
+	 * @param phraseBook
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(method = RequestMethod.POST)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody CreateResponseDTO<ProvinceDTO> add(@RequestBody ProvinceDTO province, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
+		// validate
+		validator.validateDTONullIdd(province, entity_id);
+				
+		// create the processor
+		CreateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> rp = 
+				new CreateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO>(repo, 
+						rdDozerMapper, 
+						Province.class, 
+						entity_name, 
+						getLoggedUser(request), 
+						province,
+						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
+		
+		// process
+		return rp.process();
+	}
+	
+	/**
+	 * Update a province
+	 * @param phraseBook
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(method = RequestMethod.PUT)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody UpdateResponseDTO<ProvinceDTO> update(@RequestBody ProvinceDTO province, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
+		// validate that username can perform the requested operation on appSetting
+		validator.validateDTOIdd(province, entity_name);
+
+		// create processor
+		UpdateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> rp = 
+				new UpdateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO>(repo, 
+						rdDozerMapper,
+						entity_name,
+						entity_id,
+						getLoggedUser(request), 
+						province, 
+						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, province.getIdd().toString()));
+
+		// return response
+		return rp.process();
+	}
+	
+	/**
+	 * Delete a province
+	 * @param phraseBook
+	 * @param request
+	 * @return
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(method = RequestMethod.DELETE)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody UpdateResponseDTO<ProvinceDTO> delete(@RequestBody ProvinceDTO province, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+				
+		// validate that username can perform the requested operation on appSetting
+		validator.validateDTOIdd(province, entity_name);
+
+		// create processor
+		UpdateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> rp = 
+				new UpdateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO>(repo, 
+						rdDozerMapper,
+						entity_name,
+						entity_id,
+						getLoggedUser(request), 
+						province, 
+						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, province.getIdd().toString()));
+
+		// return response
+		return rp.enable(false);
 	}
 }

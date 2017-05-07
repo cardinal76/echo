@@ -1,5 +1,9 @@
 package it.clevercom.echo.rd.controller;
 
+import java.text.MessageFormat;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.EchoException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
@@ -26,7 +33,6 @@ import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.jpa.specification.ModalityTypeSpecification;
 import it.clevercom.echo.rd.model.dto.ServiceDTO;
-import it.clevercom.echo.rd.model.entity.Province;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.repository.IService_rd_Repository;
 
@@ -72,8 +78,20 @@ public class Service_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody ServiceDTO get(@PathVariable Long id) throws Exception {
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting"), entity_name, entity_id, id.toString()));
+		
+		// find entity
 		Service entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		
+		// check if entity has been found
+		if (entity == null) {
+			logger.warn(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, id.toString()));
+			throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		}
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.returning.response"), entity_name, entity_id, id.toString()));
 		return rdDozerMapper.map(entity, ServiceDTO.class);
 	}
 	
@@ -99,10 +117,14 @@ public class Service_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 
-		// check enum string params
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
+		// validate
 		validator.validateSort(sort);
 		validator.validateSortField(field, Service.class, entity_name);
 
+		// create processor
 		CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO> rp = 
 				new CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, 
 						rdDozerMapper, 
@@ -115,49 +137,120 @@ public class Service_rd_Controller extends EchoController {
 						size,
 						env);
 		
-		// check modalitytype and add it to specification
+		// check modalitytype param and add it to specification
 		if (!modalitytype.equals("*")) {
 			ModalityTypeSpecification<Service> md = new ModalityTypeSpecification<Service>(null, Long.valueOf(modalitytype));
 			rp.addAndSpecification(md);
 		}
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
 		return rp.process();
 	}
 	
 	/**
-	 * Add service 
+	 * Add a service
+	 * @param phraseBook
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<ServiceDTO> add() {
-		return new CreateResponseDTO<ServiceDTO>();
+	public @ResponseBody CreateResponseDTO<ServiceDTO> add(@RequestBody ServiceDTO service, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
+		// validate
+		validator.validateDTONullIdd(service, entity_id);
+				
+		// create the processor
+		CreateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> rp = 
+				new CreateRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, 
+						rdDozerMapper, 
+						Service.class, 
+						entity_name, 
+						getLoggedUser(request), 
+						service,
+						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
+		
+		// process
+		return rp.process();
 	}
 	
 	/**
-	 * Update service
+	 * Update a service
+	 * @param phraseBook
+	 * @param request
 	 * @return
+	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<ServiceDTO> update() {
-		return new UpdateResponseDTO<ServiceDTO>();
+	public @ResponseBody UpdateResponseDTO<ServiceDTO> update(@RequestBody ServiceDTO service, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
+		// validate that username can perform the requested operation on appSetting
+		validator.validateDTOIdd(service, entity_name);
+
+		// create processor
+		UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> rp = 
+				new UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, 
+						rdDozerMapper,
+						entity_name,
+						entity_id,
+						getLoggedUser(request), 
+						service, 
+						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, service.getIdd().toString()));
+
+		// return response
+		return rp.process();
 	}
 	
 	/**
-	 * Delete service
+	 * Delete a service
+	 * @param phraseBook
+	 * @param request
 	 * @return
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody String delete() {
-		return "patient";
+	public @ResponseBody UpdateResponseDTO<ServiceDTO> delete(@RequestBody ServiceDTO service, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+				
+		// validate that username can perform the requested operation on appSetting
+		validator.validateDTOIdd(service, entity_name);
+
+		// create processor
+		UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> rp = 
+				new UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, 
+						rdDozerMapper,
+						entity_name,
+						entity_id,
+						getLoggedUser(request), 
+						service, 
+						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, service.getIdd().toString()));
+
+		// return response
+		return rp.enable(false);
 	}
 }

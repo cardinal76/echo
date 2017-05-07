@@ -31,7 +31,6 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.WorkTaskDTO;
-import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.model.entity.WorkTask;
 import it.clevercom.echo.rd.repository.IWorkTask_rd_Repository;
 
@@ -116,10 +115,11 @@ public class WorkTask_rd_Controller extends EchoController {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
-		// check enum string params
+		// validate
 		validator.validateSort(sort);
 		validator.validateSortField(field, WorkTask.class, entity_name);
 		
+		// create processor
 		CriteriaRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> rp = 
 				new CriteriaRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO>(repo, 
 						rdDozerMapper, 
@@ -155,7 +155,8 @@ public class WorkTask_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
-				
+		validator.validateDTONullIdd(workTask, entity_id);
+
 		// create the processor
 		CreateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> rp = 
 				new CreateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO>(repo, 
@@ -188,7 +189,7 @@ public class WorkTask_rd_Controller extends EchoController {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// validate that username can perform the requested operation on appSetting
+		// validate
 		validator.validateDTOIdd(workTask, entity_name);
 
 		// create processor

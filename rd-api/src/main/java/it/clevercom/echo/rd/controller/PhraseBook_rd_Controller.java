@@ -112,10 +112,11 @@ public class PhraseBook_rd_Controller extends EchoController {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
-		// check enum string params
+		// validate
 		validator.validateSort(sort);
 		validator.validateSortField(field, PhraseBook.class, entity_name);
 		
+		// create processor
 		CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> rp = 
 				new CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, 
 						rdDozerMapper, 
@@ -151,6 +152,7 @@ public class PhraseBook_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
+		validator.validateDTONullIdd(phraseBook, entity_id);
 				
 		// create the processor
 		CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> rp = 
