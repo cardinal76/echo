@@ -3,9 +3,7 @@ package it.clevercom.echo.tm.model.converter;
 import org.dozer.CustomConverter;
 import org.dozer.MappingException;
 
-import it.clevercom.echo.tm.model.dto.gateway.BloodPressureEventDTO;
 import it.clevercom.echo.tm.model.dto.gateway.WeightEventDTO;
-import it.clevercom.echo.tm.model.entity.gateway.GatewayEventBloodPressure;
 import it.clevercom.echo.tm.model.entity.gateway.GatewayEventWeight;
 
 public class GatewayEventWeight2WeightEventDTO implements CustomConverter {

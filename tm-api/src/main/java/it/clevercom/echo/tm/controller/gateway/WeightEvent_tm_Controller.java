@@ -87,6 +87,8 @@ public class WeightEvent_tm_Controller extends EchoController{
 		// validate
 		validator.validateDTONullIdd(event, entity_id);
 		
+		calculateBmi(event);
+		
 		// create processor
 		BaseGatewayEntityDTO baseDto = tmDozerMapper.map(event, BaseGatewayEntityDTO.class);
 		CreateRequestProcessor<BaseGatewayEntity_tm_Repository, GatewayEvent, BaseGatewayEntityDTO> rp = 
@@ -113,7 +115,8 @@ public class WeightEvent_tm_Controller extends EchoController{
 
 		// create blood event
 		GatewayEventWeight weightEvent = rp1.create();
-	
+		weightEvent.setCreated(gatewayEvent.getTimestamp());
+		
 		// update reference
 		weightEvent.setGatewayEvent(gatewayEvent);
 		weightEvent = repository.saveAndFlush(weightEvent);
@@ -124,7 +127,21 @@ public class WeightEvent_tm_Controller extends EchoController{
 		// process
 		return ResponseFactory.getCreateResponseDTO(tmDozerMapper.map(weightEvent, WeightEventDTO.class), entity_name, MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 	}
-	
+
+	/**
+	 * @param event
+	 */
+	private void calculateBmi(WeightEventDTO event) {
+		//Operativamente l'indice di massa corporea si calcola come il rapporto tra la massa-peso, espressa in chilogrammi, 
+		//e il quadrato dell'altezza, espressa in metri.
+		Double height = new Double(1.85);
+		logger.info("WEIGHT IN INPUT ---> "+event.getWeight());
+		Double bmi = event.getWeight()/(height*height);
+		logger.info("BMI ---> "+bmi);
+		logger.info("HEIGHT ---> "+height);
+		event.setHeight(height);
+		event.setBmi(bmi.longValue());
+	}
 	
 	/**
 	 * Get a body weight by id
