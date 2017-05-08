@@ -11,7 +11,7 @@ import it.clevercom.echo.common.dto.AbstractEchoDTO;
 public class ModalityTypeDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = 3406464325790754778L;
 
-	private Long idmodalitytype;
+	private Long idModalityType;
 	private String type;
 	
 	// transient attributes
@@ -23,8 +23,8 @@ public class ModalityTypeDTO extends AbstractEchoDTO implements Serializable {
 	public ModalityTypeDTO() {
 	}
 
-	public ModalityTypeDTO(Long idmodalitytype, String type, Date created, Date updated, String userupdate,	boolean active) {
-		this.idmodalitytype = idmodalitytype;
+	public ModalityTypeDTO(Long idModalityType, String type, Date created, Date updated, String userupdate,	boolean active) {
+		this.idModalityType = idModalityType;
 		this.type = type;
 		this.created = created;
 		this.updated = updated;
@@ -35,15 +35,15 @@ public class ModalityTypeDTO extends AbstractEchoDTO implements Serializable {
 	/**
 	 * @return the idmodalitytype
 	 */
-	public Long getIdmodalitytype() {
-		return idmodalitytype;
+	public Long getIdModalityType() {
+		return idModalityType;
 	}
 
 	/**
 	 * @param idmodalitytype the idmodalitytype to set
 	 */
-	public void setIdmodalitytype(Long idmodalitytype) {
-		this.idmodalitytype = idmodalitytype;
+	public void setIdModalityType(Long idModalityType) {
+		this.idModalityType = idModalityType;
 	}
 
 	/**
@@ -125,6 +125,6 @@ public class ModalityTypeDTO extends AbstractEchoDTO implements Serializable {
 
 	@Override
 	public Object getIdd() {
-		return getIdmodalitytype();
+		return getIdModalityType();
 	}
 }
