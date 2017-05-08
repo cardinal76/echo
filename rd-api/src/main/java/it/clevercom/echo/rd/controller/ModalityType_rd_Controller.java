@@ -30,6 +30,7 @@ import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.model.dto.ModalityGroupDTO;
 import it.clevercom.echo.rd.model.dto.ModalityTypeDTO;
 import it.clevercom.echo.rd.model.entity.ModalityType;
 import it.clevercom.echo.rd.repository.IModalityType_rd_Repository;
@@ -132,6 +133,57 @@ public class ModalityType_rd_Controller extends EchoController {
 				new CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, 
 						rdDozerMapper, 
 						ModalityTypeDTO.class, 
+						entity_name, 
+						criteria, 
+						sort, 
+						field, 
+						page, 
+						size,
+						env);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
+				
+		// process data request
+		return rp.process();
+	}
+	
+	/**
+	 * Get modality type group with modality children
+	 * @author luca
+	 * @category standard get by criteria REST method
+	 * @param criteria
+	 * @param page
+	 * @param size
+	 * @param sort
+	 * @param field
+	 * @return
+	 * @since 1.2.0
+	 * @throws Exception
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(value="modality", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody PagedDTO<ModalityGroupDTO> getModalityGroupedByModalityType (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="1000", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
+		
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+						
+		// validate
+		validator.validateSort(sort);
+		validator.validateSortField(field, ModalityType.class, entity_name);
+		
+		// create the processor
+		CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityGroupDTO> rp = 
+				new CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityGroupDTO>(repo, 
+						rdDozerMapper, 
+						ModalityGroupDTO.class, 
 						entity_name, 
 						criteria, 
 						sort, 

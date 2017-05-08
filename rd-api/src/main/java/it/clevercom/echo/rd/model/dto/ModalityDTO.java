@@ -8,7 +8,8 @@ import it.clevercom.echo.common.dto.AbstractEchoDTO;
 
 @JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
 public class ModalityDTO extends AbstractEchoDTO implements Serializable {
-
+	private static final long serialVersionUID = 8840332359183826527L;
+	
 	private Long idModality;
     private BaseObjectDTO modalityType;
     private BaseObjectDTO organizationUnit;

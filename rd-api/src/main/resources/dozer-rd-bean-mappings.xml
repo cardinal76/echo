@@ -42,6 +42,19 @@
 	<mapping>
 		<class-a map-null="false">it.clevercom.echo.rd.model.entity.ModalityType</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.ModalityTypeDTO</class-b>
+		<field>
+			<a>idmodalitytype</a>
+			<b>idModalityType</b>
+		</field>
+		<field>
+			<a>type</a>
+			<b>type</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.ModalityType</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ModalityGroupDTO</class-b>
 	</mapping>
 
 	<mapping>
