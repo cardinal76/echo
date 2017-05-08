@@ -365,18 +365,18 @@ public class Order_rd_Controller extends EchoController {
 		
 		if ((WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() == WorkStatusEnum.REQUESTED.order()) 
 				&& (WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).order() == WorkStatusEnum.SCHEDULED.order())) {
+
 			// generate worksession and work task if status = scheduled
 			// consider to refactor/moving this code
+			// create task
+			Set<WorkTaskDTO> tasks = this.generateTasksFromOrder(order.getServices());
+			
 			WorkSessionDTO workSession = new WorkSessionDTO();
 			workSession.setPatient(order.getPatient());
 			workSession.setScheduledDate(order.getScheduledDate());
 			workSession.setWorkPriority(order.getWorkPriority());
 			workSession.setWorkStatus(order.getWorkStatus());
-			
-			// create task
-			Set<WorkTaskDTO> tasks = this.generateTasksFromOrder(order.getServices());
-			
-			// workSession.setWorkTasks();
+			workSession.setWorkTasks(tasks);
 			
 			CreateResponseDTO<WorkSessionDTO> response = workSessionController.add(workSession, request);
 		}
@@ -511,7 +511,7 @@ public class Order_rd_Controller extends EchoController {
 	private Set<WorkTaskDTO> generateTasksFromOrder(Set<OrderedServiceDTO> services) {
 		Set<WorkTaskDTO> workTask = new HashSet<WorkTaskDTO>();
 		for (OrderedServiceDTO orderedServiceDTO : services) {
-			
+			workTask.add(rdDozerMapper.map(orderedServiceDTO, WorkTaskDTO.class));
 		}
 		
 		return workTask;
