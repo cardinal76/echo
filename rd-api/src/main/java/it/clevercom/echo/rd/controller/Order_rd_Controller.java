@@ -3,6 +3,7 @@ package it.clevercom.echo.rd.controller;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,6 +51,8 @@ import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
+import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
+import it.clevercom.echo.rd.model.dto.WorkTaskDTO;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
@@ -96,6 +99,9 @@ public class Order_rd_Controller extends EchoController {
 	
 	@Autowired
 	private IService_rd_Repository repo_s;
+	
+	@Autowired
+	WorkSession_rd_Controller workSessionController;
 	
 	@Autowired
 	private OrderValidator orderValidator; 
@@ -346,20 +352,35 @@ public class Order_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {
-
-		// FIXME once a service is canceled it cannot be activate anymore (costraint violation)
-		// TODO allocate order on rd_modality_daily_allocation (only on schedulation)
-		
+	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 						
 		// validate
 		validator.validateDTOIdd(order, entity_name);		
 		orderValidator.validateUpdateRequest(order);
-	
+		
 		// update changed services only if order status is lower in order value than accepted
 		Order orderToUpdate = repo.findOne(order.getIdOrder());
+		
+		if ((WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() == WorkStatusEnum.REQUESTED.order()) 
+				&& (WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).order() == WorkStatusEnum.SCHEDULED.order())) {
+			// generate worksession and work task if status = scheduled
+			// consider to refactor/moving this code
+			WorkSessionDTO workSession = new WorkSessionDTO();
+			workSession.setPatient(order.getPatient());
+			workSession.setScheduledDate(order.getScheduledDate());
+			workSession.setWorkPriority(order.getWorkPriority());
+			workSession.setWorkStatus(order.getWorkStatus());
+			
+			// create task
+			Set<WorkTaskDTO> tasks = this.generateTasksFromOrder(order.getServices());
+			
+			// workSession.setWorkTasks();
+			
+			CreateResponseDTO<WorkSessionDTO> response = workSessionController.add(workSession, request);
+		}
+		
 		if (WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() <= WorkStatusEnum.ACCEPTED.order()) {
 			// create two maps (active, inactive)
 			Map<Long, BaseObjectDTO> oldActiveServiceMap = new HashMap<Long, BaseObjectDTO>();
@@ -480,5 +501,19 @@ public class Order_rd_Controller extends EchoController {
 
 		// return response
 		return rp.enable(false);
+	}
+	
+	/**
+	 * Return a set of task based on input services
+	 * @param services
+	 * @return
+	 */
+	private Set<WorkTaskDTO> generateTasksFromOrder(Set<OrderedServiceDTO> services) {
+		Set<WorkTaskDTO> workTask = new HashSet<WorkTaskDTO>();
+		for (OrderedServiceDTO orderedServiceDTO : services) {
+			
+		}
+		
+		return workTask;
 	}
 }
