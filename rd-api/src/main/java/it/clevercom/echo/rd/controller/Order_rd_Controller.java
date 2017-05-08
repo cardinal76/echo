@@ -101,7 +101,7 @@ public class Order_rd_Controller extends EchoController {
 	private IService_rd_Repository repo_s;
 	
 	@Autowired
-	WorkSession_rd_Controller workSessionController;
+	private WorkSession_rd_Controller workSessionController;
 	
 	@Autowired
 	private OrderValidator orderValidator; 
@@ -325,12 +325,14 @@ public class Order_rd_Controller extends EchoController {
 		// process order insert
 		Order newOrder = rp.create();		
 		
+		// process services
 		Set<OrderService> orderServices = newOrder.getOrderServices();
 		for (OrderService orderService : orderServices) {
 			orderService.setUserupdate(getLoggedUser(request));
 			repo_os.saveAndFlush(orderService);
 		}
 		
+		// fix input dto with new ID
 		order.setIdOrder(newOrder.getIdorder()); 
 
 		// create standard response
@@ -363,14 +365,15 @@ public class Order_rd_Controller extends EchoController {
 		// update changed services only if order status is lower in order value than accepted
 		Order orderToUpdate = repo.findOne(order.getIdOrder());
 		
+		// generate worksession and work task if status = scheduled
+		// consider to refactor/moving this code
 		if ((WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() == WorkStatusEnum.REQUESTED.order()) 
 				&& (WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).order() == WorkStatusEnum.SCHEDULED.order())) {
-
-			// generate worksession and work task if status = scheduled
-			// consider to refactor/moving this code
-			// create task
-			Set<WorkTaskDTO> tasks = this.generateTasksFromOrder(order.getServices());
 			
+			// create task
+			Set<WorkTaskDTO> tasks = this.generateTasksFromOrder(order);
+			
+			// create worksession
 			WorkSessionDTO workSession = new WorkSessionDTO();
 			workSession.setPatient(order.getPatient());
 			workSession.setScheduledDate(order.getScheduledDate());
@@ -378,7 +381,8 @@ public class Order_rd_Controller extends EchoController {
 			workSession.setWorkStatus(order.getWorkStatus());
 			workSession.setWorkTasks(tasks);
 			
-			CreateResponseDTO<WorkSessionDTO> response = workSessionController.add(workSession, request);
+			// delegate action to work session controller			
+			order.setWorkSession(workSessionController.add(workSession, request).getNewValue().get(0));
 		}
 		
 		if (WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() <= WorkStatusEnum.ACCEPTED.order()) {
@@ -508,12 +512,17 @@ public class Order_rd_Controller extends EchoController {
 	 * @param services
 	 * @return
 	 */
-	private Set<WorkTaskDTO> generateTasksFromOrder(Set<OrderedServiceDTO> services) {
-		Set<WorkTaskDTO> workTask = new HashSet<WorkTaskDTO>();
-		for (OrderedServiceDTO orderedServiceDTO : services) {
-			workTask.add(rdDozerMapper.map(orderedServiceDTO, WorkTaskDTO.class));
+	private Set<WorkTaskDTO> generateTasksFromOrder(OrderDTO order) {
+		Set<WorkTaskDTO> workTasks = new HashSet<WorkTaskDTO>();
+		for (OrderedServiceDTO orderedServiceDTO : order.getServices()) {
+			WorkTaskDTO task = new WorkTaskDTO();
+			task.setScheduledDate(order.getScheduledDate());
+			task.setService(rdDozerMapper.map(orderedServiceDTO, BaseObjectDTO.class));
+			task.setWorkPriority(order.getWorkPriority());
+			task.setWorkStatus(order.getWorkStatus());
+			workTasks.add(task);
 		}
 		
-		return workTask;
+		return workTasks;
 	}
 }
