@@ -84,7 +84,7 @@ public class WorkSession2WorkSessionDTO implements CustomConverter, MapperAware 
 				target = (WorkSession) destinationFieldValue;
 			}
 			
-			target.setIdworksession(source.getIdWorkSession());
+			target.setIdworksession((source.getIdWorkSession()!=null) ? source.getIdWorkSession() : null);
 			target.setPatient(rdDozerMapper.map(source.getPatient(), Patient.class));
 			target.setWorkStatus(rdDozerMapper.map(source.getWorkStatus(), WorkStatus.class));
 			
@@ -108,10 +108,10 @@ public class WorkSession2WorkSessionDTO implements CustomConverter, MapperAware 
 			target.setScheduleddate(source.getScheduledDate()!=null ? new Date(source.getScheduledDate()) : null);
 			target.setReporteddate(source.getReportedDate()!=null ? new Date(source.getReportedDate()) : null);
 			
-			target.setActive(source.getActive());
-			target.setCreated(source.getCreated());
-			target.setUpdated(source.getUpdated());
-			target.setUserupdate(source.getUserupdate());
+			target.setActive((source.getActive()!=null) ? source.getActive() : null);
+			target.setCreated((source.getCreated()!=null) ? source.getCreated() : null);
+			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : null);
+			target.setUserupdate((source.getUserupdate()!=null) ? source.getUserupdate() : null);
 			
 			return target;
 		} else {
