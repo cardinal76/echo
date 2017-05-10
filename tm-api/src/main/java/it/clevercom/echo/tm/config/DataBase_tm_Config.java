@@ -48,7 +48,8 @@ public class DataBase_tm_Config {
 		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);
 		em.setJpaProperties(tmHibernateProperties());
-
+		em.setPersistenceUnitName("tmPU");
+		
 		return em;
 	}
 
