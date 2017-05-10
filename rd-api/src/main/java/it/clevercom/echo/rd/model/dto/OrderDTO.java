@@ -26,6 +26,7 @@ public class OrderDTO extends AbstractEchoDTO implements Serializable {
 	private Long scheduledDate;
 	private Long acceptanceDate;
 	private Long duration;
+	private BaseObjectDTO scheduledModality;
 	private String requestingPhysician;
 	private String clinicalQuestion;
 	private String rejectReason;
@@ -530,6 +531,20 @@ public class OrderDTO extends AbstractEchoDTO implements Serializable {
 	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	/**
+	 * @return the scheduledModality
+	 */
+	public BaseObjectDTO getScheduledModality() {
+		return scheduledModality;
+	}
+
+	/**
+	 * @param scheduledModality the scheduledModality to set
+	 */
+	public void setScheduledModality(BaseObjectDTO scheduledModality) {
+		this.scheduledModality = scheduledModality;
 	}
 
 	@Override

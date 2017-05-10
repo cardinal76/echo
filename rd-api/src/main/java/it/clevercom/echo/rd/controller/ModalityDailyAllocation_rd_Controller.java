@@ -111,7 +111,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
-		// check enum string params
+		// validate
 		validator.validateSort(sort);
 		validator.validateSortField(field, ModalityDailyAllocation.class, entity_name);
 		
@@ -136,7 +136,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	
 	/**
 	 * Add a work task
-	 * @param workTask
+	 * @param allocation
 	 * @param request
 	 * @return
 	 * @throws Exception
@@ -145,12 +145,13 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<ModalityDailyAllocationDTO> add(@RequestBody ModalityDailyAllocationDTO workTask, HttpServletRequest request) throws Exception {
+	public @ResponseBody CreateResponseDTO<ModalityDailyAllocationDTO> add(@RequestBody ModalityDailyAllocationDTO allocation, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
-				
+		validator.validateDTONullIdd(allocation, entity_id);
+		
 		// create the processor
 		CreateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> rp = 
 				new CreateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO>(repo, 
@@ -158,7 +159,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 						ModalityDailyAllocation.class, 
 						entity_name, 
 						getLoggedUser(request), 
-						workTask,
+						allocation,
 						env);
 		
 		// log info
@@ -170,7 +171,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	
 	/**
 	 * Update a work task
-	 * @param workTask
+	 * @param allocation
 	 * @param request
 	 * @return
 	 * @throws Exception
@@ -179,12 +180,12 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<ModalityDailyAllocationDTO> update(@RequestBody ModalityDailyAllocationDTO workTask, HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<ModalityDailyAllocationDTO> update(@RequestBody ModalityDailyAllocationDTO allocation, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate that username can perform the requested operation on appSetting
-		validator.validateDTOIdd(workTask, entity_name);
+		validator.validateDTOIdd(allocation, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> rp = 
@@ -193,11 +194,11 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 						entity_name,
 						entity_id,
 						getLoggedUser(request), 
-						workTask, 
+						allocation, 
 						env);
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, workTask.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, allocation.getIdd().toString()));
 
 		// return response
 		return rp.process();
@@ -205,7 +206,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	
 	/**
 	 * Delete a work task 
-	 * @param workTask
+	 * @param allocation
 	 * @param request
 	 * @return
 	 */
@@ -213,12 +214,12 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<ModalityDailyAllocationDTO> delete(@RequestBody ModalityDailyAllocationDTO workTask, HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<ModalityDailyAllocationDTO> delete(@RequestBody ModalityDailyAllocationDTO allocation, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
 		// validate that username can perform the requested operation on appSetting
-		validator.validateDTOIdd(workTask, entity_name);
+		validator.validateDTOIdd(allocation, entity_name);
 
 		// create processor
 		UpdateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> rp = 
@@ -227,11 +228,11 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 						entity_name,
 						entity_id,
 						getLoggedUser(request), 
-						workTask, 
+						allocation, 
 						env);
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, workTask.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, allocation.getIdd().toString()));
 
 		// return response
 		return rp.enable(false);

@@ -1,10 +1,11 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 2-mag-2017 14.43.59 by Hibernate Tools 5.2.2.Final
+// Generated 9-mag-2017 22.28.32 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -135,7 +136,7 @@ public class WorkSession  extends AbstractJpaEchoEntity implements java.io.Seria
         this.workReports = workReports;
     }
 
-@OneToMany(fetch=FetchType.LAZY, mappedBy="workSession")
+@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="workSession")
     public Set<WorkTask> getWorkTasks() {
         return this.workTasks;
     }

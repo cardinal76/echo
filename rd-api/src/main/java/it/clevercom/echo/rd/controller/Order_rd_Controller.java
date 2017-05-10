@@ -3,6 +3,7 @@ package it.clevercom.echo.rd.controller;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,17 +51,32 @@ import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
+import it.clevercom.echo.rd.model.dto.UserDTO;
+import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
+import it.clevercom.echo.rd.model.dto.WorkTaskDTO;
+import it.clevercom.echo.rd.model.entity.Modality;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
 import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.Service;
+import it.clevercom.echo.rd.model.entity.User;
+import it.clevercom.echo.rd.model.entity.WorkPriority;
+import it.clevercom.echo.rd.model.entity.WorkSession;
+import it.clevercom.echo.rd.model.entity.WorkStatus;
+import it.clevercom.echo.rd.model.entity.WorkTask;
+import it.clevercom.echo.rd.repository.IModality_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderLog_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderService_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrder_rd_Repository;
+import it.clevercom.echo.rd.repository.IPatient_rd_Repository;
 import it.clevercom.echo.rd.repository.IService_rd_Repository;
+import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
+import it.clevercom.echo.rd.repository.IWorkSession_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
+import it.clevercom.echo.rd.repository.IWorkTask_rd_Repository;
+import it.clevercom.echo.rd.service.OrderProcessor;
 import it.clevercom.echo.rd.util.WorkStatusDateFieldDecoder;
 
 @Controller
@@ -95,7 +111,22 @@ public class Order_rd_Controller extends EchoController {
 	private IWorkPriority_rd_Repository repo_wp;
 	
 	@Autowired
+	private IPatient_rd_Repository repo_p;
+	
+	@Autowired
 	private IService_rd_Repository repo_s;
+	
+	@Autowired
+	private IUser_rd_Repository repo_u;
+	
+	@Autowired
+	private IWorkSession_rd_Repository repo_wss;
+	
+	@Autowired
+	private IWorkTask_rd_Repository repo_wt;
+	
+	@Autowired
+	private IModality_rd_Repository repo_m;
 	
 	@Autowired
 	private OrderValidator orderValidator; 
@@ -105,6 +136,9 @@ public class Order_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@Autowired
+	private OrderProcessor orderProcessor;
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -317,15 +351,17 @@ public class Order_rd_Controller extends EchoController {
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process order insert
-		Order newOrder = rp.create();		
+		Order newOrder = rp.create();
 		
+		// fix input dto with new ID
+		order.setIdOrder(newOrder.getIdorder());
+		
+		// process services
 		Set<OrderService> orderServices = newOrder.getOrderServices();
 		for (OrderService orderService : orderServices) {
 			orderService.setUserupdate(getLoggedUser(request));
 			repo_os.saveAndFlush(orderService);
 		}
-		
-		order.setIdOrder(newOrder.getIdorder()); 
 
 		// create standard response
 		String message = MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name);
@@ -346,21 +382,21 @@ public class Order_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {
-
-		// FIXME once a service is canceled it cannot be activate anymore (costraint violation)
-		// TODO allocate order on rd_modality_daily_allocation (only on schedulation)
-		
+	public @ResponseBody UpdateResponseDTO<OrderDTO> update(@RequestBody OrderDTO order, HttpServletRequest request) throws Exception {		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 						
 		// validate
 		validator.validateDTOIdd(order, entity_name);		
 		orderValidator.validateUpdateRequest(order);
-	
+		
 		// update changed services only if order status is lower in order value than accepted
 		Order orderToUpdate = repo.findOne(order.getIdOrder());
+		
 		if (WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() <= WorkStatusEnum.ACCEPTED.order()) {
+			// boolean (requested service changed)
+			boolean changeRequest = false;
+			
 			// create two maps (active, inactive)
 			Map<Long, BaseObjectDTO> oldActiveServiceMap = new HashMap<Long, BaseObjectDTO>();
 			Map<Long, BaseObjectDTO> oldInactiveServiceMap = new HashMap<Long, BaseObjectDTO>();
@@ -394,6 +430,7 @@ public class Order_rd_Controller extends EchoController {
 						orderService.setAddedreason(current.getAddedReason());
 						repo_os.saveAndFlush(orderService);
 					}
+					changeRequest = true;
 				}
 			}
 			
@@ -406,7 +443,23 @@ public class Order_rd_Controller extends EchoController {
 					orderService.setActive(false);
 					orderService.setCanceledreason(current.getCancelReason());
 					repo_os.saveAndFlush(orderService);
+					changeRequest = true;
 				}
+			}
+			
+			// generate worksession and work task if status = scheduled
+			// consider to refactor/moving this code
+			if ((WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() == WorkStatusEnum.REQUESTED.order()) 
+					&& (WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).order() == WorkStatusEnum.SCHEDULED.order())) {
+							
+				this.createWorkSessionTree(order);
+				
+				// order.setWorkSession(workSessionController.add(, request).getNewValue().get(0));
+			} else if (changeRequest==true) {
+				//WorkSessionDTO sessionToUpdate = workSessionController.get(orderToUpdate.getWorkSession().getIdworksession());
+				//sessionToUpdate.setWorkTasks(this.generateWorkTasksFromOrder(order));
+				// delegate action to work session controller			
+				//order.setWorkSession(workSessionController.update(sessionToUpdate, request).getNewValue().get(0));
 			}
 		}
 		
@@ -480,5 +533,45 @@ public class Order_rd_Controller extends EchoController {
 
 		// return response
 		return rp.enable(false);
+	}
+	
+	/**
+	 * 
+	 * @param order
+	 * @return
+	 */
+	private WorkSession createWorkSessionTree(OrderDTO order) {
+		// query objects
+		Patient p = repo_p.findOne(order.getPatient().getIdPatient());
+		Date scheduleDate = new Date(order.getScheduledDate());
+		WorkPriority priority = repo_wp.findByCode(order.getWorkPriority().getCode());
+		WorkStatus status = repo_ws.findByCode(order.getWorkStatus().getCode());
+		User systemUser = repo_u.findOne("SYSTEM");
+		Modality modality = repo_m.findOne(Long.valueOf(order.getScheduledModality().getId()));
+		
+		// create worksession
+		WorkSession workSession = new WorkSession();
+		workSession.setPatient(p);
+		workSession.setScheduleddate(scheduleDate);
+		workSession.setWorkPriority(priority);
+		workSession.setWorkStatus(status);
+		workSession = repo_wss.saveAndFlush(workSession);
+		
+		// create task list
+		for (OrderedServiceDTO orderedServiceDTO : order.getServices()) {
+			WorkTask task = new WorkTask();
+			task.setScheduleddate(new Date(order.getScheduledDate()));
+			task.setService(repo_s.findOne(Long.valueOf(orderedServiceDTO.getId())));
+			task.setWorkPriority(repo_wp.findByCode(order.getWorkPriority().getCode()));
+			task.setWorkStatus(repo_ws.findByCode(order.getWorkStatus().getCode()));
+			task.setUser(systemUser);
+			task.setAccessionnumber(new Long(123123123));
+			task.setModality(modality);
+			task.setWorkSession(workSession);
+			repo_wt.saveAndFlush(task);
+		}
+		
+		// return session
+		return workSession;
 	}
 }
