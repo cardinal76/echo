@@ -49,7 +49,7 @@ public class DataBase_rd_Config {
 		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);
 		em.setJpaProperties(rdHibernateProperties());
-
+		em.setPersistenceUnitName("rdPU");
 		return em;
 	}
 	
