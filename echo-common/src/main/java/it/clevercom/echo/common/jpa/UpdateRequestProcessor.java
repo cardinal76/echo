@@ -6,6 +6,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.core.env.Environment;
@@ -29,6 +31,7 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	private String updatedUser;
 	private Environment env;
 	private Class<?> idClazz;
+	private EntityManager em;
 	private final Logger logger = Logger.getLogger(this.getClass());
 
 	/**
@@ -40,6 +43,7 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	 * @param updatedUser
 	 * @param dto
 	 * @param env
+	 * @deprecated
 	 */
 	public UpdateRequestProcessor(I repository, DozerBeanMapper mapper, String entity_name, String entity_id, String updatedUser, D dto, Environment env) throws Exception {
 		super();
@@ -62,6 +66,37 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		this.dtoClazz = (Class<D>) dto.getClass();
 		this.repoClazz = (Class<I>) repository.getClass();
 		this.idClazz = dto.getIdd().getClass();
+	}
+	
+	/**
+	 * 
+	 * @param repository
+	 * @param mapper
+	 * @param entity_name
+	 * @param entity_id
+	 * @param updatedUser
+	 * @param dto
+	 * @param env
+	 */
+	public UpdateRequestProcessor(I repository, DozerBeanMapper mapper, String entity_name, String entity_id, Environment env, EntityManager em) {
+		super();
+		// repository
+		this.repository = repository;
+		// mapper
+		this.mapper = mapper;
+		// entity name
+		this.entity_name = entity_name;
+		// entity name
+		this.entity_id = entity_id;
+		// set env
+		this.env = env;
+		// set entity manager
+		this.em = em;
+		
+		// clazzez
+		//this.dtoClazz = (Class<D>) dto.getClass();
+		//this.idClazz = dto.getIdd().getClass();
+		this.repoClazz = (Class<I>) repository.getClass();
 	}
 	
 	/**
@@ -96,8 +131,11 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 
 		// save and map to out dto
 		E newValueEntity = repository.saveAndFlush(oldValueEntity);
-		// D newValueDTO = mapper.map(newValueEntity, dtoClazz);
-		D newValueDTO = dto;
+		// legacy code (should be removed after refactoring)
+		if (em!=null) {
+			em.refresh(newValueEntity);		
+		}
+		D newValueDTO = mapper.map(newValueEntity, dtoClazz);
 		
 		// create standard response
 		UpdateResponseDTO<D> response = new UpdateResponseDTO<D>();
@@ -150,6 +188,11 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		// save and map to out dto
 		E newValueEntity = repository.saveAndFlush(oldValueEntity);
 		
+		// legacy code (should be removed after refactoring)
+		if (em!=null) {
+			em.refresh(newValueEntity);		
+		}
+				
 		return newValueEntity;
 	}	
 	
@@ -204,5 +247,35 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		response.setOldValue(oldDTOs);
 
 		return response;
+	}
+
+	/**
+	 * @return the dto
+	 */
+	public D getDto() {
+		return dto;
+	}
+
+	/**
+	 * @param dto the dto to set
+	 */
+	public void setDto(D dto) {
+		this.dto = dto;
+		this.dtoClazz = (Class<D>) dto.getClass();
+		this.idClazz = dto.getIdd().getClass();
+	}
+
+	/**
+	 * @return the updatedUser
+	 */
+	public String getUpdatedUser() {
+		return updatedUser;
+	}
+
+	/**
+	 * @param updatedUser the updatedUser to set
+	 */
+	public void setUpdatedUser(String updatedUser) {
+		this.updatedUser = updatedUser;
 	}
 }

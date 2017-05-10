@@ -42,6 +42,7 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 	 * @param field
 	 * @param page
 	 * @param size
+	 * @deprecated
 	 */
 	public CriteriaRequestProcessor(
 			// repository that performs operation
@@ -81,6 +82,30 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 		// create paged request
 		pageable = PageRequestFactory.getPageRequest(sort, field, page, size);
 		
+	}
+	
+	public CriteriaRequestProcessor(
+			// repository that performs operation
+			I repo, 
+			// mapper that performs conversion
+			DozerBeanMapper mapper, 
+			// dto class
+			Class<D> clazz, 
+			// entity friendly name
+			String entity_name,
+			// environment
+			Environment env) {
+		super();
+		// class
+		this.clazz = clazz;
+		// mapper
+		this.mapper = mapper;
+		// set repository
+		repository = repo;
+		// set entity name
+		this.entity_name = entity_name;
+		// set env
+		this.env = env;		
 	}
 	
 	/**
@@ -136,5 +161,26 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 	 */
 	public void setSpecification(Specification<E> specification) {
 		this.specification = specification;
+	}
+	
+	/**
+	 * 
+	 * @param criteria
+	 */
+	public void setCriteria(String criteria) {
+		// create and set specification with criteria param
+		this.specification = CriteriaSpecificationFactory.getCriteriaSpecification(criteria);
+	}
+	
+	/**
+	 * @param sort
+	 * @param field
+	 * @param page
+	 * @param size
+	 */
+	public void setPageCriteria(String sort, String field, int page, int size) {
+		this.page = page;
+		this.size = size;
+		this.pageable = PageRequestFactory.getPageRequest(sort, field, page, size);
 	}
 }
