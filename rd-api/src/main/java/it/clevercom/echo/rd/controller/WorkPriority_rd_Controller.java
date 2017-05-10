@@ -2,6 +2,10 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +28,6 @@ import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.rd.component.Validator;
-import it.clevercom.echo.rd.model.dto.WorkPriorityDTO;
 import it.clevercom.echo.rd.model.dto.WorkPriorityDTO;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
@@ -54,11 +57,26 @@ public class WorkPriority_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO> processor;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "WorkPriority";
 	public static final String entity_id = "idworkpriority";
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO>(repo, rdDozerMapper, WorkPriorityDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get work priority by id

@@ -2,6 +2,10 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +29,6 @@ import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.WorkStatusDTO;
-import it.clevercom.echo.rd.model.entity.WorkSession;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 
@@ -54,12 +57,27 @@ public class WorkStatus_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+	
+	// crud processors
+	private CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO> processor;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "WorkStatus";
 	public static final String entity_id = "idworkstatus";
 
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO>(repo, rdDozerMapper, WorkStatusDTO.class, entity_name, env);
+	}
+	
 	/**
 	 * Get work status by id
 	 * @param id

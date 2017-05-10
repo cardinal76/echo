@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -59,11 +62,32 @@ public class MaritalStatus_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> processor;
+	private CreateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> creator;
+	private UpdateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "Maritalstatus";
 	public static final String entity_id = "idmaritalstatus";
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, rdDozerMapper, Maritalstatus.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, rdDozerMapper, MaritalStatusDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get marital status by id

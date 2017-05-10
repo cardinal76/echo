@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -60,11 +63,32 @@ public class AppSetting_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> processor;
+	private CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> creator;
+	private UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	public static final String entity_name = "AppSetting";
 	public static final String entity_id = "idappsetting";
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, rdDozerMapper, AppSetting.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, rdDozerMapper, AppSettingDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get application setting by id

@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -59,11 +62,32 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> processor;
+	private CreateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> creator;
+	private UpdateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "OrganizationUnit";
 	public static final String entity_id = "idorganizationunit";
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, rdDozerMapper, OrganizationUnit.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, rdDozerMapper, OrganizationUnitDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get organization unit by id

@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -31,7 +34,6 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.PhraseBookDTO;
-import it.clevercom.echo.rd.model.entity.OrganizationUnit;
 import it.clevercom.echo.rd.model.entity.PhraseBook;
 import it.clevercom.echo.rd.repository.IPhraseBook_rd_Repository;
 
@@ -54,11 +56,32 @@ public class PhraseBook_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> processor;
+	private CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> creator;
+	private UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	public static final String entity_name = "PhraseBook";
 	public static final String entity_id = "idphrasebook";
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, rdDozerMapper, PhraseBook.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, rdDozerMapper, PhraseBookDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get a phrase book by id

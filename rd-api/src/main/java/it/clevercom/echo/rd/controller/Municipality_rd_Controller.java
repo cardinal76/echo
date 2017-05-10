@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -59,11 +62,32 @@ public class Municipality_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> processor;
+	private CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> creator;
+	private UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "Municipality";
 	public static final String entity_id = "idmunicipality";
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, Municipality.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, MunicipalityDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get municipality by id

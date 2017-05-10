@@ -4,6 +4,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -89,6 +92,14 @@ public class Country_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> processor;
+	private CreateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> creator;
+	private UpdateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
@@ -100,6 +111,19 @@ public class Country_rd_Controller extends EchoController {
 	public static final String p_entity_id = Province_rd_Controller.entity_id;
 	public static final String m_entity_name = Municipality_rd_Controller.entity_name;
 	public static final String m_entity_id = Municipality_rd_Controller.entity_id;
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO>(repo, rdDozerMapper, Country.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<ICountry_rd_Repository, Country, CountryDTO>(repo, rdDozerMapper, CountryDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get country by id

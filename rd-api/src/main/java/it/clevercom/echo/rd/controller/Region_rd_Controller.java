@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -32,7 +35,6 @@ import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.RegionDTO;
 import it.clevercom.echo.rd.model.entity.Region;
-import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
 import it.clevercom.echo.rd.repository.IRegion_rd_Repository;
 
 @Controller
@@ -55,16 +57,18 @@ public class Region_rd_Controller extends EchoController {
 	private IRegion_rd_Repository repo;
 	
 	@Autowired
-	private IRegion_rd_Repository repo_p;
-	
-	@Autowired
-	private IMunicipality_rd_Repository repo_m;
-	
-	@Autowired
     private DozerBeanMapper rdDozerMapper;
 	
 	@Autowired
 	private Validator validator;
+	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> processor;
+	private CreateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> creator;
+	private UpdateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -72,6 +76,18 @@ public class Region_rd_Controller extends EchoController {
 	public static final String entity_name = "Region";
 	public static final String entity_id = "idregion";
 
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, rdDozerMapper, Region.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, rdDozerMapper, RegionDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get region by id

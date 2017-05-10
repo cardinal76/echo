@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -59,11 +62,32 @@ public class CodingActor_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> processor;
+	private CreateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> creator;
+	private UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "CodingActor";
 	public static final String entity_id = "idcodingactor";
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, rdDozerMapper, CodingActor.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, rdDozerMapper, CodingActorDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get coding actor by id

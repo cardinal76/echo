@@ -1,9 +1,10 @@
 package it.clevercom.echo.rd.controller;
 
-import java.sql.Timestamp;
 import java.text.MessageFormat;
-import java.util.HashMap;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.controller.EchoController;
-import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
@@ -33,14 +33,11 @@ import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.model.dto.ServiceDTO;
 import it.clevercom.echo.rd.model.dto.UserDTO;
-import it.clevercom.echo.rd.model.dto.UserDTO;
-import it.clevercom.echo.rd.model.dto.UserDTO;
+import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.User;
-import it.clevercom.echo.rd.model.entity.User;
-import it.clevercom.echo.rd.model.entity.User;
-import it.clevercom.echo.rd.repository.IUser_rd_Repository;
-import it.clevercom.echo.rd.repository.IUser_rd_Repository;
+import it.clevercom.echo.rd.repository.IService_rd_Repository;
 import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 
 @Controller
@@ -68,12 +65,32 @@ public class User_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO> processor;
+	private CreateRequestProcessor<IUser_rd_Repository, User, UserDTO> creator;
+	private UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "User";
 	public static final String entity_id = "username";
 
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, rdDozerMapper, User.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, rdDozerMapper, UserDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get user by id

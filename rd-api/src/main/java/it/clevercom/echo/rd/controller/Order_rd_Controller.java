@@ -41,7 +41,6 @@ import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
-import it.clevercom.echo.common.model.factory.ResponseFactory;
 import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.StringUtils;
 import it.clevercom.echo.rd.component.OrderValidator;
@@ -54,9 +53,7 @@ import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
-import it.clevercom.echo.rd.model.dto.UserDTO;
 import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
-import it.clevercom.echo.rd.model.dto.WorkTaskDTO;
 import it.clevercom.echo.rd.model.entity.Modality;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderLog;
@@ -79,7 +76,6 @@ import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkSession_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkTask_rd_Repository;
-import it.clevercom.echo.rd.service.OrderProcessor;
 import it.clevercom.echo.rd.util.WorkStatusDateFieldDecoder;
 
 @Controller

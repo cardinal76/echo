@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -59,12 +62,33 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> processor;
+	private CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> creator;
+	private UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	public static final String entity_name = "BodyApparatus";
 	public static final String entity_id = "idbodyapparatus";
 
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, rdDozerMapper, BodyApparatus.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, rdDozerMapper, BodyApparatusDTO.class, entity_name, env);
+	}
+	
 	/**
 	 * Get a body apparatus by id
 	 * @author luca

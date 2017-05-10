@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -53,11 +56,32 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> processor;
+	private CreateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> creator;
+	private UpdateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	public static final String entity_name = "ModalityDailyAllocation";
 	public static final String entity_id = "idmodalitydailyallocation";
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO>(repo, rdDozerMapper, ModalityDailyAllocation.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO>(repo, rdDozerMapper, ModalityDailyAllocationDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get a work task by id

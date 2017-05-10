@@ -4,6 +4,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -71,6 +74,14 @@ public class Patient_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> processor;
+	private CreateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> creator;
+	private UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> updater;
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -78,6 +89,19 @@ public class Patient_rd_Controller extends EchoController {
 	public static final String entity_name = "Patient";
 	public static final String entity_id = "idpatient";
 	public static final String entity_pc_id = "idpatientcodingactor";
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, rdDozerMapper, Patient.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, rdDozerMapper, PatientDTO.class, entity_name, env);
+	}
 
 	/**
 	 * Get patient by id

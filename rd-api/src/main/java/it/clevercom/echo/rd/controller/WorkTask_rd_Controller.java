@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -57,11 +60,32 @@ public class WorkTask_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+	
+	// crud processors
+	private CriteriaRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> processor;
+	private CreateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> creator;
+	private UpdateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	public static final String entity_name = "WorkTask";
 	public static final String entity_id = "idworktask";
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO>(repo, rdDozerMapper, WorkTask.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO>(repo, rdDozerMapper, WorkTaskDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get a work task by id

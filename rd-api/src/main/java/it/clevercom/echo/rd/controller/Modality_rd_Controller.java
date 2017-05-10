@@ -2,6 +2,9 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -53,11 +56,32 @@ public class Modality_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> processor;
+	private CreateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> creator;
+	private UpdateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	public static final String entity_name = "Modality";
 	public static final String entity_id = "idmodality";
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO>(repo, rdDozerMapper, Modality.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO>(repo, rdDozerMapper, ModalityDTO.class, entity_name, env);
+	}
 
 	/**
 	 * Get a modality by id
