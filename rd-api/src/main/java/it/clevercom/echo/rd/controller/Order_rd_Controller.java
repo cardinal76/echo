@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -137,9 +140,14 @@ public class Order_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
-	@Autowired
-	private OrderProcessor orderProcessor;
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
 
+	// crud processors
+	private CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> processor;
+	private CreateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> creator;
+	private UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 
 	// used to bind it in exception message
@@ -149,6 +157,19 @@ public class Order_rd_Controller extends EchoController {
 	public static final String entity_s_name = "Service";
 	public static final String entity_os_name = "Ordered Service";
 	public static final String entity_o_name = "Organization Unit";
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	public void init() {
+		// construct creator
+		creator = new CreateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, rdDozerMapper, Order.class, entity_name, env, em);
+		// construct updater
+		updater = new UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+		// costruct processor
+		processor = new CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, rdDozerMapper, OrderDTO.class, entity_name, env);
+	}
 	
 	/**
 	 * Get order by id
@@ -224,18 +245,9 @@ public class Order_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, Order.class, entity_name);
 		
-		// create processor
-		CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> rp = 
-				new CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, 
-						rdDozerMapper, 
-						OrderDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// get dates
 		final Date t1 = DateUtil.getStartOfDay(new Date(from));
@@ -254,65 +266,65 @@ public class Order_rd_Controller extends EchoController {
 				DateIntervalSpecification<Order, Order> interval = new DateIntervalSpecification<Order, Order>(null, t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i])));
 				current = Specifications.where(current).and(st).and(interval);
 				if (i==0) {
-					rp.addAndSpecification(Specifications.where(current));
+					processor.addAndSpecification(Specifications.where(current));
 				} else {
-					rp.addOrSpecification(Specifications.where(current));
+					processor.addOrSpecification(Specifications.where(current));
 				}
 			}
 		} else {
 			// create standard specification based on date interval and standard field name
 			// parse long parameter to Date Object
 			DateIntervalSpecification<Order, Order> interval = new DateIntervalSpecification<Order, Order>(null, t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(null));
-			rp.addAndSpecification(interval);
+			processor.addAndSpecification(interval);
 		}
 		
 		// if there's a selected priority, create and set priority specification
 		if (!priority.equals("*")) {
 			WorkPrioritySpecification<Order> pr = new WorkPrioritySpecification<Order>(repo_wp.findByCode(WorkPriorityEnum.getInstanceFromCodeValue(priority).code()).getIdworkpriority());
-			rp.addAndSpecification(pr);
+			processor.addAndSpecification(pr);
 		}
 
 		// if there's a selected patient name, create and set patient name specification
 		if ((!name.equals("*"))) {
 			StringSpecification<Order, Patient> n = new StringSpecification<Order, Patient>("patient", "name", name.toLowerCase()); 
-			rp.addAndSpecification(n);
+			processor.addAndSpecification(n);
 		}
 
 		// if there's a selected patient surname, create and set patient surname specification
 		if ((!surname.equals("*"))) {
 			StringSpecification<Order, Patient> sn = new StringSpecification<Order, Patient>("patient", "surname", surname.toLowerCase());
-			rp.addAndSpecification(sn);
+			processor.addAndSpecification(sn);
 		}
 		
 		// if there's a selected patient taxcode, create and set patient surname specification
 		if (!taxCode.equals("*")) {
 			StringSpecification<Order, Patient> tc = new StringSpecification<Order, Patient>("patient", "taxcode", taxCode.toLowerCase());
-			rp.addAndSpecification(tc);
+			processor.addAndSpecification(tc);
 		}
 		
 		// if there's a selected target organization unit, create and set target organization unit specification
 		if (!targetorgid.equals(Long.valueOf(0))) {
 			OrganizationUnitSpecification<Order> tou = new OrganizationUnitSpecification<Order>("organizationUnitByTargetorganizationunitid", targetorgid);
-			rp.addAndSpecification(tou);
+			processor.addAndSpecification(tou);
 		}
 
 		// if there's a selected origin organization unit, create and set origin organization unit specification
 		if (!originorgid.equals(Long.valueOf(0))) {
 			OrganizationUnitSpecification<Order> oou = new OrganizationUnitSpecification<Order>("organizationUnitByOriginorganizationunitid", originorgid);
-			rp.addAndSpecification(oou);
+			processor.addAndSpecification(oou);
 		}
 		
 		// include only active if active!false is not specified in criteria
 		if ((criteria.equals("null")) || ((!criteria.equals("null")) && (!criteria.contains("active!false")) && (!criteria.contains("active!true")))) {
 			BooleanSpecification<Order, Order> act = new BooleanSpecification<Order, Order>(null, "active", true);
-			rp.addAndSpecification(act);
+			processor.addAndSpecification(act);
 		}
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**
@@ -337,35 +349,15 @@ public class Order_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(order, entity_id);
 		orderValidator.validateCreateRequest(order);
 
-		// create the processor
-		CreateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> rp = 
-				new CreateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo,
-						rdDozerMapper,
-						Order.class,
-						entity_name,
-						getLoggedUser(request),
-						order,
-						env);
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(order);
 				
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
-		// process order insert
-		Order newOrder = rp.create();
-		
-		// fix input dto with new ID
-		order.setIdOrder(newOrder.getIdorder());
-		
-		// process services
-		Set<OrderService> orderServices = newOrder.getOrderServices();
-		for (OrderService orderService : orderServices) {
-			orderService.setUserupdate(getLoggedUser(request));
-			repo_os.saveAndFlush(orderService);
-		}
-
-		// create standard response
-		String message = MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name);
-		return ResponseFactory.getCreateResponseDTO(order, entity_name, message);		
+		// process 
+		return creator.process();
 	}
 
 	/**
@@ -452,7 +444,7 @@ public class Order_rd_Controller extends EchoController {
 			if ((WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() == WorkStatusEnum.REQUESTED.order()) 
 					&& (WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).order() == WorkStatusEnum.SCHEDULED.order())) {
 							
-				this.createWorkSessionTree(order);
+				order.setWorkSession(rdDozerMapper.map(this.createWorkSessionTree(order), WorkSessionDTO.class));
 				
 				// order.setWorkSession(workSessionController.add(, request).getNewValue().get(0));
 			} else if (changeRequest==true) {
@@ -468,20 +460,14 @@ public class Order_rd_Controller extends EchoController {
 		log.setUserupdate(getLoggedUser(request));
 		repo_ol.saveAndFlush(log);
 		
-		// create processor
-		UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> rp = 
-				new UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						order, 
-						env);
+		// set updater params
+		updater.setDto(order);
+		updater.setUpdatedUser(getLoggedUser(request));
 					
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, order.getIdd().toString()));
 
-		return rp.process();
+		return updater.process();
 	}
 
 	/**
@@ -555,9 +541,9 @@ public class Order_rd_Controller extends EchoController {
 		workSession.setScheduleddate(scheduleDate);
 		workSession.setWorkPriority(priority);
 		workSession.setWorkStatus(status);
-		workSession = repo_wss.saveAndFlush(workSession);
 		
 		// create task list
+		Set<WorkTask> workTasks = new HashSet<WorkTask>();
 		for (OrderedServiceDTO orderedServiceDTO : order.getServices()) {
 			WorkTask task = new WorkTask();
 			task.setScheduleddate(new Date(order.getScheduledDate()));
@@ -568,8 +554,11 @@ public class Order_rd_Controller extends EchoController {
 			task.setAccessionnumber(new Long(123123123));
 			task.setModality(modality);
 			task.setWorkSession(workSession);
-			repo_wt.saveAndFlush(task);
+			workTasks.add(task);
 		}
+		
+		workSession.setWorkTasks(workTasks);
+		//workSession = repo_wss.saveAndFlush(workSession);
 		
 		// return session
 		return workSession;
