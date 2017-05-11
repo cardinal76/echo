@@ -55,6 +55,7 @@ import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
 import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
 import it.clevercom.echo.rd.model.entity.Modality;
+import it.clevercom.echo.rd.model.entity.ModalityDailyAllocation;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
@@ -65,6 +66,7 @@ import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkSession;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.model.entity.WorkTask;
+import it.clevercom.echo.rd.repository.IModalityDailyAllocation_rd_Repository;
 import it.clevercom.echo.rd.repository.IModality_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderLog_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderService_rd_Repository;
@@ -122,7 +124,7 @@ public class Order_rd_Controller extends EchoController {
 	private IWorkSession_rd_Repository repo_wss;
 	
 	@Autowired
-	private IWorkTask_rd_Repository repo_wt;
+	private IModalityDailyAllocation_rd_Repository repo_a;
 	
 	@Autowired
 	private IModality_rd_Repository repo_m;
@@ -435,20 +437,58 @@ public class Order_rd_Controller extends EchoController {
 				}
 			}
 			
+			// ********************************************************
 			// generate worksession and work task if status = scheduled
-			// consider to refactor/moving this code
+			// ********************************************************
 			if ((WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() == WorkStatusEnum.REQUESTED.order()) 
 					&& (WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).order() == WorkStatusEnum.SCHEDULED.order())) {
-							
-				order.setWorkSession(rdDozerMapper.map(this.createWorkSessionTree(order), WorkSessionDTO.class));
+				// create work session and put dto into order to update
+				WorkSession ws = this.createWorkSessionTree(order);
+				order.setWorkSession(rdDozerMapper.map(ws, WorkSessionDTO.class));
 				
-				// order.setWorkSession(workSessionController.add(, request).getNewValue().get(0));
-			} else if (false==true) {
+				// **************************
+				// update modality allocation
+				// **************************
+				
+				// find allocation for selected modality
+				Modality scheduledModality = repo_m.findOne(Long.valueOf(order.getScheduledModality().getId()));
+				ModalityDailyAllocation allocation = repo_a.findByModalityAndDay(scheduledModality, new Date(order.getScheduledDate()));
+				
+				if (allocation == null) {
+					// if not found create a new allocation
+					allocation = new ModalityDailyAllocation();
+					allocation.setModality(scheduledModality);
+					allocation.setPatientallocation(1);
+					allocation.setPatientexcess(0);
+					allocation.setServiceallocation(ws.getWorkTasks().size());
+					allocation.setServiceexcess(0);
+					allocation.setUserupdate(getLoggedUser(request));
+					allocation.setDay(new Date(order.getScheduledDate()));
+				} else {
+					// update counters
+					allocation.setPatientallocation(allocation.getPatientallocation()+1);
+					allocation.setServiceallocation(allocation.getServiceallocation()+ws.getWorkTasks().size());
+					int dpc = scheduledModality.getDailypatientcapacity();
+					int dsc = scheduledModality.getDailyservicecapacity();
+					allocation.setPatientexcess(new Integer((allocation.getPatientallocation()-dpc > 0) ? allocation.getPatientallocation()-dpc : 0));
+					allocation.setServiceexcess(new Integer((allocation.getServiceallocation()-dsc > 0) ? allocation.getServiceallocation()-dpc : 0));
+				}
+				
+				// flush modification
+				repo_a.saveAndFlush(allocation);
+			} 
+			
+			// ********************************************************
+			// generate worksession and work task if status = scheduled
+			// ********************************************************
+			
+			else if (changeRequest==true) {
 				//WorkSessionDTO sessionToUpdate = workSessionController.get(orderToUpdate.getWorkSession().getIdworksession());
 				//sessionToUpdate.setWorkTasks(this.generateWorkTasksFromOrder(order));
 				// delegate action to work session controller			
 				//order.setWorkSession(workSessionController.update(sessionToUpdate, request).getNewValue().get(0));
 			}
+			
 			em.refresh(orderToUpdate);
 		}
 		

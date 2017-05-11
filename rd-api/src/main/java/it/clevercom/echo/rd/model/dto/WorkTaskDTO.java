@@ -14,7 +14,7 @@ public class WorkTaskDTO extends AbstractEchoDTO implements Serializable {
 	private BaseObjectDTO workStatus;
 	private BaseObjectDTO workPriority;
 	private BaseObjectDTO service;
-	//private ModalityDTO modality;
+	private ModalityDTO modality;
 	private Long scheduledDate;
 	private Long executedDate;
 	private String studyId;
@@ -108,19 +108,19 @@ public class WorkTaskDTO extends AbstractEchoDTO implements Serializable {
 		this.service = service;
 	}
 
-//	/**
-//	 * @return the modality
-//	 */
-//	public ModalityDTO getModality() {
-//		return modality;
-//	}
-//
-//	/**
-//	 * @param modality the modality to set
-//	 */
-//	public void setModality(ModalityDTO modality) {
-//		this.modality = modality;
-//	}
+	/**
+	 * @return the modality
+	 */
+	public ModalityDTO getModality() {
+		return modality;
+	}
+
+	/**
+	 * @param modality the modality to set
+	 */
+	public void setModality(ModalityDTO modality) {
+		this.modality = modality;
+	}
 
 	/**
 	 * @return the scheduledDate
