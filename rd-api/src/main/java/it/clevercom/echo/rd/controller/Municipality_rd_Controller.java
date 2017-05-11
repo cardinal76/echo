@@ -85,7 +85,7 @@ public class Municipality_rd_Controller extends EchoController {
 		creator = new CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, Municipality.class, entity_name, env, em);
 		// construct updater
 		updater = new UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
+		// construct processor
 		processor = new CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, MunicipalityDTO.class, entity_name, env);
 	}
 	
@@ -151,24 +151,15 @@ public class Municipality_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, Municipality.class, entity_name);
 
-		// create processor
-		CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> rp = 
-				new CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, 
-						rdDozerMapper, 
-						MunicipalityDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**
@@ -192,21 +183,15 @@ public class Municipality_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(municipality, entity_id);
 				
-		// create the processor
-		CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> rp = 
-				new CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo,
-						rdDozerMapper,
-						Municipality.class,
-						entity_name,
-						getLoggedUser(request),
-						municipality,
-						env);
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(municipality);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -230,21 +215,15 @@ public class Municipality_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(municipality, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> rp = 
-				new UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						municipality, 
-						env);
+		// set updater params
+		updater.setDto(municipality);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, municipality.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -267,20 +246,14 @@ public class Municipality_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(municipality, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> rp = 
-				new UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						municipality, 
-						env);
+		// set updater params
+		updater.setDto(municipality);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, municipality.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
 	}
 }

@@ -154,24 +154,15 @@ public class BurnRobot_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, BurnRobot.class, entity_name);
 		
-		// create processor
-		CriteriaRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> rp = 
-				new CriteriaRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO>(repo, 
-						rdDozerMapper, 
-						BurnRobotDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**
@@ -188,28 +179,22 @@ public class BurnRobot_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<BurnRobotDTO> add(@RequestBody BurnRobotDTO burnrobot, HttpServletRequest request) throws Exception {
+	public @ResponseBody CreateResponseDTO<BurnRobotDTO> add(@RequestBody BurnRobotDTO burnRobot, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
-		validator.validateDTONullIdd(burnrobot, entity_id);
+		validator.validateDTONullIdd(burnRobot, entity_id);
 		
-		// create processor
-		CreateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> rp = 
-				new CreateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO>(repo, 
-						rdDozerMapper, 
-						BurnRobot.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						burnrobot,
-						env);
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(burnRobot);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -233,21 +218,15 @@ public class BurnRobot_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(burnRobot, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> rp = 
-				new UpdateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						burnRobot, 
-						env);
-		
+		// set updater params
+		updater.setDto(burnRobot);
+		updater.setUpdatedUser(getLoggedUser(request));
+				
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, burnRobot.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -271,20 +250,14 @@ public class BurnRobot_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(burnRobot, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> rp = 
-				new UpdateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						burnRobot, 
-						env);
-		
+		// set updater params
+		updater.setDto(burnRobot);
+		updater.setUpdatedUser(getLoggedUser(request));
+				
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, burnRobot.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
 	}
 }

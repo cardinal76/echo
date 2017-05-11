@@ -156,30 +156,21 @@ public class AppSetting_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, AppSetting.class, entity_name);
 		
-		// create processor
-		CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
-				new CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
-						rdDozerMapper, 
-						AppSettingDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// add username specification
 		if (!username.equals("*")) {
 			UserSpecification<AppSetting> u = new UserSpecification<AppSetting>(null, username);
-			rp.addAndSpecification(u);
+			processor.addAndSpecification(u);
 		}
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();		
+		return processor.process();		
 	}
 	
 	/**
@@ -203,21 +194,15 @@ public class AppSetting_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateUsername(getLoggedUser(request), appSetting);
 		
-		// create the processor
-		CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
-				new CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
-						rdDozerMapper, 
-						AppSetting.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						appSetting,
-						env);
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(appSetting);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -242,21 +227,15 @@ public class AppSetting_rd_Controller extends EchoController {
 		validator.validateUsername(getLoggedUser(request), appSetting);
 		validator.validateDTOIdd(appSetting, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
-				new UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						appSetting, 
-						env);
+		// set updater params
+		updater.setDto(appSetting);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, appSetting.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**

@@ -154,24 +154,15 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, BodyApparatus.class, entity_name);
 		
-		// create processor
-		CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
-				new CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
-						rdDozerMapper, 
-						BodyApparatusDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();	
+		return processor.process();	
 	}
 	
 	/**
@@ -195,21 +186,15 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(bodyapparatus, entity_id);
 		
-		// create processor
-		CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
-				new CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
-						rdDozerMapper, 
-						BodyApparatus.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						bodyapparatus,
-						env);
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(bodyapparatus);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -233,21 +218,15 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(bodyApparatus, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
-				new UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						bodyApparatus, 
-						env);
+		// set updater params
+		updater.setDto(bodyApparatus);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, bodyApparatus.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -271,20 +250,14 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(bodyApparatus, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
-				new UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						bodyApparatus, 
-						env);
+		// set updater params
+		updater.setDto(bodyApparatus);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, bodyApparatus.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
 	}
 }

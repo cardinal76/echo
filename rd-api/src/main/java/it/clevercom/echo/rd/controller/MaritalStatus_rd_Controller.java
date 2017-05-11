@@ -147,25 +147,22 @@ public class MaritalStatus_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue="idmaritalstatus", required=false) String field) throws Exception {
 		
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+				
 		// validate
 		validator.validateSort(sort);
 		validator.validateSortField(field, Maritalstatus.class, entity_name);
 
-		// create the processor
-		CriteriaRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> rp = 
-				new CriteriaRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, 
-						rdDozerMapper, 
-						MaritalStatusDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
+				
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));		
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**
@@ -189,21 +186,15 @@ public class MaritalStatus_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(maritalStatus, entity_id);
 		
-		// create processor
-		CreateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> rp = 
-				new CreateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, 
-						rdDozerMapper, 
-						Maritalstatus.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						maritalStatus,
-						env);
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(maritalStatus);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -227,21 +218,15 @@ public class MaritalStatus_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(maritalStatus, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> rp = 
-				new UpdateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						maritalStatus, 
-						env);
+		// set updater params
+		updater.setDto(maritalStatus);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, maritalStatus.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -264,20 +249,14 @@ public class MaritalStatus_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(maritalStatus, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> rp = 
-				new UpdateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						maritalStatus, 
-						env);
+		// set updater params
+		updater.setDto(maritalStatus);
+		updater.setUpdatedUser(getLoggedUser(request));
 				
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, maritalStatus.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
 	}
 }

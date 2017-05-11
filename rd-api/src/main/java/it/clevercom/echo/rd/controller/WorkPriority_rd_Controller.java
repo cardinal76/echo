@@ -122,24 +122,15 @@ public class WorkPriority_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, WorkPriority.class, entity_name);
 		
-		// create processor
-		CriteriaRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO> rp = 
-				new CriteriaRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO>(repo, 
-						rdDozerMapper, 
-						WorkPriorityDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**

@@ -89,8 +89,20 @@ public class WorkStatus_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody WorkStatusDTO get(@PathVariable Long id) throws Exception {
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting"), entity_name, entity_id, id.toString()));
+
+		// find entity
 		WorkStatus entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+
+		// check if entity has been found
+		if (entity == null) {
+			logger.warn(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, id.toString()));
+			throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		}
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.returning.response"), entity_name, entity_id, id.toString()));
 		return rdDozerMapper.map(entity, WorkStatusDTO.class);
 	}
 	
@@ -115,24 +127,22 @@ public class WorkStatus_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="asc", required=false) String sort, 
 			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
 		// check enum string params
 		validator.validateSort(sort);
 		validator.validateSortField(field, WorkStatus.class, entity_name);
 		
-		CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO> rp = 
-				new CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO>(repo, 
-						rdDozerMapper, 
-						WorkStatusDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**

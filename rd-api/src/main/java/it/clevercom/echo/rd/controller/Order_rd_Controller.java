@@ -437,18 +437,19 @@ public class Order_rd_Controller extends EchoController {
 				}
 			}
 			
-			// ********************************************************
+			// --------------------------------------------------------
 			// generate worksession and work task if status = scheduled
-			// ********************************************************
+			// --------------------------------------------------------
+			
 			if ((WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() == WorkStatusEnum.REQUESTED.order()) 
 					&& (WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).order() == WorkStatusEnum.SCHEDULED.order())) {
 				// create work session and put dto into order to update
 				WorkSession ws = this.createWorkSessionTree(order);
 				order.setWorkSession(rdDozerMapper.map(ws, WorkSessionDTO.class));
 				
-				// **************************
-				// update modality allocation
-				// **************************
+				// ------------------------------------
+				// update or create modality allocation
+				// ------------------------------------
 				
 				// find allocation for selected modality
 				Modality scheduledModality = repo_m.findOne(Long.valueOf(order.getScheduledModality().getId()));
@@ -478,9 +479,9 @@ public class Order_rd_Controller extends EchoController {
 				repo_a.saveAndFlush(allocation);
 			} 
 			
-			// ********************************************************
-			// generate worksession and work task if status = scheduled
-			// ********************************************************
+			// ------------------------------------------------------------
+			// reallocate modality work laod and work session with new task
+			// ------------------------------------------------------------
 			
 			else if (changeRequest==true) {
 				//WorkSessionDTO sessionToUpdate = workSessionController.get(orderToUpdate.getWorkSession().getIdworksession());
@@ -541,21 +542,15 @@ public class Order_rd_Controller extends EchoController {
 		toDeactivate.setCancelReason((StringUtils.isNullEmptyWhiteSpaceOnly(cancelReason)) ? null : cancelReason);
 		toDeactivate.setRejectReason((StringUtils.isNullEmptyWhiteSpaceOnly(rejectReason)) ? null : rejectReason);
 		
-		// create processor		
-		UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> rp = 
-				new UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						toDeactivate, 
-						env);
+		// set updater params
+		updater.setDto(toDeactivate);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, id.toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
 	}
 	
 	/**
@@ -566,6 +561,7 @@ public class Order_rd_Controller extends EchoController {
 	private WorkSession createWorkSessionTree(OrderDTO order) {
 		// query objects
 		// TODO must remove set
+		// TODO can be optimized?
 		Set<Order> orders = new HashSet<Order>();
 		orders.add(repo.findOne(order.getIdOrder()));
 		Patient p = repo_p.findOne(order.getPatient().getIdPatient());

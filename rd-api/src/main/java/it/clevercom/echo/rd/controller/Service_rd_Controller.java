@@ -148,30 +148,21 @@ public class Service_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, Service.class, entity_name);
 
-		// create processor
-		CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO> rp = 
-				new CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, 
-						rdDozerMapper, 
-						ServiceDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// check modalitytype param and add it to specification
 		if (!modalitytype.equals("*")) {
 			ModalityTypeSpecification<Service> md = new ModalityTypeSpecification<Service>(null, Long.valueOf(modalitytype));
-			rp.addAndSpecification(md);
+			processor.addAndSpecification(md);
 		}
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**
@@ -192,21 +183,15 @@ public class Service_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(service, entity_id);
 				
-		// create the processor
-		CreateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> rp = 
-				new CreateRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, 
-						rdDozerMapper, 
-						Service.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						service,
-						env);
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(service);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -227,21 +212,15 @@ public class Service_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(service, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> rp = 
-				new UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						service, 
-						env);
+		// set updater params
+		updater.setDto(service);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, service.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -261,20 +240,14 @@ public class Service_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(service, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> rp = 
-				new UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						service, 
-						env);
+		// set updater params
+		updater.setDto(service);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, service.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
 	}
 }

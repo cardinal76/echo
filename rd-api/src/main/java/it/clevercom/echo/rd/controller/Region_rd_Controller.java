@@ -145,24 +145,15 @@ public class Region_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, Region.class, entity_name);
 		
-		// create processor
-		CriteriaRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> rp = 
-				new CriteriaRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, 
-						rdDozerMapper, 
-						RegionDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**
@@ -183,21 +174,15 @@ public class Region_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(region, entity_id);
 				
-		// create the processor
-		CreateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> rp = 
-				new CreateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, 
-						rdDozerMapper, 
-						Region.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						region,
-						env);
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(region);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -218,21 +203,15 @@ public class Region_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(region, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> rp = 
-				new UpdateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						region, 
-						env);
+		// set updater params
+		updater.setDto(region);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, region.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -252,20 +231,14 @@ public class Region_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(region, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> rp = 
-				new UpdateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						region, 
-						env);
+		// set updater params
+		updater.setDto(region);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, region.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
 	}
 }

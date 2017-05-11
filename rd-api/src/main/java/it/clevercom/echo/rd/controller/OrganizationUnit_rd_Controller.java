@@ -142,24 +142,15 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, OrganizationUnit.class, entity_name);
 
-		// create processor
-		CriteriaRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> rp = 
-				new CriteriaRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, 
-						rdDozerMapper, 
-						OrganizationUnitDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 				
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**
@@ -183,21 +174,15 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(organization, entity_id);
 				
-		// create the processor
-		CreateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> rp = 
-				new CreateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo,
-						rdDozerMapper,
-						OrganizationUnit.class,
-						entity_name,
-						getLoggedUser(request),
-						organization,
-						env);
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(organization);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -221,21 +206,15 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(organization, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> rp = 
-				new UpdateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						organization, 
-						env);
+		// set updater params
+		updater.setDto(organization);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, organization.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -258,20 +237,14 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(organization, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> rp = 
-				new UpdateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						organization, 
-						env);
+		// set updater params
+		updater.setDto(organization);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, organization.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
 	}
 }

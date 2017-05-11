@@ -208,24 +208,15 @@ public class Patient_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, Patient.class, entity_name);
 
-		// create processor
-		CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> rp = 
-				new CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, 
-						rdDozerMapper, 
-						PatientDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 
 	/**
@@ -246,21 +237,15 @@ public class Patient_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(patient, entity_id);
 				
-		// create the processor
-		CreateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> rp = 
-				new CreateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo,
-						rdDozerMapper,
-						Patient.class,
-						entity_name,
-						getLoggedUser(request),
-						patient,
-						env);
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(patient);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 
 	/**
@@ -281,21 +266,15 @@ public class Patient_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(patient, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> rp = 
-				new UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						patient, 
-						env);
+		// set updater params
+		updater.setDto(patient);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, patient.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 
 	/**
@@ -313,20 +292,14 @@ public class Patient_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(patient, entity_name);
 	
-		// create processor
-		UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> rp = 
-				new UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						patient, 
-						env);
+		// set updater params
+		updater.setDto(patient);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, patient.getIdd().toString()));
 	
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
 	}
 }

@@ -140,24 +140,15 @@ public class WorkSession_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, WorkSession.class, entity_name);
 		
-		// create processor
-		CriteriaRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> rp = 
-				new CriteriaRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, 
-						rdDozerMapper, 
-						WorkSessionDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();	
+		return processor.process();	
 	}
 	
 	/**
@@ -178,21 +169,15 @@ public class WorkSession_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(workSession, entity_id);
 		
-		// create the processor
-		CreateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> rp = 
-				new CreateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, 
-						rdDozerMapper, 
-						WorkSession.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						workSession,
-						env);
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(workSession);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -213,21 +198,15 @@ public class WorkSession_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(workSession, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> rp = 
-				new UpdateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						workSession, 
-						env);
+		// set updater params
+		updater.setDto(workSession);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, workSession.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -247,20 +226,14 @@ public class WorkSession_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(workSession, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> rp = 
-				new UpdateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						workSession, 
-						env);
+		// set updater params
+		updater.setDto(workSession);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, workSession.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
 	}
 }

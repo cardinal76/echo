@@ -148,24 +148,15 @@ public class User_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, User.class, entity_name);
 		
-		// create processor
-		CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO> rp = 
-				new CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, 
-						rdDozerMapper, 
-						UserDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**
@@ -185,21 +176,15 @@ public class User_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(user, entity_id);
 				
-		// create the processor
-		CreateRequestProcessor<IUser_rd_Repository, User, UserDTO> rp = 
-				new CreateRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, 
-						rdDozerMapper, 
-						User.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						user,
-						env);
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(user);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -220,21 +205,15 @@ public class User_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(user, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO> rp = 
-				new UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						user, 
-						env);
+		// set updater params
+		updater.setDto(user);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, user.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -254,20 +233,14 @@ public class User_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(user, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO> rp = 
-				new UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						user, 
-						env);
+		// set updater params
+		updater.setDto(user);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, user.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
 	}
 }
