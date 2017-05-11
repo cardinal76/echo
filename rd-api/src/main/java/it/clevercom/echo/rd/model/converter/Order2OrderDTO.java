@@ -206,7 +206,7 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			
 			// iterate
 			Set<OrderedServiceDTO> services = source.getServices();			
-			if (!(services.isEmpty())) {
+			if ((!(services.isEmpty())) && ((target.getOrderServices()==null) || (target.getOrderServices().size()==0))) {
 				target.setOrderServices(new HashSet<OrderService>());
 				for (OrderedServiceDTO srv : services) {
 					Service service = rdDozerMapper.map(srv, Service.class);

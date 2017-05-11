@@ -443,12 +443,13 @@ public class Order_rd_Controller extends EchoController {
 				order.setWorkSession(rdDozerMapper.map(this.createWorkSessionTree(order), WorkSessionDTO.class));
 				
 				// order.setWorkSession(workSessionController.add(, request).getNewValue().get(0));
-			} else if (changeRequest==true) {
+			} else if (false==true) {
 				//WorkSessionDTO sessionToUpdate = workSessionController.get(orderToUpdate.getWorkSession().getIdworksession());
 				//sessionToUpdate.setWorkTasks(this.generateWorkTasksFromOrder(order));
 				// delegate action to work session controller			
 				//order.setWorkSession(workSessionController.update(sessionToUpdate, request).getNewValue().get(0));
 			}
+			em.refresh(orderToUpdate);
 		}
 		
 		// create and save log
@@ -524,6 +525,9 @@ public class Order_rd_Controller extends EchoController {
 	 */
 	private WorkSession createWorkSessionTree(OrderDTO order) {
 		// query objects
+		// TODO must remove set
+		Set<Order> orders = new HashSet<Order>();
+		orders.add(repo.findOne(order.getIdOrder()));
 		Patient p = repo_p.findOne(order.getPatient().getIdPatient());
 		Date scheduleDate = new Date(order.getScheduledDate());
 		WorkPriority priority = repo_wp.findByCode(order.getWorkPriority().getCode());
@@ -537,6 +541,7 @@ public class Order_rd_Controller extends EchoController {
 		workSession.setScheduleddate(scheduleDate);
 		workSession.setWorkPriority(priority);
 		workSession.setWorkStatus(status);
+		workSession.setOrders(orders);
 		
 		// create task list
 		Set<WorkTask> workTasks = new HashSet<WorkTask>();
@@ -554,7 +559,7 @@ public class Order_rd_Controller extends EchoController {
 		}
 		
 		workSession.setWorkTasks(workTasks);
-		//workSession = repo_wss.saveAndFlush(workSession);
+		workSession = repo_wss.saveAndFlush(workSession);
 		
 		// return session
 		return workSession;
