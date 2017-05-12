@@ -84,7 +84,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	}
 	
 	/**
-	 * Get a work task by id
+	 * Get an allocation by id
 	 * @param id
 	 * @return
 	 * @throws Exception
@@ -112,7 +112,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	}
 	
 	/**
-	 * Get a work task list by criteria with pagination
+	 * Get an allocation list by criteria with pagination
 	 * @param criteria
 	 * @param page
 	 * @param size
@@ -151,7 +151,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	}
 	
 	/**
-	 * Add a work task
+	 * Add an allocation 
 	 * @param allocation
 	 * @param request
 	 * @return
@@ -180,7 +180,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	}
 	
 	/**
-	 * Update a work task
+	 * Update an allocation 
 	 * @param allocation
 	 * @param request
 	 * @return
@@ -209,7 +209,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	}
 	
 	/**
-	 * Delete a work task 
+	 * Delete an allocation 
 	 * @param allocation
 	 * @param request
 	 * @return
