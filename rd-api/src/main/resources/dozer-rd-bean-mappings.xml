@@ -313,6 +313,23 @@
 	</mapping>
 	
 	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Modality</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
+		<field>
+			<a>idmodality</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>name</a>
+			<b>name</b>
+		</field>
+		<field>
+			<a>modalityType.idmodalitytype</a>
+			<b>code</b>
+		</field>
+	</mapping>
+	
+	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.Municipality</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
 		<field>

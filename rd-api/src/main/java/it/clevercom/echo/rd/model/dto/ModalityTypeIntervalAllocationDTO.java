@@ -1,7 +1,7 @@
 package it.clevercom.echo.rd.model.dto;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Map;
 
 import it.clevercom.echo.common.dto.AbstractEchoDTO;
 import it.clevercom.echo.rd.model.entity.ModalityDailyAllocation;
@@ -10,15 +10,18 @@ public class ModalityTypeIntervalAllocationDTO extends AbstractEchoDTO implement
 	
 	private static final long serialVersionUID = 5880101803484534823L;
 	
+	// selected interval
 	private Long from;
 	private Long to;
-	private BaseObjectDTO modalityType;
-	private Integer serviceallocation;
-    private Integer serviceexcess;
-    private Integer patientallocation;
-    private Integer patientexcess;
 	
-	private List<ModalityDailyAllocation> allocations;
+	// master modality type
+	private BaseObjectDTO modalityType;
+	
+	// general allocation for modality type (key => day, value => allocation
+	private Map<Long, ModalityTypeDailyAllocationDTO> modalityTypeAllocation;
+	
+	// allocation details for each modality (key => idModality, value => {key => day, value => allocation})
+	private Map<Long, Map<Long, ModalityDailyAllocation>> modalityAllocation;
 	
 	@Override
 	public Object getIdd() {
@@ -68,73 +71,31 @@ public class ModalityTypeIntervalAllocationDTO extends AbstractEchoDTO implement
 	}
 
 	/**
-	 * @return the serviceallocation
+	 * @return the modalityTypeAllocation
 	 */
-	public Integer getServiceallocation() {
-		return serviceallocation;
+	public Map<Long, ModalityTypeDailyAllocationDTO> getModalityTypeAllocation() {
+		return modalityTypeAllocation;
 	}
 
 	/**
-	 * @param serviceallocation the serviceallocation to set
+	 * @param modalityTypeAllocation the modalityTypeAllocation to set
 	 */
-	public void setServiceallocation(Integer serviceallocation) {
-		this.serviceallocation = serviceallocation;
+	public void setModalityTypeAllocation(Map<Long, ModalityTypeDailyAllocationDTO> modalityTypeAllocation) {
+		this.modalityTypeAllocation = modalityTypeAllocation;
 	}
 
 	/**
-	 * @return the serviceexcess
+	 * @return the modalityAllocation
 	 */
-	public Integer getServiceexcess() {
-		return serviceexcess;
+	public Map<Long, Map<Long, ModalityDailyAllocation>> getModalityAllocation() {
+		return modalityAllocation;
 	}
 
 	/**
-	 * @param serviceexcess the serviceexcess to set
+	 * @param modalityAllocation the modalityAllocation to set
 	 */
-	public void setServiceexcess(Integer serviceexcess) {
-		this.serviceexcess = serviceexcess;
-	}
-
-	/**
-	 * @return the patientallocation
-	 */
-	public Integer getPatientallocation() {
-		return patientallocation;
-	}
-
-	/**
-	 * @param patientallocation the patientallocation to set
-	 */
-	public void setPatientallocation(Integer patientallocation) {
-		this.patientallocation = patientallocation;
-	}
-
-	/**
-	 * @return the patientexcess
-	 */
-	public Integer getPatientexcess() {
-		return patientexcess;
-	}
-
-	/**
-	 * @param patientexcess the patientexcess to set
-	 */
-	public void setPatientexcess(Integer patientexcess) {
-		this.patientexcess = patientexcess;
-	}
-
-	/**
-	 * @return the allocations
-	 */
-	public List<ModalityDailyAllocation> getAllocations() {
-		return allocations;
-	}
-
-	/**
-	 * @param allocations the allocations to set
-	 */
-	public void setAllocations(List<ModalityDailyAllocation> allocations) {
-		this.allocations = allocations;
+	public void setModalityAllocation(Map<Long, Map<Long, ModalityDailyAllocation>> modalityAllocation) {
+		this.modalityAllocation = modalityAllocation;
 	}
 
 	/**
@@ -143,5 +104,4 @@ public class ModalityTypeIntervalAllocationDTO extends AbstractEchoDTO implement
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
 }

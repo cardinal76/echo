@@ -7,12 +7,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.clevercom.echo.common.dto.AbstractEchoDTO;
 
 @JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
-public class ModalityDailyAllocationDTO extends AbstractEchoDTO implements Serializable {
+public class ModalityTypeDailyAllocationDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = -2971414166225920555L;
-	
-	private Long idModalityDailyAllocation;
-    private BaseObjectDTO modality;
+
     private Long day;
+	private BaseObjectDTO modalityType;
     private Integer serviceAllocation;
     private Integer serviceExcess;
     private Integer patientAllocation;
@@ -20,35 +19,21 @@ public class ModalityDailyAllocationDTO extends AbstractEchoDTO implements Seria
 	
 	@Override
 	public Object getIdd() {
-		return getIdModalityDailyAllocation();
-	}
-
-	/**
-	 * @return the idModalityDailyAllocation
-	 */
-	public Long getIdModalityDailyAllocation() {
-		return idModalityDailyAllocation;
-	}
-
-	/**
-	 * @param idModalityDailyAllocation the idModalityDailyAllocation to set
-	 */
-	public void setIdModalityDailyAllocation(Long idModalityDailyAllocation) {
-		this.idModalityDailyAllocation = idModalityDailyAllocation;
+		return this.getDay();
 	}
 
 	/**
 	 * @return the modality
 	 */
-	public BaseObjectDTO getModality() {
-		return modality;
+	public BaseObjectDTO getModalityType() {
+		return modalityType;
 	}
 
 	/**
 	 * @param modality the modality to set
 	 */
-	public void setModality(BaseObjectDTO modality) {
-		this.modality = modality;
+	public void setModality(ModalityDTO modality) {
+		this.modalityType = modalityType;
 	}
 
 	/**
