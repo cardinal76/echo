@@ -1,11 +1,15 @@
 package it.clevercom.echo.rd.model.dto;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import it.clevercom.echo.common.dto.AbstractEchoDTO;
 import it.clevercom.echo.rd.model.entity.ModalityDailyAllocation;
 
+@JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
 public class ModalityTypeIntervalAllocationDTO extends AbstractEchoDTO implements Serializable {
 	
 	private static final long serialVersionUID = 5880101803484534823L;
@@ -18,10 +22,10 @@ public class ModalityTypeIntervalAllocationDTO extends AbstractEchoDTO implement
 	private BaseObjectDTO modalityType;
 	
 	// general allocation for modality type (key => day, value => allocation
-	private Map<Long, ModalityTypeDailyAllocationDTO> modalityTypeAllocation;
+	private List<ModalityTypeDailyAllocationDTO> modalityTypeAllocation;
 	
 	// allocation details for each modality (key => idModality, value => {key => day, value => allocation})
-	private Map<Long, Map<Long, ModalityDailyAllocation>> modalityAllocation;
+	private Map<Long, List<ModalityDailyAllocationDTO>> modalityAllocation;
 	
 	@Override
 	public Object getIdd() {
@@ -73,28 +77,28 @@ public class ModalityTypeIntervalAllocationDTO extends AbstractEchoDTO implement
 	/**
 	 * @return the modalityTypeAllocation
 	 */
-	public Map<Long, ModalityTypeDailyAllocationDTO> getModalityTypeAllocation() {
+	public List<ModalityTypeDailyAllocationDTO> getModalityTypeAllocation() {
 		return modalityTypeAllocation;
 	}
 
 	/**
 	 * @param modalityTypeAllocation the modalityTypeAllocation to set
 	 */
-	public void setModalityTypeAllocation(Map<Long, ModalityTypeDailyAllocationDTO> modalityTypeAllocation) {
+	public void setModalityTypeAllocation(List<ModalityTypeDailyAllocationDTO> modalityTypeAllocation) {
 		this.modalityTypeAllocation = modalityTypeAllocation;
 	}
 
 	/**
 	 * @return the modalityAllocation
 	 */
-	public Map<Long, Map<Long, ModalityDailyAllocation>> getModalityAllocation() {
+	public Map<Long, List<ModalityDailyAllocationDTO>> getModalityAllocation() {
 		return modalityAllocation;
 	}
 
 	/**
 	 * @param modalityAllocation the modalityAllocation to set
 	 */
-	public void setModalityAllocation(Map<Long, Map<Long, ModalityDailyAllocation>> modalityAllocation) {
+	public void setModalityAllocation(Map<Long, List<ModalityDailyAllocationDTO>> modalityAllocation) {
 		this.modalityAllocation = modalityAllocation;
 	}
 

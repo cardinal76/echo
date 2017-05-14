@@ -50,12 +50,15 @@ public class EchoController {
 	    final CustomNumberEditor all_date_options = new CustomNumberEditor(Long.class, true) {
 	    	@Override
 	        public void setAsText(String text) throws IllegalArgumentException {
+	    		Date today = new Date();
 	    		if ("today_start".equals(text)) { 
-	    			Date today = new Date();
 	    			setValue(DateUtil.getStartOfDay(today).getTime());
 	    		} else if ("today_end".equals(text)) {
-	    			Date today = new Date();
 	    			setValue(DateUtil.getEndOfDay(today).getTime());
+	    		} else if ("current_month_start".equals(text)) {
+	    			setValue(DateUtil.getFirstDateOfMonth(today).getTime());
+	    		} else if ("current_month_end".equals(text)) {
+	    			setValue(DateUtil.getLastDateOfMonth(today).getTime());
 	    		} else if ("system_start".equals(text)) {
 	    			Date sysStart = new Date(-3600000l);
 	    			setValue(DateUtil.getEndOfDay(sysStart).getTime());

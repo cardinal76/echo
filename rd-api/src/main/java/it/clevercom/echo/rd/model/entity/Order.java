@@ -1,11 +1,10 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 11-mag-2017 9.49.22 by Hibernate Tools 5.2.2.Final
+// Generated 14-mag-2017 12.23.30 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -160,7 +159,7 @@ public class Order  extends AbstractJpaEchoEntity implements java.io.Serializabl
         this.workPriority = workPriority;
     }
 
-@ManyToOne(cascade=CascadeType.REFRESH, fetch=FetchType.LAZY)
+@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="idworksession", unique=true)
     public WorkSession getWorkSession() {
         return this.workSession;
@@ -380,7 +379,7 @@ public class Order  extends AbstractJpaEchoEntity implements java.io.Serializabl
         this.canceleddate = canceleddate;
     }
 
-@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="order")
+@OneToMany(fetch=FetchType.LAZY, mappedBy="order")
     public Set<OrderLog> getOrderLogs() {
         return this.orderLogs;
     }
@@ -389,7 +388,7 @@ public class Order  extends AbstractJpaEchoEntity implements java.io.Serializabl
         this.orderLogs = orderLogs;
     }
 
-@OneToMany(cascade={CascadeType.PERSIST, CascadeType.REFRESH}, fetch=FetchType.LAZY, mappedBy="order")
+@OneToMany(fetch=FetchType.LAZY, mappedBy="order")
     public Set<OrderService> getOrderServices() {
         return this.orderServices;
     }

@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtil {
@@ -65,5 +66,29 @@ public class DateUtil {
 	 */
 	public static LocalDateTime longToLocalDateTime(Long longDate) {
 		return LocalDateTime.ofInstant(Instant.ofEpochMilli(longDate), ZoneId.systemDefault());
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Date getFirstDateOfMonth(Date date) {
+		Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        Date firstDay = calendar.getTime();
+        return firstDay;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static Date getLastDateOfMonth(Date date) {
+		Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Date lastDay = calendar.getTime();
+        return lastDay;
 	}
 }

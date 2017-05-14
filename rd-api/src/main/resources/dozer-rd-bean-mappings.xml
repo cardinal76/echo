@@ -213,6 +213,31 @@
 			<b>email</b>
 		</field>
 	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.VModalitytypeAllocation</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ModalityTypeDailyAllocationDTO</class-b>
+		<field>
+			<a>scheduledate</a>
+			<b>scheduleDate</b>
+		</field>
+		<field>
+			<a>serviceallocation</a>
+			<b>serviceAllocation</b>
+		</field>
+		<field>
+			<a>patientallocation</a>
+			<b>patientAllocation</b>
+		</field>
+		<field>
+			<a>serviceexcess</a>
+			<b>serviceExcess</b>
+		</field>
+		<field>
+			<a>patientexcess</a>
+			<b>patientExcess</b>
+		</field>		
+	</mapping>
 
 	<mapping>
 		<class-a map-null="false">it.clevercom.echo.rd.model.entity.OrganizationUnit</class-a>

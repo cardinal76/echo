@@ -1,6 +1,11 @@
 package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -28,15 +33,27 @@ import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
+import it.clevercom.echo.common.jpa.specification.DateIntervalSpecification;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
+import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
+import it.clevercom.echo.rd.model.dto.ModalityDailyAllocationDTO;
 import it.clevercom.echo.rd.model.dto.ModalityGroupDTO;
 import it.clevercom.echo.rd.model.dto.ModalityTypeDTO;
+import it.clevercom.echo.rd.model.dto.ModalityTypeDailyAllocationDTO;
+import it.clevercom.echo.rd.model.dto.ModalityTypeIntervalAllocationDTO;
+import it.clevercom.echo.rd.model.entity.Modality;
+import it.clevercom.echo.rd.model.entity.ModalityDailyAllocation;
 import it.clevercom.echo.rd.model.entity.ModalityType;
+import it.clevercom.echo.rd.model.entity.VModalitytypeAllocation;
+import it.clevercom.echo.rd.repository.IModalityDailyAllocation_rd_Repository;
 import it.clevercom.echo.rd.repository.IModalityType_rd_Repository;
+import it.clevercom.echo.rd.repository.IModality_rd_Repository;
+import it.clevercom.echo.rd.repository.IVModalitytypeAllocation_rd_Repository;
 
 @Controller
 @RestController
@@ -58,6 +75,14 @@ public class ModalityType_rd_Controller extends EchoController {
 	private IModalityType_rd_Repository repo;
 	
 	@Autowired
+	private IModality_rd_Repository repo_m;
+	
+	@Autowired
+	private IVModalitytypeAllocation_rd_Repository repo_mta;
+	@Autowired
+	private IModalityDailyAllocation_rd_Repository repo_mda;
+	
+	@Autowired
     private DozerBeanMapper rdDozerMapper;
 	
 	@Autowired
@@ -69,6 +94,7 @@ public class ModalityType_rd_Controller extends EchoController {
 	// crud processors
 	private CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> processor;
 	private CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityGroupDTO> processor_mg;
+	private CriteriaRequestProcessor<IVModalitytypeAllocation_rd_Repository, VModalitytypeAllocation, ModalityTypeDailyAllocationDTO> processor_mta;
 	private CreateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> creator;
 	private UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> updater;
 	
@@ -77,6 +103,8 @@ public class ModalityType_rd_Controller extends EchoController {
 	// used to bind it in exception message
 	public static final String entity_name = "ModalityType";
 	public static final String entity_id = "idmodalitytype";
+	public static final String entity_allocation_type_name = "ModalityTypeAllocation";
+	public static final String entity_allocation_type_id = "id";
 	
 	/**
 	 * 
@@ -90,6 +118,7 @@ public class ModalityType_rd_Controller extends EchoController {
 		// construct processor
 		processor = new CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, rdDozerMapper, ModalityTypeDTO.class, entity_name, env);
 		processor_mg = new CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityGroupDTO>(repo, rdDozerMapper, ModalityGroupDTO.class, entity_name, env);
+		processor_mta =new CriteriaRequestProcessor<IVModalitytypeAllocation_rd_Repository, VModalitytypeAllocation, ModalityTypeDailyAllocationDTO>(repo_mta, rdDozerMapper, ModalityTypeDailyAllocationDTO.class, entity_allocation_type_name, env);
 	}
 	
 	/**
@@ -163,6 +192,62 @@ public class ModalityType_rd_Controller extends EchoController {
 				
 		// process data request
 		return processor.process();
+	}
+	
+	/**
+	 * Get modality type and modalities allocation
+	 * @author luca
+	 * @category custom get REST method
+	 * @return
+	 * @since 1.2.0
+	 * @throws Exception
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(value="allocation", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody ModalityTypeIntervalAllocationDTO getAllocation (
+			@RequestParam(defaultValue = "current_month_start", required = false) Long from,
+			@RequestParam(defaultValue = "current_month_end", required = false) Long to,
+			@RequestParam(required = true) Long idmodalitytype) throws Exception {
+		
+		processor_mta.setCriteria(entity_id + "!" + idmodalitytype.toString());
+		processor_mta.setPageCriteria("asc", entity_allocation_type_id, 1, 31);
+
+		// create standard specification based on date interval and standard field name
+		// parse long parameter to Date Object
+		// get dates
+		final Date t1 = DateUtil.getStartOfDay(new Date(from));
+		final Date t2 = DateUtil.getEndOfDay(new Date(to));
+		DateIntervalSpecification<VModalitytypeAllocation, VModalitytypeAllocation> interval = new DateIntervalSpecification<VModalitytypeAllocation, VModalitytypeAllocation>(null, t1, t2, "scheduledate");
+		processor_mta.addAndSpecification(interval);
+		
+		// find modality and convert to base object dto
+		ModalityType modalityType = repo.findOne(idmodalitytype);
+		
+		// find all modalities belonging to modalityType
+		List<Modality> modalityList = repo_m.findByModalityType(modalityType);
+		
+		// get allocations
+		Map<Long, List<ModalityDailyAllocationDTO>> modalityAllocation = new HashMap<Long, List<ModalityDailyAllocationDTO>>();
+		for (Modality modality : modalityList) {
+			
+			List<ModalityDailyAllocation> modalityDailyAllocation = repo_mda.findByModalityAndDayBetween(modality, new Date(from), new Date(to));
+			List<ModalityDailyAllocationDTO> allocationDTO = new ArrayList<ModalityDailyAllocationDTO>();
+			for (ModalityDailyAllocation allocation : modalityDailyAllocation) {
+				allocationDTO.add(rdDozerMapper.map(allocation, ModalityDailyAllocationDTO.class));
+			}
+			modalityAllocation.put(modality.getIdmodality(), allocationDTO);
+		}
+		
+		// build dto
+		ModalityTypeIntervalAllocationDTO dto = new ModalityTypeIntervalAllocationDTO();
+		dto.setFrom(from);
+		dto.setTo(to);
+		dto.setModalityType(rdDozerMapper.map(modalityType, BaseObjectDTO.class));
+		dto.setModalityTypeAllocation(processor_mta.process().getElements());
+		dto.setModalityAllocation(modalityAllocation );
+		return dto;
 	}
 	
 	/**
