@@ -240,6 +240,31 @@
 	</mapping>
 
 	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.VModalityAllocation</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ModalityDailyAllocationDTO</class-b>
+		<field>
+			<a>scheduledate</a>
+			<b>day</b>
+		</field>
+		<field>
+			<a>serviceallocation</a>
+			<b>serviceAllocation</b>
+		</field>
+		<field>
+			<a>patientallocation</a>
+			<b>patientAllocation</b>
+		</field>
+		<field>
+			<a>serviceexcess</a>
+			<b>serviceExcess</b>
+		</field>
+		<field>
+			<a>patientexcess</a>
+			<b>patientExcess</b>
+		</field>		
+	</mapping>
+
+	<mapping>
 		<class-a map-null="false">it.clevercom.echo.rd.model.entity.OrganizationUnit</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.OrganizationUnitDTO</class-b>
 		<field>

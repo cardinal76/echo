@@ -49,10 +49,11 @@ import it.clevercom.echo.rd.model.dto.ModalityTypeIntervalAllocationDTO;
 import it.clevercom.echo.rd.model.entity.Modality;
 import it.clevercom.echo.rd.model.entity.ModalityDailyAllocation;
 import it.clevercom.echo.rd.model.entity.ModalityType;
+import it.clevercom.echo.rd.model.entity.VModalityAllocation;
 import it.clevercom.echo.rd.model.entity.VModalitytypeAllocation;
-import it.clevercom.echo.rd.repository.IModalityDailyAllocation_rd_Repository;
 import it.clevercom.echo.rd.repository.IModalityType_rd_Repository;
 import it.clevercom.echo.rd.repository.IModality_rd_Repository;
+import it.clevercom.echo.rd.repository.IVModalityAllocation_rd_Repository;
 import it.clevercom.echo.rd.repository.IVModalitytypeAllocation_rd_Repository;
 
 @Controller
@@ -79,8 +80,9 @@ public class ModalityType_rd_Controller extends EchoController {
 	
 	@Autowired
 	private IVModalitytypeAllocation_rd_Repository repo_mta;
+	
 	@Autowired
-	private IModalityDailyAllocation_rd_Repository repo_mda;
+	private IVModalityAllocation_rd_Repository repo_mda;
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
@@ -211,11 +213,11 @@ public class ModalityType_rd_Controller extends EchoController {
 			@RequestParam(defaultValue = "current_month_end", required = false) Long to,
 			@RequestParam(required = true) Long idmodalitytype) throws Exception {
 		
+		// set params
 		processor_mta.setCriteria(entity_id + "!" + idmodalitytype.toString());
 		processor_mta.setPageCriteria("asc", entity_allocation_type_id, 1, 31);
 
 		// create standard specification based on date interval and standard field name
-		// parse long parameter to Date Object
 		// get dates
 		final Date t1 = DateUtil.getStartOfDay(new Date(from));
 		final Date t2 = DateUtil.getEndOfDay(new Date(to));
@@ -231,10 +233,9 @@ public class ModalityType_rd_Controller extends EchoController {
 		// get allocations
 		Map<Long, List<ModalityDailyAllocationDTO>> modalityAllocation = new HashMap<Long, List<ModalityDailyAllocationDTO>>();
 		for (Modality modality : modalityList) {
-			
-			List<ModalityDailyAllocation> modalityDailyAllocation = repo_mda.findByModalityAndDayBetween(modality, new Date(from), new Date(to));
+			List<VModalityAllocation> modalityDailyAllocation = repo_mda.findByIdmodalityAndScheduledateBetween(modality.getIdmodality(), new Date(from), new Date(to));
 			List<ModalityDailyAllocationDTO> allocationDTO = new ArrayList<ModalityDailyAllocationDTO>();
-			for (ModalityDailyAllocation allocation : modalityDailyAllocation) {
+			for (VModalityAllocation allocation : modalityDailyAllocation) {
 				allocationDTO.add(rdDozerMapper.map(allocation, ModalityDailyAllocationDTO.class));
 			}
 			modalityAllocation.put(modality.getIdmodality(), allocationDTO);

@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 14-mag-2017 12.23.30 by Hibernate Tools 5.2.2.Final
+// Generated 15-mag-2017 0.54.47 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.HashSet;

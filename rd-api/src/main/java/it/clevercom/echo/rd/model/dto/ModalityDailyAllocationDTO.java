@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import it.clevercom.echo.common.dto.AbstractEchoDTO;
 
-@JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
+@JsonIgnoreProperties({"created","updated","userupdate","active","idd","idModalityDailyAllocation","modality"})
 public class ModalityDailyAllocationDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = -2971414166225920555L;
 	
