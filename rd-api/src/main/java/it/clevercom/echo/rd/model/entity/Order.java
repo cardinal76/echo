@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 15-mag-2017 0.54.47 by Hibernate Tools 5.2.2.Final
+// Generated 15-mag-2017 15.03.46 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -160,7 +160,7 @@ public class Order  extends AbstractJpaEchoEntity implements java.io.Serializabl
         this.workPriority = workPriority;
     }
 
-@ManyToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+@ManyToOne(cascade=CascadeType.REFRESH, fetch=FetchType.LAZY)
     @JoinColumn(name="idworksession", unique=true)
     public WorkSession getWorkSession() {
         return this.workSession;
@@ -389,7 +389,7 @@ public class Order  extends AbstractJpaEchoEntity implements java.io.Serializabl
         this.orderLogs = orderLogs;
     }
 
-@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="order")
+@OneToMany(cascade={CascadeType.PERSIST, CascadeType.REFRESH}, fetch=FetchType.LAZY, mappedBy="order")
     public Set<OrderService> getOrderServices() {
         return this.orderServices;
     }

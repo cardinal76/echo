@@ -315,6 +315,11 @@
 			<b>organizationUnit</b>
 		</field>
 	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Hl7Patient</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.Hl7PatientDTO</class-b>
+	</mapping>
 
 	<!-- customized mapping -->
 
