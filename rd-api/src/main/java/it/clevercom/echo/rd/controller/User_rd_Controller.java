@@ -206,7 +206,7 @@ public class User_rd_Controller extends EchoController {
 		validator.validateDTOIdd(user, entity_name);
 
 		// set updater params
-		updater.setDto(user);
+		updater.setSourceDto(user);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -234,7 +234,7 @@ public class User_rd_Controller extends EchoController {
 		validator.validateDTOIdd(user, entity_name);
 
 		// set updater params
-		updater.setDto(user);
+		updater.setSourceDto(user);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

@@ -198,7 +198,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 		validator.validateDTOIdd(allocation, entity_name);
 
 		// set updater params
-		updater.setDto(allocation);
+		updater.setSourceDto(allocation);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -226,7 +226,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 		validator.validateDTOIdd(allocation, entity_name);
 
 		// set updater params
-		updater.setDto(allocation);
+		updater.setSourceDto(allocation);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

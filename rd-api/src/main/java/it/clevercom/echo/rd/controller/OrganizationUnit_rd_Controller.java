@@ -207,7 +207,7 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 		validator.validateDTOIdd(organization, entity_name);
 
 		// set updater params
-		updater.setDto(organization);
+		updater.setSourceDto(organization);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -238,7 +238,7 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 		validator.validateDTOIdd(organization, entity_name);
 
 		// set updater params
-		updater.setDto(organization);
+		updater.setSourceDto(organization);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

@@ -198,7 +198,7 @@ public class WorkReport_rd_Controller extends EchoController {
 		validator.validateDTOIdd(workReport, entity_name);
 
 		// set updater params
-		updater.setDto(workReport);
+		updater.setSourceDto(workReport);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -226,7 +226,7 @@ public class WorkReport_rd_Controller extends EchoController {
 		validator.validateDTOIdd(workReport, entity_name);
 
 		// set updater params
-		updater.setDto(workReport);
+		updater.setSourceDto(workReport);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

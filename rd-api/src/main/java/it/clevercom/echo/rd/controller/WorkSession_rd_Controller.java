@@ -199,7 +199,7 @@ public class WorkSession_rd_Controller extends EchoController {
 		validator.validateDTOIdd(workSession, entity_name);
 
 		// set updater params
-		updater.setDto(workSession);
+		updater.setSourceDto(workSession);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -227,7 +227,7 @@ public class WorkSession_rd_Controller extends EchoController {
 		validator.validateDTOIdd(workSession, entity_name);
 
 		// set updater params
-		updater.setDto(workSession);
+		updater.setSourceDto(workSession);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

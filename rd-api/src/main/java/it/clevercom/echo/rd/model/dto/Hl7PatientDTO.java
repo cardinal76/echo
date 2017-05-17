@@ -3,9 +3,12 @@ package it.clevercom.echo.rd.model.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import it.clevercom.echo.common.dto.AbstractEchoDTO;
 import it.clevercom.echo.rd.model.entity.Patient;
 
+@JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
 public class Hl7PatientDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = 8105708703666941232L;
 
@@ -31,6 +34,12 @@ public class Hl7PatientDTO extends AbstractEchoDTO implements Serializable {
 	private String citizenshipdesc;
 	private Date deathdate;
 	private String messagecontrolid;
+	
+	// transient attributes
+	private Date created;
+	private Date updated;
+	private String userupdate;
+	private Boolean active;
 	
 	@Override
 	public Object getIdd() {
@@ -343,5 +352,68 @@ public class Hl7PatientDTO extends AbstractEchoDTO implements Serializable {
 	 */
 	public void setMessagecontrolid(String messagecontrolid) {
 		this.messagecontrolid = messagecontrolid;
+	}
+
+	/**
+	 * @return the created
+	 */
+	public Date getCreated() {
+		return created;
+	}
+
+	/**
+	 * @param created the created to set
+	 */
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	/**
+	 * @return the updated
+	 */
+	public Date getUpdated() {
+		return updated;
+	}
+
+	/**
+	 * @param updated the updated to set
+	 */
+	public void setUpdated(Date updated) {
+		this.updated = updated;
+	}
+
+	/**
+	 * @return the userupdate
+	 */
+	public String getUserupdate() {
+		return userupdate;
+	}
+
+	/**
+	 * @param userupdate the userupdate to set
+	 */
+	public void setUserupdate(String userupdate) {
+		this.userupdate = userupdate;
+	}
+
+	/**
+	 * @return the active
+	 */
+	public Boolean getActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	/**
+	 * @return the serialversionuid
+	 */
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 }

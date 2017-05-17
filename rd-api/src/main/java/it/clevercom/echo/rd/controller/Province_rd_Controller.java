@@ -209,7 +209,7 @@ public class Province_rd_Controller extends EchoController {
 		validator.validateDTOIdd(province, entity_name);
 
 		// set updater params
-		updater.setDto(province);
+		updater.setSourceDto(province);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -237,7 +237,7 @@ public class Province_rd_Controller extends EchoController {
 		validator.validateDTOIdd(province, entity_name);
 
 		// set updater params
-		updater.setDto(province);
+		updater.setSourceDto(province);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

@@ -267,7 +267,7 @@ public class Patient_rd_Controller extends EchoController {
 		validator.validateDTOIdd(patient, entity_name);
 
 		// set updater params
-		updater.setDto(patient);
+		updater.setSourceDto(patient);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -293,7 +293,7 @@ public class Patient_rd_Controller extends EchoController {
 		validator.validateDTOIdd(patient, entity_name);
 	
 		// set updater params
-		updater.setDto(patient);
+		updater.setSourceDto(patient);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

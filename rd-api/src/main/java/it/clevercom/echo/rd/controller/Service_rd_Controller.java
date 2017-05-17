@@ -213,7 +213,7 @@ public class Service_rd_Controller extends EchoController {
 		validator.validateDTOIdd(service, entity_name);
 
 		// set updater params
-		updater.setDto(service);
+		updater.setSourceDto(service);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -241,7 +241,7 @@ public class Service_rd_Controller extends EchoController {
 		validator.validateDTOIdd(service, entity_name);
 
 		// set updater params
-		updater.setDto(service);
+		updater.setSourceDto(service);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

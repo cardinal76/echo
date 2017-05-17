@@ -204,7 +204,7 @@ public class Region_rd_Controller extends EchoController {
 		validator.validateDTOIdd(region, entity_name);
 
 		// set updater params
-		updater.setDto(region);
+		updater.setSourceDto(region);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -232,7 +232,7 @@ public class Region_rd_Controller extends EchoController {
 		validator.validateDTOIdd(region, entity_name);
 
 		// set updater params
-		updater.setDto(region);
+		updater.setSourceDto(region);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

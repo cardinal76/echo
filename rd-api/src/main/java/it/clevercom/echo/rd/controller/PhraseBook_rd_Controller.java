@@ -198,7 +198,7 @@ public class PhraseBook_rd_Controller extends EchoController {
 		validator.validateDTOIdd(phraseBook, entity_name);
 
 		// set updater params
-		updater.setDto(phraseBook);
+		updater.setSourceDto(phraseBook);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -226,7 +226,7 @@ public class PhraseBook_rd_Controller extends EchoController {
 		validator.validateDTOIdd(phraseBook, entity_name);
 
 		// set updater params
-		updater.setDto(phraseBook);
+		updater.setSourceDto(phraseBook);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

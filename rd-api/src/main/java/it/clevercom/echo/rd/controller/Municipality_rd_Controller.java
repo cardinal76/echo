@@ -216,7 +216,7 @@ public class Municipality_rd_Controller extends EchoController {
 		validator.validateDTOIdd(municipality, entity_name);
 
 		// set updater params
-		updater.setDto(municipality);
+		updater.setSourceDto(municipality);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -247,7 +247,7 @@ public class Municipality_rd_Controller extends EchoController {
 		validator.validateDTOIdd(municipality, entity_name);
 
 		// set updater params
-		updater.setDto(municipality);
+		updater.setSourceDto(municipality);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

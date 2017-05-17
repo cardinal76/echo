@@ -499,7 +499,7 @@ public class Order_rd_Controller extends EchoController {
 		repo_ol.saveAndFlush(log);
 		
 		// set updater params
-		updater.setDto(order);
+		updater.setSourceDto(order);
 		updater.setUpdatedUser(getLoggedUser(request));
 					
 		// log info
@@ -543,7 +543,7 @@ public class Order_rd_Controller extends EchoController {
 		toDeactivate.setRejectReason((StringUtils.isNullEmptyWhiteSpaceOnly(rejectReason)) ? null : rejectReason);
 		
 		// set updater params
-		updater.setDto(toDeactivate);
+		updater.setSourceDto(toDeactivate);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

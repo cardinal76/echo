@@ -219,7 +219,7 @@ public class BurnRobot_rd_Controller extends EchoController {
 		validator.validateDTOIdd(burnRobot, entity_name);
 
 		// set updater params
-		updater.setDto(burnRobot);
+		updater.setSourceDto(burnRobot);
 		updater.setUpdatedUser(getLoggedUser(request));
 				
 		// log info
@@ -251,7 +251,7 @@ public class BurnRobot_rd_Controller extends EchoController {
 		validator.validateDTOIdd(burnRobot, entity_name);
 
 		// set updater params
-		updater.setDto(burnRobot);
+		updater.setSourceDto(burnRobot);
 		updater.setUpdatedUser(getLoggedUser(request));
 				
 		// log info

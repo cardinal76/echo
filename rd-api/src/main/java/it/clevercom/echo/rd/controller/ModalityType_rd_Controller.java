@@ -347,7 +347,7 @@ public class ModalityType_rd_Controller extends EchoController {
 		validator.validateDTOIdd(modalityType, entity_name);
 
 		// set updater params
-		updater.setDto(modalityType);
+		updater.setSourceDto(modalityType);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -378,7 +378,7 @@ public class ModalityType_rd_Controller extends EchoController {
 		validator.validateDTOIdd(modalityType, entity_name);
 
 		// set updater params
-		updater.setDto(modalityType);
+		updater.setSourceDto(modalityType);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

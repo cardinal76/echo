@@ -1,7 +1,9 @@
-package it.clevercom.echo.rd.controller.toimplement;
+package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -30,22 +32,27 @@ import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
-import it.clevercom.echo.rd.model.dto.BodyApparatusDTO;
-import it.clevercom.echo.rd.model.entity.BodyApparatus;
-import it.clevercom.echo.rd.repository.IBodyApparatus_rd_Repository;
+import it.clevercom.echo.rd.model.dto.Hl7InboundMessageDTO;
+import it.clevercom.echo.rd.model.entity.Hl7InboundMessage;
+import it.clevercom.echo.rd.repository.IHl7InboundMessage_rd_Repository;
 
 @Controller
 @RestController
-@RequestMapping("rd/types/icd9patologygroup")
+@RequestMapping("rd/assets/hl7/inboundmessage")
 @PropertySource("classpath:rest.platform.properties")
 @PropertySource("classpath:rest.rd.properties")
 
-public class ICD9PatologyGroup_rd_Controller extends EchoController {
+/**
+ * Hl7InboundMessage Controller
+ * @author luca
+ */
+
+public class Hl7InboundMessage_rd_Controller extends EchoController {
 	@Autowired
 	private Environment env;
 	
 	@Autowired
-	private IBodyApparatus_rd_Repository repo;
+	private IHl7InboundMessage_rd_Repository repo;
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
@@ -53,28 +60,42 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
+	// crud processors
+	private CriteriaRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> processor;
+	private CreateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> creator;
+	private UpdateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> updater;
+	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
-	// used to bind entity name and id in exception message
-	private static String entity_name = "BodyApparatus";
-	private static String entity_id = "idbodyapparatus";
-
+	// used to bind it in exception message
+	public static final String entity_name = "Hl7InboundMessage";
+	public static final String entity_id = "idhl7inboundmessage";
+	
 	/**
-	 * Get a body apparatus by id
+	 * Get marital status by id
+	 * @author luca
+	 * @category standard get by id REST method
 	 * @param id
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody BodyApparatusDTO get(@PathVariable Long id) throws Exception {
+	public @ResponseBody Hl7InboundMessageDTO get(@PathVariable Long id) throws Exception {
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting"), entity_name, entity_id, id.toString()));
+			
+		// validate
+		validator.validateId(id, entity_name);
 		
 		// find entity
-		BodyApparatus entity = repo.findOne(id);
+		Hl7InboundMessage entity = repo.findOne(id);
 		
 		// check if entity has been found
 		if (entity == null) {
@@ -84,155 +105,143 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.returning.response"), entity_name, entity_id, id.toString()));
-		return rdDozerMapper.map(entity, BodyApparatusDTO.class);
+		return rdDozerMapper.map(entity, Hl7InboundMessageDTO.class);
 	}
 	
 	/**
-	 * Get a body apparatus list by criteria with pagination
+	 * Get marital status by criteria with pagination
+	 * @author luca
+	 * @category standard get by criteria REST method
 	 * @param criteria
 	 * @param page
 	 * @param size
 	 * @param sort
 	 * @param field
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(value="", method = RequestMethod.GET)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody PagedDTO<BodyApparatusDTO> getByCriteria (
+	public @ResponseBody PagedDTO<Hl7InboundMessageDTO> getByCriteria (
 			@RequestParam(defaultValue="null", required=false) String criteria, 
 			@RequestParam(defaultValue="1", required=false) int page, 
-			@RequestParam(defaultValue="1000", required=false) int size, 
+			@RequestParam(defaultValue="20", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="code", required=false) String field) throws Exception {
+			@RequestParam(defaultValue="idmaritalstatus", required=false) String field) throws Exception {
 		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
-		// check enum string params
+		// validate
 		validator.validateSort(sort);
-		
-		CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
-				new CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
-						rdDozerMapper, 
-						BodyApparatusDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
-		
+		validator.validateSortField(field, Hl7InboundMessage.class, entity_name);
+
+		// set processor params
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
+				
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));		
 		
 		// process data request
-		return rp.process();	
+		return processor.process();
 	}
 	
 	/**
-	 * Add a body apparatus
-	 * @param bodyapparatus
+	 * Add marital status
+	 * @author luca
+	 * @category standard create REST method
+	 * @param maritalStatus
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<BodyApparatusDTO> add(@RequestBody BodyApparatusDTO bodyapparatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody CreateResponseDTO<Hl7InboundMessageDTO> add(@RequestBody Hl7InboundMessageDTO maritalStatus, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
-				
-		// create the processor
-		CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
-				new CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
-						rdDozerMapper, 
-						BodyApparatus.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						bodyapparatus,
-						env);
+		validator.validateDTONullIdd(maritalStatus, entity_id);
+		
+		// invoke order creator
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(maritalStatus);
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name, entity_id, bodyapparatus.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
-	 * Update a body apparatus
-	 * @param bodyApparatus
+	 * Update marital status
+	 * @author luca
+	 * @category standard update REST method
+	 * @param maritalStatus
 	 * @param request
 	 * @return
+	 * @since 1.2.0
 	 * @throws Exception
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<BodyApparatusDTO> update(@RequestBody BodyApparatusDTO bodyApparatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<Hl7InboundMessageDTO> update(@RequestBody Hl7InboundMessageDTO maritalStatus, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// validate that username can perform the requested operation on appSetting
-		validator.validateDTOIdd(bodyApparatus, entity_name);
+		// validate
+		validator.validateDTOIdd(maritalStatus, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
-				new UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						bodyApparatus, 
-						env);
+		// set updater params
+		updater.setSourceDto(maritalStatus);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, bodyApparatus.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, maritalStatus.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
-	 * Delete a body apparatus 
-	 * @param bodyApparatus
+	 * Delete marital status
+	 * @author luca
+	 * @category standard delete REST method
+	 * @param maritalStatus
 	 * @param request
+	 * @since 1.2.0
 	 * @return
 	 */
 	@Transactional("rdTm")
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<BodyApparatusDTO> delete(@RequestBody BodyApparatusDTO bodyApparatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<Hl7InboundMessageDTO> delete(@RequestBody Hl7InboundMessageDTO maritalStatus, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
-				
-		// validate that username can perform the requested operation on appSetting
-		validator.validateDTOIdd(bodyApparatus, entity_name);
+						
+		// validate
+		validator.validateDTOIdd(maritalStatus, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> rp = 
-				new UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						bodyApparatus, 
-						env);
-		
+		// set updater params
+		updater.setSourceDto(maritalStatus);
+		updater.setUpdatedUser(getLoggedUser(request));
+				
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, bodyApparatus.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, maritalStatus.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
 	}
 }

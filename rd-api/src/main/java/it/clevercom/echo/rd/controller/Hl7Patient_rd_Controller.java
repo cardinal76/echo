@@ -213,7 +213,7 @@ public class Hl7Patient_rd_Controller extends EchoController {
 		validator.validateDTOIdd(maritalStatus, entity_name);
 
 		// set updater params
-		updater.setDto(maritalStatus);
+		updater.setSourceDto(maritalStatus);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -244,7 +244,7 @@ public class Hl7Patient_rd_Controller extends EchoController {
 		validator.validateDTOIdd(maritalStatus, entity_name);
 
 		// set updater params
-		updater.setDto(maritalStatus);
+		updater.setSourceDto(maritalStatus);
 		updater.setUpdatedUser(getLoggedUser(request));
 				
 		// log info

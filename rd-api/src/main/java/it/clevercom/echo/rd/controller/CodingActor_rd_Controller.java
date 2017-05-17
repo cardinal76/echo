@@ -219,7 +219,7 @@ public class CodingActor_rd_Controller extends EchoController {
 		validator.validateDTOIdd(codingactor, entity_name);
 
 		// set updater params
-		updater.setDto(codingactor);
+		updater.setSourceDto(codingactor);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -250,7 +250,7 @@ public class CodingActor_rd_Controller extends EchoController {
 		validator.validateDTOIdd(codingactor, entity_name);
 
 		// set updater params
-		updater.setDto(codingactor);
+		updater.setSourceDto(codingactor);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

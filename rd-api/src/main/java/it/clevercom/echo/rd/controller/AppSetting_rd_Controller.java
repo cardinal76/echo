@@ -228,7 +228,7 @@ public class AppSetting_rd_Controller extends EchoController {
 		validator.validateDTOIdd(appSetting, entity_name);
 
 		// set updater params
-		updater.setDto(appSetting);
+		updater.setSourceDto(appSetting);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

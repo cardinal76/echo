@@ -66,10 +66,10 @@ import it.clevercom.echo.rd.repository.IRegion_rd_Repository;
 public class Country_rd_Controller extends EchoController {
 	// hard coded data 
 	@Value("${echo.api.setting.localcountryid}")
-	public static Long localCountryId;
+	public String localCountryId;
 	
 	@Value("${echo.api.setting.unknownregionid}")
-	public static Long unknownRegionId;
+	public String unknownRegionId;
 	
 	@Autowired
 	private Environment env;
@@ -232,9 +232,9 @@ public class Country_rd_Controller extends EchoController {
 		
 		// finding related entities
 		List<Region> regions = new ArrayList<Region>();
-		if (country.getIdcountry().longValue() != localCountryId.longValue()) {
+		if (!country.getIdcountry().equals(Long.valueOf(localCountryId))) {
 			// return unknown region
-			regions.add(repo_r.findOne(unknownRegionId));
+			regions.add(repo_r.findOne(Long.valueOf(unknownRegionId)));
 		} else {
 			// return local country region			
 			regions = repo_r.findByCountry(country, new Sort("regionname"));
@@ -432,7 +432,7 @@ public class Country_rd_Controller extends EchoController {
 		validator.validateDTOIdd(country, entity_name);
 
 		// set updater params
-		updater.setDto(country);
+		updater.setSourceDto(country);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -463,7 +463,7 @@ public class Country_rd_Controller extends EchoController {
 		validator.validateDTOIdd(country, entity_name);
 
 		// set updater params
-		updater.setDto(country);
+		updater.setSourceDto(country);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

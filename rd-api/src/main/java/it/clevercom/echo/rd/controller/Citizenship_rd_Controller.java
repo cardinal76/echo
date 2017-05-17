@@ -219,7 +219,7 @@ public class Citizenship_rd_Controller extends EchoController {
 		validator.validateDTOIdd(citizenship, entity_name);
 
 		// set updater params
-		updater.setDto(citizenship);
+		updater.setSourceDto(citizenship);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -251,7 +251,7 @@ public class Citizenship_rd_Controller extends EchoController {
 		validator.validateDTOIdd(citizenship, entity_name);
 
 		// set updater params
-		updater.setDto(citizenship);
+		updater.setSourceDto(citizenship);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

@@ -219,7 +219,7 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		validator.validateDTOIdd(bodyApparatus, entity_name);
 
 		// set updater params
-		updater.setDto(bodyApparatus);
+		updater.setSourceDto(bodyApparatus);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
@@ -251,7 +251,7 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		validator.validateDTOIdd(bodyApparatus, entity_name);
 
 		// set updater params
-		updater.setDto(bodyApparatus);
+		updater.setSourceDto(bodyApparatus);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info

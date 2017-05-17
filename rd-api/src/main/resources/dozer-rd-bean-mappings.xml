@@ -320,6 +320,11 @@
 		<class-a>it.clevercom.echo.rd.model.entity.Hl7Patient</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.Hl7PatientDTO</class-b>
 	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Hl7InboundMessage</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.Hl7InboundMessageDTO</class-b>
+	</mapping>
 
 	<!-- customized mapping -->
 
