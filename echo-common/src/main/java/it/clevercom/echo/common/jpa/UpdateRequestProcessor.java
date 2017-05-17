@@ -21,7 +21,7 @@ import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends AbstractJpaEchoEntity, D extends AbstractEchoDTO> {
 	
 	private I repository;
-	private D dto; // maybe not in use
+	private D sourceDTO; // maybe not in use
 	private E oldValueEntity;
 	private DozerBeanMapper mapper;
 	private Class<D> dtoClazz;
@@ -58,7 +58,7 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		// created user
 		this.updatedUser = updatedUser;
 		// set dto
-		this.dto = dto;
+		this.sourceDTO = dto;
 		// set env
 		this.env = env;
 		
@@ -75,7 +75,7 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	 * @param entity_name
 	 * @param entity_id
 	 * @param updatedUser
-	 * @param dto
+	 * @param sourceDTO
 	 * @param env
 	 */
 	public UpdateRequestProcessor(I repository, DozerBeanMapper mapper, String entity_name, String entity_id, Environment env, EntityManager em) {
@@ -109,7 +109,7 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	    Method method = repoClazz.getMethod("findOne", Serializable.class);
 	    
 	    // cast id to serializable
-	    Serializable id = (Serializable) idClazz.cast(dto.getIdd());
+	    Serializable id = (Serializable) idClazz.cast(sourceDTO.getIdd());
 	    
 	    // invoke method with reflection and cast result to E
 	    this.oldValueEntity = (E) method.invoke(repository, id);
@@ -117,14 +117,14 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	    // if an entity with given id is not found in DB throw record not found
 	    if (oldValueEntity==null) {
 	    	logger.error(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, id.toString()));
-	    	throw new RecordNotFoundException(entity_name, entity_id, dto.getIdd().toString());
+	    	throw new RecordNotFoundException(entity_name, entity_id, sourceDTO.getIdd().toString());
 	    }
 	    
 		// map old value to a dto
 		D oldValueDTO = mapper.map(oldValueEntity, dtoClazz);
 		
 		// begin update of oldValue
-		mapper.map(dto, oldValueEntity);
+		mapper.map(sourceDTO, oldValueEntity);
 
 		// add technical field
 		oldValueEntity.setUserupdate(updatedUser);
@@ -165,7 +165,7 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	    Method method = repoClazz.getMethod("findOne", Serializable.class);
 	    
 	    // cast id to serializable
-	    Serializable id = (Serializable) idClazz.cast(dto.getIdd());
+	    Serializable id = (Serializable) idClazz.cast(sourceDTO.getIdd());
 	    
 	    // invoke method with reflection and cast result to E
 	    E oldValueEntity = (E) method.invoke(repository, id);
@@ -173,14 +173,14 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	    // if an entity with given id is not found in DB throw record not found
 	    if (oldValueEntity==null) {
 	    	logger.error(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, id.toString()));
-	    	throw new RecordNotFoundException(entity_name, entity_id, dto.getIdd().toString());
+	    	throw new RecordNotFoundException(entity_name, entity_id, sourceDTO.getIdd().toString());
 	    }
 		
 		// map old value to a dto
 		D oldValueDTO = mapper.map(oldValueEntity, dtoClazz);
 		
 		// begin update of oldValue
-		mapper.map(dto, oldValueEntity);
+		mapper.map(sourceDTO, oldValueEntity);
 
 		// add technical field
 		oldValueEntity.setUserupdate(updatedUser);
@@ -206,7 +206,7 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	    Method method = repoClazz.getMethod("findOne", Serializable.class);
 	    
 	    // cast id to serializable
-	    Serializable id = (Serializable) idClazz.cast(dto.getIdd());
+	    Serializable id = (Serializable) idClazz.cast(sourceDTO.getIdd());
 	    
 	    // invoke method with reflection and cast result to E
 	    E oldValueEntity = (E) method.invoke(repository, id);
@@ -214,14 +214,14 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	    // if an entity with given id is not found in DB throw record not found
 	    if (oldValueEntity==null) {
 	    	logger.error(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, id.toString()));
-	    	throw new RecordNotFoundException(entity_name, entity_id, dto.getIdd().toString());
+	    	throw new RecordNotFoundException(entity_name, entity_id, sourceDTO.getIdd().toString());
 	    }
 		
 		// map old value to a dto
 		D oldValueDTO = mapper.map(oldValueEntity, dtoClazz);
 		
 		// begin update of oldValue
-		mapper.map(dto, oldValueEntity);
+		mapper.map(sourceDTO, oldValueEntity);
 		
 		// add technical field
 		oldValueEntity.setUserupdate(updatedUser);
@@ -252,15 +252,15 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	/**
 	 * @return the dto
 	 */
-	public D getDto() {
-		return dto;
+	public D getSourceDto() {
+		return sourceDTO;
 	}
 
 	/**
 	 * @param dto the dto to set
 	 */
-	public void setDto(D dto) {
-		this.dto = dto;
+	public void setSourceDto(D dto) {
+		this.sourceDTO = dto;
 		this.dtoClazz = (Class<D>) dto.getClass();
 		this.idClazz = dto.getIdd().getClass();
 	}
