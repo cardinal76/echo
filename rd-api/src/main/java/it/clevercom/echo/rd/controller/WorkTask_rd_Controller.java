@@ -130,6 +130,10 @@ public class WorkTask_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody PagedDTO<WorkTaskDTO> getByCriteria (
+			@RequestParam(defaultValue="current_week_start", required=false) Long from,
+			@RequestParam(defaultValue="current_week_end", required=false) Long to,
+			@RequestParam(defaultValue="*", required=false) Long idmodalitytype,
+			@RequestParam(defaultValue="*", required=false) Long modality,
 			@RequestParam(defaultValue="null", required=false) String criteria, 
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="15", required=false) int size, 
@@ -138,7 +142,7 @@ public class WorkTask_rd_Controller extends EchoController {
 		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
-				
+		
 		// validate
 		validator.validateSort(sort);
 		validator.validateSortField(field, WorkTask.class, entity_name);

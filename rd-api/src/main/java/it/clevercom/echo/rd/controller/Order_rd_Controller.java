@@ -77,7 +77,6 @@ import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkSession_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
-import it.clevercom.echo.rd.repository.IWorkTask_rd_Repository;
 import it.clevercom.echo.rd.util.WorkStatusDateFieldDecoder;
 
 @Controller

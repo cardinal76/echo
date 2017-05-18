@@ -70,6 +70,7 @@ public class DateUtil {
 
 	/**
 	 * 
+	 * @param date
 	 * @return
 	 */
 	public static Date getFirstDateOfMonth(Date date) {
@@ -82,12 +83,39 @@ public class DateUtil {
 
 	/**
 	 * 
+	 * @param date
 	 * @return
 	 */
 	public static Date getLastDateOfMonth(Date date) {
 		Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Date lastDay = calendar.getTime();
+        return lastDay;
+	}
+
+	/**
+	 * 
+	 * @param today
+	 * @return
+	 */
+	public static Date getFirstDateOfWeek(Date date) {
+		Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_WEEK, calendar.getFirstDayOfWeek());
+        Date firstDay = calendar.getTime();
+        return firstDay;
+	}
+
+	/**
+	 * 
+	 * @param today
+	 * @return
+	 */
+	public static Date getLastDateOfWeek(Date date) {
+		Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.WEEK_OF_YEAR, 1);
         Date lastDay = calendar.getTime();
         return lastDay;
 	}

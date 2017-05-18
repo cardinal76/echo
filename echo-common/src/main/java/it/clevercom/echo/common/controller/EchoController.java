@@ -59,6 +59,10 @@ public class EchoController {
 	    			setValue(DateUtil.getFirstDateOfMonth(today).getTime());
 	    		} else if ("current_month_end".equals(text)) {
 	    			setValue(DateUtil.getLastDateOfMonth(today).getTime());
+	    		} else if ("current_week_start".equals(text)) {
+	    			setValue(DateUtil.getFirstDateOfWeek(today).getTime());
+	    		} else if ("current_week_end".equals(text)) {
+	    			setValue(DateUtil.getLastDateOfWeek(today).getTime());
 	    		} else if ("system_start".equals(text)) {
 	    			Date sysStart = new Date(-3600000l);
 	    			setValue(DateUtil.getEndOfDay(sysStart).getTime());
