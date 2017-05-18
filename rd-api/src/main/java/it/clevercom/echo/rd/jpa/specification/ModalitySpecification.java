@@ -7,10 +7,10 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import it.clevercom.echo.rd.model.entity.ModalityType;
+import it.clevercom.echo.rd.model.entity.Modality;
 
-public class ModalityTypeSpecification<T,S> implements Specification<T> {
-	private String fieldName = "modalityType";
+public class ModalitySpecification<T,S> implements Specification<T> {
+	private String fieldName = "modality";
 	private Long fieldValue = 0l;
 	private String subEntity;
 	
@@ -18,7 +18,7 @@ public class ModalityTypeSpecification<T,S> implements Specification<T> {
 	 * @param fieldName
 	 * @param fieldValue
 	 */
-	public ModalityTypeSpecification(String subEntity, String fieldName, Long fieldValue) {
+	public ModalitySpecification(String subEntity, String fieldName, Long fieldValue) {
 		super();
 		if (fieldName != null) {
 			this.fieldName = fieldName;
@@ -30,9 +30,9 @@ public class ModalityTypeSpecification<T,S> implements Specification<T> {
 	@Override
 	public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 		if (subEntity==null) {
-			return cb.equal(root.<ModalityType>get(fieldName).<Long>get("idmodalitytype"), fieldValue);
+			return cb.equal(root.<Modality>get(fieldName).<Long>get("idmodality"), fieldValue);
 		} else {
-			return cb.equal(root.<S>get(subEntity).<ModalityType>get(fieldName).<Long>get("idmodalitytype"), fieldValue);
+			return cb.equal(root.<S>get(subEntity).<Modality>get(fieldName).<Long>get("idmodality"), fieldValue);
 		}
 	}
 

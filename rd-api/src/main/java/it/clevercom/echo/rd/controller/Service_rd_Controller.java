@@ -154,7 +154,7 @@ public class Service_rd_Controller extends EchoController {
 		
 		// check modalitytype param and add it to specification
 		if (!modalitytype.equals("*")) {
-			ModalityTypeSpecification<Service> md = new ModalityTypeSpecification<Service>(null, Long.valueOf(modalitytype));
+			ModalityTypeSpecification<Service,Service> md = new ModalityTypeSpecification<Service,Service>(null, null, Long.valueOf(modalitytype));
 			processor.addAndSpecification(md);
 		}
 		
