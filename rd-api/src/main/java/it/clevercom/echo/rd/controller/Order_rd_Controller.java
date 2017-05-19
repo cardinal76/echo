@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -139,11 +138,6 @@ public class Order_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> processor;
-	private CreateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> creator;
-	private UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -154,19 +148,6 @@ public class Order_rd_Controller extends EchoController {
 	public static final String entity_s_name = "Service";
 	public static final String entity_os_name = "Ordered Service";
 	public static final String entity_o_name = "Organization Unit";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, rdDozerMapper, Order.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, rdDozerMapper, OrderDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get order by id
@@ -243,6 +224,7 @@ public class Order_rd_Controller extends EchoController {
 		validator.validateSortField(field, Order.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -347,6 +329,7 @@ public class Order_rd_Controller extends EchoController {
 		orderValidator.validateCreateRequest(order);
 
 		// invoke order creator
+		CreateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(order);
 				
@@ -498,6 +481,7 @@ public class Order_rd_Controller extends EchoController {
 		repo_ol.saveAndFlush(log);
 		
 		// set updater params
+		UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> updater = getUpdater();
 		updater.setSourceDto(order);
 		updater.setUpdatedUser(getLoggedUser(request));
 					
@@ -542,6 +526,7 @@ public class Order_rd_Controller extends EchoController {
 		toDeactivate.setRejectReason((StringUtils.isNullEmptyWhiteSpaceOnly(rejectReason)) ? null : rejectReason);
 		
 		// set updater params
+		UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> updater = getUpdater();
 		updater.setSourceDto(toDeactivate);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -601,20 +586,20 @@ public class Order_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CreateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> getCreator() {
+		// construct creator
+		return new CreateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, rdDozerMapper, Order.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
-		// TODO Auto-generated method stub
-		return null;
+	protected UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> getUpdater() {
+		// construct updater
+		return new UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> getProcessor() {
+		// costruct processor
+		return new CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, rdDozerMapper, OrderDTO.class, entity_name, env);
 	}
 }

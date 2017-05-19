@@ -4,7 +4,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -78,30 +77,12 @@ public class Patient_rd_Controller extends EchoController {
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
 
-	// crud processors
-	private CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> processor;
-	private CreateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> creator;
-	private UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> updater;
-
 	private final Logger logger = Logger.getLogger(this.getClass());
 
 	// used to bind it in exception message
 	public static final String entity_name = "Patient";
 	public static final String entity_id = "idpatient";
 	public static final String entity_pc_id = "idpatientcodingactor";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, rdDozerMapper, Patient.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, rdDozerMapper, PatientDTO.class, entity_name, env);
-	}
 
 	/**
 	 * Get patient by id
@@ -209,6 +190,7 @@ public class Patient_rd_Controller extends EchoController {
 		validator.validateSortField(field, Patient.class, entity_name);
 
 		// set processor params
+		CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -238,6 +220,7 @@ public class Patient_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(patient, entity_id);
 				
 		// invoke order creator
+		CreateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(patient);
 		
@@ -267,6 +250,7 @@ public class Patient_rd_Controller extends EchoController {
 		validator.validateDTOIdd(patient, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> updater = getUpdater();
 		updater.setSourceDto(patient);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -293,6 +277,7 @@ public class Patient_rd_Controller extends EchoController {
 		validator.validateDTOIdd(patient, entity_name);
 	
 		// set updater params
+		UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> updater = getUpdater();
 		updater.setSourceDto(patient);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -304,20 +289,20 @@ public class Patient_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+	protected CreateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> getCreator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CreateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, rdDozerMapper, Patient.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+	protected UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> getUpdater() {
 		// TODO Auto-generated method stub
-		return null;
+		return new UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+	protected CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> getProcessor() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, rdDozerMapper, PatientDTO.class, entity_name, env);
 	}
 }

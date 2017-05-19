@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -64,30 +63,12 @@ public class Region_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> processor;
-	private CreateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> creator;
-	private UpdateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "Region";
 	public static final String entity_id = "idregion";
-
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, rdDozerMapper, Region.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, rdDozerMapper, RegionDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get region by id
@@ -146,6 +127,7 @@ public class Region_rd_Controller extends EchoController {
 		validator.validateSortField(field, Region.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -175,6 +157,7 @@ public class Region_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(region, entity_id);
 				
 		// invoke order creator
+		CreateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(region);
 		
@@ -204,6 +187,7 @@ public class Region_rd_Controller extends EchoController {
 		validator.validateDTOIdd(region, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> updater = getUpdater();
 		updater.setSourceDto(region);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -232,6 +216,7 @@ public class Region_rd_Controller extends EchoController {
 		validator.validateDTOIdd(region, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> updater = getUpdater();
 		updater.setSourceDto(region);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -243,20 +228,20 @@ public class Region_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+	protected CreateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> getCreator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CreateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, rdDozerMapper, Region.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+	protected UpdateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> getUpdater() {
 		// TODO Auto-generated method stub
-		return null;
+		return new UpdateRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+	protected CriteriaRequestProcessor<IRegion_rd_Repository, Region, RegionDTO> getProcessor() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CriteriaRequestProcessor<IRegion_rd_Repository, Region, RegionDTO>(repo, rdDozerMapper, RegionDTO.class, entity_name, env);
 	}
 }

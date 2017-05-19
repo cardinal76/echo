@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -66,30 +65,12 @@ public class Service_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO> processor;
-	private CreateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> creator;
-	private UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "Service";
 	public static final String entity_id = "idservice";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, rdDozerMapper, Service.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, rdDozerMapper, ServiceDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get service by id
@@ -149,6 +130,7 @@ public class Service_rd_Controller extends EchoController {
 		validator.validateSortField(field, Service.class, entity_name);
 
 		// set processor params
+		CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -184,6 +166,7 @@ public class Service_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(service, entity_id);
 				
 		// invoke order creator
+		CreateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(service);
 		
@@ -213,6 +196,7 @@ public class Service_rd_Controller extends EchoController {
 		validator.validateDTOIdd(service, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> updater = getUpdater();
 		updater.setSourceDto(service);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -241,6 +225,7 @@ public class Service_rd_Controller extends EchoController {
 		validator.validateDTOIdd(service, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> updater = getUpdater();
 		updater.setSourceDto(service);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -252,20 +237,20 @@ public class Service_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+	protected CreateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> getCreator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CreateRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, rdDozerMapper, Service.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+	protected UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO> getUpdater() {
 		// TODO Auto-generated method stub
-		return null;
+		return new UpdateRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+	protected CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO> getProcessor() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CriteriaRequestProcessor<IService_rd_Repository, Service, ServiceDTO>(repo, rdDozerMapper, ServiceDTO.class, entity_name, env);
 	}
 }

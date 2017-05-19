@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -59,29 +58,11 @@ public class WorkSession_rd_Controller extends EchoController {
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
 	
-	// crud processors
-	private CriteriaRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> processor;
-	private CreateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> creator;
-	private UpdateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> updater;
-	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	public static final String entity_name = "WorkSession";
 	public static final String entity_id = "idworksession";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, rdDozerMapper, WorkSession.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, rdDozerMapper, WorkSessionDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get a work session by id
@@ -141,6 +122,7 @@ public class WorkSession_rd_Controller extends EchoController {
 		validator.validateSortField(field, WorkSession.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -170,6 +152,7 @@ public class WorkSession_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(workSession, entity_id);
 		
 		// invoke order creator
+		CreateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(workSession);
 		
@@ -199,6 +182,7 @@ public class WorkSession_rd_Controller extends EchoController {
 		validator.validateDTOIdd(workSession, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> updater = getUpdater();
 		updater.setSourceDto(workSession);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -227,6 +211,7 @@ public class WorkSession_rd_Controller extends EchoController {
 		validator.validateDTOIdd(workSession, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> updater = getUpdater();
 		updater.setSourceDto(workSession);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -238,20 +223,20 @@ public class WorkSession_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+	protected CreateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> getCreator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CreateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, rdDozerMapper, WorkSession.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+	protected UpdateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> getUpdater() {
 		// TODO Auto-generated method stub
-		return null;
+		return new UpdateRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+	protected CriteriaRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> getProcessor() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CriteriaRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO>(repo, rdDozerMapper, WorkSessionDTO.class, entity_name, env);
 	}
 }

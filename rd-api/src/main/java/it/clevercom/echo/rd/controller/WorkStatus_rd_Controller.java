@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -62,23 +61,11 @@ public class WorkStatus_rd_Controller extends EchoController {
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
 	
-	// crud processors
-	private CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO> processor;
-	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "WorkStatus";
 	public static final String entity_id = "idworkstatus";
-
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO>(repo, rdDozerMapper, WorkStatusDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get work status by id
@@ -137,6 +124,7 @@ public class WorkStatus_rd_Controller extends EchoController {
 		validator.validateSortField(field, WorkStatus.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -189,20 +177,20 @@ public class WorkStatus_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+	protected CreateRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO> getCreator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+	protected UpdateRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO> getUpdater() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+	protected CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO> getProcessor() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CriteriaRequestProcessor<IWorkStatus_rd_Repository, WorkStatus, WorkStatusDTO>(repo, rdDozerMapper, WorkStatusDTO.class, entity_name, env);
 	}
 }

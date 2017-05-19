@@ -63,11 +63,6 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
 
-	// crud processors
-	private CriteriaRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> processor;
-	private CreateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> creator;
-	private UpdateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> updater;
-	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
@@ -140,6 +135,7 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 		validator.validateSortField(field, Hl7InboundMessage.class, entity_name);
 
 		// set processor params
+		CriteriaRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 				
@@ -172,6 +168,7 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(maritalStatus, entity_id);
 		
 		// invoke order creator
+		CreateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(maritalStatus);
 		
@@ -204,6 +201,7 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 		validator.validateDTOIdd(maritalStatus, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> updater = getUpdater();
 		updater.setSourceDto(maritalStatus);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -235,6 +233,7 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 		validator.validateDTOIdd(maritalStatus, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> updater = getUpdater();
 		updater.setSourceDto(maritalStatus);
 		updater.setUpdatedUser(getLoggedUser(request));
 				
@@ -246,20 +245,17 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CreateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> getCreator() {
+		return new CreateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO>(repo, rdDozerMapper, Hl7InboundMessage.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
-		// TODO Auto-generated method stub
-		return null;
+	protected UpdateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> getUpdater() {
+		return new UpdateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CriteriaRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO>(repo, rdDozerMapper, Hl7InboundMessageDTO.class, entity_name, env);
 	}
 }

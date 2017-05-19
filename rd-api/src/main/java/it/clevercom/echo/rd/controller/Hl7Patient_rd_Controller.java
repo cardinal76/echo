@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -58,30 +57,12 @@ public class Hl7Patient_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO> processor;
-	private CreateRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO> creator;
-	private UpdateRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "Hl7Patient";
 	public static final String entity_id = "idhl7patient";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO>(repo, rdDozerMapper, Hl7Patient.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO>(repo, rdDozerMapper, Hl7PatientDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get hl7 patient by id
@@ -149,6 +130,7 @@ public class Hl7Patient_rd_Controller extends EchoController {
 		validator.validateSortField(field, Hl7Patient.class, entity_name);
 
 		// set processor params
+		CriteriaRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 				
@@ -181,6 +163,7 @@ public class Hl7Patient_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(maritalStatus, entity_id);
 		
 		// invoke order creator
+		CreateRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(maritalStatus);
 		
@@ -213,6 +196,7 @@ public class Hl7Patient_rd_Controller extends EchoController {
 		validator.validateDTOIdd(maritalStatus, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO> updater = getUpdater();
 		updater.setSourceDto(maritalStatus);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -244,6 +228,7 @@ public class Hl7Patient_rd_Controller extends EchoController {
 		validator.validateDTOIdd(maritalStatus, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO> updater = getUpdater();
 		updater.setSourceDto(maritalStatus);
 		updater.setUpdatedUser(getLoggedUser(request));
 				
@@ -255,20 +240,17 @@ public class Hl7Patient_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CreateRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO> getCreator() {
+		return new CreateRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO>(repo, rdDozerMapper, Hl7Patient.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
-		// TODO Auto-generated method stub
-		return null;
+	protected UpdateRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO> getUpdater() {
+		return new UpdateRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CriteriaRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IHl7Patient_rd_Repository, Hl7Patient, Hl7PatientDTO>(repo, rdDozerMapper, Hl7PatientDTO.class, entity_name, env);
 	}
 }

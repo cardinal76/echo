@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +34,6 @@ import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.ProvinceDTO;
 import it.clevercom.echo.rd.model.entity.Province;
-import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
 import it.clevercom.echo.rd.repository.IProvince_rd_Repository;
 
 @Controller
@@ -58,9 +56,6 @@ public class Province_rd_Controller extends EchoController {
 	private IProvince_rd_Repository repo;
 	
 	@Autowired
-	private IMunicipality_rd_Repository repo_m;
-	
-	@Autowired
     private DozerBeanMapper rdDozerMapper;
 	
 	@Autowired
@@ -68,30 +63,12 @@ public class Province_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> processor;
-	private CreateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> creator;
-	private UpdateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "Province";
 	public static final String entity_id = "idprovince";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO>(repo, rdDozerMapper, Province.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO>(repo, rdDozerMapper, ProvinceDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get province by id
@@ -150,6 +127,7 @@ public class Province_rd_Controller extends EchoController {
 		validator.validateSortField(field, Province.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -180,6 +158,7 @@ public class Province_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(province, entity_id);
 				
 		// invoke order creator
+		CreateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(province);
 		
@@ -209,6 +188,7 @@ public class Province_rd_Controller extends EchoController {
 		validator.validateDTOIdd(province, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> updater = getUpdater();
 		updater.setSourceDto(province);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -237,6 +217,7 @@ public class Province_rd_Controller extends EchoController {
 		validator.validateDTOIdd(province, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> updater = getUpdater();
 		updater.setSourceDto(province);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -248,20 +229,20 @@ public class Province_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+	protected CreateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> getCreator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CreateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO>(repo, rdDozerMapper, Province.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+	protected UpdateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> getUpdater() {
 		// TODO Auto-generated method stub
-		return null;
+		return new UpdateRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+	protected CriteriaRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO> getProcessor() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CriteriaRequestProcessor<IProvince_rd_Repository, Province, ProvinceDTO>(repo, rdDozerMapper, ProvinceDTO.class, entity_name, env);
 	}
 }

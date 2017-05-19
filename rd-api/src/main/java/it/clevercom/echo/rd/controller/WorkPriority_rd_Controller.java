@@ -62,9 +62,6 @@ public class WorkPriority_rd_Controller extends EchoController {
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
 
-	// crud processors
-	private CriteriaRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO> processor;
-	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
@@ -76,8 +73,7 @@ public class WorkPriority_rd_Controller extends EchoController {
 	 */
 	@PostConstruct
 	public void init() {
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO>(repo, rdDozerMapper, WorkPriorityDTO.class, entity_name, env);
+		
 	}
 	
 	/**
@@ -125,6 +121,7 @@ public class WorkPriority_rd_Controller extends EchoController {
 		validator.validateSortField(field, WorkPriority.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -177,20 +174,20 @@ public class WorkPriority_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+	protected CreateRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO> getCreator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+	protected UpdateRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO> getUpdater() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+	protected CriteriaRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO> getProcessor() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CriteriaRequestProcessor<IWorkPriority_rd_Repository, WorkPriority, WorkPriorityDTO>(repo, rdDozerMapper, WorkPriorityDTO.class, entity_name, env);
 	}
 }

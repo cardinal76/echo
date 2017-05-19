@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -59,29 +58,11 @@ public class WorkReport_rd_Controller extends EchoController {
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
 	
-	// crud processors
-	private CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> processor;
-	private CreateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> creator;
-	private UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> updater;
-	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	public static final String entity_name = "WorkReport";
 	public static final String entity_id = "idworkreport";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, rdDozerMapper, WorkReport.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, rdDozerMapper, WorkReportDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get a work report by id
@@ -140,6 +121,7 @@ public class WorkReport_rd_Controller extends EchoController {
 		validator.validateSortField(field, WorkReport.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -169,6 +151,7 @@ public class WorkReport_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(workReport, entity_id);
 		
 		// invoke order creator
+		CreateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(workReport);
 		
@@ -198,6 +181,7 @@ public class WorkReport_rd_Controller extends EchoController {
 		validator.validateDTOIdd(workReport, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> updater = getUpdater();
 		updater.setSourceDto(workReport);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -226,6 +210,7 @@ public class WorkReport_rd_Controller extends EchoController {
 		validator.validateDTOIdd(workReport, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> updater = getUpdater();
 		updater.setSourceDto(workReport);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -237,20 +222,20 @@ public class WorkReport_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+	protected CreateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> getCreator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CreateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, rdDozerMapper, WorkReport.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+	protected UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> getUpdater() {
 		// TODO Auto-generated method stub
-		return null;
+		return new UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+	protected CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> getProcessor() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, rdDozerMapper, WorkReportDTO.class, entity_name, env);
 	}
 }

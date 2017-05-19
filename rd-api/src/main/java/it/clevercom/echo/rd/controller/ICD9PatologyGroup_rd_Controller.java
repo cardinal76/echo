@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +33,7 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.Icd9PatologyGroupDTO;
+import it.clevercom.echo.rd.model.entity.Hl7Patient;
 import it.clevercom.echo.rd.model.entity.Icd9PatologyGroup;
 import it.clevercom.echo.rd.repository.IICD9PatologyGroup_rd_Repository;
 
@@ -60,29 +60,11 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
 	
-	// crud processors
-	private CriteriaRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> processor;
-	private CreateRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> creator;
-	private UpdateRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> updater;
-	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	private static String entity_name = "Icd9PatologyGroup";
 	private static String entity_id = "idicd9patologygroup";
-
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO>(repo, rdDozerMapper, Icd9PatologyGroup.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO>(repo, rdDozerMapper, Icd9PatologyGroupDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get a body apparatus by id
@@ -138,18 +120,12 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 				
 		// check enum string params
 		validator.validateSort(sort);
-		
-//		CriteriaRequestProcessor<IIcd9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> rp = 
-//				new CriteriaRequestProcessor<IIcd9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO>(repo, 
-//						rdDozerMapper, 
-//						Icd9PatologyGroupDTO.class, 
-//						entity_name, 
-//						criteria, 
-//						sort, 
-//						field, 
-//						page, 
-//						size,
-//						env);
+		validator.validateSortField(field, Hl7Patient.class, entity_name);
+
+		// set processor params
+		CriteriaRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> processor = getProcessor();
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
@@ -160,7 +136,7 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 	
 	/**
 	 * Add a body apparatus
-	 * @param bodyapparatus
+	 * @param icd9group
 	 * @param request
 	 * @return
 	 * @throws Exception
@@ -169,24 +145,20 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<Icd9PatologyGroupDTO> add(@RequestBody Icd9PatologyGroupDTO bodyapparatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody CreateResponseDTO<Icd9PatologyGroupDTO> add(@RequestBody Icd9PatologyGroupDTO icd9group, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
+		validator.validateDTONullIdd(icd9group, entity_id);
 				
-//		// create the processor
-//		CreateRequestProcessor<IIcd9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> rp = 
-//				new CreateRequestProcessor<IIcd9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO>(repo, 
-//						rdDozerMapper, 
-//						Icd9PatologyGroup.class, 
-//						entity_name, 
-//						getLoggedUser(request), 
-//						bodyapparatus,
-//						env);
+		// invoke order creator
+		CreateRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> creator = getCreator();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(icd9group);
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name, entity_id, bodyapparatus.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name, entity_id, icd9group.getIdd().toString()));
 		
 		// process
 		return creator.process();
@@ -207,18 +179,13 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// validate that username can perform the requested operation on appSetting
+		// validate
 		validator.validateDTOIdd(icd9group, entity_name);
 
-//		// create processor
-//		UpdateRequestProcessor<IIcd9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> rp = 
-//				new UpdateRequestProcessor<IIcd9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO>(repo, 
-//						rdDozerMapper,
-//						entity_name,
-//						entity_id,
-//						getLoggedUser(request), 
-//						icd9group, 
-//						env);
+		// set updater params
+		UpdateRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> updater = getUpdater();
+		updater.setSourceDto(icd9group);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, icd9group.getIdd().toString()));
@@ -244,15 +211,10 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(icd9group, entity_name);
 
-//		// create processor
-//		UpdateRequestProcessor<IIcd9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> rp = 
-//				new UpdateRequestProcessor<IIcd9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO>(repo, 
-//						rdDozerMapper,
-//						entity_name,
-//						entity_id,
-//						getLoggedUser(request), 
-//						icd9group, 
-//						env);
+		// set updater params
+		UpdateRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> updater = getUpdater();
+		updater.setSourceDto(icd9group);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, icd9group.getIdd().toString()));
@@ -262,20 +224,17 @@ public class ICD9PatologyGroup_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CreateRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> getCreator() {
+		return new CreateRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO>(repo, rdDozerMapper, Icd9PatologyGroup.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
-		// TODO Auto-generated method stub
-		return null;
+	protected UpdateRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> getUpdater() {
+		return new UpdateRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CriteriaRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IICD9PatologyGroup_rd_Repository, Icd9PatologyGroup, Icd9PatologyGroupDTO>(repo, rdDozerMapper, Icd9PatologyGroupDTO.class, entity_name, env);
 	}
 }

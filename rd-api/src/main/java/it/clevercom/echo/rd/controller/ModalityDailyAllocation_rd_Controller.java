@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -58,30 +57,12 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> processor;
-	private CreateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> creator;
-	private UpdateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	public static final String entity_name = "ModalityDailyAllocation";
 	public static final String entity_id = "idmodalitydailyallocation";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO>(repo, rdDozerMapper, ModalityDailyAllocation.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO>(repo, rdDozerMapper, ModalityDailyAllocationDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get an allocation by id
@@ -140,6 +121,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 		validator.validateSortField(field, ModalityDailyAllocation.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -169,6 +151,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(allocation, entity_id);
 		
 		// invoke order creator
+		CreateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(allocation);
 		
@@ -198,6 +181,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 		validator.validateDTOIdd(allocation, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> updater = getUpdater();
 		updater.setSourceDto(allocation);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -226,6 +210,7 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 		validator.validateDTOIdd(allocation, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> updater = getUpdater();
 		updater.setSourceDto(allocation);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -237,20 +222,22 @@ public class ModalityDailyAllocation_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CreateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> getCreator() {
+		// construct creator
+		return new CreateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO>(repo, rdDozerMapper, ModalityDailyAllocation.class, entity_name, env, em);		
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
-		// TODO Auto-generated method stub
-		return null;
+	protected UpdateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> getUpdater() {
+		// construct updater
+		return new UpdateRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+				
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CriteriaRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO> getProcessor() {
+		// costruct processor
+		return new CriteriaRequestProcessor<IModalityDailyAllocation_rd_Repository, ModalityDailyAllocation, ModalityDailyAllocationDTO>(repo, rdDozerMapper, ModalityDailyAllocationDTO.class, entity_name, env);
+		
 	}
 }

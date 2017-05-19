@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -64,30 +63,12 @@ public class MaritalStatus_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> processor;
-	private CreateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> creator;
-	private UpdateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "Maritalstatus";
 	public static final String entity_id = "idmaritalstatus";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, rdDozerMapper, Maritalstatus.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, rdDozerMapper, MaritalStatusDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get marital status by id
@@ -155,6 +136,7 @@ public class MaritalStatus_rd_Controller extends EchoController {
 		validator.validateSortField(field, Maritalstatus.class, entity_name);
 
 		// set processor params
+		CriteriaRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 				
@@ -187,6 +169,7 @@ public class MaritalStatus_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(maritalStatus, entity_id);
 		
 		// invoke order creator
+		CreateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(maritalStatus);
 		
@@ -219,6 +202,7 @@ public class MaritalStatus_rd_Controller extends EchoController {
 		validator.validateDTOIdd(maritalStatus, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> updater = getUpdater();
 		updater.setSourceDto(maritalStatus);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -250,6 +234,7 @@ public class MaritalStatus_rd_Controller extends EchoController {
 		validator.validateDTOIdd(maritalStatus, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> updater = getUpdater();
 		updater.setSourceDto(maritalStatus);
 		updater.setUpdatedUser(getLoggedUser(request));
 				
@@ -261,20 +246,17 @@ public class MaritalStatus_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CreateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> getCreator() {
+		return new CreateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, rdDozerMapper, Maritalstatus.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
-		// TODO Auto-generated method stub
-		return null;
+	protected UpdateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> getUpdater() {
+		return new UpdateRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CriteriaRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IMaritalStatus_rd_Repository, Maritalstatus, MaritalStatusDTO>(repo, rdDozerMapper, MaritalStatusDTO.class, entity_name, env);
 	}
 }

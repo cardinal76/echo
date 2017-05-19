@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -64,30 +63,12 @@ public class Municipality_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> processor;
-	private CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> creator;
-	private UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "Municipality";
 	public static final String entity_id = "idmunicipality";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, Municipality.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// construct processor
-		processor = new CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, MunicipalityDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get municipality by id
@@ -152,6 +133,7 @@ public class Municipality_rd_Controller extends EchoController {
 		validator.validateSortField(field, Municipality.class, entity_name);
 
 		// set processor params
+		CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -184,6 +166,7 @@ public class Municipality_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(municipality, entity_id);
 				
 		// invoke order creator
+		CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(municipality);
 		
@@ -216,6 +199,7 @@ public class Municipality_rd_Controller extends EchoController {
 		validator.validateDTOIdd(municipality, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> updater = getUpdater();
 		updater.setSourceDto(municipality);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -247,6 +231,7 @@ public class Municipality_rd_Controller extends EchoController {
 		validator.validateDTOIdd(municipality, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> updater = getUpdater();
 		updater.setSourceDto(municipality);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -258,20 +243,17 @@ public class Municipality_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> getCreator() {
+		return new CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, Municipality.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
-		// TODO Auto-generated method stub
-		return null;
+	protected UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> getUpdater() {
+		return new UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, MunicipalityDTO.class, entity_name, env);
 	}
 }

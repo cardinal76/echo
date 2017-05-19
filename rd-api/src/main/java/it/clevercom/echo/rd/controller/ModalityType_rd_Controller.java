@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +46,6 @@ import it.clevercom.echo.rd.model.dto.ModalityTypeDTO;
 import it.clevercom.echo.rd.model.dto.ModalityTypeDailyAllocationDTO;
 import it.clevercom.echo.rd.model.dto.ModalityTypeIntervalAllocationDTO;
 import it.clevercom.echo.rd.model.entity.Modality;
-import it.clevercom.echo.rd.model.entity.ModalityDailyAllocation;
 import it.clevercom.echo.rd.model.entity.ModalityType;
 import it.clevercom.echo.rd.model.entity.VModalityAllocation;
 import it.clevercom.echo.rd.model.entity.VModalitytypeAllocation;
@@ -92,13 +90,6 @@ public class ModalityType_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> processor;
-	private CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityGroupDTO> processor_mg;
-	private CriteriaRequestProcessor<IVModalitytypeAllocation_rd_Repository, VModalitytypeAllocation, ModalityTypeDailyAllocationDTO> processor_mta;
-	private CreateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> creator;
-	private UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -107,21 +98,6 @@ public class ModalityType_rd_Controller extends EchoController {
 	public static final String entity_id = "idmodalitytype";
 	public static final String entity_allocation_type_name = "ModalityTypeAllocation";
 	public static final String entity_allocation_type_id = "id";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, rdDozerMapper, ModalityType.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// construct processor
-		processor = new CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, rdDozerMapper, ModalityTypeDTO.class, entity_name, env);
-		processor_mg = new CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityGroupDTO>(repo, rdDozerMapper, ModalityGroupDTO.class, entity_name, env);
-		processor_mta =new CriteriaRequestProcessor<IVModalitytypeAllocation_rd_Repository, VModalitytypeAllocation, ModalityTypeDailyAllocationDTO>(repo_mta, rdDozerMapper, ModalityTypeDailyAllocationDTO.class, entity_allocation_type_name, env);
-	}
 	
 	/**
 	 * Get modality type by id
@@ -186,6 +162,7 @@ public class ModalityType_rd_Controller extends EchoController {
 		validator.validateSortField(field, ModalityType.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -214,6 +191,7 @@ public class ModalityType_rd_Controller extends EchoController {
 			@RequestParam(required = true) Long idmodalitytype) throws Exception {
 		
 		// set params
+		CriteriaRequestProcessor<IVModalitytypeAllocation_rd_Repository, VModalitytypeAllocation, ModalityTypeDailyAllocationDTO> processor_mta = getMTAProcessor();
 		processor_mta.setCriteria(entity_id + "!" + idmodalitytype.toString());
 		processor_mta.setPageCriteria("asc", entity_allocation_type_id, 1, 31);
 
@@ -250,7 +228,7 @@ public class ModalityType_rd_Controller extends EchoController {
 		dto.setModalityAllocation(modalityAllocation );
 		return dto;
 	}
-	
+
 	/**
 	 * Get modality type group with modality children
 	 * @author luca
@@ -283,6 +261,7 @@ public class ModalityType_rd_Controller extends EchoController {
 		validator.validateSortField(field, ModalityType.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityGroupDTO> processor_mg = getMGProcessor();
 		processor_mg.setCriteria(criteria);
 		processor_mg.setPageCriteria(sort, field, page, size);
 		
@@ -292,7 +271,7 @@ public class ModalityType_rd_Controller extends EchoController {
 		// process data request
 		return processor_mg.process();
 	}
-	
+
 	/**
 	 * Add a modality
 	 * @author luca
@@ -315,6 +294,7 @@ public class ModalityType_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(modalityType, entity_id);
 				
 		// invoke order creator
+		CreateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(modalityType);
 		
@@ -347,6 +327,7 @@ public class ModalityType_rd_Controller extends EchoController {
 		validator.validateDTOIdd(modalityType, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> updater = getUpdater();
 		updater.setSourceDto(modalityType);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -378,6 +359,7 @@ public class ModalityType_rd_Controller extends EchoController {
 		validator.validateDTOIdd(modalityType, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> updater = getUpdater();
 		updater.setSourceDto(modalityType);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -389,20 +371,25 @@ public class ModalityType_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CreateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> getCreator() {
+		return new CreateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, rdDozerMapper, ModalityType.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
-		// TODO Auto-generated method stub
-		return null;
+	protected UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> getUpdater() {
+		return new UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
-		// TODO Auto-generated method stub
-		return null;
+	protected CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, rdDozerMapper, ModalityTypeDTO.class, entity_name, env);
+	}
+	
+	private CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityGroupDTO> getMGProcessor() {
+		return new CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityGroupDTO>(repo, rdDozerMapper, ModalityGroupDTO.class, entity_name, env);
+	}
+	
+	private CriteriaRequestProcessor<IVModalitytypeAllocation_rd_Repository, VModalitytypeAllocation, ModalityTypeDailyAllocationDTO> getMTAProcessor() {
+		return new CriteriaRequestProcessor<IVModalitytypeAllocation_rd_Repository, VModalitytypeAllocation, ModalityTypeDailyAllocationDTO>(repo_mta, rdDozerMapper, ModalityTypeDailyAllocationDTO.class, entity_allocation_type_name, env);
 	}
 }

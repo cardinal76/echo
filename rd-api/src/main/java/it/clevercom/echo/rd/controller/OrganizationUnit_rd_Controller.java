@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -64,30 +63,12 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> processor;
-	private CreateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> creator;
-	private UpdateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "OrganizationUnit";
 	public static final String entity_id = "idorganizationunit";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, rdDozerMapper, OrganizationUnit.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, rdDozerMapper, OrganizationUnitDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get organization unit by id
@@ -143,6 +124,7 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 		validator.validateSortField(field, OrganizationUnit.class, entity_name);
 
 		// set processor params
+		CriteriaRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -175,6 +157,7 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(organization, entity_id);
 				
 		// invoke order creator
+		CreateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(organization);
 		
@@ -207,6 +190,7 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 		validator.validateDTOIdd(organization, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> updater = getUpdater();
 		updater.setSourceDto(organization);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -238,6 +222,7 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 		validator.validateDTOIdd(organization, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> updater = getUpdater();
 		updater.setSourceDto(organization);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -249,20 +234,20 @@ public class OrganizationUnit_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+	protected CreateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> getCreator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CreateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, rdDozerMapper, OrganizationUnit.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+	protected UpdateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> getUpdater() {
 		// TODO Auto-generated method stub
-		return null;
+		return new UpdateRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+	protected CriteriaRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO> getProcessor() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CriteriaRequestProcessor<IOrganizationUnit_rd_Repository, OrganizationUnit, OrganizationUnitDTO>(repo, rdDozerMapper, OrganizationUnitDTO.class, entity_name, env);
 	}
 }

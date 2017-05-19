@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -33,11 +32,8 @@ import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
-import it.clevercom.echo.rd.model.dto.ServiceDTO;
 import it.clevercom.echo.rd.model.dto.UserDTO;
-import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.User;
-import it.clevercom.echo.rd.repository.IService_rd_Repository;
 import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 
 @Controller
@@ -67,30 +63,12 @@ public class User_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO> processor;
-	private CreateRequestProcessor<IUser_rd_Repository, User, UserDTO> creator;
-	private UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "User";
 	public static final String entity_id = "username";
-
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, rdDozerMapper, User.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, rdDozerMapper, UserDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get user by id
@@ -149,6 +127,7 @@ public class User_rd_Controller extends EchoController {
 		validator.validateSortField(field, User.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -177,6 +156,7 @@ public class User_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(user, entity_id);
 				
 		// invoke order creator
+		CreateRequestProcessor<IUser_rd_Repository, User, UserDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(user);
 		
@@ -206,6 +186,7 @@ public class User_rd_Controller extends EchoController {
 		validator.validateDTOIdd(user, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO> updater = getUpdater();
 		updater.setSourceDto(user);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -234,6 +215,7 @@ public class User_rd_Controller extends EchoController {
 		validator.validateDTOIdd(user, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO> updater = getUpdater();
 		updater.setSourceDto(user);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -245,20 +227,20 @@ public class User_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+	protected CreateRequestProcessor<IUser_rd_Repository, User, UserDTO> getCreator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CreateRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, rdDozerMapper, User.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+	protected UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO> getUpdater() {
 		// TODO Auto-generated method stub
-		return null;
+		return new UpdateRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+	protected CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO> getProcessor() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CriteriaRequestProcessor<IUser_rd_Repository, User, UserDTO>(repo, rdDozerMapper, UserDTO.class, entity_name, env);
 	}
 }

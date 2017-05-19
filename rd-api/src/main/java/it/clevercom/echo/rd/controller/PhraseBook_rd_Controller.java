@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -58,30 +57,12 @@ public class PhraseBook_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> processor;
-	private CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> creator;
-	private UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	public static final String entity_name = "PhraseBook";
 	public static final String entity_id = "idphrasebook";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, rdDozerMapper, PhraseBook.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, rdDozerMapper, PhraseBookDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get a phrase book by id
@@ -140,6 +121,7 @@ public class PhraseBook_rd_Controller extends EchoController {
 		validator.validateSortField(field, PhraseBook.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -169,6 +151,7 @@ public class PhraseBook_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(phraseBook, entity_id);
 				
 		// invoke order creator
+		CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(phraseBook);
 		
@@ -198,6 +181,7 @@ public class PhraseBook_rd_Controller extends EchoController {
 		validator.validateDTOIdd(phraseBook, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> updater = getUpdater();
 		updater.setSourceDto(phraseBook);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -226,6 +210,7 @@ public class PhraseBook_rd_Controller extends EchoController {
 		validator.validateDTOIdd(phraseBook, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> updater = getUpdater();
 		updater.setSourceDto(phraseBook);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -237,20 +222,20 @@ public class PhraseBook_rd_Controller extends EchoController {
 	}
 
 	@Override
-	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+	protected CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> getCreator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, rdDozerMapper, PhraseBook.class, entity_name, env, em);
 	}
 
 	@Override
-	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+	protected UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> getUpdater() {
 		// TODO Auto-generated method stub
-		return null;
+		return new UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
 	}
 
 	@Override
-	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+	protected CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> getProcessor() {
 		// TODO Auto-generated method stub
-		return null;
+		return new CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, rdDozerMapper, PhraseBookDTO.class, entity_name, env);
 	}
 }
