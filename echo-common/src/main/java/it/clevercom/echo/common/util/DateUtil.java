@@ -115,7 +115,7 @@ public class DateUtil {
 	public static Date getLastDateOfWeek(Date date) {
 		Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.set(Calendar.WEEK_OF_YEAR, 1);
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
         Date lastDay = calendar.getTime();
         return lastDay;
 	}

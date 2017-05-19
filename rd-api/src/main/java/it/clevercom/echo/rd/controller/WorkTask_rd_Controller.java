@@ -31,7 +31,6 @@ import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
 import it.clevercom.echo.common.jpa.specification.DateIntervalSpecification;
-import it.clevercom.echo.common.jpa.specification.StringSpecification;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
@@ -45,8 +44,6 @@ import it.clevercom.echo.rd.jpa.specification.ModalityTypeSpecification;
 import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
 import it.clevercom.echo.rd.model.dto.WorkTaskDTO;
 import it.clevercom.echo.rd.model.entity.Modality;
-import it.clevercom.echo.rd.model.entity.Order;
-import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.WorkTask;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkTask_rd_Repository;
@@ -150,10 +147,9 @@ public class WorkTask_rd_Controller extends EchoController {
 	public @ResponseBody PagedDTO<WorkTaskDTO> getByCriteria (
 			@RequestParam(defaultValue="current_week_start", required=false) Long from,
 			@RequestParam(defaultValue="current_week_end", required=false) Long to,
-			@RequestParam(defaultValue = "*", required = false) String status,
-			@RequestParam(defaultValue="*", required=false) Long idmodalitytype,
-			@RequestParam(defaultValue="*", required=false) Long idmodality,
-			@RequestParam(defaultValue="*", required=false) Long modalityType,
+			@RequestParam(defaultValue = "*", required=false) String status,
+			@RequestParam(defaultValue="0", required=false) Long idmodalitytype,
+			@RequestParam(defaultValue="0", required=false) Long idmodality,
 			@RequestParam(defaultValue="null", required=false) String criteria, 
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="15", required=false) int size, 
@@ -201,10 +197,10 @@ public class WorkTask_rd_Controller extends EchoController {
 		}
 		
 		// if there's a selected patient name, create and set patient name specification
-		if ((!idmodality.equals("*"))) {
+		if ((!idmodality.equals(Long.valueOf(0)))) {
 			ModalitySpecification<WorkTask, WorkTask> n = new ModalitySpecification<WorkTask, WorkTask>(null, null, idmodality); 
 			processor.addAndSpecification(n);
-		} else if ((!idmodalitytype.equals("*"))) {
+		} else if ((!idmodalitytype.equals(Long.valueOf(0)))) {
 			ModalityTypeSpecification<WorkTask, Modality> n = new ModalityTypeSpecification<WorkTask, Modality>("modality", null, idmodalitytype); 
 			processor.addAndSpecification(n);
 		}

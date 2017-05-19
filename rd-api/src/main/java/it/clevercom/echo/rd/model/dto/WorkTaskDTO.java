@@ -3,8 +3,11 @@ package it.clevercom.echo.rd.model.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import it.clevercom.echo.common.dto.AbstractEchoDTO;
 
+@JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
 public class WorkTaskDTO extends AbstractEchoDTO implements Serializable {
 	
 	private static final long serialVersionUID = 5376111644338310682L;
