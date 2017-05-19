@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -64,30 +63,12 @@ public class Citizenship_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> processor;
-	private CreateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> creator;
-	private UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "Citizenship";
 	public static final String entity_id = "idcitizenship";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, rdDozerMapper, Citizenship.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, rdDozerMapper, CitizenshipDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get Citizenship by id
@@ -155,6 +136,7 @@ public class Citizenship_rd_Controller extends EchoController {
 		validator.validateSortField(field, Citizenship.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -187,6 +169,7 @@ public class Citizenship_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(citizenship, entity_id);
 		
 		// invoke order creator
+		CreateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(citizenship);
 		
@@ -219,6 +202,7 @@ public class Citizenship_rd_Controller extends EchoController {
 		validator.validateDTOIdd(citizenship, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> updater = getUpdater();
 		updater.setSourceDto(citizenship);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -251,6 +235,7 @@ public class Citizenship_rd_Controller extends EchoController {
 		validator.validateDTOIdd(citizenship, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> updater = getUpdater();
 		updater.setSourceDto(citizenship);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -259,5 +244,29 @@ public class Citizenship_rd_Controller extends EchoController {
 
 		// return response
 		return updater.enable(false);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected CreateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> getCreator() {
+		return new CreateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, rdDozerMapper, Citizenship.class, entity_name, env, em);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> getUpdater() {
+		return new UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> getProcessor() {
+		return new CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, rdDozerMapper, CitizenshipDTO.class, entity_name, env);
 	}
 }

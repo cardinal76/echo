@@ -253,4 +253,22 @@ public class Hl7Patient_rd_Controller extends EchoController {
 		// return response
 		return updater.enable(false);
 	}
+
+	@Override
+	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

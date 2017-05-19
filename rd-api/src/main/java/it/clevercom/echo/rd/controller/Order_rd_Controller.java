@@ -599,4 +599,22 @@ public class Order_rd_Controller extends EchoController {
 		// return session
 		return workSession;
 	}
+
+	@Override
+	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

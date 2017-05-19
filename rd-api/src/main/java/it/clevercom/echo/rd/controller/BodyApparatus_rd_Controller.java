@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -65,29 +64,11 @@ public class BodyApparatus_rd_Controller extends EchoController {
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
 
-	// crud processors
-	private CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> processor;
-	private CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> creator;
-	private UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> updater;
-	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	public static final String entity_name = "BodyApparatus";
 	public static final String entity_id = "idbodyapparatus";
-
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, rdDozerMapper, BodyApparatus.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, rdDozerMapper, BodyApparatusDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get a body apparatus by id
@@ -155,6 +136,7 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		validator.validateSortField(field, BodyApparatus.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -187,6 +169,7 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(bodyapparatus, entity_id);
 		
 		// invoke order creator
+		CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(bodyapparatus);
 		
@@ -219,6 +202,7 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		validator.validateDTOIdd(bodyApparatus, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> updater = getUpdater();
 		updater.setSourceDto(bodyApparatus);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -251,6 +235,7 @@ public class BodyApparatus_rd_Controller extends EchoController {
 		validator.validateDTOIdd(bodyApparatus, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> updater = getUpdater();
 		updater.setSourceDto(bodyApparatus);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -259,5 +244,29 @@ public class BodyApparatus_rd_Controller extends EchoController {
 
 		// return response
 		return updater.enable(false);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> getCreator() {
+		return new CreateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, rdDozerMapper, BodyApparatus.class, entity_name, env, em);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> getUpdater() {
+		return new UpdateRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IBodyApparatus_rd_Repository, BodyApparatus, BodyApparatusDTO>(repo, rdDozerMapper, BodyApparatusDTO.class, entity_name, env);
 	}
 }

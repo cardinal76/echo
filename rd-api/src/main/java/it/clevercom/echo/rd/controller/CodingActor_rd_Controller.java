@@ -64,30 +64,12 @@ public class CodingActor_rd_Controller extends EchoController {
 	
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
-
-	// crud processors
-	private CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> processor;
-	private CreateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> creator;
-	private UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> updater;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "CodingActor";
 	public static final String entity_id = "idcodingactor";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, rdDozerMapper, CodingActor.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, rdDozerMapper, CodingActorDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get coding actor by id
@@ -155,6 +137,7 @@ public class CodingActor_rd_Controller extends EchoController {
 		validator.validateSortField(field, CodingActor.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -187,6 +170,7 @@ public class CodingActor_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(codingactor, entity_id);
 		
 		// invoke order creator
+		CreateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(codingactor);
 		
@@ -219,6 +203,7 @@ public class CodingActor_rd_Controller extends EchoController {
 		validator.validateDTOIdd(codingactor, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> updater = getUpdater();
 		updater.setSourceDto(codingactor);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -250,6 +235,7 @@ public class CodingActor_rd_Controller extends EchoController {
 		validator.validateDTOIdd(codingactor, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> updater = getUpdater();
 		updater.setSourceDto(codingactor);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -258,5 +244,20 @@ public class CodingActor_rd_Controller extends EchoController {
 
 		// return response
 		return updater.enable(false);
+	}
+
+	@Override
+	protected CreateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> getCreator() {
+		return new CreateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, rdDozerMapper, CodingActor.class, entity_name, env, em);
+	}
+
+	@Override
+	protected UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> getUpdater() {
+		return new UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> getProcessor() {
+		return new CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, rdDozerMapper, CodingActorDTO.class, entity_name, env);
 	}
 }

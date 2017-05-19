@@ -21,6 +21,7 @@ import it.clevercom.echo.common.controller.EchoController;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
 import it.clevercom.echo.common.jpa.specification.DateIntervalSpecification;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
@@ -232,6 +233,24 @@ public class WeightEvent_tm_Controller extends EchoController{
 		
 		// process data request
 		return rp.process();	
+	}
+
+	@Override
+	protected CreateRequestProcessor<?, ?, ?> getCreator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected UpdateRequestProcessor<?, ?, ?> getUpdater() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<?, ?, ?> getProcessor() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

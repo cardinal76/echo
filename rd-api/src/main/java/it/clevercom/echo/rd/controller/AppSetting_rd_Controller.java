@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -66,29 +65,11 @@ public class AppSetting_rd_Controller extends EchoController {
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
 
-	// crud processors
-	private CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> processor;
-	private CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> creator;
-	private UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> updater;
-	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
 	public static final String entity_name = "AppSetting";
 	public static final String entity_id = "idappsetting";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, rdDozerMapper, AppSetting.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, rdDozerMapper, AppSettingDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get application setting by id
@@ -157,6 +138,7 @@ public class AppSetting_rd_Controller extends EchoController {
 		validator.validateSortField(field, AppSetting.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -195,6 +177,7 @@ public class AppSetting_rd_Controller extends EchoController {
 		validator.validateUsername(getLoggedUser(request), appSetting);
 		
 		// invoke order creator
+		CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(appSetting);
 		
@@ -228,6 +211,7 @@ public class AppSetting_rd_Controller extends EchoController {
 		validator.validateDTOIdd(appSetting, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> updater = getUpdater();
 		updater.setSourceDto(appSetting);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
@@ -253,5 +237,29 @@ public class AppSetting_rd_Controller extends EchoController {
 	@Loggable
 	public @ResponseBody String delete(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) {
 		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), entity_name);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> getCreator() {
+		return new CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, rdDozerMapper, AppSetting.class, entity_name, env, em);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> getUpdater() {
+		return new UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, rdDozerMapper, AppSettingDTO.class, entity_name, env);
 	}
 }

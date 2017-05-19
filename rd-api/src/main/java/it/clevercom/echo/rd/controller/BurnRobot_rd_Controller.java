@@ -2,7 +2,6 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
@@ -65,29 +64,11 @@ public class BurnRobot_rd_Controller extends EchoController {
 	@PersistenceContext(unitName="rdPU")
 	protected EntityManager em;
 
-	// crud processors
-	private CriteriaRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> processor;
-	private CreateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> creator;
-	private UpdateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> updater;
-	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "BurnRobot";
 	public static final String entity_id = "idburnrobot";
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	public void init() {
-		// construct creator
-		creator = new CreateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO>(repo, rdDozerMapper, BurnRobot.class, entity_name, env, em);
-		// construct updater
-		updater = new UpdateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
-		// costruct processor
-		processor = new CriteriaRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO>(repo, rdDozerMapper, BurnRobotDTO.class, entity_name, env);
-	}
 	
 	/**
 	 * Get a burn robot by id
@@ -155,6 +136,7 @@ public class BurnRobot_rd_Controller extends EchoController {
 		validator.validateSortField(field, BurnRobot.class, entity_name);
 		
 		// set processor params
+		CriteriaRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
 		
@@ -187,6 +169,7 @@ public class BurnRobot_rd_Controller extends EchoController {
 		validator.validateDTONullIdd(burnRobot, entity_id);
 		
 		// invoke order creator
+		CreateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
 		creator.setDto(burnRobot);
 		
@@ -219,6 +202,7 @@ public class BurnRobot_rd_Controller extends EchoController {
 		validator.validateDTOIdd(burnRobot, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> updater = getUpdater();
 		updater.setSourceDto(burnRobot);
 		updater.setUpdatedUser(getLoggedUser(request));
 				
@@ -251,6 +235,7 @@ public class BurnRobot_rd_Controller extends EchoController {
 		validator.validateDTOIdd(burnRobot, entity_name);
 
 		// set updater params
+		UpdateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> updater = getUpdater();
 		updater.setSourceDto(burnRobot);
 		updater.setUpdatedUser(getLoggedUser(request));
 				
@@ -259,5 +244,29 @@ public class BurnRobot_rd_Controller extends EchoController {
 
 		// return response
 		return updater.enable(false);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected CreateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> getCreator() {
+		return new CreateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO>(repo, rdDozerMapper, BurnRobot.class, entity_name, env, em);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected UpdateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> getUpdater() {
+		return new UpdateRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected CriteriaRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IBurnRobot_rd_Repository, BurnRobot, BurnRobotDTO>(repo, rdDozerMapper, BurnRobotDTO.class, entity_name, env);
 	}
 }

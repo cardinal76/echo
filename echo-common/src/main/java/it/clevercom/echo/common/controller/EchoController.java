@@ -8,11 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.jpa.CreateRequestProcessor;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
 import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 
@@ -25,7 +29,7 @@ import it.clevercom.echo.common.util.JwtTokenUtils;
  * @author luca
  */
 
-public class EchoController {
+public abstract class EchoController {
 	@Value("${jwt.token.header}")
 	private String tokenHeader;
 	
@@ -96,4 +100,23 @@ public class EchoController {
 		
 		return username;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	protected abstract CreateRequestProcessor<?,?,?> getCreator();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	protected abstract UpdateRequestProcessor<?,?,?> getUpdater();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	protected abstract CriteriaRequestProcessor<?,?,?> getProcessor();
+
 }
