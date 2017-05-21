@@ -76,6 +76,7 @@ import it.clevercom.echo.rd.repository.IUser_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkSession_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
+import it.clevercom.echo.rd.repository.IWorkTask_rd_Repository;
 import it.clevercom.echo.rd.util.WorkStatusDateFieldDecoder;
 
 @Controller
@@ -120,6 +121,9 @@ public class Order_rd_Controller extends EchoController {
 	
 	@Autowired
 	private IWorkSession_rd_Repository repo_wss;
+	
+	@Autowired
+	private IWorkTask_rd_Repository repo_wt;
 	
 	@Autowired
 	private IModalityDailyAllocation_rd_Repository repo_a;
@@ -361,10 +365,14 @@ public class Order_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(order, entity_name);		
 		orderValidator.validateUpdateRequest(order);
-		
-		// update changed services only if order status is lower in order value than accepted
+			
+		// find order to update 
 		Order orderToUpdate = repo.findOne(order.getIdOrder());
 		
+		UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> updater = getUpdater();
+		updater.setOriginDTO(rdDozerMapper.map(orderToUpdate, OrderDTO.class));
+		
+		// update changed services only if order status is lower in order value than accepted
 		if (WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() <= WorkStatusEnum.ACCEPTED.order()) {
 			// boolean (requested service changed)
 			boolean changeRequest = false;
@@ -419,9 +427,9 @@ public class Order_rd_Controller extends EchoController {
 				}
 			}
 			
-			// --------------------------------------------------------
-			// generate worksession and work task if status = scheduled
-			// --------------------------------------------------------
+			// ----------------------------------------------------------------------------------------------
+			// generate worksession and work task if update status = scheduled and current status = requested
+			// ----------------------------------------------------------------------------------------------
 			
 			if ((WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).order() == WorkStatusEnum.REQUESTED.order()) 
 					&& (WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).order() == WorkStatusEnum.SCHEDULED.order())) {
@@ -454,22 +462,42 @@ public class Order_rd_Controller extends EchoController {
 					int dpc = scheduledModality.getDailypatientcapacity();
 					int dsc = scheduledModality.getDailyservicecapacity();
 					allocation.setPatientexcess(new Integer((allocation.getPatientallocation()-dpc > 0) ? allocation.getPatientallocation()-dpc : 0));
-					allocation.setServiceexcess(new Integer((allocation.getServiceallocation()-dsc > 0) ? allocation.getServiceallocation()-dpc : 0));
+					allocation.setServiceexcess(new Integer((allocation.getServiceallocation()-dsc > 0) ? allocation.getServiceallocation()-dsc : 0));
 				}
 				
 				// flush modification
 				repo_a.saveAndFlush(allocation);
 			} 
 			
-			// ------------------------------------------------------------
-			// reallocate modality work laod and work session with new task
-			// ------------------------------------------------------------
+			// ----------------------------------------------------------------------------------
+			// reallocate modality work load and update work session with new task and new status
+			// ----------------------------------------------------------------------------------
 			
-			else if (changeRequest==true) {
-				//WorkSessionDTO sessionToUpdate = workSessionController.get(orderToUpdate.getWorkSession().getIdworksession());
-				//sessionToUpdate.setWorkTasks(this.generateWorkTasksFromOrder(order));
-				// delegate action to work session controller			
-				//order.setWorkSession(workSessionController.update(sessionToUpdate, request).getNewValue().get(0));
+			else if (((WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).equals(WorkStatusEnum.SCHEDULED))) || (WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).equals(WorkStatusEnum.ACCEPTED)) &&
+					 ((WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).equals(WorkStatusEnum.SCHEDULED.order()) || WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).equals(WorkStatusEnum.ACCEPTED.order())))) {
+				
+				if (changeRequest==true) {
+					// get session
+					WorkSession sessionToUpdate = orderToUpdate.getWorkSession();
+					
+					// old task size
+					int oldTaskSize = sessionToUpdate.getWorkTasks().size();
+					
+					// recreate new task list
+					WorkSession updatedSession = this.recreateWorkSessionTree(sessionToUpdate, order);
+					
+					// new task size
+					int newTaskSize = sessionToUpdate.getWorkTasks().size();
+					
+					// find allocation for selected modality
+					Modality scheduledModality = repo_m.findOne(Long.valueOf(order.getScheduledModality().getId()));
+					ModalityDailyAllocation allocation = repo_a.findByModalityAndDay(scheduledModality, new Date(order.getScheduledDate()));
+					
+					
+				} else {
+					// update work task status
+					
+				}				
 			}
 			
 			em.refresh(orderToUpdate);
@@ -480,8 +508,7 @@ public class Order_rd_Controller extends EchoController {
 		log.setUserupdate(getLoggedUser(request));
 		repo_ol.saveAndFlush(log);
 		
-		// set updater params
-		UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> updater = getUpdater();
+		// set updater params		
 		updater.setSourceDto(order);
 		updater.setUpdatedUser(getLoggedUser(request));
 					
@@ -569,8 +596,8 @@ public class Order_rd_Controller extends EchoController {
 			WorkTask task = new WorkTask();
 			task.setScheduleddate(new Date(order.getScheduledDate()));
 			task.setService(repo_s.findOne(Long.valueOf(orderedServiceDTO.getId())));
-			task.setWorkPriority(repo_wp.findByCode(order.getWorkPriority().getCode()));
-			task.setWorkStatus(repo_ws.findByCode(order.getWorkStatus().getCode()));
+			task.setWorkPriority(priority);
+			task.setWorkStatus(status);
 			task.setUser(systemUser);
 			task.setAccessionnumber(new Long(123123123));
 			task.setModality(modality);
@@ -583,6 +610,33 @@ public class Order_rd_Controller extends EchoController {
 		
 		// return session
 		return workSession;
+	}
+	
+	private WorkSession recreateWorkSessionTree(WorkSession sessionToUpdate, OrderDTO order) {
+		// remove all tasks
+		repo_wt.delete(sessionToUpdate.getWorkTasks());
+		repo_wt.flush();
+		
+		// create task list
+		Set<WorkTask> workTasks = new HashSet<WorkTask>();
+		for (OrderedServiceDTO orderedServiceDTO : order.getServices()) {
+			WorkTask task = new WorkTask();
+			task.setScheduleddate(new Date(order.getScheduledDate()));
+			task.setService(repo_s.findOne(Long.valueOf(orderedServiceDTO.getId())));
+			task.setWorkPriority(repo_wp.findByCode(order.getWorkPriority().getCode()));
+			task.setWorkStatus(repo_ws.findByCode(order.getWorkStatus().getCode()));
+			task.setUser(repo_u.findOne("SYSTEM"));
+			task.setAccessionnumber(new Long(123123123));
+			task.setModality(repo_m.findOne(Long.valueOf(order.getScheduledModality().getId())));
+			task.setWorkSession(sessionToUpdate);
+			workTasks.add(task);
+		}
+		
+		sessionToUpdate.setWorkTasks(workTasks);
+		sessionToUpdate = repo_wss.saveAndFlush(sessionToUpdate);
+		
+		// TODO Auto-generated method stub
+		return sessionToUpdate;
 	}
 
 	@Override

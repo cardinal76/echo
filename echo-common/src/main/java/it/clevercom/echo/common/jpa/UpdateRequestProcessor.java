@@ -27,12 +27,14 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	private E oldValueEntity;
 	
 	// dtos
-	private D oldValueDTO;
-	private D newValueDTO;
+	private D originDTO;
+	private D modifiedDTO;
 	
-	// 
+	// log strings
 	private String entity_name;
 	private String entity_id;
+	
+	// update user
 	private String updatedUser;
 	
 	// generic types
@@ -124,10 +126,10 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		}
 		
 		// get new value DTO
-		newValueDTO = mapper.map(newValueEntity, dtoClazz);
+		modifiedDTO = mapper.map(newValueEntity, dtoClazz);
 
 		// create standard response
-		return ResponseFactory.getUpdateResponseDTO(oldValueDTO, newValueDTO, entity_name, MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
+		return ResponseFactory.getUpdateResponseDTO(originDTO, modifiedDTO, entity_name, MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 	}
 	
 	/**
@@ -136,13 +138,13 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	 * @throws Exception
 	 */
 	public E update() throws Exception {
-		// get method with reflection
+		// get method findOne with reflection
 	    Method method = repoClazz.getMethod("findOne", Serializable.class);
 	    
 	    // cast id to serializable
 	    Serializable id = (Serializable) idClazz.cast(sourceDTO.getIdd());
 	    
-	    // invoke method with reflection and cast result to E
+	    // invoke method with reflection and cast result to E entity
 	    oldValueEntity = (E) method.invoke(repository, id);
 	    
 	    // if an entity with given id is not found in DB throw record not found
@@ -151,10 +153,10 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	    	throw new RecordNotFoundException(entity_name, entity_id, sourceDTO.getIdd().toString());
 	    }
 		
-		// map old value to a dto
-		oldValueDTO = mapper.map(oldValueEntity, dtoClazz);
+		// if original DTO is null map old value entity to originDTO
+	    if (originDTO == null) originDTO = mapper.map(oldValueEntity, dtoClazz);
 		
-		// begin update of oldValue
+		// begin update of oldValueEntity
 		mapper.map(sourceDTO, oldValueEntity);
 
 		// add technical field
@@ -162,11 +164,6 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		
 		// save and map to out dto
 		newValueEntity = repository.saveAndFlush(oldValueEntity);
-		
-		// legacy code (should be removed after refactoring)
-		if (em!=null) {
-			em.refresh(newValueEntity);		
-		}
 				
 		return newValueEntity;
 	}
@@ -177,13 +174,13 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	 * @throws Exception
 	 */
 	public UpdateResponseDTO<D> enable(boolean enabled) throws Exception {
-		// get method with reflection
+		// get method findOne with reflection
 	    Method method = repoClazz.getMethod("findOne", Serializable.class);
 	    
 	    // cast id to serializable
 	    Serializable id = (Serializable) idClazz.cast(sourceDTO.getIdd());
 	    
-	    // invoke method with reflection and cast result to E
+	    // invoke method with reflection and cast result to E entity
 	    oldValueEntity = (E) method.invoke(repository, id);
 	    
 	    // if an entity with given id is not found in DB throw record not found
@@ -192,10 +189,10 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	    	throw new RecordNotFoundException(entity_name, entity_id, sourceDTO.getIdd().toString());
 	    }
 		
-		// map old value to a dto
-		oldValueDTO = mapper.map(oldValueEntity, dtoClazz);
+		// if original DTO is null map old value entity to originDTO
+	    if (originDTO == null) originDTO = mapper.map(oldValueEntity, dtoClazz);
 		
-		// begin update of oldValue
+		// begin update of oldValueEntity
 		mapper.map(sourceDTO, oldValueEntity);
 		
 		// add technical field
@@ -204,10 +201,10 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		
 		// save and map to out dto
 		newValueEntity = repository.saveAndFlush(oldValueEntity);
-		newValueDTO = mapper.map(newValueEntity, dtoClazz);
+		modifiedDTO = mapper.map(newValueEntity, dtoClazz);
 				
 		// create standard response
-		return ResponseFactory.getUpdateResponseDTO(oldValueDTO, newValueDTO, entity_name, MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
+		return ResponseFactory.getUpdateResponseDTO(originDTO, modifiedDTO, entity_name, MessageFormat.format(env.getProperty("echo.api.crud.saved"), entity_name));
 	}
 
 	/**
@@ -239,6 +236,18 @@ public class UpdateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	public void setUpdatedUser(String updatedUser) {
 		this.updatedUser = updatedUser;
 	}
-	
-	
+
+	/**
+	 * @return the originDTO
+	 */
+	public D getOriginDTO() {
+		return originDTO;
+	}
+
+	/**
+	 * @param originDTO the originDTO to set
+	 */
+	public void setOriginDTO(D originDTO) {
+		this.originDTO = originDTO;
+	}
 }
