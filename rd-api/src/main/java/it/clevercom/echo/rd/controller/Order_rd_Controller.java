@@ -463,6 +463,7 @@ public class Order_rd_Controller extends EchoController {
 					int dsc = scheduledModality.getDailyservicecapacity();
 					allocation.setPatientexcess(new Integer((allocation.getPatientallocation()-dpc > 0) ? allocation.getPatientallocation()-dpc : 0));
 					allocation.setServiceexcess(new Integer((allocation.getServiceallocation()-dsc > 0) ? allocation.getServiceallocation()-dsc : 0));
+					allocation.setUserupdate(getLoggedUser(request));
 				}
 				
 				// flush modification
@@ -489,14 +490,70 @@ public class Order_rd_Controller extends EchoController {
 					// new task size
 					int newTaskSize = sessionToUpdate.getWorkTasks().size();
 					
-					// find allocation for selected modality
+					// update allocation for selected modality and schedule date
 					Modality scheduledModality = repo_m.findOne(Long.valueOf(order.getScheduledModality().getId()));
-					ModalityDailyAllocation allocation = repo_a.findByModalityAndDay(scheduledModality, new Date(order.getScheduledDate()));
-					
-					
+					if (!order.getScheduledDate().equals(orderToUpdate.getScheduleddate().getTime())) {
+						// update old allocation
+						ModalityDailyAllocation oldAllocation = repo_a.findByModalityAndDay(scheduledModality, new Date(orderToUpdate.getScheduleddate().getTime()));
+						oldAllocation.setPatientallocation(oldAllocation.getPatientallocation()-1);
+						oldAllocation.setServiceallocation(oldAllocation.getServiceallocation()-oldTaskSize);
+						oldAllocation.setServiceexcess((oldAllocation.getServiceexcess()==0) ? 0 : oldAllocation.getServiceexcess()-oldTaskSize);
+						oldAllocation.setPatientexcess((oldAllocation.getPatientexcess()==0) ? 0 : oldAllocation.getPatientexcess()-1);
+						oldAllocation.setUserupdate(getLoggedUser(request));
+						// flush modification
+						repo_a.saveAndFlush(oldAllocation);
+						
+						// create or update new allocation
+						// update old allocation
+						ModalityDailyAllocation newAllocation = repo_a.findByModalityAndDay(scheduledModality, new Date(order.getScheduledDate()));
+						if (newAllocation == null) {
+							// if not found create a new allocation
+							newAllocation = new ModalityDailyAllocation();
+							newAllocation.setModality(scheduledModality);
+							newAllocation.setPatientallocation(1);
+							newAllocation.setPatientexcess(0);
+							newAllocation.setServiceallocation(newTaskSize);
+							newAllocation.setServiceexcess(0);
+							newAllocation.setUserupdate(getLoggedUser(request));
+							newAllocation.setDay(new Date(order.getScheduledDate()));
+						} else {
+							// update counters
+							newAllocation.setPatientallocation(newAllocation.getPatientallocation()+1);
+							newAllocation.setServiceallocation(newAllocation.getServiceallocation()+newTaskSize);
+							int dpc = scheduledModality.getDailypatientcapacity();
+							int dsc = scheduledModality.getDailyservicecapacity();
+							newAllocation.setPatientexcess(new Integer((newAllocation.getPatientallocation()-dpc > 0) ? newAllocation.getPatientallocation()-dpc : 0));
+							newAllocation.setServiceexcess(new Integer((newAllocation.getServiceallocation()-dsc > 0) ? newAllocation.getServiceallocation()-dsc : 0));
+							newAllocation.setUserupdate(getLoggedUser(request));
+						}
+						
+						// flush modification
+						repo_a.saveAndFlush(newAllocation);
+					} else {
+						// update old allocation
+						ModalityDailyAllocation oldAllocation = repo_a.findByModalityAndDay(scheduledModality, new Date(orderToUpdate.getScheduleddate().getTime()));
+						//oldAllocation.setPatientallocation(oldAllocation.getPatientallocation()-1);
+						//oldAllocation.setPatientexcess((oldAllocation.getPatientexcess()==0) ? 0 : oldAllocation.getPatientexcess()-1);
+						oldAllocation.setServiceallocation(oldAllocation.getServiceallocation()+(newTaskSize-oldTaskSize));
+						oldAllocation.setServiceexcess((oldAllocation.getServiceexcess()==0) ? 0 : oldAllocation.getServiceexcess()-(newTaskSize-oldTaskSize));
+						oldAllocation.setUserupdate(getLoggedUser(request));
+						// flush modification
+						repo_a.saveAndFlush(oldAllocation);
+					}
 				} else {
-					// update work task status
+					// update only work task status
 					
+					// get session
+					WorkSession sessionToUpdate = orderToUpdate.getWorkSession();
+					// get new status
+					WorkStatus newStatus = repo_ws.findByCode(order.getWorkStatus().getCode());
+					// update new status for each element
+					for (WorkTask element : sessionToUpdate.getWorkTasks()) {
+						element.setWorkStatus(newStatus);
+						element.setUserupdate(getLoggedUser(request));
+						repo_wt.saveAndFlush(element);
+					}
+					em.refresh(sessionToUpdate);
 				}				
 			}
 			
