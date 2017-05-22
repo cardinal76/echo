@@ -191,7 +191,7 @@ public class WorkTask_rd_Controller extends EchoController {
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return processor.process();	
+		return processor.processNo404();	
 	}
 	
 	/**

@@ -134,6 +134,33 @@ public class CriteriaRequestProcessor<I extends JpaSpecificationExecutor<E>, E, 
 		// assembly dto
 		return ResponseFactory.getPagedDTO(dtoList, size, page, rs.getTotalPages(), rs.getTotalElements());
 	}
+	
+	/**
+	 * @return
+	 * @throws PageNotFoundException
+	 */
+	public PagedDTO<D> processNo404() throws PageNotFoundException {
+		// find with specification and pagination
+		Page<E> rs = repository.findAll(specification, pageable);
+		
+		// get content
+		List<E> entity = rs.getContent();
+		
+		// throw exception if no content
+		if (entity.size() == 0) {
+			logger.warn(MessageFormat.format(env.getProperty("echo.api.crud.search.nopage"), entity_name, page));
+			// throw new PageNotFoundException(entity_name, page);
+		}
+		
+		// create list
+		List<D> dtoList = new ArrayList<D>();
+		for (E s: entity) {
+			dtoList.add(mapper.map(s, clazz));			
+		}
+		
+		// assembly dto
+		return ResponseFactory.getPagedDTO(dtoList, size, page, rs.getTotalPages(), rs.getTotalElements());
+	}
 
 	/**
 	 * @param specification
