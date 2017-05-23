@@ -133,10 +133,10 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			target.setDomicile(domicile);
 			
 			// inject tech fields
-			target.setActive(source.getActive());
-			target.setCreated(source.getCreated());
-			target.setUpdated(source.getUpdated());
-			target.setUserUpdate(source.getUserupdate());
+			target.setActive((source.getActive()!=null) ? source.getActive() : null);
+			target.setCreated((source.getCreated()!=null) ? source.getCreated() : null);
+			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : null);
+			target.setUserUpdate((source.getUserupdate()!=null) ? source.getUserupdate() : null);
 			
 			// return adjusted PatientDTO
 			return target.buildExtendedObject();
@@ -224,6 +224,12 @@ public class Patient2PatientDTO implements CustomConverter, MapperAware {
 			target.setCountryByDomicileidcountry(domicileCountry);
 			target.setMunicipalityByDomicileidmunicipality(domicileMunicipality);
 			target.setDomicilestreetaddress((source.getDomicile().getStreet()!=null) ? source.getDomicile().getStreet() : null);
+			
+			// inject tech fields
+			target.setActive((source.getActive()!=null) ? source.getActive() : null);
+			target.setCreated((source.getCreated()!=null) ? source.getCreated() : null);
+			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : null);
+			target.setUserupdate((source.getUserUpdate()!=null) ? source.getUserUpdate() : null);
 			
 			return target;
 		} else {

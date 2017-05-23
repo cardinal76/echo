@@ -131,10 +131,11 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			}
 			
 			// inject tech fields
-			target.setActive(source.getActive());
-			target.setCreated(source.getCreated());
-			target.setUpdated(source.getUpdated());
-			target.setUserUpdate(source.getUserupdate());
+			target.setActive((source.getActive()!=null) ? source.getActive() : target.getActive());
+			target.setCreated((source.getCreated()!=null) ? source.getCreated() : target.getCreated());
+			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : target.getUpdated());
+			target.setUserUpdate((source.getUserupdate()!=null) ? source.getUserupdate() : target.getUserUpdate());
+			
 			
 			// return adjusted OrderDTO
 			return target;

@@ -360,6 +360,15 @@
 	<!-- ******************* -->
 	
 	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Order</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
+		<field>
+			<a>idorder</a>
+			<b>id</b>
+		</field>
+	</mapping>
+	
+	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.ModalityType</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
 		<field>

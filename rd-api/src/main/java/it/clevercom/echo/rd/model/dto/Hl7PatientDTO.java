@@ -13,27 +13,47 @@ public class Hl7PatientDTO extends AbstractEchoDTO implements Serializable {
 	private static final long serialVersionUID = 8105708703666941232L;
 
 	private Long idhl7patient;
-	private Patient patient;
-	private String idhl7authoritypatient;
-	private String idauthoritynamespaceid;
-	private String idauthority;
-	private String idtypecode;
-	private String name;
-	private String surname;
-	private Date dateofbirth;
-	private String gender;
-	private String residencestreetaddress;
-	private String residencecitycode;
-	private String residencecountry;
-	private String domicilestreetaddress;
-	private String domicilecitycode;
-	private String domicilecountry;
-	private String maritalstatus;
-	private String birthplace;
-	private String citizenshipid;
-	private String citizenshipdesc;
-	private Date deathdate;
-	private String messagecontrolid;
+    private Patient patient;
+    private String teamIdPatient;
+    private String teamAuthorityNsId;
+    private String teamAuthorityUid;
+    private String teamIdtypecode;
+    private String name;
+    private String surname;
+    private Date dateofbirth;
+    private String gender;
+    private String residencestreetaddress;
+    private String residencecitycode;
+    private String residencecountry;
+    private String domicilestreetaddress;
+    private String domicilecitycode;
+    private String domicilecountry;
+    private String maritalstatus;
+    private String birthplace;
+    private String citizenshipid;
+    private String citizenshipdesc;
+    private Date deathdate;
+    private String messagecontrolid;
+    private String cfIdPatient;
+    private String cfAuthorityNsId;
+    private String cfAuthorityUid;
+    private String cfIdtypecode;
+    private String stpIdPatient;
+    private String stpAuthorityNsId;
+    private String stpAuthorityUid;
+    private String stpIdtypecode;
+    private String eniIdPatient;
+    private String eniAuthorityNsId;
+    private String eniAuthorityUid;
+    private String eniIdtypecode;
+    private String ccIdPatient;
+    private String ccAuthorityNsId;
+    private String ccAuthorityUid;
+    private String ccIdtypecode;
+    private String pkIdPatient;
+    private String pkAuthorityNsId;
+    private String pkAuthorityUid;
+    private String pkIdtypecode;
 	
 	// transient attributes
 	private Date created;
@@ -75,59 +95,59 @@ public class Hl7PatientDTO extends AbstractEchoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the idhl7authoritypatient
+	 * @return the teamIdPatient
 	 */
-	public String getIdhl7authoritypatient() {
-		return idhl7authoritypatient;
+	public String getTeamIdPatient() {
+		return teamIdPatient;
 	}
 
 	/**
-	 * @param idhl7authoritypatient the idhl7authoritypatient to set
+	 * @param teamIdPatient the teamIdPatient to set
 	 */
-	public void setIdhl7authoritypatient(String idhl7authoritypatient) {
-		this.idhl7authoritypatient = idhl7authoritypatient;
+	public void setTeamIdPatient(String teamIdPatient) {
+		this.teamIdPatient = teamIdPatient;
 	}
 
 	/**
-	 * @return the idauthoritynamespaceid
+	 * @return the teamAuthorityNsId
 	 */
-	public String getIdauthoritynamespaceid() {
-		return idauthoritynamespaceid;
+	public String getTeamAuthorityNsId() {
+		return teamAuthorityNsId;
 	}
 
 	/**
-	 * @param idauthoritynamespaceid the idauthoritynamespaceid to set
+	 * @param teamAuthorityNsId the teamAuthorityNsId to set
 	 */
-	public void setIdauthoritynamespaceid(String idauthoritynamespaceid) {
-		this.idauthoritynamespaceid = idauthoritynamespaceid;
+	public void setTeamAuthorityNsId(String teamAuthorityNsId) {
+		this.teamAuthorityNsId = teamAuthorityNsId;
 	}
 
 	/**
-	 * @return the idauthority
+	 * @return the teamAuthorityUid
 	 */
-	public String getIdauthority() {
-		return idauthority;
+	public String getTeamAuthorityUid() {
+		return teamAuthorityUid;
 	}
 
 	/**
-	 * @param idauthority the idauthority to set
+	 * @param teamAuthorityUid the teamAuthorityUid to set
 	 */
-	public void setIdauthority(String idauthority) {
-		this.idauthority = idauthority;
+	public void setTeamAuthorityUid(String teamAuthorityUid) {
+		this.teamAuthorityUid = teamAuthorityUid;
 	}
 
 	/**
-	 * @return the idtypecode
+	 * @return the teamIdtypecode
 	 */
-	public String getIdtypecode() {
-		return idtypecode;
+	public String getTeamIdtypecode() {
+		return teamIdtypecode;
 	}
 
 	/**
-	 * @param idtypecode the idtypecode to set
+	 * @param teamIdtypecode the teamIdtypecode to set
 	 */
-	public void setIdtypecode(String idtypecode) {
-		this.idtypecode = idtypecode;
+	public void setTeamIdtypecode(String teamIdtypecode) {
+		this.teamIdtypecode = teamIdtypecode;
 	}
 
 	/**
@@ -352,6 +372,286 @@ public class Hl7PatientDTO extends AbstractEchoDTO implements Serializable {
 	 */
 	public void setMessagecontrolid(String messagecontrolid) {
 		this.messagecontrolid = messagecontrolid;
+	}
+
+	/**
+	 * @return the cfIdPatient
+	 */
+	public String getCfIdPatient() {
+		return cfIdPatient;
+	}
+
+	/**
+	 * @param cfIdPatient the cfIdPatient to set
+	 */
+	public void setCfIdPatient(String cfIdPatient) {
+		this.cfIdPatient = cfIdPatient;
+	}
+
+	/**
+	 * @return the cfAuthorityNsId
+	 */
+	public String getCfAuthorityNsId() {
+		return cfAuthorityNsId;
+	}
+
+	/**
+	 * @param cfAuthorityNsId the cfAuthorityNsId to set
+	 */
+	public void setCfAuthorityNsId(String cfAuthorityNsId) {
+		this.cfAuthorityNsId = cfAuthorityNsId;
+	}
+
+	/**
+	 * @return the cfAuthorityUid
+	 */
+	public String getCfAuthorityUid() {
+		return cfAuthorityUid;
+	}
+
+	/**
+	 * @param cfAuthorityUid the cfAuthorityUid to set
+	 */
+	public void setCfAuthorityUid(String cfAuthorityUid) {
+		this.cfAuthorityUid = cfAuthorityUid;
+	}
+
+	/**
+	 * @return the cfIdtypecode
+	 */
+	public String getCfIdtypecode() {
+		return cfIdtypecode;
+	}
+
+	/**
+	 * @param cfIdtypecode the cfIdtypecode to set
+	 */
+	public void setCfIdtypecode(String cfIdtypecode) {
+		this.cfIdtypecode = cfIdtypecode;
+	}
+
+	/**
+	 * @return the stpIdPatient
+	 */
+	public String getStpIdPatient() {
+		return stpIdPatient;
+	}
+
+	/**
+	 * @param stpIdPatient the stpIdPatient to set
+	 */
+	public void setStpIdPatient(String stpIdPatient) {
+		this.stpIdPatient = stpIdPatient;
+	}
+
+	/**
+	 * @return the stpAuthorityNsId
+	 */
+	public String getStpAuthorityNsId() {
+		return stpAuthorityNsId;
+	}
+
+	/**
+	 * @param stpAuthorityNsId the stpAuthorityNsId to set
+	 */
+	public void setStpAuthorityNsId(String stpAuthorityNsId) {
+		this.stpAuthorityNsId = stpAuthorityNsId;
+	}
+
+	/**
+	 * @return the stpAuthorityUid
+	 */
+	public String getStpAuthorityUid() {
+		return stpAuthorityUid;
+	}
+
+	/**
+	 * @param stpAuthorityUid the stpAuthorityUid to set
+	 */
+	public void setStpAuthorityUid(String stpAuthorityUid) {
+		this.stpAuthorityUid = stpAuthorityUid;
+	}
+
+	/**
+	 * @return the stpIdtypecode
+	 */
+	public String getStpIdtypecode() {
+		return stpIdtypecode;
+	}
+
+	/**
+	 * @param stpIdtypecode the stpIdtypecode to set
+	 */
+	public void setStpIdtypecode(String stpIdtypecode) {
+		this.stpIdtypecode = stpIdtypecode;
+	}
+
+	/**
+	 * @return the eniIdPatient
+	 */
+	public String getEniIdPatient() {
+		return eniIdPatient;
+	}
+
+	/**
+	 * @param eniIdPatient the eniIdPatient to set
+	 */
+	public void setEniIdPatient(String eniIdPatient) {
+		this.eniIdPatient = eniIdPatient;
+	}
+
+	/**
+	 * @return the eniAuthorityNsId
+	 */
+	public String getEniAuthorityNsId() {
+		return eniAuthorityNsId;
+	}
+
+	/**
+	 * @param eniAuthorityNsId the eniAuthorityNsId to set
+	 */
+	public void setEniAuthorityNsId(String eniAuthorityNsId) {
+		this.eniAuthorityNsId = eniAuthorityNsId;
+	}
+
+	/**
+	 * @return the eniAuthorityUid
+	 */
+	public String getEniAuthorityUid() {
+		return eniAuthorityUid;
+	}
+
+	/**
+	 * @param eniAuthorityUid the eniAuthorityUid to set
+	 */
+	public void setEniAuthorityUid(String eniAuthorityUid) {
+		this.eniAuthorityUid = eniAuthorityUid;
+	}
+
+	/**
+	 * @return the eniIdtypecode
+	 */
+	public String getEniIdtypecode() {
+		return eniIdtypecode;
+	}
+
+	/**
+	 * @param eniIdtypecode the eniIdtypecode to set
+	 */
+	public void setEniIdtypecode(String eniIdtypecode) {
+		this.eniIdtypecode = eniIdtypecode;
+	}
+
+	/**
+	 * @return the ccIdPatient
+	 */
+	public String getCcIdPatient() {
+		return ccIdPatient;
+	}
+
+	/**
+	 * @param ccIdPatient the ccIdPatient to set
+	 */
+	public void setCcIdPatient(String ccIdPatient) {
+		this.ccIdPatient = ccIdPatient;
+	}
+
+	/**
+	 * @return the ccAuthorityNsId
+	 */
+	public String getCcAuthorityNsId() {
+		return ccAuthorityNsId;
+	}
+
+	/**
+	 * @param ccAuthorityNsId the ccAuthorityNsId to set
+	 */
+	public void setCcAuthorityNsId(String ccAuthorityNsId) {
+		this.ccAuthorityNsId = ccAuthorityNsId;
+	}
+
+	/**
+	 * @return the ccAuthorityUid
+	 */
+	public String getCcAuthorityUid() {
+		return ccAuthorityUid;
+	}
+
+	/**
+	 * @param ccAuthorityUid the ccAuthorityUid to set
+	 */
+	public void setCcAuthorityUid(String ccAuthorityUid) {
+		this.ccAuthorityUid = ccAuthorityUid;
+	}
+
+	/**
+	 * @return the ccIdtypecode
+	 */
+	public String getCcIdtypecode() {
+		return ccIdtypecode;
+	}
+
+	/**
+	 * @param ccIdtypecode the ccIdtypecode to set
+	 */
+	public void setCcIdtypecode(String ccIdtypecode) {
+		this.ccIdtypecode = ccIdtypecode;
+	}
+
+	/**
+	 * @return the pkIdPatient
+	 */
+	public String getPkIdPatient() {
+		return pkIdPatient;
+	}
+
+	/**
+	 * @param pkIdPatient the pkIdPatient to set
+	 */
+	public void setPkIdPatient(String pkIdPatient) {
+		this.pkIdPatient = pkIdPatient;
+	}
+
+	/**
+	 * @return the pkAuthorityNsId
+	 */
+	public String getPkAuthorityNsId() {
+		return pkAuthorityNsId;
+	}
+
+	/**
+	 * @param pkAuthorityNsId the pkAuthorityNsId to set
+	 */
+	public void setPkAuthorityNsId(String pkAuthorityNsId) {
+		this.pkAuthorityNsId = pkAuthorityNsId;
+	}
+
+	/**
+	 * @return the pkAuthorityUid
+	 */
+	public String getPkAuthorityUid() {
+		return pkAuthorityUid;
+	}
+
+	/**
+	 * @param pkAuthorityUid the pkAuthorityUid to set
+	 */
+	public void setPkAuthorityUid(String pkAuthorityUid) {
+		this.pkAuthorityUid = pkAuthorityUid;
+	}
+
+	/**
+	 * @return the pkIdtypecode
+	 */
+	public String getPkIdtypecode() {
+		return pkIdtypecode;
+	}
+
+	/**
+	 * @param pkIdtypecode the pkIdtypecode to set
+	 */
+	public void setPkIdtypecode(String pkIdtypecode) {
+		this.pkIdtypecode = pkIdtypecode;
 	}
 
 	/**

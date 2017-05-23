@@ -43,7 +43,10 @@ import it.clevercom.echo.rd.jpa.specification.ModalityTypeSpecification;
 import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
 import it.clevercom.echo.rd.model.dto.WorkTaskDTO;
 import it.clevercom.echo.rd.model.entity.Modality;
+import it.clevercom.echo.rd.model.entity.WorkSession;
+import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.model.entity.WorkTask;
+import it.clevercom.echo.rd.repository.IWorkSession_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkTask_rd_Repository;
 import it.clevercom.echo.rd.util.WorkStatusDateFieldDecoder;
@@ -67,6 +70,9 @@ public class WorkTask_rd_Controller extends EchoController {
 	
 	@Autowired
 	private IWorkStatus_rd_Repository repo_ws;
+	
+	@Autowired
+	private IWorkSession_rd_Repository repo_wss;
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
@@ -242,6 +248,17 @@ public class WorkTask_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(workTask, entity_name);
 
+		// check if session needs to be updated
+		WorkTask task = repo.findOne(workTask.getIdWorkTask());
+		WorkSession session = task.getWorkSession();
+		
+		if (WorkStatusEnum.getInstanceFromCodeValue(session.getWorkStatus().getCode()).order() <= WorkStatusEnum.getInstanceFromCodeValue(workTask.getWorkStatus().getCode()).order()) {
+			WorkStatus status = repo_ws.findByCode(workTask.getWorkStatus().getCode());
+			session.setWorkStatus(status);
+			// update session
+			repo_wss.saveAndFlush(session);
+		}
+		
 		// set updater params
 		UpdateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> updater = getUpdater();
 		updater.setSourceDto(workTask);

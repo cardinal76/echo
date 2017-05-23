@@ -408,6 +408,7 @@ public class Order_rd_Controller extends EchoController {
 						orderService.setActive(false);
 						orderService.setCanceledreason(null);
 						orderService.setAddedreason(current.getAddedReason());
+						orderService.setActive(true);
 						repo_os.saveAndFlush(orderService);
 					}
 					changeRequest = true;
@@ -541,7 +542,9 @@ public class Order_rd_Controller extends EchoController {
 						repo_a.saveAndFlush(oldAllocation);
 					}
 				} else {
-					// update only work task status
+					// ----------------------------------------
+					// update work session and work task status
+					// ----------------------------------------
 					
 					// get session
 					WorkSession sessionToUpdate = orderToUpdate.getWorkSession();
@@ -553,6 +556,10 @@ public class Order_rd_Controller extends EchoController {
 						element.setUserupdate(getLoggedUser(request));
 						repo_wt.saveAndFlush(element);
 					}
+					
+					// update session
+					sessionToUpdate.setWorkStatus(newStatus);
+					repo_wss.saveAndFlush(sessionToUpdate);
 					em.refresh(sessionToUpdate);
 				}				
 			}
