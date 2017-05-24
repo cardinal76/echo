@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -487,6 +488,8 @@ public class Order_rd_Controller extends EchoController {
 					
 					// recreate new task list
 					WorkSession updatedSession = this.recreateWorkSessionTree(sessionToUpdate, order);
+					// fix input dto with new worksession
+					order.setWorkSession(rdDozerMapper.map(updatedSession, WorkSessionDTO.class));
 					
 					// new task size
 					int newTaskSize = sessionToUpdate.getWorkTasks().size();
@@ -702,8 +705,15 @@ public class Order_rd_Controller extends EchoController {
 	
 	private WorkSession recreateWorkSessionTree(WorkSession sessionToUpdate, OrderDTO order) {
 		// remove all tasks
-		repo_wt.delete(sessionToUpdate.getWorkTasks());
-		repo_wt.flush();
+		Iterator<WorkTask> it = sessionToUpdate.getWorkTasks().iterator();
+		while (it.hasNext()) {
+			WorkTask element = it.next();
+			repo_wt.delete(element);
+			it.remove();
+			repo_wt.flush();
+		}
+
+		// em.refresh(sessionToUpdate);
 		
 		// create task list
 		Set<WorkTask> workTasks = new HashSet<WorkTask>();
@@ -718,10 +728,12 @@ public class Order_rd_Controller extends EchoController {
 			task.setModality(repo_m.findOne(Long.valueOf(order.getScheduledModality().getIdModality())));
 			task.setWorkSession(sessionToUpdate);
 			workTasks.add(task);
+			//repo_wt.saveAndFlush(task);
 		}
 		
 		sessionToUpdate.setWorkTasks(workTasks);
 		sessionToUpdate = repo_wss.saveAndFlush(sessionToUpdate);
+		em.refresh(sessionToUpdate);
 		
 		// TODO Auto-generated method stub
 		return sessionToUpdate;
