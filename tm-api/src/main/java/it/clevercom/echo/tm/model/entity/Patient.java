@@ -16,6 +16,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+
+import it.clevercom.echo.common.jpa.entity.AbstractJpaEchoEntity;
+import it.clevercom.echo.tm.model.entity.Maritalstatus;
+import it.clevercom.echo.tm.model.entity.Citizenship;
+
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
@@ -29,10 +34,12 @@ import javax.persistence.UniqueConstraint;
 @Table(name="tm_patient"
     , uniqueConstraints = @UniqueConstraint(columnNames="taxcode") 
 )
-public class Patient  implements java.io.Serializable {
+public class Patient extends AbstractJpaEchoEntity implements java.io.Serializable {
 
 
      private Long idpatient;
+     private Citizenship citizenship;
+     private Maritalstatus maritalstatus;
      private Municipality municipality;
      private String name;
      private String surname;
@@ -62,15 +69,17 @@ public class Patient  implements java.io.Serializable {
     }
 
 	
-    public Patient(Long idpatient, String username, Date created, Date updated, boolean active, String updateuser) {
+    public Patient( Maritalstatus maritalstatus, Citizenship citizenship, Long idpatient, String username, Date created, Date updated, boolean active, String updateuser) {
         this.idpatient = idpatient;
         this.username = username;
         this.created = created;
         this.updated = updated;
         this.active = active;
         this.updateuser = updateuser;
+        this.citizenship = citizenship;
+        this.maritalstatus = maritalstatus;
     }
-    public Patient(Long idpatient, Municipality municipality, String name, String surname, Character gender, String taxcode, Date birthdate, String nationality, String homeaddress, String phonenumber, String username, Date created, Date updated, boolean active, String updateuser, Set<TreatmentPlan> treatmentPlans, Set<MeetingRequest> meetingRequests, Set<Message> messages, Set<ClinicFolder> clinicFolders, Set<CustomThreshold> customThresholds, Set<DetectionPlan> detectionPlans, Set<PatientCaregiver> patientCaregivers, Set<HealthkitPatient> healthkitPatients, Set<Nurse> nurses, Set<PhysicianPatient> physicianPatients) {
+    public Patient( Maritalstatus maritalstatus, Citizenship citizenship, Long idpatient, Municipality municipality, String name, String surname, Character gender, String taxcode, Date birthdate, String nationality, String homeaddress, String phonenumber, String username, Date created, Date updated, boolean active, String updateuser, Set<TreatmentPlan> treatmentPlans, Set<MeetingRequest> meetingRequests, Set<Message> messages, Set<ClinicFolder> clinicFolders, Set<CustomThreshold> customThresholds, Set<DetectionPlan> detectionPlans, Set<PatientCaregiver> patientCaregivers, Set<HealthkitPatient> healthkitPatients, Set<Nurse> nurses, Set<PhysicianPatient> physicianPatients) {
        this.idpatient = idpatient;
        this.municipality = municipality;
        this.name = name;
@@ -96,6 +105,8 @@ public class Patient  implements java.io.Serializable {
        this.healthkitPatients = healthkitPatients;
        this.nurses = nurses;
        this.physicianPatients = physicianPatients;
+       this.citizenship = citizenship;
+       this.maritalstatus = maritalstatus;
     }
    
      @Id 
@@ -340,8 +351,24 @@ public class Patient  implements java.io.Serializable {
         this.physicianPatients = physicianPatients;
     }
 
-
-
+@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="idcitizenship")
+    public Citizenship getCitizenship() {
+        return this.citizenship;
+    }
+    
+    public void setCitizenship(Citizenship citizenship) {
+        this.citizenship = citizenship;
+    }
+@ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="idmaritalstatus")
+    public Maritalstatus getMaritalstatus() {
+        return this.maritalstatus;
+    }
+    
+    public void setMaritalstatus(Maritalstatus maritalstatus) {
+        this.maritalstatus = maritalstatus;
+    }
 
 }
 
