@@ -1,6 +1,7 @@
 package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
+import java.util.Date;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -11,6 +12,7 @@ import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +29,22 @@ import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
+import it.clevercom.echo.common.jpa.specification.DateIntervalSpecification;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
+import it.clevercom.echo.common.util.DateUtil;
+import it.clevercom.echo.common.util.StringUtils;
 import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.enums.WorkStatusEnum;
+import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
 import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
 import it.clevercom.echo.rd.model.entity.WorkSession;
+import it.clevercom.echo.rd.model.entity.WorkTask;
 import it.clevercom.echo.rd.repository.IWorkSession_rd_Repository;
+import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
+import it.clevercom.echo.rd.util.WorkStatusDateFieldDecoder;
 
 @Controller
 @RestController
@@ -48,6 +58,9 @@ public class WorkSession_rd_Controller extends EchoController {
 	
 	@Autowired
 	private IWorkSession_rd_Repository repo;
+	
+	@Autowired
+	private IWorkStatus_rd_Repository repo_ws;
 	
 	@Autowired
     private DozerBeanMapper rdDozerMapper;
@@ -108,6 +121,8 @@ public class WorkSession_rd_Controller extends EchoController {
 	@Loggable
 	public @ResponseBody PagedDTO<WorkSessionDTO> getByCriteria (
 			@RequestParam(defaultValue="null", required=false) String criteria,
+			@RequestParam(defaultValue = "today_start", required = false) Long from,
+			@RequestParam(defaultValue = "today_end", required = false) Long to,
 			@RequestParam(defaultValue = "*", required = false) String status,
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="15", required=false) int size, 
@@ -125,6 +140,35 @@ public class WorkSession_rd_Controller extends EchoController {
 		CriteriaRequestProcessor<IWorkSession_rd_Repository, WorkSession, WorkSessionDTO> processor = getProcessor();
 		processor.setCriteria(criteria);
 		processor.setPageCriteria(sort, field, page, size);
+		
+		// get dates
+		final Date t1 = DateUtil.getStartOfDay(new Date(from));
+		final Date t2 = DateUtil.getEndOfDay(new Date(to));
+		
+		// if there's a selected status, create and set status specification
+		if (!status.equals("*")) {
+			// start decoding status
+			String[] statusItems = StringUtils.split(status, "\\|");
+			// iterate status item and create the right specification
+			for (int i = 0; i < statusItems.length; i++) {
+				Specifications<WorkSession> current = null;
+				// create status specification
+				WorkStatusSpecification<WorkSession> st = new WorkStatusSpecification<WorkSession>(repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i]).code()).getIdworkstatus());
+				// create interval specification based on right date field
+				DateIntervalSpecification<WorkSession, WorkSession> interval = new DateIntervalSpecification<WorkSession, WorkSession>(null, t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i])));
+				current = Specifications.where(current).and(st).and(interval);
+				if (i==0) {
+					processor.addAndSpecification(Specifications.where(current));
+				} else {
+					processor.addOrSpecification(Specifications.where(current));
+				}
+			}
+		} else {
+			// create standard specification based on date interval and standard field name
+			// parse long parameter to Date Object
+			DateIntervalSpecification<WorkSession, WorkSession> interval = new DateIntervalSpecification<WorkSession, WorkSession>(null, t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(WorkStatusEnum.SCHEDULED));
+			processor.addAndSpecification(interval);
+		}
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));

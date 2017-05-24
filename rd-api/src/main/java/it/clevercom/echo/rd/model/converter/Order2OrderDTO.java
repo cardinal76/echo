@@ -11,6 +11,7 @@ import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
+import it.clevercom.echo.rd.model.dto.ModalityDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
 import it.clevercom.echo.rd.model.dto.PatientSmartDTO;
@@ -23,6 +24,7 @@ import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkSession;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
+import it.clevercom.echo.rd.model.entity.WorkTask;
 
 public class Order2OrderDTO implements CustomConverter, MapperAware {
 	@Autowired
@@ -56,6 +58,18 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			target.setRejectReason((source.getRejectreason() != null) ? source.getRejectreason() : null);
 			target.setRequestingPhysician(source.getRequestingphysician() != null ? source.getRequestingphysician() : null);
 			target.setScheduledDate((source.getScheduleddate() != null) ? source.getScheduleddate().getTime() : null);
+			
+			if (source.getWorkSession()!=null) {
+				Set<WorkTask> tasks = source.getWorkSession().getWorkTasks();
+			
+				WorkTask task = null;
+				for (WorkTask workTask : tasks) {
+					task = workTask;
+					break;
+				}
+				target.setScheduledModality(rdDozerMapper.map(task.getModality(), ModalityDTO.class));
+			}
+			
 			target.setCancelReason((source.getCancelreason() != null) ? source.getCancelreason() : null);
 			target.setIdentificationDocument((source.getIdentificationdocument() != null) ? source.getIdentificationdocument() : null);
 			

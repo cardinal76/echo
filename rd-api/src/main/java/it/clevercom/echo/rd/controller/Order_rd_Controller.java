@@ -443,7 +443,7 @@ public class Order_rd_Controller extends EchoController {
 				// ------------------------------------
 				
 				// find allocation for selected modality
-				Modality scheduledModality = repo_m.findOne(Long.valueOf(order.getScheduledModality().getId()));
+				Modality scheduledModality = repo_m.findOne(Long.valueOf(order.getScheduledModality().getIdModality()));
 				ModalityDailyAllocation allocation = repo_a.findByModalityAndDay(scheduledModality, new Date(order.getScheduledDate()));
 				
 				if (allocation == null) {
@@ -492,7 +492,7 @@ public class Order_rd_Controller extends EchoController {
 					int newTaskSize = sessionToUpdate.getWorkTasks().size();
 					
 					// update allocation for selected modality and schedule date
-					Modality scheduledModality = repo_m.findOne(Long.valueOf(order.getScheduledModality().getId()));
+					Modality scheduledModality = repo_m.findOne(Long.valueOf(order.getScheduledModality().getIdModality()));
 					if (!order.getScheduledDate().equals(orderToUpdate.getScheduleddate().getTime())) {
 						// update old allocation
 						ModalityDailyAllocation oldAllocation = repo_a.findByModalityAndDay(scheduledModality, new Date(orderToUpdate.getScheduleddate().getTime()));
@@ -559,6 +559,9 @@ public class Order_rd_Controller extends EchoController {
 					
 					// update session
 					sessionToUpdate.setWorkStatus(newStatus);
+					if (WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).equals(WorkStatusEnum.ACCEPTED)) {
+						sessionToUpdate.setAcceptancedate(new Date());
+					}
 					repo_wss.saveAndFlush(sessionToUpdate);
 					em.refresh(sessionToUpdate);
 				}				
@@ -608,13 +611,34 @@ public class Order_rd_Controller extends EchoController {
 		// validate
 		validator.validateId(id, entity_name);
 		orderValidator.validateDeleteRequest(id, rejectReason, cancelReason);
-			
+		
+		// find order to update 
+		Order orderToUpdate = repo.findOne(id);
+		
+		// deactivate requested services 
+		for (OrderService element : orderToUpdate.getOrderServices()) {
+			element.setActive(false);
+			element.setCanceledreason((StringUtils.isNullEmptyWhiteSpaceOnly(cancelReason)) ? rejectReason : cancelReason);
+		}
+		
+		// deactivate session and task
+		WorkStatus canceledStatus = repo_ws.findOne((long)WorkStatusEnum.CANCELED.order());
+		WorkSession ws = orderToUpdate.getWorkSession();
+		ws.setActive(false);
+		ws.setWorkStatus(canceledStatus);
+		for (WorkTask element : ws.getWorkTasks()) {
+			element.setActive(false);
+			element.setWorkStatus(canceledStatus);
+		}
+		repo_wss.saveAndFlush(ws);
+		
 		// build dto to deactivate
 		OrderDTO toDeactivate = new OrderDTO();
 		toDeactivate.setIdOrder(id);
 		toDeactivate.setCanceledDate(new Date().getTime());
 		toDeactivate.setCancelReason((StringUtils.isNullEmptyWhiteSpaceOnly(cancelReason)) ? null : cancelReason);
 		toDeactivate.setRejectReason((StringUtils.isNullEmptyWhiteSpaceOnly(rejectReason)) ? null : rejectReason);
+		toDeactivate.setWorkStatus(new BaseObjectDTO(String.valueOf(WorkStatusEnum.CANCELED.order()), WorkStatusEnum.CANCELED.name(), WorkStatusEnum.CANCELED.code()));
 		
 		// set updater params
 		UpdateRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> updater = getUpdater();
@@ -644,7 +668,7 @@ public class Order_rd_Controller extends EchoController {
 		WorkPriority priority = repo_wp.findByCode(order.getWorkPriority().getCode());
 		WorkStatus status = repo_ws.findByCode(order.getWorkStatus().getCode());
 		User systemUser = repo_u.findOne("SYSTEM");
-		Modality modality = repo_m.findOne(Long.valueOf(order.getScheduledModality().getId()));
+		Modality modality = repo_m.findOne(Long.valueOf(order.getScheduledModality().getIdModality()));
 		
 		// create worksession
 		WorkSession workSession = new WorkSession();
@@ -691,7 +715,7 @@ public class Order_rd_Controller extends EchoController {
 			task.setWorkStatus(repo_ws.findByCode(order.getWorkStatus().getCode()));
 			task.setUser(repo_u.findOne("SYSTEM"));
 			task.setAccessionnumber(new Long(123123123));
-			task.setModality(repo_m.findOne(Long.valueOf(order.getScheduledModality().getId())));
+			task.setModality(repo_m.findOne(Long.valueOf(order.getScheduledModality().getIdModality())));
 			task.setWorkSession(sessionToUpdate);
 			workTasks.add(task);
 		}
