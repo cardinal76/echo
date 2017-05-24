@@ -125,7 +125,7 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="20", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="idmaritalstatus", required=false) String field) throws Exception {
+			@RequestParam(defaultValue="idinboundmessage", required=false) String field) throws Exception {
 		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
@@ -150,7 +150,7 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 	 * Add marital status
 	 * @author luca
 	 * @category standard create REST method
-	 * @param maritalStatus
+	 * @param inboundmessage
 	 * @param request
 	 * @return
 	 * @since 1.2.0
@@ -160,17 +160,17 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<Hl7InboundMessageDTO> add(@RequestBody Hl7InboundMessageDTO maritalStatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody CreateResponseDTO<Hl7InboundMessageDTO> add(@RequestBody Hl7InboundMessageDTO inboundmessage, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
-		validator.validateDTONullIdd(maritalStatus, entity_id);
+		validator.validateDTONullIdd(inboundmessage, entity_id);
 		
 		// invoke order creator
 		CreateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> creator = getCreator();
 		creator.setCreatedUser(getLoggedUser(request));
-		creator.setDto(maritalStatus);
+		creator.setDto(inboundmessage);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
@@ -183,7 +183,7 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 	 * Update marital status
 	 * @author luca
 	 * @category standard update REST method
-	 * @param maritalStatus
+	 * @param inboundmessage
 	 * @param request
 	 * @return
 	 * @since 1.2.0
@@ -193,20 +193,20 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<Hl7InboundMessageDTO> update(@RequestBody Hl7InboundMessageDTO maritalStatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<Hl7InboundMessageDTO> update(@RequestBody Hl7InboundMessageDTO inboundmessage, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
-		validator.validateDTOIdd(maritalStatus, entity_name);
+		validator.validateDTOIdd(inboundmessage, entity_name);
 
 		// set updater params
 		UpdateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> updater = getUpdater();
-		updater.setSourceDto(maritalStatus);
+		updater.setSourceDto(inboundmessage);
 		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, maritalStatus.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, inboundmessage.getIdd().toString()));
 
 		// return response
 		return updater.process();
@@ -216,7 +216,7 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 	 * Delete marital status
 	 * @author luca
 	 * @category standard delete REST method
-	 * @param maritalStatus
+	 * @param inboundmessage
 	 * @param request
 	 * @since 1.2.0
 	 * @return
@@ -225,20 +225,20 @@ public class Hl7InboundMessage_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<Hl7InboundMessageDTO> delete(@RequestBody Hl7InboundMessageDTO maritalStatus, HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<Hl7InboundMessageDTO> delete(@RequestBody Hl7InboundMessageDTO inboundmessage, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 						
 		// validate
-		validator.validateDTOIdd(maritalStatus, entity_name);
+		validator.validateDTOIdd(inboundmessage, entity_name);
 
 		// set updater params
 		UpdateRequestProcessor<IHl7InboundMessage_rd_Repository, Hl7InboundMessage, Hl7InboundMessageDTO> updater = getUpdater();
-		updater.setSourceDto(maritalStatus);
+		updater.setSourceDto(inboundmessage);
 		updater.setUpdatedUser(getLoggedUser(request));
 				
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, maritalStatus.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, inboundmessage.getIdd().toString()));
 
 		// return response
 		return updater.enable(false);
