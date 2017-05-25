@@ -477,7 +477,7 @@ public class Order_rd_Controller extends EchoController {
 			// ----------------------------------------------------------------------------------
 			
 			else if (((WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).equals(WorkStatusEnum.SCHEDULED))) || (WorkStatusEnum.getInstanceFromCodeValue(orderToUpdate.getWorkStatus().getCode()).equals(WorkStatusEnum.ACCEPTED)) &&
-					 ((WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).equals(WorkStatusEnum.SCHEDULED.order()) || WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).equals(WorkStatusEnum.ACCEPTED.order())))) {
+					 ((WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).equals(WorkStatusEnum.SCHEDULED) || WorkStatusEnum.getInstanceFromCodeValue(order.getWorkStatus().getCode()).equals(WorkStatusEnum.ACCEPTED)))) {
 				
 				if (changeRequest==true) {
 					// get session
@@ -629,11 +629,22 @@ public class Order_rd_Controller extends EchoController {
 		WorkSession ws = orderToUpdate.getWorkSession();
 		ws.setActive(false);
 		ws.setWorkStatus(canceledStatus);
+		
+		Modality scheduledModality = null;
+		int taskToRemove = 0;
 		for (WorkTask element : ws.getWorkTasks()) {
 			element.setActive(false);
 			element.setWorkStatus(canceledStatus);
+			scheduledModality = element.getModality();
+			taskToRemove++;
 		}
 		repo_wss.saveAndFlush(ws);
+		
+		// remove allocation
+		ModalityDailyAllocation oldAllocation = repo_a.findByModalityAndDay(scheduledModality, new Date(orderToUpdate.getScheduleddate().getTime()));
+		oldAllocation.setPatientallocation(oldAllocation.getPatientallocation()-1);
+		oldAllocation.setServiceallocation(oldAllocation.getServiceallocation()-taskToRemove);
+		repo_a.saveAndFlush(oldAllocation);
 		
 		// build dto to deactivate
 		OrderDTO toDeactivate = new OrderDTO();
