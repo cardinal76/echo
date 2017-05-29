@@ -25,7 +25,11 @@ public abstract class AbstractJpaEchoEntity {
     
     @PrePersist
     protected void onCreate() {
-    	updated = created = new Date();
+    	if (created != null )
+    		updated = new Date();
+    	else
+    		updated = created = new Date();
+    	
     }
 
     @PreUpdate

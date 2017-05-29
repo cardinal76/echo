@@ -4,6 +4,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -40,7 +42,6 @@ import it.clevercom.echo.rd.model.dto.CountryDTO;
 import it.clevercom.echo.rd.model.dto.MunicipalityDTO;
 import it.clevercom.echo.rd.model.dto.ProvinceDTO;
 import it.clevercom.echo.rd.model.dto.RegionDTO;
-import it.clevercom.echo.rd.model.entity.BodyApparatus;
 import it.clevercom.echo.rd.model.entity.Country;
 import it.clevercom.echo.rd.model.entity.Municipality;
 import it.clevercom.echo.rd.model.entity.Province;
@@ -64,10 +65,10 @@ import it.clevercom.echo.rd.repository.IRegion_rd_Repository;
 public class Country_rd_Controller extends EchoController {
 	// hard coded data 
 	@Value("${echo.api.setting.localcountryid}")
-	public static Long localCountryId;
+	public String localCountryId;
 	
 	@Value("${echo.api.setting.unknownregionid}")
-	public static Long unknownRegionId;
+	public String unknownRegionId;
 	
 	@Autowired
 	private Environment env;
@@ -89,6 +90,9 @@ public class Country_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -162,29 +166,21 @@ public class Country_rd_Controller extends EchoController {
 		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
-				
+		new CriteriaRequestProcessor<ICountry_rd_Repository, Country, CountryDTO>(repo, rdDozerMapper, CountryDTO.class, entity_name, env);
 		// validate
 		validator.validateSort(sort);
-		validator.validateSortField(field, BodyApparatus.class, entity_name);
+		validator.validateSortField(field, Country.class, entity_name);
 		
-		// create processor
-		CriteriaRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> rp = 
-				new CriteriaRequestProcessor<ICountry_rd_Repository, Country, CountryDTO>(repo, 
-						rdDozerMapper, 
-						CountryDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		CriteriaRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> processor = getProcessor();
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**
@@ -218,9 +214,9 @@ public class Country_rd_Controller extends EchoController {
 		
 		// finding related entities
 		List<Region> regions = new ArrayList<Region>();
-		if (country.getIdcountry().longValue() != localCountryId.longValue()) {
+		if (!country.getIdcountry().equals(Long.valueOf(localCountryId))) {
 			// return unknown region
-			regions.add(repo_r.findOne(unknownRegionId));
+			regions.add(repo_r.findOne(Long.valueOf(unknownRegionId)));
 		} else {
 			// return local country region			
 			regions = repo_r.findByCountry(country, new Sort("regionname"));
@@ -385,21 +381,16 @@ public class Country_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(country, entity_id);
 		
-		// create processor
-		CreateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> rp = 
-				new CreateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO>(repo, 
-						rdDozerMapper, 
-						Country.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						country,
-						env);
+		// invoke order creator
+		CreateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> creator = getCreator();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(country);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -423,21 +414,16 @@ public class Country_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(country, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> rp = 
-				new UpdateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						country, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> updater = getUpdater();
+		updater.setSourceDto(country);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, country.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -460,20 +446,30 @@ public class Country_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(country, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> rp = 
-				new UpdateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						country, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> updater = getUpdater();
+		updater.setSourceDto(country);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, country.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
+	}
+
+	@Override
+	protected CreateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> getCreator() {
+		return new CreateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO>(repo, rdDozerMapper, Country.class, entity_name, env, em);
+	}
+
+	@Override
+	protected UpdateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> getUpdater() {
+		return new UpdateRequestProcessor<ICountry_rd_Repository, Country, CountryDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<ICountry_rd_Repository, Country, CountryDTO> getProcessor() {
+		return new CriteriaRequestProcessor<ICountry_rd_Repository, Country, CountryDTO>(repo, rdDozerMapper, CountryDTO.class, entity_name, env);
 	}
 }

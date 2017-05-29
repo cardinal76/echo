@@ -1,7 +1,14 @@
 package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -25,14 +32,27 @@ import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
+import it.clevercom.echo.common.jpa.specification.DateIntervalSpecification;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
+import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
+import it.clevercom.echo.rd.model.dto.ModalityDailyAllocationDTO;
+import it.clevercom.echo.rd.model.dto.ModalityGroupDTO;
 import it.clevercom.echo.rd.model.dto.ModalityTypeDTO;
+import it.clevercom.echo.rd.model.dto.ModalityTypeDailyAllocationDTO;
+import it.clevercom.echo.rd.model.dto.ModalityTypeIntervalAllocationDTO;
+import it.clevercom.echo.rd.model.entity.Modality;
 import it.clevercom.echo.rd.model.entity.ModalityType;
+import it.clevercom.echo.rd.model.entity.VModalityAllocation;
+import it.clevercom.echo.rd.model.entity.VModalitytypeAllocation;
 import it.clevercom.echo.rd.repository.IModalityType_rd_Repository;
+import it.clevercom.echo.rd.repository.IModality_rd_Repository;
+import it.clevercom.echo.rd.repository.IVModalityAllocation_rd_Repository;
+import it.clevercom.echo.rd.repository.IVModalitytypeAllocation_rd_Repository;
 
 @Controller
 @RestController
@@ -54,16 +74,30 @@ public class ModalityType_rd_Controller extends EchoController {
 	private IModalityType_rd_Repository repo;
 	
 	@Autowired
+	private IModality_rd_Repository repo_m;
+	
+	@Autowired
+	private IVModalitytypeAllocation_rd_Repository repo_mta;
+	
+	@Autowired
+	private IVModalityAllocation_rd_Repository repo_mda;
+	
+	@Autowired
     private DozerBeanMapper rdDozerMapper;
 	
 	@Autowired
 	private Validator validator;
+	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind it in exception message
 	public static final String entity_name = "ModalityType";
 	public static final String entity_id = "idmodalitytype";
+	public static final String entity_allocation_type_name = "ModalityTypeAllocation";
+	public static final String entity_allocation_type_id = "id";
 	
 	/**
 	 * Get modality type by id
@@ -127,26 +161,117 @@ public class ModalityType_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, ModalityType.class, entity_name);
 		
-		// create the processor
-		CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> rp = 
-				new CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, 
-						rdDozerMapper, 
-						ModalityTypeDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> processor = getProcessor();
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 				
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
+	/**
+	 * Get modality type and modalities allocation
+	 * @author luca
+	 * @category custom get REST method
+	 * @return
+	 * @since 1.2.0
+	 * @throws Exception
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(value="allocation", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody ModalityTypeIntervalAllocationDTO getAllocation (
+			@RequestParam(defaultValue = "current_month_start", required = false) Long from,
+			@RequestParam(defaultValue = "current_month_end", required = false) Long to,
+			@RequestParam(required = true) Long idmodalitytype) throws Exception {
+		
+		// set params
+		CriteriaRequestProcessor<IVModalitytypeAllocation_rd_Repository, VModalitytypeAllocation, ModalityTypeDailyAllocationDTO> processor_mta = getMTAProcessor();
+		processor_mta.setCriteria(entity_id + "!" + idmodalitytype.toString());
+		processor_mta.setPageCriteria("asc", entity_allocation_type_id, 1, 31);
+
+		// create standard specification based on date interval and standard field name
+		// get dates
+		final Date t1 = DateUtil.getStartOfDay(new Date(from));
+		final Date t2 = DateUtil.getEndOfDay(new Date(to));
+		DateIntervalSpecification<VModalitytypeAllocation, VModalitytypeAllocation> interval = new DateIntervalSpecification<VModalitytypeAllocation, VModalitytypeAllocation>(null, t1, t2, "scheduledate");
+		processor_mta.addAndSpecification(interval);
+		
+		// find modality and convert to base object dto
+		ModalityType modalityType = repo.findOne(idmodalitytype);
+		
+		// find all modalities belonging to modalityType
+		List<Modality> modalityList = repo_m.findByModalityType(modalityType);
+		
+		// get allocations
+		Map<Long, List<ModalityDailyAllocationDTO>> modalityAllocation = new HashMap<Long, List<ModalityDailyAllocationDTO>>();
+		for (Modality modality : modalityList) {
+			List<VModalityAllocation> modalityDailyAllocation = repo_mda.findByIdmodalityAndScheduledateBetween(modality.getIdmodality(), new Date(from), new Date(to));
+			List<ModalityDailyAllocationDTO> allocationDTO = new ArrayList<ModalityDailyAllocationDTO>();
+			for (VModalityAllocation allocation : modalityDailyAllocation) {
+				allocationDTO.add(rdDozerMapper.map(allocation, ModalityDailyAllocationDTO.class));
+			}
+			modalityAllocation.put(modality.getIdmodality(), allocationDTO);
+		}
+		
+		// build dto
+		ModalityTypeIntervalAllocationDTO dto = new ModalityTypeIntervalAllocationDTO();
+		dto.setFrom(from);
+		dto.setTo(to);
+		dto.setModalityType(rdDozerMapper.map(modalityType, BaseObjectDTO.class));
+		dto.setModalityTypeAllocation(processor_mta.process().getElements());
+		dto.setModalityAllocation(modalityAllocation );
+		return dto;
+	}
+
+	/**
+	 * Get modality type group with modality children
+	 * @author luca
+	 * @category standard get by criteria REST method
+	 * @param criteria
+	 * @param page
+	 * @param size
+	 * @param sort
+	 * @param field
+	 * @return
+	 * @since 1.2.0
+	 * @throws Exception
+	 */
+	@Transactional("rdTm")
+	@RequestMapping(value="modality", method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody PagedDTO<ModalityGroupDTO> getModalityGroupedByModalityType (
+			@RequestParam(defaultValue="null", required=false) String criteria, 
+			@RequestParam(defaultValue="1", required=false) int page, 
+			@RequestParam(defaultValue="1000", required=false) int size, 
+			@RequestParam(defaultValue="asc", required=false) String sort, 
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
+		
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+						
+		// validate
+		validator.validateSort(sort);
+		validator.validateSortField(field, ModalityType.class, entity_name);
+		
+		// set processor params
+		CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityGroupDTO> processor_mg = getMGProcessor();
+		processor_mg.setCriteria(criteria);
+		processor_mg.setPageCriteria(sort, field, page, size);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
+				
+		// process data request
+		return processor_mg.process();
+	}
+
 	/**
 	 * Add a modality
 	 * @author luca
@@ -161,28 +286,23 @@ public class ModalityType_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.POST)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody CreateResponseDTO<ModalityTypeDTO> add(@RequestBody ModalityTypeDTO modalityTpye, HttpServletRequest request) throws Exception {
+	public @ResponseBody CreateResponseDTO<ModalityTypeDTO> add(@RequestBody ModalityTypeDTO modalityType, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
-		validator.validateDTONullIdd(modalityTpye, entity_id);
+		validator.validateDTONullIdd(modalityType, entity_id);
 				
-		// create the processor
-		CreateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> rp = 
-				new CreateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, 
-						rdDozerMapper, 
-						ModalityType.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						modalityTpye,
-						env);
+		// invoke order creator
+		CreateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> creator = getCreator();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(modalityType);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -199,28 +319,23 @@ public class ModalityType_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.PUT)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody UpdateResponseDTO<ModalityTypeDTO> update(@RequestBody ModalityTypeDTO modalityTpye, HttpServletRequest request) throws Exception {
+	public @ResponseBody UpdateResponseDTO<ModalityTypeDTO> update(@RequestBody ModalityTypeDTO modalityType, HttpServletRequest request) throws Exception {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
-		validator.validateDTOIdd(modalityTpye, entity_name);
+		validator.validateDTOIdd(modalityType, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> rp = 
-				new UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						modalityTpye, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> updater = getUpdater();
+		updater.setSourceDto(modalityType);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
-		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, modalityTpye.getIdd().toString()));
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, modalityType.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -243,20 +358,38 @@ public class ModalityType_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(modalityType, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> rp = 
-				new UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						modalityType, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> updater = getUpdater();
+		updater.setSourceDto(modalityType);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, modalityType.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
+	}
+
+	@Override
+	protected CreateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> getCreator() {
+		return new CreateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, rdDozerMapper, ModalityType.class, entity_name, env, em);
+	}
+
+	@Override
+	protected UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> getUpdater() {
+		return new UpdateRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityTypeDTO>(repo, rdDozerMapper, ModalityTypeDTO.class, entity_name, env);
+	}
+	
+	private CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityGroupDTO> getMGProcessor() {
+		return new CriteriaRequestProcessor<IModalityType_rd_Repository, ModalityType, ModalityGroupDTO>(repo, rdDozerMapper, ModalityGroupDTO.class, entity_name, env);
+	}
+	
+	private CriteriaRequestProcessor<IVModalitytypeAllocation_rd_Repository, VModalitytypeAllocation, ModalityTypeDailyAllocationDTO> getMTAProcessor() {
+		return new CriteriaRequestProcessor<IVModalitytypeAllocation_rd_Repository, VModalitytypeAllocation, ModalityTypeDailyAllocationDTO>(repo_mta, rdDozerMapper, ModalityTypeDailyAllocationDTO.class, entity_allocation_type_name, env);
 	}
 }

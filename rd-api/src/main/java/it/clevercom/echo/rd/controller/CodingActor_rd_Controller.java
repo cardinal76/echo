@@ -2,6 +2,8 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -31,7 +33,6 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.CodingActorDTO;
-import it.clevercom.echo.rd.model.entity.BodyApparatus;
 import it.clevercom.echo.rd.model.entity.CodingActor;
 import it.clevercom.echo.rd.repository.ICodingActor_rd_Repository;
 
@@ -59,6 +60,9 @@ public class CodingActor_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -129,26 +133,18 @@ public class CodingActor_rd_Controller extends EchoController {
 				
 		// validate
 		validator.validateSort(sort);
-		validator.validateSortField(field, BodyApparatus.class, entity_name);
+		validator.validateSortField(field, CodingActor.class, entity_name);
 		
-		// create processor
-		CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> rp = 
-				new CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, 
-						rdDozerMapper, 
-						CodingActorDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> processor = getProcessor();
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**
@@ -172,21 +168,16 @@ public class CodingActor_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(codingactor, entity_id);
 		
-		// create processor
-		CreateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> rp = 
-				new CreateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, 
-						rdDozerMapper, 
-						CodingActor.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						codingactor,
-						env);
+		// invoke order creator
+		CreateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> creator = getCreator();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(codingactor);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -210,21 +201,16 @@ public class CodingActor_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(codingactor, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> rp = 
-				new UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						codingactor, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> updater = getUpdater();
+		updater.setSourceDto(codingactor);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, codingactor.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -247,20 +233,30 @@ public class CodingActor_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(codingactor, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> rp = 
-				new UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						codingactor, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> updater = getUpdater();
+		updater.setSourceDto(codingactor);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, codingactor.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
+	}
+
+	@Override
+	protected CreateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> getCreator() {
+		return new CreateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, rdDozerMapper, CodingActor.class, entity_name, env, em);
+	}
+
+	@Override
+	protected UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> getUpdater() {
+		return new UpdateRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO> getProcessor() {
+		return new CriteriaRequestProcessor<ICodingActor_rd_Repository, CodingActor, CodingActorDTO>(repo, rdDozerMapper, CodingActorDTO.class, entity_name, env);
 	}
 }

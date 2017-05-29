@@ -11,10 +11,12 @@ import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
+import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.PatientSmartDTO;
 import it.clevercom.echo.rd.model.dto.WorkReportDTO;
 import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
 import it.clevercom.echo.rd.model.dto.WorkTaskDTO;
+import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkReport;
@@ -67,10 +69,18 @@ public class WorkSession2WorkSessionDTO implements CustomConverter, MapperAware 
 			target.setScheduledDate(source.getScheduleddate()!=null ? source.getScheduleddate().getTime() : null);
 			target.setReportedDate(source.getReporteddate()!=null ? source.getReporteddate().getTime() : null);
 			
-			target.setActive(source.getActive());
-			target.setCreated(source.getCreated());
-			target.setUpdated(source.getUpdated());
-			target.setUserupdate(source.getUserupdate());
+			Order order = null;
+			for (Order element : source.getOrders()) {
+				order = element;
+				break;
+			}
+			
+			target.setOrder(rdDozerMapper.map(order, BaseObjectDTO.class));
+			
+			target.setActive((source.getActive()!=null) ? source.getActive() : null);
+			target.setCreated((source.getCreated()!=null) ? source.getCreated() : null);
+			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : null);
+			target.setUserUpdate((source.getUserupdate()!=null) ? source.getUserupdate() : null);
 			
 			return target;
 		} else if (sourceFieldValue instanceof WorkSessionDTO) {
@@ -84,7 +94,7 @@ public class WorkSession2WorkSessionDTO implements CustomConverter, MapperAware 
 				target = (WorkSession) destinationFieldValue;
 			}
 			
-			target.setIdworksession(source.getIdWorkSession());
+			target.setIdworksession((source.getIdWorkSession()!=null) ? source.getIdWorkSession() : null);
 			target.setPatient(rdDozerMapper.map(source.getPatient(), Patient.class));
 			target.setWorkStatus(rdDozerMapper.map(source.getWorkStatus(), WorkStatus.class));
 			
@@ -108,10 +118,14 @@ public class WorkSession2WorkSessionDTO implements CustomConverter, MapperAware 
 			target.setScheduleddate(source.getScheduledDate()!=null ? new Date(source.getScheduledDate()) : null);
 			target.setReporteddate(source.getReportedDate()!=null ? new Date(source.getReportedDate()) : null);
 			
-			target.setActive(source.getActive());
-			target.setCreated(source.getCreated());
-			target.setUpdated(source.getUpdated());
-			target.setUserupdate(source.getUserupdate());
+			Set<Order> orders = new HashSet<Order>();
+			orders.add(rdDozerMapper.map(source.getOrder(), Order.class));
+			target.setOrders(orders);
+			
+			target.setActive((source.getActive()!=null) ? source.getActive() : null);
+			target.setCreated((source.getCreated()!=null) ? source.getCreated() : null);
+			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : null);
+			target.setUserupdate((source.getUserUpdate()!=null) ? source.getUserUpdate() : null);
 			
 			return target;
 		} else {

@@ -49,7 +49,8 @@ public class DataBase_sso_Config {
 		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		em.setJpaVendorAdapter(vendorAdapter);
 		em.setJpaProperties(ssoHibernateProperties());
-
+		em.setPersistenceUnitName("ssoPU");
+		
 		return em;
 	}
 

@@ -1,5 +1,5 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 2-mag-2017 14.43.59 by Hibernate Tools 5.2.2.Final
+// Generated 24-mag-2017 22.43.53 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
@@ -32,10 +32,10 @@ public class Hl7Patient  extends AbstractJpaEchoEntity implements java.io.Serial
 
      private Long idhl7patient;
      private Patient patient;
-     private String idhl7authoritypatient;
-     private String idauthoritynamespaceid;
-     private String idauthority;
-     private String idtypecode;
+     private String teamIdPatient;
+     private String teamAuthorityNsId;
+     private String teamAuthorityUid;
+     private String teamIdtypecode;
      private String name;
      private String surname;
      private Date dateofbirth;
@@ -52,24 +52,40 @@ public class Hl7Patient  extends AbstractJpaEchoEntity implements java.io.Serial
      private String citizenshipdesc;
      private Date deathdate;
      private String messagecontrolid;
+     private String cfIdPatient;
+     private String cfAuthorityNsId;
+     private String cfAuthorityUid;
+     private String cfIdtypecode;
+     private String stpIdPatient;
+     private String stpAuthorityNsId;
+     private String stpAuthorityUid;
+     private String stpIdtypecode;
+     private String eniIdPatient;
+     private String eniAuthorityNsId;
+     private String eniAuthorityUid;
+     private String eniIdtypecode;
+     private String ccIdPatient;
+     private String ccAuthorityNsId;
+     private String ccAuthorityUid;
+     private String ccIdtypecode;
+     private String pkIdPatient;
+     private String pkAuthorityNsId;
+     private String pkAuthorityUid;
+     private String pkIdtypecode;
 
     public Hl7Patient() {
     }
 
 	
-    public Hl7Patient(String idhl7authoritypatient, String idauthoritynamespaceid, String idauthority, String idtypecode, String messagecontrolid) {
-        this.idhl7authoritypatient = idhl7authoritypatient;
-        this.idauthoritynamespaceid = idauthoritynamespaceid;
-        this.idauthority = idauthority;
-        this.idtypecode = idtypecode;
+    public Hl7Patient(String messagecontrolid) {
         this.messagecontrolid = messagecontrolid;
     }
-    public Hl7Patient(Patient patient, String idhl7authoritypatient, String idauthoritynamespaceid, String idauthority, String idtypecode, String name, String surname, Date dateofbirth, String gender, String residencestreetaddress, String residencecitycode, String residencecountry, String domicilestreetaddress, String domicilecitycode, String domicilecountry, String maritalstatus, String birthplace, String citizenshipid, String citizenshipdesc, Date deathdate, String messagecontrolid) {
+    public Hl7Patient(Patient patient, String teamIdPatient, String teamAuthorityNsId, String teamAuthorityUid, String teamIdtypecode, String name, String surname, Date dateofbirth, String gender, String residencestreetaddress, String residencecitycode, String residencecountry, String domicilestreetaddress, String domicilecitycode, String domicilecountry, String maritalstatus, String birthplace, String citizenshipid, String citizenshipdesc, Date deathdate, String messagecontrolid, String cfIdPatient, String cfAuthorityNsId, String cfAuthorityUid, String cfIdtypecode, String stpIdPatient, String stpAuthorityNsId, String stpAuthorityUid, String stpIdtypecode, String eniIdPatient, String eniAuthorityNsId, String eniAuthorityUid, String eniIdtypecode, String ccIdPatient, String ccAuthorityNsId, String ccAuthorityUid, String ccIdtypecode, String pkIdPatient, String pkAuthorityNsId, String pkAuthorityUid, String pkIdtypecode) {
        this.patient = patient;
-       this.idhl7authoritypatient = idhl7authoritypatient;
-       this.idauthoritynamespaceid = idauthoritynamespaceid;
-       this.idauthority = idauthority;
-       this.idtypecode = idtypecode;
+       this.teamIdPatient = teamIdPatient;
+       this.teamAuthorityNsId = teamAuthorityNsId;
+       this.teamAuthorityUid = teamAuthorityUid;
+       this.teamIdtypecode = teamIdtypecode;
        this.name = name;
        this.surname = surname;
        this.dateofbirth = dateofbirth;
@@ -86,6 +102,26 @@ public class Hl7Patient  extends AbstractJpaEchoEntity implements java.io.Serial
        this.citizenshipdesc = citizenshipdesc;
        this.deathdate = deathdate;
        this.messagecontrolid = messagecontrolid;
+       this.cfIdPatient = cfIdPatient;
+       this.cfAuthorityNsId = cfAuthorityNsId;
+       this.cfAuthorityUid = cfAuthorityUid;
+       this.cfIdtypecode = cfIdtypecode;
+       this.stpIdPatient = stpIdPatient;
+       this.stpAuthorityNsId = stpAuthorityNsId;
+       this.stpAuthorityUid = stpAuthorityUid;
+       this.stpIdtypecode = stpIdtypecode;
+       this.eniIdPatient = eniIdPatient;
+       this.eniAuthorityNsId = eniAuthorityNsId;
+       this.eniAuthorityUid = eniAuthorityUid;
+       this.eniIdtypecode = eniIdtypecode;
+       this.ccIdPatient = ccIdPatient;
+       this.ccAuthorityNsId = ccAuthorityNsId;
+       this.ccAuthorityUid = ccAuthorityUid;
+       this.ccIdtypecode = ccIdtypecode;
+       this.pkIdPatient = pkIdPatient;
+       this.pkAuthorityNsId = pkAuthorityNsId;
+       this.pkAuthorityUid = pkAuthorityUid;
+       this.pkIdtypecode = pkIdtypecode;
     }
    
      @GenericGenerator(name="generator", strategy="org.hibernate.id.enhanced.SequenceStyleGenerator", parameters={@Parameter(name="optimizer", value="none"), @Parameter(name="sequence_name", value="hl7patient_id_seq"), @Parameter(name="increment_size", value="1")})@Id @GeneratedValue(generator="generator")
@@ -111,43 +147,43 @@ public class Hl7Patient  extends AbstractJpaEchoEntity implements java.io.Serial
     }
 
     
-    @Column(name="idhl7authoritypatient", nullable=false, length=16)
-    public String getIdhl7authoritypatient() {
-        return this.idhl7authoritypatient;
+    @Column(name="team-id-patient", length=16)
+    public String getTeamIdPatient() {
+        return this.teamIdPatient;
     }
     
-    public void setIdhl7authoritypatient(String idhl7authoritypatient) {
-        this.idhl7authoritypatient = idhl7authoritypatient;
-    }
-
-    
-    @Column(name="idauthoritynamespaceid", nullable=false, length=20)
-    public String getIdauthoritynamespaceid() {
-        return this.idauthoritynamespaceid;
-    }
-    
-    public void setIdauthoritynamespaceid(String idauthoritynamespaceid) {
-        this.idauthoritynamespaceid = idauthoritynamespaceid;
+    public void setTeamIdPatient(String teamIdPatient) {
+        this.teamIdPatient = teamIdPatient;
     }
 
     
-    @Column(name="idauthority", nullable=false, length=199)
-    public String getIdauthority() {
-        return this.idauthority;
+    @Column(name="team-authority-ns-id", length=20)
+    public String getTeamAuthorityNsId() {
+        return this.teamAuthorityNsId;
     }
     
-    public void setIdauthority(String idauthority) {
-        this.idauthority = idauthority;
+    public void setTeamAuthorityNsId(String teamAuthorityNsId) {
+        this.teamAuthorityNsId = teamAuthorityNsId;
     }
 
     
-    @Column(name="idtypecode", nullable=false, length=5)
-    public String getIdtypecode() {
-        return this.idtypecode;
+    @Column(name="team-authority-uid", length=199)
+    public String getTeamAuthorityUid() {
+        return this.teamAuthorityUid;
     }
     
-    public void setIdtypecode(String idtypecode) {
-        this.idtypecode = idtypecode;
+    public void setTeamAuthorityUid(String teamAuthorityUid) {
+        this.teamAuthorityUid = teamAuthorityUid;
+    }
+
+    
+    @Column(name="team-idtypecode", length=5)
+    public String getTeamIdtypecode() {
+        return this.teamIdtypecode;
+    }
+    
+    public void setTeamIdtypecode(String teamIdtypecode) {
+        this.teamIdtypecode = teamIdtypecode;
     }
 
     
@@ -308,6 +344,206 @@ public class Hl7Patient  extends AbstractJpaEchoEntity implements java.io.Serial
     
     public void setMessagecontrolid(String messagecontrolid) {
         this.messagecontrolid = messagecontrolid;
+    }
+
+    
+    @Column(name="cf-id-patient", length=16)
+    public String getCfIdPatient() {
+        return this.cfIdPatient;
+    }
+    
+    public void setCfIdPatient(String cfIdPatient) {
+        this.cfIdPatient = cfIdPatient;
+    }
+
+    
+    @Column(name="cf-authority-ns-id", length=20)
+    public String getCfAuthorityNsId() {
+        return this.cfAuthorityNsId;
+    }
+    
+    public void setCfAuthorityNsId(String cfAuthorityNsId) {
+        this.cfAuthorityNsId = cfAuthorityNsId;
+    }
+
+    
+    @Column(name="cf-authority-uid", length=199)
+    public String getCfAuthorityUid() {
+        return this.cfAuthorityUid;
+    }
+    
+    public void setCfAuthorityUid(String cfAuthorityUid) {
+        this.cfAuthorityUid = cfAuthorityUid;
+    }
+
+    
+    @Column(name="cf-idtypecode", length=5)
+    public String getCfIdtypecode() {
+        return this.cfIdtypecode;
+    }
+    
+    public void setCfIdtypecode(String cfIdtypecode) {
+        this.cfIdtypecode = cfIdtypecode;
+    }
+
+    
+    @Column(name="stp-id-patient", length=16)
+    public String getStpIdPatient() {
+        return this.stpIdPatient;
+    }
+    
+    public void setStpIdPatient(String stpIdPatient) {
+        this.stpIdPatient = stpIdPatient;
+    }
+
+    
+    @Column(name="stp-authority-ns-id", length=20)
+    public String getStpAuthorityNsId() {
+        return this.stpAuthorityNsId;
+    }
+    
+    public void setStpAuthorityNsId(String stpAuthorityNsId) {
+        this.stpAuthorityNsId = stpAuthorityNsId;
+    }
+
+    
+    @Column(name="stp-authority-uid", length=199)
+    public String getStpAuthorityUid() {
+        return this.stpAuthorityUid;
+    }
+    
+    public void setStpAuthorityUid(String stpAuthorityUid) {
+        this.stpAuthorityUid = stpAuthorityUid;
+    }
+
+    
+    @Column(name="stp-idtypecode", length=5)
+    public String getStpIdtypecode() {
+        return this.stpIdtypecode;
+    }
+    
+    public void setStpIdtypecode(String stpIdtypecode) {
+        this.stpIdtypecode = stpIdtypecode;
+    }
+
+    
+    @Column(name="eni-id-patient", length=16)
+    public String getEniIdPatient() {
+        return this.eniIdPatient;
+    }
+    
+    public void setEniIdPatient(String eniIdPatient) {
+        this.eniIdPatient = eniIdPatient;
+    }
+
+    
+    @Column(name="eni-authority-ns-id", length=20)
+    public String getEniAuthorityNsId() {
+        return this.eniAuthorityNsId;
+    }
+    
+    public void setEniAuthorityNsId(String eniAuthorityNsId) {
+        this.eniAuthorityNsId = eniAuthorityNsId;
+    }
+
+    
+    @Column(name="eni-authority-uid", length=199)
+    public String getEniAuthorityUid() {
+        return this.eniAuthorityUid;
+    }
+    
+    public void setEniAuthorityUid(String eniAuthorityUid) {
+        this.eniAuthorityUid = eniAuthorityUid;
+    }
+
+    
+    @Column(name="eni-idtypecode", length=5)
+    public String getEniIdtypecode() {
+        return this.eniIdtypecode;
+    }
+    
+    public void setEniIdtypecode(String eniIdtypecode) {
+        this.eniIdtypecode = eniIdtypecode;
+    }
+
+    
+    @Column(name="cc-id-patient", length=16)
+    public String getCcIdPatient() {
+        return this.ccIdPatient;
+    }
+    
+    public void setCcIdPatient(String ccIdPatient) {
+        this.ccIdPatient = ccIdPatient;
+    }
+
+    
+    @Column(name="cc-authority-ns-id", length=20)
+    public String getCcAuthorityNsId() {
+        return this.ccAuthorityNsId;
+    }
+    
+    public void setCcAuthorityNsId(String ccAuthorityNsId) {
+        this.ccAuthorityNsId = ccAuthorityNsId;
+    }
+
+    
+    @Column(name="cc-authority-uid", length=199)
+    public String getCcAuthorityUid() {
+        return this.ccAuthorityUid;
+    }
+    
+    public void setCcAuthorityUid(String ccAuthorityUid) {
+        this.ccAuthorityUid = ccAuthorityUid;
+    }
+
+    
+    @Column(name="cc-idtypecode", length=5)
+    public String getCcIdtypecode() {
+        return this.ccIdtypecode;
+    }
+    
+    public void setCcIdtypecode(String ccIdtypecode) {
+        this.ccIdtypecode = ccIdtypecode;
+    }
+
+    
+    @Column(name="pk-id-patient", length=16)
+    public String getPkIdPatient() {
+        return this.pkIdPatient;
+    }
+    
+    public void setPkIdPatient(String pkIdPatient) {
+        this.pkIdPatient = pkIdPatient;
+    }
+
+    
+    @Column(name="pk-authority-ns-id", length=20)
+    public String getPkAuthorityNsId() {
+        return this.pkAuthorityNsId;
+    }
+    
+    public void setPkAuthorityNsId(String pkAuthorityNsId) {
+        this.pkAuthorityNsId = pkAuthorityNsId;
+    }
+
+    
+    @Column(name="pk-authority-uid", length=199)
+    public String getPkAuthorityUid() {
+        return this.pkAuthorityUid;
+    }
+    
+    public void setPkAuthorityUid(String pkAuthorityUid) {
+        this.pkAuthorityUid = pkAuthorityUid;
+    }
+
+    
+    @Column(name="pk-idtypecode", length=5)
+    public String getPkIdtypecode() {
+        return this.pkIdtypecode;
+    }
+    
+    public void setPkIdtypecode(String pkIdtypecode) {
+        this.pkIdtypecode = pkIdtypecode;
     }
 
 

@@ -21,10 +21,11 @@ public class WorkSessionDTO extends AbstractEchoDTO implements Serializable {
 	private BaseObjectDTO workPriority;
 	private Long scheduledDate;
 	private Long reportedDate;
+	private BaseObjectDTO order;
 	
 	private Date created;
 	private Date updated;
-	private String userupdate;
+	private String userUpdate;
 	private Boolean active;
 	
 	@Override
@@ -133,15 +134,15 @@ public class WorkSessionDTO extends AbstractEchoDTO implements Serializable {
 	/**
 	 * @return the userupdate
 	 */
-	public String getUserupdate() {
-		return userupdate;
+	public String getUserUpdate() {
+		return userUpdate;
 	}
 
 	/**
 	 * @param userupdate the userupdate to set
 	 */
-	public void setUserupdate(String userupdate) {
-		this.userupdate = userupdate;
+	public void setUserUpdate(String userUpdate) {
+		this.userUpdate = userUpdate;
 	}
 
 	/**
@@ -198,6 +199,20 @@ public class WorkSessionDTO extends AbstractEchoDTO implements Serializable {
 	 */
 	public void setReportedDate(Long reportedDate) {
 		this.reportedDate = reportedDate;
+	}
+	
+	/**
+	 * @return the order
+	 */
+	public BaseObjectDTO getOrder() {
+		return order;
+	}
+
+	/**
+	 * @param order the order to set
+	 */
+	public void setOrder(BaseObjectDTO order) {
+		this.order = order;
 	}
 
 	/**

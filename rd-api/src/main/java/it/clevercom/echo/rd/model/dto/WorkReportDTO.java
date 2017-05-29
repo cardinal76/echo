@@ -24,7 +24,7 @@ public class WorkReportDTO extends AbstractEchoDTO implements Serializable {
 	
 	private Date created;
 	private Date updated;
-	private String userupdate;
+	private String userUpdate;
 	private Boolean active;
 	
 	@Override
@@ -175,15 +175,15 @@ public class WorkReportDTO extends AbstractEchoDTO implements Serializable {
 	/**
 	 * @return the userupdate
 	 */
-	public String getUserupdate() {
-		return userupdate;
+	public String getUserUpdate() {
+		return userUpdate;
 	}
 
 	/**
 	 * @param userupdate the userupdate to set
 	 */
-	public void setUserupdate(String userupdate) {
-		this.userupdate = userupdate;
+	public void setUserUpdate(String userUpdate) {
+		this.userUpdate = userUpdate;
 	}
 
 	/**

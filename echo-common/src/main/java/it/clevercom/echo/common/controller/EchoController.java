@@ -8,11 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.clevercom.echo.common.jpa.CreateRequestProcessor;
+import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
 import it.clevercom.echo.common.util.DateUtil;
 import it.clevercom.echo.common.util.JwtTokenUtils;
 
@@ -25,7 +29,7 @@ import it.clevercom.echo.common.util.JwtTokenUtils;
  * @author luca
  */
 
-public class EchoController {
+public abstract class EchoController {
 	@Value("${jwt.token.header}")
 	private String tokenHeader;
 	
@@ -50,12 +54,19 @@ public class EchoController {
 	    final CustomNumberEditor all_date_options = new CustomNumberEditor(Long.class, true) {
 	    	@Override
 	        public void setAsText(String text) throws IllegalArgumentException {
+	    		Date today = new Date();
 	    		if ("today_start".equals(text)) { 
-	    			Date today = new Date();
 	    			setValue(DateUtil.getStartOfDay(today).getTime());
 	    		} else if ("today_end".equals(text)) {
-	    			Date today = new Date();
 	    			setValue(DateUtil.getEndOfDay(today).getTime());
+	    		} else if ("current_month_start".equals(text)) {
+	    			setValue(DateUtil.getFirstDateOfMonth(today).getTime());
+	    		} else if ("current_month_end".equals(text)) {
+	    			setValue(DateUtil.getLastDateOfMonth(today).getTime());
+	    		} else if ("current_week_start".equals(text)) {
+	    			setValue(DateUtil.getFirstDateOfWeek(today).getTime());
+	    		} else if ("current_week_end".equals(text)) {
+	    			setValue(DateUtil.getLastDateOfWeek(today).getTime());
 	    		} else if ("system_start".equals(text)) {
 	    			Date sysStart = new Date(-3600000l);
 	    			setValue(DateUtil.getEndOfDay(sysStart).getTime());
@@ -89,4 +100,23 @@ public class EchoController {
 		
 		return username;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	protected abstract CreateRequestProcessor<?,?,?> getCreator();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	protected abstract UpdateRequestProcessor<?,?,?> getUpdater();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	protected abstract CriteriaRequestProcessor<?,?,?> getProcessor();
+
 }

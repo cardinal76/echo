@@ -2,6 +2,8 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -60,6 +62,9 @@ public class AppSetting_rd_Controller extends EchoController {
 	@Autowired
 	private Validator validator;
 	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
+
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	// used to bind entity name and id in exception message
@@ -132,30 +137,22 @@ public class AppSetting_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, AppSetting.class, entity_name);
 		
-		// create processor
-		CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
-				new CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
-						rdDozerMapper, 
-						AppSettingDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> processor = getProcessor();
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// add username specification
 		if (!username.equals("*")) {
 			UserSpecification<AppSetting> u = new UserSpecification<AppSetting>(null, username);
-			rp.addAndSpecification(u);
+			processor.addAndSpecification(u);
 		}
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();		
+		return processor.process();		
 	}
 	
 	/**
@@ -179,21 +176,16 @@ public class AppSetting_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateUsername(getLoggedUser(request), appSetting);
 		
-		// create the processor
-		CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
-				new CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
-						rdDozerMapper, 
-						AppSetting.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						appSetting,
-						env);
+		// invoke order creator
+		CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> creator = getCreator();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(appSetting);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -218,21 +210,16 @@ public class AppSetting_rd_Controller extends EchoController {
 		validator.validateUsername(getLoggedUser(request), appSetting);
 		validator.validateDTOIdd(appSetting, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> rp = 
-				new UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						appSetting, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> updater = getUpdater();
+		updater.setSourceDto(appSetting);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, appSetting.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -250,5 +237,29 @@ public class AppSetting_rd_Controller extends EchoController {
 	@Loggable
 	public @ResponseBody String delete(@RequestBody AppSettingDTO appSetting, HttpServletRequest request) {
 		return MessageFormat.format(env.getProperty("echo.api.crud.notsupported"), RequestMethod.DELETE.toString(), entity_name);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> getCreator() {
+		return new CreateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, rdDozerMapper, AppSetting.class, entity_name, env, em);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> getUpdater() {
+		return new UpdateRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IAppSetting_rd_Repository, AppSetting, AppSettingDTO>(repo, rdDozerMapper, AppSettingDTO.class, entity_name, env);
 	}
 }

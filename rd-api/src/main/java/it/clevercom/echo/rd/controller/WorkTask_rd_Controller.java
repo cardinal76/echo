@@ -1,7 +1,10 @@
 package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
+import java.util.Date;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -9,6 +12,7 @@ import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +29,27 @@ import it.clevercom.echo.common.exception.model.RecordNotFoundException;
 import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
 import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
+import it.clevercom.echo.common.jpa.specification.DateIntervalSpecification;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
+import it.clevercom.echo.common.util.DateUtil;
+import it.clevercom.echo.common.util.StringUtils;
 import it.clevercom.echo.rd.component.Validator;
+import it.clevercom.echo.rd.enums.WorkStatusEnum;
+import it.clevercom.echo.rd.jpa.specification.ModalitySpecification;
+import it.clevercom.echo.rd.jpa.specification.ModalityTypeSpecification;
+import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
 import it.clevercom.echo.rd.model.dto.WorkTaskDTO;
+import it.clevercom.echo.rd.model.entity.Modality;
+import it.clevercom.echo.rd.model.entity.WorkSession;
+import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.model.entity.WorkTask;
+import it.clevercom.echo.rd.repository.IWorkSession_rd_Repository;
+import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkTask_rd_Repository;
+import it.clevercom.echo.rd.util.WorkStatusDateFieldDecoder;
 
 @Controller
 @RestController
@@ -52,10 +69,19 @@ public class WorkTask_rd_Controller extends EchoController {
 	private IWorkTask_rd_Repository repo;
 	
 	@Autowired
+	private IWorkStatus_rd_Repository repo_ws;
+	
+	@Autowired
+	private IWorkSession_rd_Repository repo_wss;
+	
+	@Autowired
     private DozerBeanMapper rdDozerMapper;
 	
 	@Autowired
 	private Validator validator;
+	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -106,35 +132,72 @@ public class WorkTask_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody PagedDTO<WorkTaskDTO> getByCriteria (
+			@RequestParam(defaultValue="current_week_start", required=false) Long from,
+			@RequestParam(defaultValue="current_week_end", required=false) Long to,
+			@RequestParam(defaultValue = "*", required=false) String status,
+			@RequestParam(defaultValue="0", required=false) Long idmodalitytype,
+			@RequestParam(defaultValue="0", required=false) Long idmodality,
 			@RequestParam(defaultValue="null", required=false) String criteria, 
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="15", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="code", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
-				
-		// check enum string params
-		validator.validateSort(sort);
 		
-		CriteriaRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> rp = 
-				new CriteriaRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO>(repo, 
-						rdDozerMapper, 
-						WorkTaskDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// validate
+		validator.validateSort(sort);
+		validator.validateSortField(field, WorkTask.class, entity_name);
+		
+		// set processor params
+		CriteriaRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> processor = getProcessor();
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
+		
+		// get dates
+		final Date t1 = DateUtil.getStartOfDay(new Date(from));
+		final Date t2 = DateUtil.getEndOfDay(new Date(to));
+		
+		// if there's a selected status, create and set status specification
+		if (!status.equals("*")) {
+			// start decoding status
+			String[] statusItems = StringUtils.split(status, "\\|");
+			// iterate status item and create the right specification
+			for (int i = 0; i < statusItems.length; i++) {
+				Specifications<WorkTask> current = null;
+				// create status specification
+				WorkStatusSpecification<WorkTask> st = new WorkStatusSpecification<WorkTask>(repo_ws.findByCode(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i]).code()).getIdworkstatus());
+				// create interval specification based on right date field
+				DateIntervalSpecification<WorkTask, WorkTask> interval = new DateIntervalSpecification<WorkTask, WorkTask>(null, t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(WorkStatusEnum.getInstanceFromCodeValue(statusItems[i])));
+				current = Specifications.where(current).and(st).and(interval);
+				if (i==0) {
+					processor.addAndSpecification(Specifications.where(current));
+				} else {
+					processor.addOrSpecification(Specifications.where(current));
+				}
+			}
+		} else {
+			// create standard specification based on date interval and standard field name
+			// parse long parameter to Date Object
+			DateIntervalSpecification<WorkTask, WorkTask> interval = new DateIntervalSpecification<WorkTask, WorkTask>(null, t1, t2, WorkStatusDateFieldDecoder.decodeDateFieldFromWorkStatus(WorkStatusEnum.SCHEDULED));
+			processor.addAndSpecification(interval);
+		}
+		
+		// if there's a selected patient name, create and set patient name specification
+		if ((!idmodality.equals(Long.valueOf(0)))) {
+			ModalitySpecification<WorkTask, WorkTask> n = new ModalitySpecification<WorkTask, WorkTask>(null, null, idmodality); 
+			processor.addAndSpecification(n);
+		} else if ((!idmodalitytype.equals(Long.valueOf(0)))) {
+			ModalityTypeSpecification<WorkTask, Modality> n = new ModalityTypeSpecification<WorkTask, Modality>("modality", null, idmodalitytype); 
+			processor.addAndSpecification(n);
+		}
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();	
+		return processor.processNo404();	
 	}
 	
 	/**
@@ -153,22 +216,18 @@ public class WorkTask_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
-				
-		// create the processor
-		CreateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> rp = 
-				new CreateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO>(repo, 
-						rdDozerMapper, 
-						WorkTask.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						workTask,
-						env);
+		validator.validateDTONullIdd(workTask, entity_id);
+
+		// invoke order creator
+		CreateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> creator = getCreator();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(workTask);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -186,24 +245,45 @@ public class WorkTask_rd_Controller extends EchoController {
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// validate that username can perform the requested operation on appSetting
+		// validate
 		validator.validateDTOIdd(workTask, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> rp = 
-				new UpdateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						workTask, 
-						env);
+		// check if session needs to be updated
+		WorkTask task = repo.findOne(workTask.getIdWorkTask());
+		WorkSession session = task.getWorkSession();
+		
+		if ((WorkStatusEnum.getInstanceFromCodeValue(session.getWorkStatus().getCode()).order() == WorkStatusEnum.ACCEPTED.order()) && (WorkStatusEnum.getInstanceFromCodeValue(session.getWorkStatus().getCode()).order() <= WorkStatusEnum.getInstanceFromCodeValue(workTask.getWorkStatus().getCode()).order())) {
+			WorkStatus status = repo_ws.findByCode(workTask.getWorkStatus().getCode());
+			session.setWorkStatus(status);
+			session.setExecutingdate(new Date());
+			// update session
+			repo_wss.saveAndFlush(session);
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(workTask.getWorkStatus().getCode()).equals(WorkStatusEnum.EXECUTED)) {
+			boolean executed = true;
+			// find all task
+			for (WorkTask element : session.getWorkTasks()) {
+				if ((!element.getIdworktask().equals(workTask.getIdWorkTask())) && (!WorkStatusEnum.getInstanceFromCodeValue(element.getWorkStatus().getCode()).equals(WorkStatusEnum.EXECUTED))) { 
+					executed = false;
+					break;
+				}
+			}
+			if (executed) {
+				session.setWorkStatus(repo_ws.findByCode(WorkStatusEnum.EXECUTED.code()));
+				session.setExecuteddate(new Date());
+				repo_wss.saveAndFlush(session);
+			}
+		}
+		
+		// set updater params
+		UpdateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> updater = getUpdater();
+		updater.setSourceDto(workTask);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, workTask.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -223,20 +303,33 @@ public class WorkTask_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(workTask, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> rp = 
-				new UpdateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						workTask, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> updater = getUpdater();
+		updater.setSourceDto(workTask);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, workTask.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
+	}
+
+	@Override
+	protected CreateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> getCreator() {
+		// TODO Auto-generated method stub
+		return new CreateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO>(repo, rdDozerMapper, WorkTask.class, entity_name, env, em);
+	}
+
+	@Override
+	protected UpdateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> getUpdater() {
+		// TODO Auto-generated method stub
+		return new UpdateRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO> getProcessor() {
+		// TODO Auto-generated method stub
+		return new CriteriaRequestProcessor<IWorkTask_rd_Repository, WorkTask, WorkTaskDTO>(repo, rdDozerMapper, WorkTaskDTO.class, entity_name, env);
 	}
 }

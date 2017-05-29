@@ -4,6 +4,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.core.env.Environment;
@@ -22,6 +24,7 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	private String entity_name;
 	private String createdUser;
 	private Environment env;
+	private EntityManager em;
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
 	/**
@@ -33,6 +36,7 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 	 * @param createdUser
 	 * @param dto
 	 * @param env
+	 * @deprecated
 	 */
 	public CreateRequestProcessor(
 			// repository that performs create operation
@@ -68,6 +72,35 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 		this.entityClazz = entityClazz;
 	}
 	
+	public CreateRequestProcessor(
+			// repository that performs create operation
+			I repository, 
+			// mapper that performs conversion
+			DozerBeanMapper mapper,
+			// entity class
+			Class<E> entityClazz,
+			// entity friendly name
+			String entity_name,
+			// environment
+			Environment env,
+			// entity manager
+			EntityManager em) {  
+		
+		super();
+		// repository
+		this.repository = repository;
+		// mapper
+		this.mapper = mapper;
+		// entity name
+		this.entity_name = entity_name;
+		// set env
+		this.env = env;
+		// entity clazz
+		this.entityClazz = entityClazz;
+		// entity manager
+		this.em = em;
+	}
+	
 	/**
 	 * 
 	 * @return
@@ -82,6 +115,10 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 
 		// save and map to out dto
 		entity = repository.saveAndFlush(entity);
+		// legacy code (should be removed after refactoring)
+		if (em!=null) {
+			em.refresh(entity);
+		}
 		dto = mapper.map(entity, dtoClazz);
 
 		// create standard response
@@ -110,7 +147,40 @@ public class CreateRequestProcessor<I extends JpaRepository<E, ?>, E extends Abs
 
 		// save and map to out dto
 		entity = repository.saveAndFlush(entity);
+		// legacy code (should be removed after refactoring)
+		if (em!=null) {
+			em.refresh(entity);
+		}
 		
 		return entity;
+	}
+
+	/**
+	 * @return the dto
+	 */
+	public D getDto() {
+		return dto;
+	}
+
+	/**
+	 * @param dto the dto to set
+	 */
+	public void setDto(D dto) {
+		this.dto = dto;
+		this.dtoClazz = (Class<D>) dto.getClass();
+	}
+
+	/**
+	 * @return the createdUser
+	 */
+	public String getCreatedUser() {
+		return createdUser;
+	}
+
+	/**
+	 * @param createdUser the createdUser to set
+	 */
+	public void setCreatedUser(String createdUser) {
+		this.createdUser = createdUser;
 	}
 }

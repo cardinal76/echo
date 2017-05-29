@@ -3,8 +3,11 @@ package it.clevercom.echo.rd.model.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import it.clevercom.echo.common.dto.AbstractEchoDTO;
 
+@JsonIgnoreProperties({"created","updated","userupdate","active","idd"})
 public class WorkTaskDTO extends AbstractEchoDTO implements Serializable {
 	
 	private static final long serialVersionUID = 5376111644338310682L;
@@ -14,7 +17,7 @@ public class WorkTaskDTO extends AbstractEchoDTO implements Serializable {
 	private BaseObjectDTO workStatus;
 	private BaseObjectDTO workPriority;
 	private BaseObjectDTO service;
-	//private ModalityDTO modality;
+	private ModalityDTO modality;
 	private Long scheduledDate;
 	private Long executedDate;
 	private String studyId;
@@ -30,7 +33,7 @@ public class WorkTaskDTO extends AbstractEchoDTO implements Serializable {
 
 	private Date created;
 	private Date updated;
-	private String userupdate;
+	private String userUpdate;
 	private Boolean active;
 	
 	@Override
@@ -108,19 +111,19 @@ public class WorkTaskDTO extends AbstractEchoDTO implements Serializable {
 		this.service = service;
 	}
 
-//	/**
-//	 * @return the modality
-//	 */
-//	public ModalityDTO getModality() {
-//		return modality;
-//	}
-//
-//	/**
-//	 * @param modality the modality to set
-//	 */
-//	public void setModality(ModalityDTO modality) {
-//		this.modality = modality;
-//	}
+	/**
+	 * @return the modality
+	 */
+	public ModalityDTO getModality() {
+		return modality;
+	}
+
+	/**
+	 * @param modality the modality to set
+	 */
+	public void setModality(ModalityDTO modality) {
+		this.modality = modality;
+	}
 
 	/**
 	 * @return the scheduledDate
@@ -223,15 +226,15 @@ public class WorkTaskDTO extends AbstractEchoDTO implements Serializable {
 	/**
 	 * @return the userupdate
 	 */
-	public String getUserupdate() {
-		return userupdate;
+	public String getUserUpdate() {
+		return userUpdate;
 	}
 
 	/**
 	 * @param userupdate the userupdate to set
 	 */
-	public void setUserupdate(String userupdate) {
-		this.userupdate = userupdate;
+	public void setUserUpdate(String userUpdate) {
+		this.userUpdate = userUpdate;
 	}
 
 	/**

@@ -2,6 +2,8 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -31,7 +33,6 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.CitizenshipDTO;
-import it.clevercom.echo.rd.model.entity.BodyApparatus;
 import it.clevercom.echo.rd.model.entity.Citizenship;
 import it.clevercom.echo.rd.repository.ICitizenship_rd_Repository;
 
@@ -59,6 +60,9 @@ public class Citizenship_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -129,26 +133,18 @@ public class Citizenship_rd_Controller extends EchoController {
 		
 		// validate
 		validator.validateSort(sort);
-		validator.validateSortField(field, BodyApparatus.class, entity_name);
+		validator.validateSortField(field, Citizenship.class, entity_name);
 		
-		// create processor
-		CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> rp = 
-				new CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, 
-						rdDozerMapper, 
-						CitizenshipDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> processor = getProcessor();
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**
@@ -172,21 +168,16 @@ public class Citizenship_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(citizenship, entity_id);
 		
-		// create processor
-		CreateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> rp = 
-				new CreateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, 
-						rdDozerMapper, 
-						Citizenship.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						citizenship,
-						env);
+		// invoke order creator
+		CreateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> creator = getCreator();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(citizenship);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -210,21 +201,16 @@ public class Citizenship_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(citizenship, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> rp = 
-				new UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						citizenship, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> updater = getUpdater();
+		updater.setSourceDto(citizenship);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, citizenship.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -248,20 +234,39 @@ public class Citizenship_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(citizenship, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> rp = 
-				new UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						citizenship, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> updater = getUpdater();
+		updater.setSourceDto(citizenship);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, citizenship.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected CreateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> getCreator() {
+		return new CreateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, rdDozerMapper, Citizenship.class, entity_name, env, em);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> getUpdater() {
+		return new UpdateRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	/**
+	 * 
+	 */
+	@Override
+	protected CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO> getProcessor() {
+		return new CriteriaRequestProcessor<ICitizenship_rd_Repository, Citizenship, CitizenshipDTO>(repo, rdDozerMapper, CitizenshipDTO.class, entity_name, env);
 	}
 }

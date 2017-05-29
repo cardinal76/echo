@@ -2,19 +2,18 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +26,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.clevercom.echo.common.controller.EchoController;
-import it.clevercom.echo.common.exception.model.BadRequestException;
 import it.clevercom.echo.common.exception.model.RecordNotFoundException;
+import it.clevercom.echo.common.jpa.CreateRequestProcessor;
 import it.clevercom.echo.common.jpa.CriteriaRequestProcessor;
+import it.clevercom.echo.common.jpa.UpdateRequestProcessor;
+import it.clevercom.echo.common.jpa.factory.PageRequestFactory;
 import it.clevercom.echo.common.logging.annotation.Loggable;
 import it.clevercom.echo.common.model.dto.response.CreateResponseDTO;
 import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
-import it.clevercom.echo.common.util.JwtTokenUtils;
+import it.clevercom.echo.common.model.factory.ResponseFactory;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.PatientCodingActorDTO;
@@ -69,22 +70,19 @@ public class Patient_rd_Controller extends EchoController {
 
 	@Autowired
 	private DozerBeanMapper rdDozerMapper;
-
-	@Value("${jwt.token.header}")
-	private String tokenHeader;
-
-	@Autowired
-	private JwtTokenUtils tokenUtils;
 	
 	@Autowired
 	private Validator validator;
+	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
 	// used to bind it in exception message
 	public static final String entity_name = "Patient";
 	public static final String entity_id = "idpatient";
-
+	public static final String entity_pc_id = "idpatientcodingactor";
 
 	/**
 	 * Get patient by id
@@ -97,8 +95,20 @@ public class Patient_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody PatientDTO get(@PathVariable Long id) throws Exception {
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting"), entity_name, entity_id, id.toString()));
+		
+		// find entity
 		Patient entity = repo.findOne(id);
-		if (entity == null) throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		
+		// check if entity has been found
+		if (entity == null) {
+			logger.warn(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_id, id.toString()));
+			throw new RecordNotFoundException(entity_name, entity_id, id.toString());
+		}
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.returning.response"), entity_name, entity_id, id.toString()));
 		return rdDozerMapper.map(entity, PatientDTO.class);
 	}
 
@@ -121,24 +131,21 @@ public class Patient_rd_Controller extends EchoController {
 			@RequestParam(defaultValue = "1", required = false) int page,
 			@RequestParam(defaultValue = "15", required = false) int size,
 			@RequestParam(defaultValue = "asc", required = false) String sort,
-			@RequestParam(defaultValue = "idpatientcodingactor", required = false) String field) throws Exception {
+			@RequestParam(defaultValue = entity_pc_id, required = false) String field) throws Exception {
 		
 		// create paged request
-		PageRequest request = null;
-
-		if (sort.equalsIgnoreCase("asc")) {
-			request = new PageRequest(page - 1, size, Direction.ASC, field);
-		} else if (sort.equalsIgnoreCase("desc")) {
-			request = new PageRequest(page - 1, size, Direction.DESC, field);
-		} else {
-			throw new BadRequestException(env.getProperty("echo.api.exception.search.sort.wrongsortparam"));
-		}
+		PageRequest request = PageRequestFactory.getPageRequest(sort, field, page, size);
 		
+		// find with custom method
 		List<PatientCodingActor> patientCodingActorList = repo_pc.findByExternalcode(extcode, request);
 
-		if (patientCodingActorList.size() == 0)
+		// check if entity has been found
+		if (patientCodingActorList.size() == 0) {
+			logger.warn(MessageFormat.format(env.getProperty("echo.api.crud.search.noresult"), entity_name, entity_pc_id, extcode.toString()));
 			throw new RecordNotFoundException(entity_name, entity_id, extcode);
+		}
 
+		// map output
 		List<PatientCodingActorDTO> patientCodingActorDTOList = new ArrayList<PatientCodingActorDTO>();
 		for (PatientCodingActor patientCodingActor : patientCodingActorList) {
 			Patient patient = patientCodingActor.getPatient();
@@ -149,17 +156,12 @@ public class Patient_rd_Controller extends EchoController {
 												rdDozerMapper.map(codingactor, BaseObjectDTO.class)));
 		}
 
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.returning.response"), entity_name, entity_pc_id, extcode.toString()));
+		
 		// assembly dto
-		PagedDTO<PatientCodingActorDTO> dto = new PagedDTO<PatientCodingActorDTO>();
-		dto.setElements(patientCodingActorDTOList);
-		dto.setPageSize(size);
-		dto.setCurrentPage(page);
-		// get total count
 		long totalCount = repo_pc.countByExternalcode(extcode);
-		dto.setTotalPages((int)Math.ceil(((double) totalCount) / ((double) size)));
-		dto.setTotalElements(totalCount);
-
-		return dto;
+		return ResponseFactory.getPagedDTO(patientCodingActorDTOList, size, page, (int)Math.ceil(((double) totalCount) / ((double) size)), totalCount);
 	}
 
 	/**
@@ -181,25 +183,22 @@ public class Patient_rd_Controller extends EchoController {
 			@RequestParam(defaultValue = "1", required = false) int page,
 			@RequestParam(defaultValue = "15", required = false) int size,
 			@RequestParam(defaultValue = "asc", required = false) String sort,
-			@RequestParam(defaultValue = "idpatient", required = false) String field) throws Exception {
+			@RequestParam(defaultValue = entity_id, required = false) String field) throws Exception {
 		
 		// check enum string params
 		validator.validateSort(sort);
+		validator.validateSortField(field, Patient.class, entity_name);
+
+		// set processor params
+		CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> processor = getProcessor();
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
-		CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> rp = 
-				new CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, 
-						rdDozerMapper, 
-						PatientDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 
 	/**
@@ -214,32 +213,22 @@ public class Patient_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody CreateResponseDTO<PatientDTO> add(@RequestBody PatientDTO patient, HttpServletRequest request)	throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
-
-		// map
-		Patient entity = rdDozerMapper.map(patient, Patient.class);
-
-		// add technical field
-		entity.setUserupdate(username);
-
-		// save and map to out dto
-		entity = repo.saveAndFlush(entity);
-		// TODO map entity instead of set ID
-		// patient = rdDozerMapper.map(entity, PatientDTO.class);
-		patient.setIdPatient(entity.getIdpatient());
-
-		// create standard response
-		CreateResponseDTO<PatientDTO> response = new CreateResponseDTO<PatientDTO>();
-		response.setEntityName(Patient_rd_Controller.entity_name);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Patient_rd_Controller.entity_name));
-		List<PatientDTO> patientDTOs = new ArrayList<PatientDTO>();
-		patientDTOs.add(patient.buildExtendedObject());
-		response.setNewValue(patientDTOs);
-
-		// return standard response
-		return response;
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
+		// validate
+		validator.validateDTONullIdd(patient, entity_id);
+				
+		// invoke order creator
+		CreateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> creator = getCreator();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(patient);
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
+		
+		// process
+		return creator.process();
 	}
 
 	/**
@@ -254,56 +243,22 @@ public class Patient_rd_Controller extends EchoController {
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
 	public @ResponseBody UpdateResponseDTO<PatientDTO> update(@RequestBody PatientDTO patient, HttpServletRequest request) throws Exception {
-		// get user info
-		String authToken = request.getHeader(this.tokenHeader);
-		String username = this.tokenUtils.getUsernameFromToken(authToken);
-
-		// if an id is not present throw bad request
-		if (patient.getIdPatient() == null)
-			throw new BadRequestException(MessageFormat.format(env.getProperty("echo.api.exception.missing.id"), entity_name));
-
-		// find entity to update (oldValue)
-		Patient oldValueEntity = repo.findOne(patient.getIdPatient());
-		// if an entity with given id is not found in DB throw record not found
-		if (oldValueEntity == null)
-			throw new RecordNotFoundException(entity_name, entity_id, patient.getIdPatient().toString());
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
-		// validation
+		// validate
+		validator.validateDTOIdd(patient, entity_name);
+
+		// set updater params
+		UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> updater = getUpdater();
+		updater.setSourceDto(patient);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
-		// save created date
-		Date created = oldValueEntity.getCreated();
-		// save old value to a dto
-		PatientDTO oldValueDTO = rdDozerMapper.map(oldValueEntity, PatientDTO.class);
-
-		// begin update of oldValue
-		rdDozerMapper.map(patient, oldValueEntity);
-
-		// add technical field
-		oldValueEntity.setUserupdate(username);
-		oldValueEntity.setUpdated(new Date());
-		oldValueEntity.setCreated(created);
-
-		// save and map to out dto
-		Patient newValueEntity = repo.saveAndFlush(oldValueEntity);
-		// TODO map newValueDTO instead of using input patient
-		// PatientDTO newValueDTO = rdDozerMapper.map(newValueEntity, PatientDTO.class);
-
-		// create standard response
-		UpdateResponseDTO<PatientDTO> response = new UpdateResponseDTO<PatientDTO>();
-		response.setEntityName(Patient_rd_Controller.entity_name);
-		response.setMessage(MessageFormat.format(env.getProperty("echo.api.crud.saved"), Patient_rd_Controller.entity_name));
-		// add new dtos values
-		List<PatientDTO> newPatientDTOs = new ArrayList<PatientDTO>();
-		newPatientDTOs.add(patient);
-		// newPatientDTOs.add(newValueDTO);
-		response.setNewValue(newPatientDTOs);
-		// add old dtos values
-		List<PatientDTO> oldAppSettingDTOs = new ArrayList<PatientDTO>();
-		oldAppSettingDTOs.add(oldValueDTO);
-		response.setOldValue(oldAppSettingDTOs);
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, patient.getIdd().toString()));
 
 		// return response
-		return response;
+		return updater.process();
 	}
 
 	/**
@@ -314,7 +269,40 @@ public class Patient_rd_Controller extends EchoController {
 	@RequestMapping(method = RequestMethod.DELETE)
 	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
 	@Loggable
-	public @ResponseBody String delete() {
-		return "patient";
+	public @ResponseBody UpdateResponseDTO<PatientDTO> delete(@RequestBody PatientDTO patient, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
+		// validate
+		validator.validateDTOIdd(patient, entity_name);
+	
+		// set updater params
+		UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> updater = getUpdater();
+		updater.setSourceDto(patient);
+		updater.setUpdatedUser(getLoggedUser(request));
+		
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, patient.getIdd().toString()));
+	
+		// return response
+		return updater.enable(false);
+	}
+
+	@Override
+	protected CreateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> getCreator() {
+		// TODO Auto-generated method stub
+		return new CreateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, rdDozerMapper, Patient.class, entity_name, env, em);
+	}
+
+	@Override
+	protected UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> getUpdater() {
+		// TODO Auto-generated method stub
+		return new UpdateRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO> getProcessor() {
+		// TODO Auto-generated method stub
+		return new CriteriaRequestProcessor<IPatient_rd_Repository, Patient, PatientDTO>(repo, rdDozerMapper, PatientDTO.class, entity_name, env);
 	}
 }

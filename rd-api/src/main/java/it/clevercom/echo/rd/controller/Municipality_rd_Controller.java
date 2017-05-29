@@ -2,6 +2,8 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -31,7 +33,6 @@ import it.clevercom.echo.common.model.dto.response.PagedDTO;
 import it.clevercom.echo.common.model.dto.response.UpdateResponseDTO;
 import it.clevercom.echo.rd.component.Validator;
 import it.clevercom.echo.rd.model.dto.MunicipalityDTO;
-import it.clevercom.echo.rd.model.entity.ModalityType;
 import it.clevercom.echo.rd.model.entity.Municipality;
 import it.clevercom.echo.rd.repository.IMunicipality_rd_Repository;
 
@@ -59,6 +60,9 @@ public class Municipality_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -126,26 +130,18 @@ public class Municipality_rd_Controller extends EchoController {
 				
 		// validate
 		validator.validateSort(sort);
-		validator.validateSortField(field, ModalityType.class, entity_name);
+		validator.validateSortField(field, Municipality.class, entity_name);
 
-		// create processor
-		CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> rp = 
-				new CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, 
-						rdDozerMapper, 
-						MunicipalityDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> processor = getProcessor();
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();
+		return processor.process();
 	}
 	
 	/**
@@ -169,21 +165,16 @@ public class Municipality_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(municipality, entity_id);
 				
-		// create the processor
-		CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> rp = 
-				new CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo,
-						rdDozerMapper,
-						Municipality.class,
-						entity_name,
-						getLoggedUser(request),
-						municipality,
-						env);
+		// invoke order creator
+		CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> creator = getCreator();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(municipality);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -207,21 +198,16 @@ public class Municipality_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(municipality, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> rp = 
-				new UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						municipality, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> updater = getUpdater();
+		updater.setSourceDto(municipality);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, municipality.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -244,20 +230,30 @@ public class Municipality_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(municipality, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> rp = 
-				new UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						municipality, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> updater = getUpdater();
+		updater.setSourceDto(municipality);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, municipality.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
+	}
+
+	@Override
+	protected CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> getCreator() {
+		return new CreateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, Municipality.class, entity_name, env, em);
+	}
+
+	@Override
+	protected UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> getUpdater() {
+		return new UpdateRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IMunicipality_rd_Repository, Municipality, MunicipalityDTO>(repo, rdDozerMapper, MunicipalityDTO.class, entity_name, env);
 	}
 }

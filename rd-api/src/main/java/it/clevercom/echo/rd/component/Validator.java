@@ -14,7 +14,6 @@ import it.clevercom.echo.common.util.StringUtils;
 import it.clevercom.echo.rd.enums.WorkPriorityEnum;
 import it.clevercom.echo.rd.enums.WorkStatusEnum;
 import it.clevercom.echo.rd.model.dto.AppSettingDTO;
-import it.clevercom.echo.rd.model.entity.BodyApparatus;
 
 @Component
 public class Validator {

@@ -28,6 +28,7 @@ import it.clevercom.echo.rd.enums.WorkPriorityEnum;
 import it.clevercom.echo.rd.enums.WorkStatusEnum;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
+import it.clevercom.echo.rd.model.dto.OrderHL7DTO;
 import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderService;
@@ -946,5 +947,225 @@ public class OrderValidator {
 
 		}
 		return problems;
+	}
+	
+	/**
+	 * Validate a create order request
+	 * @author luca
+	 * @category business request validation
+	 * @param order passed to the create method
+	 * @since 1.2.0
+	 * @throws ValidationException
+	 */
+	public void validateCreateHL7Request(OrderHL7DTO order) throws ValidationException {
+		// these fields must not be inserted
+		// in the create request and must be empty or null
+		ValidationExceptionDTO exceptions = new ValidationExceptionDTO();
+
+		// idOrder must not be present here
+		if (order.getIdOrder() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.idorder"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// work session must not be present here
+		if ((order.getWorkSession() != null)) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.worksession"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// work status must be equal to requested code
+		if ((!order.getWorkStatus().getCode().equals(WorkStatusEnum.REQUESTED.code()))) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workstatus"),
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbe"),
+							env.getProperty("echo.api.crud.fields.workstatus"), WorkStatusEnum.REQUESTED.code()));
+		}
+		
+		// work priority must not be null and must correspond to a valid enum code
+		if ((order.getWorkPriority()==null) || (StringUtils.isNullEmptyWhiteSpaceOnly(order.getWorkPriority().getCode())) || (WorkPriorityEnum.getInstanceFromCodeValue(order.getWorkPriority().getCode()) == null)) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.workpriority"),
+					MessageFormat.format(env.getProperty("echo.api.exception.search.params.wrongparam"),
+							env.getProperty("echo.api.crud.fields.workpriority"), WorkPriorityEnum.enumValuesToString()));
+		}
+			
+		// acquisition channel must contains a non empty string
+		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getAcquisitionChannel())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.acquisitionchannel"),
+					env.getProperty("echo.api.crud.validation.mustnotbeempty"));
+		}
+
+		// creation date must be == today
+		Calendar cal1 = Calendar.getInstance();
+		Calendar cal2 = Calendar.getInstance();
+		cal1.setTime(new Date(order.getCreationDate()));
+		cal2.setTime(new Date());
+		boolean sameDay = cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+		if(!sameDay) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.creationdate"), 
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbetoday"), 
+							env.getProperty("echo.api.crud.fields.creationdate"), 
+							new Date().toString()));
+		}
+		
+		// schedule date must not be present here
+		if (order.getScheduledDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.scheduledate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+
+		// acceptance date should not be present here
+		if (order.getAcceptanceDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.acceptancedate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+
+		// check that target organization unit is a valid operation unit
+		if ((order.getTargetOrganizationUnit() == null) || (StringUtils.isNullEmptyWhiteSpaceOnly(order.getTargetOrganizationUnit().getId()))) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.targetorgunit"), 
+					env.getProperty("echo.api.crud.validation.invalidelement"));
+		} else {
+			OrganizationUnit ou = repo_ou.findOne(Long.valueOf(order.getTargetOrganizationUnit().getId()));
+		
+			if (ou == null) {
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.targetorgunit"), 
+						env.getProperty("echo.api.crud.validation.invalidelement"));
+			} else if (!OrganizationUnitTypeEnum.getInstanceFromCodeValue(ou.getType()).equals(OrganizationUnitTypeEnum.OPERATION_UNIT)) {
+				exceptions.addFieldError(env.getProperty("echo.api.crud.fields.targetorgunit"), 
+						MessageFormat.format(env.getProperty("echo.api.crud.validation.mustbeoftype"), 
+								entity_o_name,
+								ou.getIdorganizationunit(),
+								OrganizationUnitTypeEnum.OPERATION_UNIT.toString()
+								));
+			}
+		}
+		
+		// check that clinical question is not null
+		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getClinicalQuestion())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.clinicalquestion"), 
+					env.getProperty("echo.api.crud.validation.mustnotbeempty"));
+		}
+		
+		// reject reason should not be present here
+		if (order.getRejectReason() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.rejectreason"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// anamnesys must be not null here
+		if (StringUtils.isNullEmptyWhiteSpaceOnly(order.getAnamnesys())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.anamnesys"),
+					env.getProperty("echo.api.crud.validation.mustnotbeempty"));
+		}
+		
+		// cancel reason must not be present here
+		if (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(order.getCancelReason())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// identification document must not be present here
+		if (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(order.getIdentificationDocument())) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.identificationdocument"), 
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+
+		// executing date should not be present here
+		if (order.getExecutingDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.executingdate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// executed date should not be present here
+		if (order.getExecutedDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.executeddate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// reporting date should not be present here
+		if (order.getReportingDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.reportingdate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// reported date should not be present here
+		if (order.getReportedDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.reporteddate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// signed date should not be present here
+		if (order.getSignedDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.signeddate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// delivered date should not be present here
+		if (order.getDeliveredDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.delivereddate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// archived date should not be present here
+		if (order.getArchivedDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.archiveddate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// archived date should not be present here
+		if (order.getCanceledDate() != null) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.canceleddate"),
+					env.getProperty("echo.api.crud.validation.mustbeempty"));
+		}
+		
+		// check if some services has been selected
+		if (order.getServices().size() == 0) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.service"),
+					MessageFormat.format(env.getProperty("echo.api.crud.validation.emptylist"),
+							env.getProperty("echo.api.crud.fields.service")));
+		} else if (order.getServices().size() > 0) {
+			// check that services belongs to same modality
+			Long masterModalityType = 0l;
+			String masterModalityName = null;
+			int i = 0;
+			for (OrderedServiceDTO element : order.getServices()) {
+				Service current = repo_s.findOne(Long.valueOf(element.getId()));
+				if (i==0) {
+					masterModalityType = current.getModalityType().getIdmodalitytype();
+					masterModalityName = current.getModalityType().getType();
+				}
+				if ((i>0) && (!masterModalityType.equals(current.getModalityType().getIdmodalitytype()))) {
+					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.orderedservice"), MessageFormat.format(env.getProperty("echo.api.crud.validation.differentkind"), 
+							entity_os_name, 
+							masterModalityName, 
+							masterModalityType));
+					break;
+				}
+				if (StringUtils.isNotNullNotEmptyNotWhiteSpaceOnly(element.getCancelReason())) {
+					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.cancelreason"), MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate"), 
+							entity_os_name, 
+							env.getProperty("echo.api.crud.fields.cancelreason")));
+					break;
+				}
+				if (StringUtils.isNullEmptyWhiteSpaceOnly(element.getAddedReason())) {
+					exceptions.addFieldError(env.getProperty("echo.api.crud.fields.addedreason"), MessageFormat.format(env.getProperty("echo.api.crud.validation.cannotupdate.missingfield"), 
+							entity_os_name,
+							env.getProperty("echo.api.crud.fields.addedreason")));
+					break;
+				}
+				i++;
+			}
+		}
+
+		// check if a patient has been selected
+		if (!((order.getPatient() != null) && (order.getPatient().getIdPatient() != null))) {
+			exceptions.addFieldError(env.getProperty("echo.api.crud.fields.patient"),
+					env.getProperty("echo.api.crud.validation.mustnotbeempty"));
+		}
+
+		if (exceptions.getFieldErrors().size() > 0) {
+			throw new ValidationException(env.getProperty("echo.api.crud.validation.genericmessage"), exceptions);
+		} else {
+			exceptions = null;
+		}
 	}
 }

@@ -10,6 +10,10 @@
 				<class-a>it.clevercom.echo.rd.model.entity.Order</class-a>
 				<class-b>it.clevercom.echo.rd.model.dto.OrderDTO</class-b>
 			</converter>
+			<converter type="it.clevercom.echo.rd.model.converter.Order2OrderDTO">
+				<class-a>it.clevercom.echo.rd.model.entity.Order</class-a>
+				<class-b>it.clevercom.echo.rd.model.dto.OrderHL7DTO</class-b>
+			</converter>
 			<converter type="it.clevercom.echo.rd.model.converter.Order2OrderLog">
 				<class-a>it.clevercom.echo.rd.model.entity.Order</class-a>
 				<class-b>it.clevercom.echo.rd.model.entity.OrderLog</class-b>
@@ -26,6 +30,10 @@
 				<class-a>it.clevercom.echo.rd.model.entity.WorkReport</class-a>
 				<class-b>it.clevercom.echo.rd.model.dto.WorkReportDTO</class-b>
 			</converter>
+			<converter type="it.clevercom.echo.common.model.converter.Date2Long">
+				<class-a>java.lang.Long</class-a>
+				<class-b>java.util.Date</class-b>
+			</converter>
 		</custom-converters>
 	</configuration>
 
@@ -38,6 +46,19 @@
 	<mapping>
 		<class-a map-null="false">it.clevercom.echo.rd.model.entity.ModalityType</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.ModalityTypeDTO</class-b>
+		<field>
+			<a>idmodalitytype</a>
+			<b>idModalityType</b>
+		</field>
+		<field>
+			<a>type</a>
+			<b>type</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.ModalityType</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ModalityGroupDTO</class-b>
 	</mapping>
 
 	<mapping>
@@ -99,6 +120,72 @@
 	</mapping>
 	
 	<mapping>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.ModalityDailyAllocation</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ModalityDailyAllocationDTO</class-b>
+		<field>
+			<a>idmodalitydailyallocation</a>
+			<b>idModalityDailyAllocation</b>
+		</field>
+		<field>
+			<a>modality</a>
+			<b>modality</b>
+		</field>
+		<field custom-converter="it.clevercom.echo.common.model.converter.Date2Long">
+			<a>day</a>
+			<b>day</b>
+		</field>
+		<field>
+			<a>serviceallocation</a>
+			<b>serviceAllocation</b>
+		</field>
+		<field>
+			<a>serviceexcess</a>
+			<b>serviceExcess</b>
+		</field>
+		<field>
+			<a>patientallocation</a>
+			<b>patientAllocation</b>
+		</field>
+		<field>
+			<a>patientexcess</a>
+			<b>patientExcess</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Modality</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ModalityDTO</class-b>
+		<field>
+			<a>idmodality</a>
+			<b>idModality</b>
+		</field>
+		<field>
+			<a>modalityType</a>
+			<b>modalityType</b>
+		</field>
+		<field>
+			<a>organizationUnit</a>
+			<b>organizationUnit</b>
+		</field>
+		<field>
+			<a>name</a>
+			<b>name</b>
+		</field>
+		<field>
+			<a>description</a>
+			<b>description</b>
+		</field>
+		<field>
+			<a>dailyservicecapacity</a>
+			<b>dailyServiceCapacity</b>
+		</field>
+		<field>
+			<a>dailypatientcapacity</a>
+			<b>dailyPatientCapacity</b>
+		</field>
+	</mapping>
+	
+	<mapping>
 		<class-a map-null="false">it.clevercom.echo.rd.model.entity.Patient</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.PatientSmartDTO</class-b>
 		<field>
@@ -129,6 +216,56 @@
 			<a>email</a>
 			<b>email</b>
 		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.VModalitytypeAllocation</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ModalityTypeDailyAllocationDTO</class-b>
+		<field>
+			<a>scheduledate</a>
+			<b>scheduleDate</b>
+		</field>
+		<field>
+			<a>serviceallocation</a>
+			<b>serviceAllocation</b>
+		</field>
+		<field>
+			<a>patientallocation</a>
+			<b>patientAllocation</b>
+		</field>
+		<field>
+			<a>serviceexcess</a>
+			<b>serviceExcess</b>
+		</field>
+		<field>
+			<a>patientexcess</a>
+			<b>patientExcess</b>
+		</field>		
+	</mapping>
+
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.VModalityAllocation</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.ModalityDailyAllocationDTO</class-b>
+		<field>
+			<a>scheduledate</a>
+			<b>day</b>
+		</field>
+		<field>
+			<a>serviceallocation</a>
+			<b>serviceAllocation</b>
+		</field>
+		<field>
+			<a>patientallocation</a>
+			<b>patientAllocation</b>
+		</field>
+		<field>
+			<a>serviceexcess</a>
+			<b>serviceExcess</b>
+		</field>
+		<field>
+			<a>patientexcess</a>
+			<b>patientExcess</b>
+		</field>		
 	</mapping>
 
 	<mapping>
@@ -182,6 +319,16 @@
 			<b>organizationUnit</b>
 		</field>
 	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Hl7Patient</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.Hl7PatientDTO</class-b>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Hl7InboundMessage</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.Hl7InboundMessageDTO</class-b>
+	</mapping>
 
 	<!-- customized mapping -->
 
@@ -217,6 +364,15 @@
 	<!-- ******************* -->
 	
 	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Order</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
+		<field>
+			<a>idorder</a>
+			<b>id</b>
+		</field>
+	</mapping>
+	
+	<mapping>
 		<class-a>it.clevercom.echo.rd.model.entity.ModalityType</class-a>
 		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
 		<field>
@@ -226,6 +382,23 @@
 		<field>
 			<a>type</a>
 			<b>name</b>
+		</field>
+	</mapping>
+	
+	<mapping>
+		<class-a>it.clevercom.echo.rd.model.entity.Modality</class-a>
+		<class-b>it.clevercom.echo.rd.model.dto.BaseObjectDTO</class-b>
+		<field>
+			<a>idmodality</a>
+			<b>id</b>
+		</field>
+		<field>
+			<a>name</a>
+			<b>name</b>
+		</field>
+		<field>
+			<a>modalityType.idmodalitytype</a>
+			<b>code</b>
 		</field>
 	</mapping>
 	

@@ -1,10 +1,11 @@
 package it.clevercom.echo.rd.model.entity;
-// Generated 2-mag-2017 14.43.59 by Hibernate Tools 5.2.2.Final
+// Generated 24-mag-2017 22.43.53 by Hibernate Tools 5.2.2.Final
 
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -39,6 +40,10 @@ public class WorkSession  extends AbstractJpaEchoEntity implements java.io.Seria
      private WorkStatus workStatus;
      private Date scheduleddate;
      private Date reporteddate;
+     private Date acceptancedate;
+     private Date executingdate;
+     private Date executeddate;
+     private Date reportingdate;
      private Set<WorkReport> workReports = new HashSet<WorkReport>(0);
      private Set<WorkTask> workTasks = new HashSet<WorkTask>(0);
      private Set<Order> orders = new HashSet<Order>(0);
@@ -53,12 +58,16 @@ public class WorkSession  extends AbstractJpaEchoEntity implements java.io.Seria
         this.workStatus = workStatus;
         this.scheduleddate = scheduleddate;
     }
-    public WorkSession(Patient patient, WorkPriority workPriority, WorkStatus workStatus, Date scheduleddate, Date reporteddate, Set<WorkReport> workReports, Set<WorkTask> workTasks, Set<Order> orders) {
+    public WorkSession(Patient patient, WorkPriority workPriority, WorkStatus workStatus, Date scheduleddate, Date reporteddate, Date acceptancedate, Date executingdate, Date executeddate, Date reportingdate, Set<WorkReport> workReports, Set<WorkTask> workTasks, Set<Order> orders) {
        this.patient = patient;
        this.workPriority = workPriority;
        this.workStatus = workStatus;
        this.scheduleddate = scheduleddate;
        this.reporteddate = reporteddate;
+       this.acceptancedate = acceptancedate;
+       this.executingdate = executingdate;
+       this.executeddate = executeddate;
+       this.reportingdate = reportingdate;
        this.workReports = workReports;
        this.workTasks = workTasks;
        this.orders = orders;
@@ -126,6 +135,46 @@ public class WorkSession  extends AbstractJpaEchoEntity implements java.io.Seria
         this.reporteddate = reporteddate;
     }
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="acceptancedate", length=29)
+    public Date getAcceptancedate() {
+        return this.acceptancedate;
+    }
+    
+    public void setAcceptancedate(Date acceptancedate) {
+        this.acceptancedate = acceptancedate;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="executingdate", length=29)
+    public Date getExecutingdate() {
+        return this.executingdate;
+    }
+    
+    public void setExecutingdate(Date executingdate) {
+        this.executingdate = executingdate;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="executeddate", length=29)
+    public Date getExecuteddate() {
+        return this.executeddate;
+    }
+    
+    public void setExecuteddate(Date executeddate) {
+        this.executeddate = executeddate;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="reportingdate", length=29)
+    public Date getReportingdate() {
+        return this.reportingdate;
+    }
+    
+    public void setReportingdate(Date reportingdate) {
+        this.reportingdate = reportingdate;
+    }
+
 @OneToMany(fetch=FetchType.LAZY, mappedBy="workSession")
     public Set<WorkReport> getWorkReports() {
         return this.workReports;
@@ -135,7 +184,7 @@ public class WorkSession  extends AbstractJpaEchoEntity implements java.io.Seria
         this.workReports = workReports;
     }
 
-@OneToMany(fetch=FetchType.LAZY, mappedBy="workSession")
+@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy="workSession")
     public Set<WorkTask> getWorkTasks() {
         return this.workTasks;
     }

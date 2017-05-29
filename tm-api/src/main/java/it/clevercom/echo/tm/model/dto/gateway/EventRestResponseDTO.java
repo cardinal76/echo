@@ -8,7 +8,7 @@ import java.io.Serializable;
  * 
  * DTO used to send response to gateway
  */
-public class EventRestResponseDTO  implements Serializable{
+public class EventRestResponseDTO implements Serializable{
 
 	/**
 	 * 

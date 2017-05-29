@@ -2,6 +2,8 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -52,6 +54,9 @@ public class WorkReport_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -106,31 +111,25 @@ public class WorkReport_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="15", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="code", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
-		// check enum string params
+		// validate
 		validator.validateSort(sort);
+		validator.validateSortField(field, WorkReport.class, entity_name);
 		
-		CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> rp = 
-				new CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, 
-						rdDozerMapper, 
-						WorkReportDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> processor = getProcessor();
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();	
+		return processor.process();	
 	}
 	
 	/**
@@ -149,22 +148,18 @@ public class WorkReport_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
-				
-		// create the processor
-		CreateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> rp = 
-				new CreateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, 
-						rdDozerMapper, 
-						WorkReport.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						workReport,
-						env);
+		validator.validateDTONullIdd(workReport, entity_id);
+		
+		// invoke order creator
+		CreateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> creator = getCreator();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(workReport);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -185,21 +180,16 @@ public class WorkReport_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(workReport, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> rp = 
-				new UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						workReport, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> updater = getUpdater();
+		updater.setSourceDto(workReport);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, workReport.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -219,20 +209,33 @@ public class WorkReport_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(workReport, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> rp = 
-				new UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						workReport, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> updater = getUpdater();
+		updater.setSourceDto(workReport);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, workReport.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
+	}
+
+	@Override
+	protected CreateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> getCreator() {
+		// TODO Auto-generated method stub
+		return new CreateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, rdDozerMapper, WorkReport.class, entity_name, env, em);
+	}
+
+	@Override
+	protected UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> getUpdater() {
+		// TODO Auto-generated method stub
+		return new UpdateRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO> getProcessor() {
+		// TODO Auto-generated method stub
+		return new CriteriaRequestProcessor<IWorkReport_rd_Repository, WorkReport, WorkReportDTO>(repo, rdDozerMapper, WorkReportDTO.class, entity_name, env);
 	}
 }

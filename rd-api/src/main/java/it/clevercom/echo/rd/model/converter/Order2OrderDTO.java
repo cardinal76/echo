@@ -11,7 +11,9 @@ import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
+import it.clevercom.echo.rd.model.dto.ModalityDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
+import it.clevercom.echo.rd.model.dto.OrderHL7DTO;
 import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
 import it.clevercom.echo.rd.model.dto.PatientSmartDTO;
 import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
@@ -23,6 +25,7 @@ import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkSession;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
+import it.clevercom.echo.rd.model.entity.WorkTask;
 
 public class Order2OrderDTO implements CustomConverter, MapperAware {
 	@Autowired
@@ -56,6 +59,18 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			target.setRejectReason((source.getRejectreason() != null) ? source.getRejectreason() : null);
 			target.setRequestingPhysician(source.getRequestingphysician() != null ? source.getRequestingphysician() : null);
 			target.setScheduledDate((source.getScheduleddate() != null) ? source.getScheduleddate().getTime() : null);
+			
+			if (source.getWorkSession()!=null) {
+				Set<WorkTask> tasks = source.getWorkSession().getWorkTasks();
+			
+				WorkTask task = null;
+				for (WorkTask workTask : tasks) {
+					task = workTask;
+					break;
+				}
+				target.setScheduledModality(rdDozerMapper.map(task.getModality(), ModalityDTO.class));
+			}
+			
 			target.setCancelReason((source.getCancelreason() != null) ? source.getCancelreason() : null);
 			target.setIdentificationDocument((source.getIdentificationdocument() != null) ? source.getIdentificationdocument() : null);
 			
@@ -131,16 +146,17 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			}
 			
 			// inject tech fields
-			target.setActive(source.getActive());
-			target.setCreated(source.getCreated());
-			target.setUpdated(source.getUpdated());
-			target.setUserUpdate(source.getUserupdate());
+			target.setActive((source.getActive()!=null) ? source.getActive() : target.getActive());
+			target.setCreated((source.getCreated()!=null) ? source.getCreated() : target.getCreated());
+			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : target.getUpdated());
+			target.setUserUpdate((source.getUserupdate()!=null) ? source.getUserupdate() : target.getUserUpdate());
+			
 			
 			// return adjusted OrderDTO
 			return target;
-		} else if (sourceFieldValue instanceof OrderDTO) {
+		} else if (sourceFieldValue instanceof OrderHL7DTO) {
 			Order target = null; 
-			OrderDTO source = (OrderDTO) sourceFieldValue;
+			OrderHL7DTO source = (OrderHL7DTO) sourceFieldValue;
 			
 			// check to see if the object already exists
 			if (destinationFieldValue == null) {
@@ -206,7 +222,7 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			
 			// iterate
 			Set<OrderedServiceDTO> services = source.getServices();			
-			if (!(services.isEmpty())) {
+			if ((!(services.isEmpty())) && ((target.getOrderServices()==null) || (target.getOrderServices().size()==0))) {
 				target.setOrderServices(new HashSet<OrderService>());
 				for (OrderedServiceDTO srv : services) {
 					Service service = rdDozerMapper.map(srv, Service.class);

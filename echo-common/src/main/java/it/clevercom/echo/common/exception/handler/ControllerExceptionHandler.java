@@ -10,6 +10,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -166,18 +168,27 @@ public class ControllerExceptionHandler {
 		return dto;
 	}
 	
-//	/**
-//	 * Maps {@link Exception} to a INTERNAL_SERVER_ERROR http status
-//	 * @param e exception to handle 
-//	 * @return exception dto message
-//	 */
-//	@ExceptionHandler(Exception.class)
-//	@ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)
-//	public @ResponseBody ExceptionDTO handleException(Exception e) {
-//		logger.fatal(e.getMessage(), e);
-//		ExceptionDTO dto = new ExceptionDTO();
-//		dto.setMessage(env.getProperty("echo.api.exception.message"));
-//		return dto;
-//	}
+	@ExceptionHandler(AuthenticationException.class)
+	@ResponseStatus(value=HttpStatus.FORBIDDEN)
+	public @ResponseBody ExceptionDTO handleAuthenticationException(AuthenticationException e) {
+		logger.error("AuthenticationException occurred : ", e);
+		ExceptionDTO dto = new ExceptionDTO();
+		dto.setMessage(e.getMessage());
+		return dto;
+	}
+	
+	/**
+	 * Maps {@link Exception} to a INTERNAL_SERVER_ERROR http status
+	 * @param e exception to handle 
+	 * @return exception dto message
+	 */
+	@ExceptionHandler(Exception.class)
+	@ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR)
+	public @ResponseBody ExceptionDTO handleException(Exception e) {
+		logger.fatal(e.getMessage(), e);
+		ExceptionDTO dto = new ExceptionDTO();
+		dto.setMessage(env.getProperty("echo.api.exception.message"));
+		return dto;
+	}
 	
 }

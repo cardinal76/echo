@@ -1,73 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://dozer.sourceforge.net http://dozer.sourceforge.net/schema/beanmapping.xsd">
+	<configuration>
+		<custom-converters>
+			<converter type="it.clevercom.echo.common.model.converter.Date2Long">
+				<class-a>java.lang.Long</class-a>
+				<class-b>java.util.Date</class-b>
+			</converter>
+			<converter type="it.clevercom.echo.common.model.converter.LocalDateTime2Long">
+				<class-a>java.lang.Long</class-a>
+				<class-b>java.time.LocalDateTime</class-b>
+			</converter>
+			<converter type="it.clevercom.echo.tm.model.converter.GatewayEventBloodPressure2BloodPressureEventDTO">
+				<class-a>it.clevercom.echo.tm.model.dto.gateway.BloodPressureEventDTO</class-a>
+				<class-b>it.clevercom.echo.tm.model.entity.gateway.GatewayEventBloodPressure</class-b>
+			</converter>
+			<converter type="it.clevercom.echo.tm.model.converter.GatewayEventWeight2WeightEventDTO">
+				<class-a>it.clevercom.echo.tm.model.dto.gateway.WeightEventDTO</class-a>
+				<class-b>it.clevercom.echo.tm.model.entity.gateway.GatewayEventWeight</class-b>
+			</converter>
+		</custom-converters>
+	</configuration>
+	
 	<mapping>
-		<class-a>it.clevercom.echo.tm.model.dto.CareGiverDTO</class-a>
-		<class-b>it.clevercom.echo.tm.model.entity.CareGiver</class-b>
+		<class-a>it.clevercom.echo.tm.model.entity.gateway.GatewayEvent</class-a>
+		<class-b>it.clevercom.echo.tm.model.dto.gateway.BaseGatewayEntityDTO</class-b>
 		<field>
-			<a>idCareGiver</a>
-			<b>idCareGiver</b>
+			<a>idevent</a>
+			<b>id</b>
+		</field>
+		<field custom-converter="it.clevercom.echo.common.model.converter.Date2Long">
+			<a>timestamp</a>
+			<b>timeStamp</b>
 		</field>
 		<field>
-			<a>name</a>
-			<b>name</b>
+			<a>devicetype</a>
+			<b>deviceType</b>
 		</field>
 		<field>
-			<a>surname</a>
-			<b>surname</b>
+			<a>gatewayserialnumber</a>
+			<b>gatewaySerialNumber</b>
 		</field>
 		<field>
-			<a>gender</a>
-			<b>gender</b>
+			<a>pheripheralmac</a>
+			<b>pheripheral</b>
 		</field>
-		<field>
-			<a>taxCode</a>
-			<b>taxCode</b>
+		<field custom-converter="it.clevercom.echo.common.model.converter.Date2Long">
+			<a>receiveddate</a>
+			<b>receivedDate</b>
 		</field>
-		<field>
-			<a>birthDate</a>
-			<b>birthDate</b>
-		</field>
-		<field>
-			<a>nationality</a>
-			<b>nationality</b>
-		</field>
-		<field>
-			<a>homeAddress</a>
-			<b>homeAddress</b>
-		</field>
-		<field>
-			<a>phoneNumber</a>
-			<b>phoneNumber</b>
-		</field>
-		<field>
-			<a>created</a>
-			<b>created</b>
-		</field>
-		<field>
-			<a>updated</a>
-			<b>updated</b>
-		</field>
-		<field>
-			<a>active</a>
-			<b>active</b>
-		</field>
-		<field>
-			<a>updateUser</a>
-			<b>updateUser</b>
-		</field>
-		<field-exclude>
-			<a>login</a>
-			<b>login</b>
-		</field-exclude>
-		<field-exclude>
-			<a>municipality</a>
-			<b>municipality</b>
-		</field-exclude>
-		<field-exclude>
-			<a>patientCaregivers</a>
-			<b>patientCaregivers</b>
-		</field-exclude>
 	</mapping>
-
+	
 </mappings>

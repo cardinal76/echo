@@ -2,6 +2,8 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -52,6 +54,9 @@ public class PhraseBook_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -106,31 +111,25 @@ public class PhraseBook_rd_Controller extends EchoController {
 			@RequestParam(defaultValue="1", required=false) int page, 
 			@RequestParam(defaultValue="15", required=false) int size, 
 			@RequestParam(defaultValue="asc", required=false) String sort, 
-			@RequestParam(defaultValue="code", required=false) String field) throws Exception {
+			@RequestParam(defaultValue=entity_id, required=false) String field) throws Exception {
 		
 		// log info
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 				
-		// check enum string params
+		// validate
 		validator.validateSort(sort);
+		validator.validateSortField(field, PhraseBook.class, entity_name);
 		
-		CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> rp = 
-				new CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, 
-						rdDozerMapper, 
-						PhraseBookDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
+		// set processor params
+		CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> processor = getProcessor();
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();	
+		return processor.process();	
 	}
 	
 	/**
@@ -149,22 +148,18 @@ public class PhraseBook_rd_Controller extends EchoController {
 		logger.info(env.getProperty("echo.api.crud.logs.validating"));
 		
 		// validate
+		validator.validateDTONullIdd(phraseBook, entity_id);
 				
-		// create the processor
-		CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> rp = 
-				new CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, 
-						rdDozerMapper, 
-						PhraseBook.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						phraseBook,
-						env);
+		// invoke order creator
+		CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> creator = getCreator();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(phraseBook);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -185,21 +180,16 @@ public class PhraseBook_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(phraseBook, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> rp = 
-				new UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						phraseBook, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> updater = getUpdater();
+		updater.setSourceDto(phraseBook);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, phraseBook.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -219,20 +209,33 @@ public class PhraseBook_rd_Controller extends EchoController {
 		// validate that username can perform the requested operation on appSetting
 		validator.validateDTOIdd(phraseBook, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> rp = 
-				new UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						phraseBook, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> updater = getUpdater();
+		updater.setSourceDto(phraseBook);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, phraseBook.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
+	}
+
+	@Override
+	protected CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> getCreator() {
+		// TODO Auto-generated method stub
+		return new CreateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, rdDozerMapper, PhraseBook.class, entity_name, env, em);
+	}
+
+	@Override
+	protected UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> getUpdater() {
+		// TODO Auto-generated method stub
+		return new UpdateRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO> getProcessor() {
+		// TODO Auto-generated method stub
+		return new CriteriaRequestProcessor<IPhraseBook_rd_Repository, PhraseBook, PhraseBookDTO>(repo, rdDozerMapper, PhraseBookDTO.class, entity_name, env);
 	}
 }

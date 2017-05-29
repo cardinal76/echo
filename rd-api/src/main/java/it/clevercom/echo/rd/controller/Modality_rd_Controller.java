@@ -2,6 +2,8 @@ package it.clevercom.echo.rd.controller;
 
 import java.text.MessageFormat;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -52,6 +54,9 @@ public class Modality_rd_Controller extends EchoController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@PersistenceContext(unitName="rdPU")
+	protected EntityManager em;
 	
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
@@ -120,24 +125,16 @@ public class Modality_rd_Controller extends EchoController {
 		validator.validateSort(sort);
 		validator.validateSortField(field, Modality.class, entity_name);
 
-		// create the processor
-		CriteriaRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> rp = 
-				new CriteriaRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO>(repo, 
-						rdDozerMapper, 
-						ModalityDTO.class, 
-						entity_name, 
-						criteria, 
-						sort, 
-						field, 
-						page, 
-						size,
-						env);
-		
+		// set processor params
+		CriteriaRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> processor = getProcessor();
+		processor.setCriteria(criteria);
+		processor.setPageCriteria(sort, field, page, size);
+	
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.getting.with.criteria"), entity_name, criteria));
 		
 		// process data request
-		return rp.process();	
+		return processor.process();	
 	}
 	
 	/**
@@ -161,21 +158,16 @@ public class Modality_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTONullIdd(modality, entity_id);
 				
-		// create the processor
-		CreateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> rp = 
-				new CreateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO>(repo, 
-						rdDozerMapper, 
-						Modality.class, 
-						entity_name, 
-						getLoggedUser(request), 
-						modality,
-						env);
+		// invoke order creator
+		CreateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> creator = getCreator();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(modality);
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
 		
 		// process
-		return rp.process();
+		return creator.process();
 	}
 	
 	/**
@@ -199,21 +191,16 @@ public class Modality_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(modality, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> rp = 
-				new UpdateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						modality, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> updater = getUpdater();
+		updater.setSourceDto(modality);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, modality.getIdd().toString()));
 
 		// return response
-		return rp.process();
+		return updater.process();
 	}
 	
 	/**
@@ -236,20 +223,30 @@ public class Modality_rd_Controller extends EchoController {
 		// validate
 		validator.validateDTOIdd(modality, entity_name);
 
-		// create processor
-		UpdateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> rp = 
-				new UpdateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO>(repo, 
-						rdDozerMapper,
-						entity_name,
-						entity_id,
-						getLoggedUser(request), 
-						modality, 
-						env);
+		// set updater params
+		UpdateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> updater = getUpdater();
+		updater.setSourceDto(modality);
+		updater.setUpdatedUser(getLoggedUser(request));
 		
 		// log info
 		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.updating"), entity_name, entity_id, modality.getIdd().toString()));
 
 		// return response
-		return rp.enable(false);
+		return updater.enable(false);
+	}
+
+	@Override
+	protected CreateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> getCreator() {
+		return new CreateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO>(repo, rdDozerMapper, Modality.class, entity_name, env, em);
+	}
+
+	@Override
+	protected UpdateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> getUpdater() {
+		return new UpdateRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO>(repo, rdDozerMapper, entity_name, entity_id, env, em);
+	}
+
+	@Override
+	protected CriteriaRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO> getProcessor() {
+		return new CriteriaRequestProcessor<IModality_rd_Repository, Modality, ModalityDTO>(repo, rdDozerMapper, ModalityDTO.class, entity_name, env);
 	}
 }

@@ -9,8 +9,10 @@ import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
+import it.clevercom.echo.rd.model.dto.ModalityDTO;
 import it.clevercom.echo.rd.model.dto.UserDTO;
 import it.clevercom.echo.rd.model.dto.WorkTaskDTO;
+import it.clevercom.echo.rd.model.entity.Modality;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.User;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
@@ -44,7 +46,7 @@ public class WorkTask2WorkTaskDTO implements CustomConverter, MapperAware {
 			target.setExecutingDate(source.getExecutingdate()!=null ? source.getExecutingdate().getTime() : null);
 			target.setExecutingNote(source.getExecutingnote()!=null ? source.getExecutingnote() : null);
 			target.setIdWorkTask(source.getIdworktask());
-			//target.setModality(rdDozerMapper.map(source, ModalityDTO.class));
+			target.setModality(rdDozerMapper.map(source.getModality(), ModalityDTO.class));
 			target.setReportedDate(source.getReporteddate() != null ? source.getReporteddate().getTime() : null);
 			target.setReportedNote(source.getReportednote() != null ? source.getReportednote() : null);
 			target.setReportingDate(source.getReportingdate() != null ? source.getReportingdate().getTime() : null);
@@ -57,10 +59,11 @@ public class WorkTask2WorkTaskDTO implements CustomConverter, MapperAware {
 			target.setWorkPriority(rdDozerMapper.map(source.getWorkPriority(), BaseObjectDTO.class));
 			target.setWorkStatus(rdDozerMapper.map(source.getWorkStatus(), BaseObjectDTO.class));
 			
-			target.setActive(source.getActive());
-			target.setCreated(source.getCreated());
-			target.setUpdated(source.getUpdated());
-			target.setUserupdate(source.getUserupdate());
+			// inject tech fields
+			target.setActive((source.getActive()!=null) ? source.getActive() : target.getActive());
+			target.setCreated((source.getCreated()!=null) ? source.getCreated() : target.getCreated());
+			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : target.getUpdated());
+			target.setUserUpdate((source.getUserupdate()!=null) ? source.getUserupdate() : target.getUserUpdate());
 			
 			return target;
 		} else if (sourceFieldValue instanceof WorkTaskDTO) {
@@ -81,7 +84,7 @@ public class WorkTask2WorkTaskDTO implements CustomConverter, MapperAware {
 			target.setExecutingnote(source.getExecutingNote() != null ? source.getExecutingNote() : null);
 			target.setIdworktask(source.getIdWorkTask());
 			
-			//target.setModality(rdDozerMapper.map(source.getModality(),Modality.class));
+			target.setModality(rdDozerMapper.map(source.getModality(),Modality.class));
 			target.setReporteddate(source.getReportedDate() != null ? new Date(source.getReportedDate()) : null);
 			target.setReportednote(source.getReportedNote() != null ? source.getReportedNote() : null);
 			target.setReportingdate(source.getReportingDate() != null ? new Date(source.getReportingDate()) : null);
@@ -91,14 +94,15 @@ public class WorkTask2WorkTaskDTO implements CustomConverter, MapperAware {
 			
 			target.setStudyid(source.getStudyId() != null ? source.getStudyId() : null);
 			target.setStudyuuid(source.getStudyUuid() != null ? source.getStudyUuid() : null);
-			target.setUser(rdDozerMapper.map(source.getUser(), User.class));
+			target.setUser((source.getUser()!=null) ? rdDozerMapper.map(source.getUser(), User.class) : null);
 			target.setWorkPriority(rdDozerMapper.map(source.getWorkPriority(), WorkPriority.class));
 			target.setWorkStatus(rdDozerMapper.map(source.getWorkStatus(), WorkStatus.class));
 				
-			target.setActive(source.getActive());
-			target.setCreated(source.getCreated());
-			target.setUpdated(source.getUpdated());
-			target.setUserupdate(source.getUserupdate());
+			// inject tech fields
+			target.setActive((source.getActive()!=null) ? source.getActive() : target.getActive());
+			target.setCreated((source.getCreated()!=null) ? source.getCreated() : target.getCreated());
+			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : target.getUpdated());
+			target.setUserupdate((source.getUserUpdate()!=null) ? source.getUserUpdate() : target.getUserupdate());
 			
 			return target;
 		} else {
