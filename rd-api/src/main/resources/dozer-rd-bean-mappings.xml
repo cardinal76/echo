@@ -10,6 +10,10 @@
 				<class-a>it.clevercom.echo.rd.model.entity.Order</class-a>
 				<class-b>it.clevercom.echo.rd.model.dto.OrderDTO</class-b>
 			</converter>
+			<converter type="it.clevercom.echo.rd.model.converter.Order2OrderDTO">
+				<class-a>it.clevercom.echo.rd.model.entity.Order</class-a>
+				<class-b>it.clevercom.echo.rd.model.dto.OrderHL7DTO</class-b>
+			</converter>
 			<converter type="it.clevercom.echo.rd.model.converter.Order2OrderLog">
 				<class-a>it.clevercom.echo.rd.model.entity.Order</class-a>
 				<class-b>it.clevercom.echo.rd.model.entity.OrderLog</class-b>

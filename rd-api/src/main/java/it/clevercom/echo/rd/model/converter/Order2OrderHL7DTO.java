@@ -11,7 +11,6 @@ import org.dozer.MappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
-import it.clevercom.echo.rd.model.dto.OrderDTO;
 import it.clevercom.echo.rd.model.dto.OrderHL7DTO;
 import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
 import it.clevercom.echo.rd.model.dto.PatientSmartDTO;
@@ -25,7 +24,7 @@ import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkSession;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
 
-public class Order2OrderDTO implements CustomConverter, MapperAware {
+public class Order2OrderHL7DTO implements CustomConverter, MapperAware {
 	@Autowired
 	private Mapper rdDozerMapper;
 
@@ -36,14 +35,14 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 		}
 		
 		if (sourceFieldValue instanceof Order) {
-			OrderDTO target = null; 
+			OrderHL7DTO target = null; 
 			Order source = (Order) sourceFieldValue;
 			
 			// check to see if the object already exists
 			if (destinationFieldValue == null) {
-				target = new OrderDTO();
+				target = new OrderHL7DTO();
 			} else {
-				target = (OrderDTO) destinationFieldValue;
+				target = (OrderHL7DTO) destinationFieldValue;
 			}
 			
 			target.setAcceptanceDate((source.getAcceptancedate() != null) ? source.getAcceptancedate().getTime() : null);
@@ -229,7 +228,7 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			
 			return target;
 		} else {
-			throw new MappingException("Converter Order2OrderDTO " + "used incorrectly. Arguments passed in were:" + destinationFieldValue + " and " + sourceFieldValue);
+			throw new MappingException("Converter Order2OrderHL7DTO " + "used incorrectly. Arguments passed in were:" + destinationFieldValue + " and " + sourceFieldValue);
 		}
 	}
 

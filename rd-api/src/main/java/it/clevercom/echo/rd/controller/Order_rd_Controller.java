@@ -50,22 +50,28 @@ import it.clevercom.echo.rd.jpa.specification.OrganizationUnitSpecification;
 import it.clevercom.echo.rd.jpa.specification.WorkPrioritySpecification;
 import it.clevercom.echo.rd.jpa.specification.WorkStatusSpecification;
 import it.clevercom.echo.rd.model.dto.BaseObjectDTO;
+import it.clevercom.echo.rd.model.dto.ModalityGroupDTO;
+import it.clevercom.echo.rd.model.dto.ModalityTypeDailyAllocationDTO;
 import it.clevercom.echo.rd.model.dto.OrderDTO;
+import it.clevercom.echo.rd.model.dto.OrderHL7DTO;
 import it.clevercom.echo.rd.model.dto.OrderedServiceDTO;
 import it.clevercom.echo.rd.model.dto.WorkSessionDTO;
 import it.clevercom.echo.rd.model.entity.Modality;
 import it.clevercom.echo.rd.model.entity.ModalityDailyAllocation;
+import it.clevercom.echo.rd.model.entity.ModalityType;
 import it.clevercom.echo.rd.model.entity.Order;
 import it.clevercom.echo.rd.model.entity.OrderLog;
 import it.clevercom.echo.rd.model.entity.OrderService;
 import it.clevercom.echo.rd.model.entity.Patient;
 import it.clevercom.echo.rd.model.entity.Service;
 import it.clevercom.echo.rd.model.entity.User;
+import it.clevercom.echo.rd.model.entity.VModalitytypeAllocation;
 import it.clevercom.echo.rd.model.entity.WorkPriority;
 import it.clevercom.echo.rd.model.entity.WorkSession;
 import it.clevercom.echo.rd.model.entity.WorkStatus;
 import it.clevercom.echo.rd.model.entity.WorkTask;
 import it.clevercom.echo.rd.repository.IModalityDailyAllocation_rd_Repository;
+import it.clevercom.echo.rd.repository.IModalityType_rd_Repository;
 import it.clevercom.echo.rd.repository.IModality_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderLog_rd_Repository;
 import it.clevercom.echo.rd.repository.IOrderService_rd_Repository;
@@ -73,6 +79,7 @@ import it.clevercom.echo.rd.repository.IOrder_rd_Repository;
 import it.clevercom.echo.rd.repository.IPatient_rd_Repository;
 import it.clevercom.echo.rd.repository.IService_rd_Repository;
 import it.clevercom.echo.rd.repository.IUser_rd_Repository;
+import it.clevercom.echo.rd.repository.IVModalitytypeAllocation_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkPriority_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkSession_rd_Repository;
 import it.clevercom.echo.rd.repository.IWorkStatus_rd_Repository;
@@ -308,6 +315,40 @@ public class Order_rd_Controller extends EchoController {
 		
 		// process data request
 		return processor.process();
+	}
+	
+	/**
+	 * Add order
+	 * @author luca
+ 	 * @category standard create order REST method
+	 * @param order
+	 * @param request
+	 * @return
+	 * @since 1.2.0
+	 * @throws Exception
+	 */
+	@Transactional("rdTm")
+	@RequestMapping( value = "/hl7", method = RequestMethod.POST, consumes = "*")
+	@PreAuthorize("hasAnyRole('ROLE_RD_REFERRING_PHYSICIAN', 'ROLE_RD_SCHEDULER', 'ROLE_RD_PERFORMING_TECHNICIAN', 'ROLE_RD_RADIOLOGIST', 'ROLE_RD_SUPERADMIN')")
+	@Loggable
+	public @ResponseBody CreateResponseDTO<OrderHL7DTO> addHL7(@RequestBody OrderHL7DTO order, HttpServletRequest request) throws Exception {
+		// log info
+		logger.info(env.getProperty("echo.api.crud.logs.validating"));
+		
+		// validate
+		validator.validateDTONullIdd(order, entity_id);
+		orderValidator.validateCreateHL7Request(order);
+		logger.debug("size pid "+order.getPids().size());
+		// invoke order creator
+		CreateRequestProcessor<IOrder_rd_Repository, Order, OrderHL7DTO> creator = getCreatorHL7();
+		creator.setCreatedUser(getLoggedUser(request));
+		creator.setDto(order);
+				
+		// log info
+		logger.info(MessageFormat.format(env.getProperty("echo.api.crud.logs.adding"), entity_name));
+		
+		// process 
+		return creator.process();
 	}
 	
 	/**
@@ -719,5 +760,9 @@ public class Order_rd_Controller extends EchoController {
 	protected CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO> getProcessor() {
 		// costruct processor
 		return new CriteriaRequestProcessor<IOrder_rd_Repository, Order, OrderDTO>(repo, rdDozerMapper, OrderDTO.class, entity_name, env);
+	}
+
+	protected CreateRequestProcessor<IOrder_rd_Repository, Order, OrderHL7DTO> getCreatorHL7() {
+		return new CreateRequestProcessor<IOrder_rd_Repository, Order, OrderHL7DTO>(repo, rdDozerMapper, Order.class, entity_name, env, em);
 	}
 }

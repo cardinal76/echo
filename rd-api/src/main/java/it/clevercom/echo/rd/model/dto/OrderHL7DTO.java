@@ -1,6 +1,7 @@
 package it.clevercom.echo.rd.model.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,8 +49,16 @@ public class OrderHL7DTO extends AbstractEchoDTO implements Serializable {
     private Long deliveredDate;
     private Long archivedDate;
     private Long canceledDate;
-    
-    
+    private ArrayList<PidDTO> pids = new ArrayList<PidDTO>();
+
+	public ArrayList<PidDTO> getPids() {
+		return pids;
+	}
+
+	public void setPids(ArrayList<PidDTO> pids) {
+		this.pids = pids;
+	}
+
 	/**
 	 * @return the idOrder
 	 */
