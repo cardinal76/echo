@@ -16,7 +16,7 @@ public class Hl7InboundMessageDTO extends AbstractEchoDTO implements Serializabl
     private String message;
     private String status;
     private String messagetype;
-    private Date received;
+    private Long received;
     
     // transient attributes
  	private Date created;
@@ -102,14 +102,14 @@ public class Hl7InboundMessageDTO extends AbstractEchoDTO implements Serializabl
 	/**
 	 * @return the received
 	 */
-	public Date getReceived() {
+	public Long getReceived() {
 		return received;
 	}
 
 	/**
 	 * @param received the received to set
 	 */
-	public void setReceived(Date received) {
+	public void setReceived(Long received) {
 		this.received = received;
 	}
 
