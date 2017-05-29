@@ -15,7 +15,7 @@ public class Date2Long implements CustomConverter {
 		if (sourceFieldValue instanceof Long) {
 			Date target = null; 
 			Long source = (Long) sourceFieldValue;
-			target = new Date(source);			
+			target = new Date(source.longValue());			
 			return target;
 		} else if (sourceFieldValue instanceof Date) {
 			Long target = null; 

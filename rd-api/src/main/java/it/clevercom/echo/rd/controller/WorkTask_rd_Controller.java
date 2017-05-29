@@ -252,11 +252,26 @@ public class WorkTask_rd_Controller extends EchoController {
 		WorkTask task = repo.findOne(workTask.getIdWorkTask());
 		WorkSession session = task.getWorkSession();
 		
-		if (WorkStatusEnum.getInstanceFromCodeValue(session.getWorkStatus().getCode()).order() <= WorkStatusEnum.getInstanceFromCodeValue(workTask.getWorkStatus().getCode()).order()) {
+		if ((WorkStatusEnum.getInstanceFromCodeValue(session.getWorkStatus().getCode()).order() == WorkStatusEnum.ACCEPTED.order()) && (WorkStatusEnum.getInstanceFromCodeValue(session.getWorkStatus().getCode()).order() <= WorkStatusEnum.getInstanceFromCodeValue(workTask.getWorkStatus().getCode()).order())) {
 			WorkStatus status = repo_ws.findByCode(workTask.getWorkStatus().getCode());
 			session.setWorkStatus(status);
+			session.setExecutingdate(new Date());
 			// update session
 			repo_wss.saveAndFlush(session);
+		} else if (WorkStatusEnum.getInstanceFromCodeValue(workTask.getWorkStatus().getCode()).equals(WorkStatusEnum.EXECUTED)) {
+			boolean executed = true;
+			// find all task
+			for (WorkTask element : session.getWorkTasks()) {
+				if ((!element.getIdworktask().equals(workTask.getIdWorkTask())) && (!WorkStatusEnum.getInstanceFromCodeValue(element.getWorkStatus().getCode()).equals(WorkStatusEnum.EXECUTED))) { 
+					executed = false;
+					break;
+				}
+			}
+			if (executed) {
+				session.setWorkStatus(repo_ws.findByCode(WorkStatusEnum.EXECUTED.code()));
+				session.setExecuteddate(new Date());
+				repo_wss.saveAndFlush(session);
+			}
 		}
 		
 		// set updater params
