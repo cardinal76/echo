@@ -52,6 +52,7 @@
 		<maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
 		<maven-war-plugin.version>3.0.0</maven-war-plugin.version>
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+		<maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
 	</properties>
 
 	<dependencyManagement>
@@ -269,6 +270,16 @@
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 					</configuration>
 				</plugin>
+				
+				<plugin>
+		           <groupId>org.apache.maven.plugins</groupId>
+		           <artifactId>maven-javadoc-plugin</artifactId>
+		           <version>${maven-javadoc-plugin.version}</version>
+		           <configuration>
+		               <additionalparam>-Xdoclint:none</additionalparam>
+<!-- 		               <failOnError>false</failOnError> -->
+		           </configuration>
+		       </plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
