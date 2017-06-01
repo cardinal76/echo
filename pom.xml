@@ -286,18 +286,28 @@
 
 	<!-- artifactory url to deploy releases -->
 	<distributionManagement>
+<!-- 		<repository> -->
+<!-- 			<id>clevercom-releases-repo</id> -->
+<!-- 			<name>dev.neclab.it-releases</name> -->
+<!-- 			<url>http://dev.neclab.it:8081/artifactory/libs-release-local</url> -->
+<!-- 		</repository> -->
 		<repository>
-			<id>clevercom-releases-repo</id>
-			<name>dev.neclab.it-releases</name>
-			<url>http://dev.neclab.it:8081/artifactory/libs-release-local</url>
-		</repository>
+        	<id>central</id>
+        	<name>marte-releases</name>
+        	<url>http://192.168.10.242:8081/artifactory/libs-release-local</url>
+    	</repository>
+    	<snapshotRepository>
+        	<id>snapshots</id>
+        	<name>marte-snapshots</name>
+        	<url>http://192.168.10.242:8081/artifactory/libs-snapshot-local</url>
+    	</snapshotRepository>
 	</distributionManagement>
 
 	<!-- gitlab url to create remote tags -->
 	<scm>
-		<connection>scm:git:git@dev.neclab.it:a.matteo/echo.git</connection>
-		<developerConnection>scm:git:git@dev.neclab.it:a.matteo/echo.git</developerConnection>
-		<url>http://dev.neclab.it:8181/a.matteo/echo</url>
+		<connection>scm:git:git@192.168.10.242:java/echo.git</connection>
+		<developerConnection>scm:git:git@192.168.10.242:java/echo.git</developerConnection>
+		<url>http://amatteo@192.168.10.242:8181/java/echo.git</url>
 		<tag>HEAD</tag>
 	</scm>
 
