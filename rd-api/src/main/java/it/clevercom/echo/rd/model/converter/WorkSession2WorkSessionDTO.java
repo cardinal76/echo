@@ -122,11 +122,6 @@ public class WorkSession2WorkSessionDTO implements CustomConverter, MapperAware 
 			orders.add(rdDozerMapper.map(source.getOrder(), Order.class));
 			target.setOrders(orders);
 			
-			target.setActive((source.getActive()!=null) ? source.getActive() : null);
-			target.setCreated((source.getCreated()!=null) ? source.getCreated() : null);
-			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : null);
-			target.setUserupdate((source.getUserUpdate()!=null) ? source.getUserUpdate() : null);
-			
 			return target;
 		} else {
 			throw new MappingException("Converter WorkSession2WorkSessionDTO " + "used incorrectly. Arguments passed in were:" + destinationFieldValue + " and " + sourceFieldValue);

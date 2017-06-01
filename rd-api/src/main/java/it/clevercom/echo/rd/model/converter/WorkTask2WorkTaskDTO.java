@@ -97,12 +97,6 @@ public class WorkTask2WorkTaskDTO implements CustomConverter, MapperAware {
 			target.setUser((source.getUser()!=null) ? rdDozerMapper.map(source.getUser(), User.class) : null);
 			target.setWorkPriority(rdDozerMapper.map(source.getWorkPriority(), WorkPriority.class));
 			target.setWorkStatus(rdDozerMapper.map(source.getWorkStatus(), WorkStatus.class));
-				
-			// inject tech fields
-			target.setActive((source.getActive()!=null) ? source.getActive() : target.getActive());
-			target.setCreated((source.getCreated()!=null) ? source.getCreated() : target.getCreated());
-			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : target.getUpdated());
-			target.setUserupdate((source.getUserUpdate()!=null) ? source.getUserUpdate() : target.getUserupdate());
 			
 			return target;
 		} else {

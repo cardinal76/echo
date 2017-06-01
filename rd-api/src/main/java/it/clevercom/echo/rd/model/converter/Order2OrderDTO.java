@@ -154,9 +154,9 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 			
 			// return adjusted OrderDTO
 			return target;
-		} else if (sourceFieldValue instanceof OrderHL7DTO) {
+		} else if (sourceFieldValue instanceof OrderDTO) {
 			Order target = null; 
-			OrderHL7DTO source = (OrderHL7DTO) sourceFieldValue;
+			OrderDTO source = (OrderDTO) sourceFieldValue;
 			
 			// check to see if the object already exists
 			if (destinationFieldValue == null) {
@@ -234,12 +234,6 @@ public class Order2OrderDTO implements CustomConverter, MapperAware {
 					target.getOrderServices().add(orderService);
 				}
 			}
-			
-			// inject tech fields
-			target.setActive((source.getActive()!=null) ? source.getActive() : target.getActive());
-			target.setCreated((source.getCreated()!=null) ? source.getCreated() : target.getCreated());
-			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : target.getUpdated());
-			target.setUserupdate((source.getUserUpdate()!=null) ? source.getUserUpdate() : target.getUserupdate());
 			
 			return target;
 		} else {

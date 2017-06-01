@@ -89,11 +89,6 @@ public class WorkReport2WorkReportDTO implements CustomConverter, MapperAware {
 				target.setWorkReportUsers(workReportUsers);
 			}
 			
-			target.setActive((source.getActive()!=null) ? source.getActive() : null);
-			target.setCreated((source.getCreated()!=null) ? source.getCreated() : null);
-			target.setUpdated((source.getUpdated()!=null) ? source.getUpdated() : null);
-			target.setUserupdate((source.getUserUpdate()!=null) ? source.getUserUpdate() : null);
-			
 			return target;
 		} else {
 			throw new MappingException("Converter WorkReport2WorkReportDTO " + "used incorrectly. Arguments passed in were:" + destinationFieldValue + " and " + sourceFieldValue);
